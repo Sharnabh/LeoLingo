@@ -10,6 +10,7 @@ import UIKit
 protocol SignUpCellDelegate: AnyObject {
     func showAlert(message: String)
     func switchToLoginVC()
+    func switchToQuestionnaireVC()
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void)
     func signUp(name: String, phone: String, password: String)
 }
@@ -85,11 +86,16 @@ class SignUpCollectionViewCell: UICollectionViewCell {
             } else {
                 // Proceed with signup
                 self?.delegate?.signUp(name: name, phone: phone, password: password)
+                self?.delegate?.switchToQuestionnaireVC()
             }
         }
     }
     
     @objc private func switchToLogin() {
         delegate?.switchToLoginVC()
+    }
+    
+    @objc private func switchToQuestionnaire() {
+        delegate?.switchToQuestionnaireVC()
     }
 }

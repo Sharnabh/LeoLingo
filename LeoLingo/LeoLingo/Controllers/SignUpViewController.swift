@@ -63,6 +63,11 @@ extension SignUpViewController: UICollectionViewDelegate, UICollectionViewDataSo
 
 // MARK: - SignUpCellDelegate
 extension SignUpViewController: SignUpCellDelegate {
+    func switchToQuestionnaireVC() {
+        let destinationVC = QuestionnaireViewController() as UIViewController
+        navigationController?.pushViewController(destinationVC, animated: true)
+    }
+    
     func showAlert(message: String) {
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -92,7 +97,7 @@ extension SignUpViewController: SignUpCellDelegate {
             try context.save()
             showAlert(message: "Sign up successful!")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.switchToLoginVC()
+                self?.switchToQuestionnaireVC()
             }
         } catch {
             showAlert(message: "Error creating user: \(error.localizedDescription)")

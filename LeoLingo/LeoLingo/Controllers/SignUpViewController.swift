@@ -64,8 +64,10 @@ extension SignUpViewController: UICollectionViewDelegate, UICollectionViewDataSo
 // MARK: - SignUpCellDelegate
 extension SignUpViewController: SignUpCellDelegate {
     func switchToQuestionnaireVC() {
-        let destinationVC = QuestionnaireViewController() as UIViewController
-        navigationController?.pushViewController(destinationVC, animated: true)
+        let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+        if let destinationVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+            navigationController?.pushViewController(destinationVC, animated: true)
+        }
     }
     
     func showAlert(message: String) {

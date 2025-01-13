@@ -1,8 +1,8 @@
-# Xcode
-*.xcuserdata/
-*.xcuserstate
-DerivedData/
-build/
-Pods/
-*.log
-.DS_Store
+# Ignore Xcode specific files
+*.xcuserdatad
+*.xcuserdata
+*.DS_Store
+
+# Build Products
+/DerivedData/
+/Build/

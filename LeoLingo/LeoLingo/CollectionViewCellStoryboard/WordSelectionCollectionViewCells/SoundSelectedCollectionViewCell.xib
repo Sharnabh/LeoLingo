@@ -9,7 +9,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="s3Q-4h-to8" customClass="SoundSelectedCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SoundSelectedCollectionViewCell" id="s3Q-4h-to8" customClass="SoundSelectedCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="250" height="50"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="QEr-An-7ia">
@@ -19,7 +19,7 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="B" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jcr-Jh-gZO">
                         <rect key="frame" x="16" y="15" width="21" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" red="0.52941176470588236" green="0.89411764705882346" blue="0.16862745098039217" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.83529411764705885" green="0.83529411764705885" blue="0.83529411764705885" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="17"/>
                         <color key="textColor" red="0.32549019607843138" green="0.34509803921568627" blue="0.37254901960784315" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -28,12 +28,16 @@
                         <rect key="frame" x="56" y="15" width="172" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.40784313725490196" green="0.76862745098039209" blue="0.10980392156862745" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
             </collectionViewCellContentView>
-            <color key="backgroundColor" red="0.78823529411764703" green="0.9137254901960784" blue="0.73725490196078436" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="0.97647058823529409" green="0.94901960784313721" blue="0.8784313725490196" alpha="1" colorSpace="calibratedRGB"/>
+            <connections>
+                <outlet property="letterLabel" destination="Jcr-Jh-gZO" id="4NT-GE-9ol"/>
+                <outlet property="wordLabel" destination="5WC-mh-MvJ" id="XgD-V9-Gtn"/>
+            </connections>
             <point key="canvasLocation" x="142.6829268292683" y="-7.1186440677966107"/>
         </collectionViewCell>
     </objects>

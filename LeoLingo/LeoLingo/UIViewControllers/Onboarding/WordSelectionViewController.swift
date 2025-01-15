@@ -71,6 +71,12 @@ class WordSelectionViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 
+    @IBAction func continueButtonTapped(_ sender: UIButton) {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress
+            questionnaireVC.moveToNextStep()
+        }
+    }
 }
 
 extension WordSelectionViewController: UICollectionViewDelegate, UICollectionViewDataSource {

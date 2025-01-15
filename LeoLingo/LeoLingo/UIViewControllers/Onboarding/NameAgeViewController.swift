@@ -35,15 +35,24 @@ class NameAgeViewController: UIViewController {
         
     }
     
+    
+    
     @IBAction func continueButtonTapped(_ sender: UIButton) {
-        let name = childNameTextField.text
-        let age = agePickerView.selectedRow(inComponent: 0)
-        print("\(name ?? "nil") - \(age)\n")
+        guard let name = childNameTextField.text, !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            let alert = UIAlertController(title: "Missing Information", 
+                                        message: "Please enter the child's name", 
+                                        preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
         
-        // Get reference to the parent QuestionnaireViewController
-        if let questionnaireVC = parent as? QuestionnaireViewController {
-            // Update progress
-            questionnaireVC.updateProgress(to: 0.25) 
+        let age = ageList[agePickerView.selectedRow(inComponent: 0)]
+        print("\(name) - \(age)\n")
+        
+        // Try getting the parent through the navigation hierarchy
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            questionnaireVC.moveToNextStep()
         }
     }
     

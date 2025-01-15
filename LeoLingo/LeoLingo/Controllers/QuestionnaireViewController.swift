@@ -12,6 +12,10 @@ class QuestionnaireViewController: UIViewController {
     @IBOutlet var nameAgeView: UIView!
     @IBOutlet var progressView: UIProgressView!
     
+    // Add total number of steps
+    private let totalSteps: Float = 5.0 // Adjust this based on your total child view controllers
+    private var currentStep: Float = 0.0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,17 +23,35 @@ class QuestionnaireViewController: UIViewController {
         
         nameAgeView.layer.borderWidth = 2
         nameAgeView.layer.borderColor = CGColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
-        nameAgeView.layer.cornerRadius = 57
+        nameAgeView.layer.cornerRadius = 30
         
         // Initialize progress bar
         progressView.progress = 0.0
         progressView.progressTintColor = UIColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
+        
+        // Initialize progress with first step
+        updateProgress(step: 1)
     }
     
-    func updateProgress(to value: Double) {
+    // Updated progress function to work with steps
+    func updateProgress(step: Int) {
+        currentStep = Float(step)
+        let progressValue = currentStep / totalSteps
         DispatchQueue.main.async {
-            self.progressView.setProgress(Float(value), animated: true)
+            self.progressView.setProgress(progressValue, animated: true)
         }
     }
     
+    // Add method to handle forward navigation
+    func moveToNextStep() {
+        let nextStep = min(currentStep + 1, totalSteps)
+        updateProgress(step: Int(nextStep))
+    }
+    
+    // Add method to handle backward navigation
+    func moveToPreviousStep() {
+        let previousStep = max(currentStep - 1, 0)
+        updateProgress(step: Int(previousStep))
+    }
 }
+

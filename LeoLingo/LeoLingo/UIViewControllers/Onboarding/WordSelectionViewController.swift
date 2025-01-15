@@ -26,7 +26,7 @@ class WordSelectionViewController: UIViewController {
         return letterAndWord.keys.sorted()
     }
     
-    var selectedItems: [String: String] = [:]
+    var selectedItems: [String: [String]] = [:]
 
 
     @IBOutlet var searchedWordCollectionView: UICollectionView!
@@ -51,6 +51,24 @@ class WordSelectionViewController: UIViewController {
         selectedWordCollectionView.dataSource = self
         
         searchBar.delegate  = self
+        
+        let backButton =  UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
+        backButton.tintColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1)
+    
+        navigationItem.leftBarButtonItem = backButton
+    }
+    
+    @objc private func backButtonTapped() {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress before popping
+            questionnaireVC.moveToPreviousStep()
+        }
+        navigationController?.popViewController(animated: true)
     }
 
 }
@@ -130,27 +148,29 @@ extension WordSelectionViewController: UICollectionViewDelegate, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = selectedWordCollectionView.dequeueReusableCell(withReuseIdentifier: "SoundSelectedCollectionViewCell", for: indexPath) as! SoundSelectedCollectionViewCell
-        let letter = cell.letterLabel.text
-        let word = cell.wordLabel.text
-        selectedItems[letter!] = word
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SoundSelectedCollectionViewCell else { return }
         
-        cell.backgroundColor = UIColor(red: 201/255, green: 233/255, blue: 188/255, alpha: 1)
-        cell.layer.borderWidth = 0
-        cell.wordLabel.textColor = UIColor(red: 104/255, green: 196/255, blue: 28/255, alpha: 1)
-        cell.letterLabel.backgroundColor = UIColor(red: 135/255, green: 228/255, blue: 43/255, alpha: 1)
+        let letter = keyLetters[indexPath.item]
+        let words = letterAndWord[letter] ?? []
         
-        print(selectedItems)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = selectedWordCollectionView.dequeueReusableCell(withReuseIdentifier: "SoundSelectedCollectionViewCell", for: indexPath) as! SoundSelectedCollectionViewCell
-        let letter = cell.letterLabel.text
-        selectedItems.removeValue(forKey: letter!)
+        if selectedItems[letter] != nil {
+            // Deselect: Remove from selected items and reset appearance
+            selectedItems.removeValue(forKey: letter)
+            cell.backgroundColor = UIColor(red: 249/255, green: 242/255, blue: 224/255, alpha: 1)
+            cell.wordLabel.textColor = .black
+            cell.letterLabel.backgroundColor = UIColor(red: 213/255, green: 213/255, blue: 213/255, alpha: 1)
+            cell.layer.borderWidth = 1
+        } else {
+            // Select: Add to selected items and update appearance
+            selectedItems[letter] = words
+            cell.backgroundColor = UIColor(red: 201/255, green: 233/255, blue: 188/255, alpha: 1)
+            cell.wordLabel.textColor = UIColor(red: 104/255, green: 196/255, blue: 28/255, alpha: 1)
+            cell.letterLabel.backgroundColor = UIColor(red: 135/255, green: 228/255, blue: 43/255, alpha: 1)
+            cell.layer.borderWidth = 0
+        }
         
-        cell.backgroundColor = UIColor(red: 249/255, green: 242/255, blue: 224/255, alpha: 1)
-        cell.wordLabel.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-        cell.letterLabel.backgroundColor = UIColor(red: 213/255, green: 213/255, blue: 213/255, alpha: 1)
+        cell.configureCell(with: letter, words: words)
+        cell.layer.cornerRadius = 10
     }
     
 }
@@ -164,6 +184,7 @@ extension WordSelectionViewController: UITextFieldDelegate {
         letters.append(newSound)
         searchedWordCollectionView.insertItems(at: [IndexPath(item: letters.count - 1, section: 0)])
         searchedWordCollectionView.reloadData()
+        print(letters)
         
         textField.text = ""
         textField.resignFirstResponder()
@@ -175,10 +196,20 @@ extension WordSelectionViewController: UITextFieldDelegate {
 
 extension WordSelectionViewController: LetterSearchedDelegate {
     func didTapRemoveButton(at indexPath: IndexPath) {
+        // Verify the index is valid before removing
+        guard indexPath.item < letters.count else { return }
+        
+        // First remove from data source
         letters.remove(at: indexPath.item)
-        searchedWordCollectionView.deleteItems(at: [indexPath])
-        searchedWordCollectionView.reloadData()
+        
+        // Then update UI
+        searchedWordCollectionView.performBatchUpdates {
+            searchedWordCollectionView.deleteItems(at: [indexPath])
+        } completion: { _ in
+            // Reload the collection view to ensure everything is in sync
+            self.searchedWordCollectionView.reloadData()
+        }
+        
+        print(letters)
     }
-    
-    
 }

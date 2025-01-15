@@ -500,8 +500,8 @@ experience</string>
                         <rect key="frame" x="0.0" y="0.0" width="672" height="762.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="V9G-td-5wh">
-                                <rect key="frame" x="10" y="0.0" width="652" height="722.5"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="V9G-td-5wh">
+                                <rect key="frame" x="10" y="10" width="652" height="722.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="BHl-Ot-odn">
                                         <rect key="frame" x="30" y="0.0" width="592" height="169"/>
@@ -519,9 +519,6 @@ experience</string>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="169" id="9tx-Xz-Tnm"/>
-                                        </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="acW-Gt-KWH">
                                         <rect key="frame" x="30" y="177" width="592" height="34"/>
@@ -567,20 +564,24 @@ experience</string>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="4QK-bL-rdn">
                                         <rect key="frame" x="30" y="337" width="592" height="21"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="vxb-GU-ohv">
-                                                <rect key="frame" x="0.0" y="10" width="242" height="1"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="vxb-GU-ohv">
+                                                <rect key="frame" x="0.0" y="10" width="280" height="1"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7we-YB-Baq">
-                                                        <rect key="frame" x="0.0" y="0.0" width="242" height="1"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="280" height="1"/>
                                                         <color key="backgroundColor" systemColor="systemGrayColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="1" id="mQd-Au-5lK"/>
                                                         </constraints>
                                                     </view>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="7we-YB-Baq" secondAttribute="trailing" id="WFW-vT-qSR"/>
+                                                    <constraint firstAttribute="height" constant="1" id="akt-Q8-DYJ"/>
+                                                </constraints>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mH1-OS-Esh">
-                                                <rect key="frame" x="250" y="0.5" width="16" height="20.5"/>
+                                                <rect key="frame" x="288" y="0.5" width="16" height="20.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="or" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PkV-OE-IgE">
                                                         <rect key="frame" x="0.0" y="0.0" width="16" height="20.5"/>
@@ -590,22 +591,26 @@ experience</string>
                                                     </label>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="HDD-Vy-q83">
-                                                <rect key="frame" x="274" y="10" width="318" height="1"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="HDD-Vy-q83">
+                                                <rect key="frame" x="312" y="10" width="280" height="1"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jY1-4Q-1FB">
-                                                        <rect key="frame" x="0.0" y="0.0" width="318" height="1"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="280" height="1"/>
                                                         <color key="backgroundColor" systemColor="systemGrayColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="1" id="gsZ-Br-etu"/>
                                                         </constraints>
                                                     </view>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="1" id="ioU-oD-Ze3"/>
+                                                    <constraint firstItem="jY1-4Q-1FB" firstAttribute="leading" secondItem="HDD-Vy-q83" secondAttribute="leading" id="vj7-Y5-68u"/>
+                                                </constraints>
                                             </stackView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="DZb-ud-3Aw"/>
-                                            <constraint firstItem="mH1-OS-Esh" firstAttribute="leading" secondItem="4QK-bL-rdn" secondAttribute="leading" constant="250" id="IyS-P9-4Jg"/>
+                                            <constraint firstItem="mH1-OS-Esh" firstAttribute="centerX" secondItem="4QK-bL-rdn" secondAttribute="centerX" id="d3X-bz-S3p"/>
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="uZh-YP-X7i">

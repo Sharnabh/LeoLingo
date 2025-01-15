@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Record {
+struct WordReport {
     var attempts: Int
     var accuracy: Double
     var recording: [String]
@@ -16,7 +16,7 @@ struct Record {
 struct Word {
     var wordTitle: String
     var wordImage: String
-    var record: [Record]
+    var wordReports: [WordReport]
     var isPracticed: Bool
 }
 
@@ -37,7 +37,7 @@ struct Badge {
     var isAchieved: Bool
 }
 
-struct JungleRUn {
+struct JungleRun {
     var backgroundImage: [String]
     var avatarImage: [String]
     var noOfLives: Int

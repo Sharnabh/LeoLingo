@@ -629,7 +629,7 @@ experience</string>
                                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="wI7-u2-lIr">
                                                         <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nUZ-8V-skH">
+                                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="nUZ-8V-skH">
                                                             <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </collectionViewCellContentView>
@@ -668,85 +668,6 @@ experience</string>
                                     <constraint firstAttribute="trailing" secondItem="4QK-bL-rdn" secondAttribute="trailing" constant="30" id="yi7-2S-sgu"/>
                                 </constraints>
                             </stackView>
-<button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="21p-Hp-dOc">
-    <rect key="frame" x="284" y="648" width="104" height="34.5"/>
-    <state key="normal" title="Button"/>
-    <buttonConfiguration key="configuration" style="filled" title="Continue"/>
-    <connections>
-        <action selector="continueButtonTapped:" destination="Lpw-7Q-wJD" eventType="touchUpInside" id="B43-2G-bBe"/>
-        <segue destination="HOj-1R-Rc9" kind="show" id="ng7-LM-R1D"/>
-    </connections>
-</button>
-
-<textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search Sound" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ssD-eG-Jh9">
-    <rect key="frame" x="78" y="199" width="516" height="34"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-    <textInputTraits key="textInputTraits"/>
-</textField>
-
-<collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="kyc-qt-qhE">
-    <rect key="frame" x="78" y="241" width="516" height="110"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <color key="backgroundColor" red="0.98039823770000001" green="0.95686084029999996" blue="0.90196478369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-    <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="LcC-jG-Acz">
-        <size key="itemSize" width="128" height="128"/>
-        <size key="headerReferenceSize" width="0.0" height="0.0"/>
-        <size key="footerReferenceSize" width="0.0" height="0.0"/>
-        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-    </collectionViewFlowLayout>
-    <cells>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Nno-q6-rdI">
-            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7cf-gn-Z0V">
-                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                <autoresizingMask key="autoresizingMask"/>
-            </collectionViewCellContentView>
-        </collectionViewCell>
-    </cells>
-</collectionView>
-
-<view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7we-YB-Baq">
-    <rect key="frame" x="78" y="383" width="240" height="2"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <color key="backgroundColor" systemColor="systemGrayColor"/>
-</view>
-
-<label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="or" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PkV-OE-IgE">
-    <rect key="frame" x="328" y="370" width="16" height="21"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-</label>
-
-<view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jY1-4Q-1FB">
-    <rect key="frame" x="354" y="383" width="240" height="2"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <color key="backgroundColor" systemColor="systemGrayColor"/>
-</view>
-
-<collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-A6-bal">
-    <rect key="frame" x="78" y="401" width="516" height="227"/>
-    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-    <color key="backgroundColor" red="0.98039823770000001" green="0.95686084029999996" blue="0.90196478369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-    <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wTU-tX-Gnt">
-        <size key="itemSize" width="128" height="128"/>
-        <size key="headerReferenceSize" width="0.0" height="0.0"/>
-        <size key="footerReferenceSize" width="0.0" height="0.0"/>
-        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-    </collectionViewFlowLayout>
-    <cells>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="wI7-u2-lIr">
-            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nUZ-8V-skH">
-                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                <autoresizingMask key="autoresizingMask"/>
-            </collectionViewCellContentView>
-        </collectionViewCell>
-    </cells>
-</collectionView>
-
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="KPP-W1-bSI"/>
                         <color key="backgroundColor" red="0.97647058819999999" green="0.94901960780000005" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>

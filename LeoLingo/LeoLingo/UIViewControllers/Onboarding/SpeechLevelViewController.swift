@@ -23,13 +23,30 @@ class SpeechLevelViewController: UIViewController {
         speechLevelTableView.delegate = self
         speechLevelTableView.dataSource = self
         
-        navigationItem.leftBarButtonItem?.image = UIImage(named: "chevron.left.circle")
+        let backButton =  UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
+        backButton.tintColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1)
+        
+        
+        navigationItem.leftBarButtonItem = backButton
+    }
+    
+    @objc private func backButtonTapped() {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress before popping
+            questionnaireVC.moveToPreviousStep()
+        }
+        navigationController?.popViewController(animated: true)
     }
 
     @IBAction func continueButtonTapped(_ sender: UIButton) {
-        if let questionnaireVC = parent as? QuestionnaireViewController {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
             // Update progress
-            questionnaireVC.updateProgress(to: 0.50)
+            questionnaireVC.moveToNextStep()
         }
     }
 }

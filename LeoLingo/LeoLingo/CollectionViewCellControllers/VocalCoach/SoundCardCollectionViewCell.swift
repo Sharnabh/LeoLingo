@@ -9,4 +9,9 @@ import UIKit
 
 class SoundCardCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet var imageView: UIImageView!
+    
+    
+    
+    
 }

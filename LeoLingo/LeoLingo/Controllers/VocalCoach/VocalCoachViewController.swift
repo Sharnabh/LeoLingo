@@ -8,7 +8,9 @@
 import UIKit
 
 //dummy
-var 
+
+
+let soundCardsImage: [String] = ["Earlywords","Bodyparts","Lsounds", "Rsounds", "Vsounds", "Ssounds"]
 
 class VocalCoachViewController: UIViewController {
     @IBOutlet var practiceCardView: UIView!
@@ -19,7 +21,10 @@ class VocalCoachViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        updatePracticeCardView()
+        registerSoundCardCell()
+        soundCards.delegate = self
+        soundCards.dataSource = self
         // Do any additional setup after loading the view.
     }
     
@@ -46,19 +51,26 @@ class VocalCoachViewController: UIViewController {
         practiceCardView.layer.shadowOffset = CGSize(width: 0, height: 1)
         practiceCardView.layer.shadowRadius = 10
         
+        
               
     }
     private func registerSoundCardCell() {
-        soundCards.register(UINib(nibName: "SoundCardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SoundCardCollectionViewCell")
+        soundCards.register(UINib(nibName: "SoundCardCell", bundle: nil), forCellWithReuseIdentifier: "SoundCardCell")
     }
 }
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
+        return soundCardsImage.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SoundCardCell", for: indexPath) as! SoundCardCollectionViewCell
+        cell.layer.cornerRadius = 21
+        let imageName = soundCardsImage[indexPath.item]
+                cell.imageView.image = UIImage(named: imageName)
+
+        return cell
+        
     }
     
         

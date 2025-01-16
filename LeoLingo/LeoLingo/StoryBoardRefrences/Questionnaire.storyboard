@@ -629,7 +629,7 @@ experience</string>
                                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="wI7-u2-lIr">
                                                         <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nUZ-8V-skH">
+                                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="nUZ-8V-skH">
                                                             <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </collectionViewCellContentView>
@@ -695,131 +695,245 @@ experience</string>
             </objects>
             <point key="canvasLocation" x="1690.9883720930231" y="637.5"/>
         </scene>
-        <!--View Controller-->
+        <!--Set Passcode View Controller-->
         <scene sceneID="qIn-7w-Cbr">
             <objects>
-                <viewController id="HOj-1R-Rc9" sceneMemberID="viewController">
+                <viewController id="HOj-1R-Rc9" customClass="SetPasscodeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bSN-gK-W5j">
                         <rect key="frame" x="0.0" y="0.0" width="672" height="762.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Set Passcode for Parent Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pYx-zy-x6j">
-                                <rect key="frame" x="156" y="168" width="360" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Passcode for Parent Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pYx-zy-x6j">
+                                <rect key="frame" x="156" y="168" width="360" height="33.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" alignment="center" spacing="29" translatesAutoresizingMaskIntoConstraints="NO" id="pc5-VA-XmQ">
-                                <rect key="frame" x="230" y="350" width="213" height="225"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="56" translatesAutoresizingMaskIntoConstraints="NO" id="kt5-Bv-AF0">
+                                <rect key="frame" x="192" y="265" width="288" height="30"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="54" translatesAutoresizingMaskIntoConstraints="NO" id="o7c-XJ-zHX">
-                                        <rect key="frame" x="1" y="0.0" width="211.5" height="34.5"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZAC-zx-6EM">
+                                        <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="O17-9s-chh"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OoM-o5-fnQ">
+                                        <rect key="frame" x="86" y="0.0" width="30" height="30"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="yGD-sv-2l1"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LJn-oP-mfg">
+                                        <rect key="frame" x="172" y="0.0" width="30" height="30"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="YsF-w3-Zhc"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tem-s5-2sp">
+                                        <rect key="frame" x="258" y="0.0" width="30" height="30"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="cJY-DY-xHJ"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="xDc-hx-VVe"/>
+                                </constraints>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="36" translatesAutoresizingMaskIntoConstraints="NO" id="pc5-VA-XmQ">
+                                <rect key="frame" x="161" y="353" width="350" height="348"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="o7c-XJ-zHX">
+                                        <rect key="frame" x="0.0" y="0.0" width="350" height="60"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="utX-yh-Yjf">
-                                                <rect key="frame" x="0.0" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="1" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="utX-yh-Yjf">
+                                                <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="J5D-6d-qMA"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="1"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="9Cx-SE-aqt"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hpa-2p-ekO">
-                                                <rect key="frame" x="88.5" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="2" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hpa-2p-ekO">
+                                                <rect key="frame" x="145" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="2"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="HFG-dp-iEd"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wfe-P7-Atr">
-                                                <rect key="frame" x="177" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="3" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wfe-P7-Atr">
+                                                <rect key="frame" x="290" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="3"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="VA4-gF-Xbv"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="54" translatesAutoresizingMaskIntoConstraints="NO" id="WUd-Yd-bJI">
-                                        <rect key="frame" x="0.0" y="63.5" width="213" height="34.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="WUd-Yd-bJI">
+                                        <rect key="frame" x="0.0" y="96" width="350" height="60"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IvN-SC-eKr">
-                                                <rect key="frame" x="0.0" y="0.0" width="35" height="34.5"/>
+                                            <button opaque="NO" tag="4" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IvN-SC-eKr">
+                                                <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="7W8-SZ-OLi"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="4"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="kfO-g1-L7o"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sjV-tq-osQ">
-                                                <rect key="frame" x="89" y="0.0" width="35" height="34.5"/>
+                                            <button opaque="NO" tag="5" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sjV-tq-osQ">
+                                                <rect key="frame" x="145" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="5"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="CYa-pO-3T0"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iw5-Bk-6Bk">
-                                                <rect key="frame" x="178" y="0.0" width="35" height="34.5"/>
+                                            <button opaque="NO" tag="6" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iw5-Bk-6Bk">
+                                                <rect key="frame" x="290" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="6"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="fji-90-5GG"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="54" translatesAutoresizingMaskIntoConstraints="NO" id="Mdb-bQ-a2m">
-                                        <rect key="frame" x="1" y="127" width="211.5" height="34.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="Mdb-bQ-a2m">
+                                        <rect key="frame" x="0.0" y="192" width="350" height="60"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y6H-sQ-4pL">
-                                                <rect key="frame" x="0.0" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="7" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y6H-sQ-4pL">
+                                                <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="3Oy-Kx-DBp"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="7"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="xSD-LL-V6W"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WWr-X6-ghv">
-                                                <rect key="frame" x="88.5" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="8" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WWr-X6-ghv">
+                                                <rect key="frame" x="145" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="8"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="o7H-Gg-WWJ"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QuH-lH-8Jz">
-                                                <rect key="frame" x="177" y="0.0" width="34.5" height="34.5"/>
+                                            <button opaque="NO" tag="9" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QuH-lH-8Jz">
+                                                <rect key="frame" x="290" y="0.0" width="60" height="60"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="9"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="taB-U9-7Gp"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="54" translatesAutoresizingMaskIntoConstraints="NO" id="64o-ia-w0h">
-                                        <rect key="frame" x="6" y="190.5" width="201" height="34.5"/>
+                                    <stackView opaque="NO" contentMode="right" distribution="fillEqually" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="64o-ia-w0h">
+                                        <rect key="frame" x="0.0" y="288" width="350" height="60"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lRC-cr-7eA">
-                                                <rect key="frame" x="0.0" y="0.0" width="73.5" height="34.5"/>
+                                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lRC-cr-7eA">
+                                                <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="60" id="4om-FE-IfW"/>
+                                                    <constraint firstAttribute="height" constant="60" id="cqm-Qy-sMk"/>
+                                                </constraints>
+                                                <color key="tintColor" red="0.97647058959999999" green="0.96078431610000004" blue="0.90588235859999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled">
+                                                    <color key="baseBackgroundColor" red="0.97647058959999999" green="0.96078431610000004" blue="0.90588235859999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                </buttonConfiguration>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TLb-5l-AAv">
+                                                <rect key="frame" x="145" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="B75-lt-Iig"/>
+                                                    <constraint firstAttribute="width" constant="60" id="nKP-BV-wX4"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="0"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="kMf-8b-wpq"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vjO-gt-217">
-                                                <rect key="frame" x="127.5" y="0.0" width="73.5" height="34.5"/>
+                                                <rect key="frame" x="290" y="0.0" width="60" height="60"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="60" id="GzP-9L-tQI"/>
+                                                    <constraint firstAttribute="width" constant="60" id="YrF-bO-zWQ"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="filled" title="Delete"/>
+                                                <buttonConfiguration key="configuration" style="filled" image="delete.left" catalog="system"/>
+                                                <connections>
+                                                    <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="cwT-vI-FPu"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                            </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" spacing="64" translatesAutoresizingMaskIntoConstraints="NO" id="AfG-Vu-CCW">
-                                <rect key="frame" x="176" y="251" width="320" height="34"/>
-                                <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qvI-lQ-PyG">
-                                        <rect key="frame" x="0.0" y="0.0" width="32" height="34"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="R5N-hA-yBi">
-                                        <rect key="frame" x="96" y="0.0" width="32" height="34"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nN4-9C-HoT">
-                                        <rect key="frame" x="192" y="0.0" width="32" height="34"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8lI-TI-JxX">
-                                        <rect key="frame" x="288" y="0.0" width="32" height="34"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="WUd-Yd-bJI" firstAttribute="leading" secondItem="pc5-VA-XmQ" secondAttribute="leading" id="1cG-cY-YD5"/>
+                                    <constraint firstItem="o7c-XJ-zHX" firstAttribute="leading" secondItem="pc5-VA-XmQ" secondAttribute="leading" id="8Vg-Iw-dBM"/>
+                                    <constraint firstAttribute="trailing" secondItem="o7c-XJ-zHX" secondAttribute="trailing" id="SbX-6N-SjH"/>
+                                    <constraint firstAttribute="trailing" secondItem="WUd-Yd-bJI" secondAttribute="trailing" id="UBk-bz-kqx"/>
+                                    <constraint firstItem="Mdb-bQ-a2m" firstAttribute="leading" secondItem="pc5-VA-XmQ" secondAttribute="leading" id="VT1-9V-Srz"/>
+                                    <constraint firstAttribute="width" constant="350" id="WJw-AZ-Bvj"/>
+                                    <constraint firstAttribute="trailing" secondItem="Mdb-bQ-a2m" secondAttribute="trailing" id="sOR-PR-G9F"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="iGD-HY-MKW"/>
                         <color key="backgroundColor" red="0.97647058959999999" green="0.95686274770000002" blue="0.90588235859999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="pc5-VA-XmQ" firstAttribute="top" secondItem="kt5-Bv-AF0" secondAttribute="bottom" constant="58" id="AZB-my-lrF"/>
+                            <constraint firstItem="iGD-HY-MKW" firstAttribute="trailing" secondItem="pc5-VA-XmQ" secondAttribute="trailing" constant="161" id="BS0-W9-uBY"/>
+                            <constraint firstItem="pc5-VA-XmQ" firstAttribute="leading" secondItem="iGD-HY-MKW" secondAttribute="leading" constant="161" id="DjJ-Qf-7vX"/>
+                            <constraint firstItem="kt5-Bv-AF0" firstAttribute="centerX" secondItem="bSN-gK-W5j" secondAttribute="centerX" id="E5v-Ky-xMs"/>
+                            <constraint firstItem="kt5-Bv-AF0" firstAttribute="top" secondItem="pYx-zy-x6j" secondAttribute="bottom" constant="63.5" id="EZd-SG-WdB"/>
+                            <constraint firstItem="iGD-HY-MKW" firstAttribute="trailing" secondItem="kt5-Bv-AF0" secondAttribute="trailing" constant="192" id="dDC-zG-3y6"/>
+                            <constraint firstItem="pYx-zy-x6j" firstAttribute="leading" secondItem="iGD-HY-MKW" secondAttribute="leading" constant="156" id="dZG-cP-iSl"/>
+                            <constraint firstItem="pYx-zy-x6j" firstAttribute="top" secondItem="iGD-HY-MKW" secondAttribute="top" constant="94" id="gc4-ZZ-G1c"/>
+                            <constraint firstItem="kt5-Bv-AF0" firstAttribute="leading" secondItem="iGD-HY-MKW" secondAttribute="leading" constant="192" id="moW-aZ-EDH"/>
+                            <constraint firstItem="iGD-HY-MKW" firstAttribute="bottom" secondItem="pc5-VA-XmQ" secondAttribute="bottom" constant="41.5" id="oYh-Tg-zYR"/>
+                            <constraint firstItem="pc5-VA-XmQ" firstAttribute="centerX" secondItem="bSN-gK-W5j" secondAttribute="centerX" id="uKS-m2-ADj"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="3Fo-aT-5zr"/>
+                    <navigationItem key="navigationItem" id="3Fo-aT-5zr">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="8vJ-jV-VOF"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="circleView1" destination="ZAC-zx-6EM" id="lh0-gd-wZ2"/>
+                        <outlet property="circleView2" destination="OoM-o5-fnQ" id="87T-Zt-cZR"/>
+                        <outlet property="circleView3" destination="LJn-oP-mfg" id="Fgv-yB-Lc9"/>
+                        <outlet property="circleView4" destination="tem-s5-2sp" id="30X-yk-Yl8"/>
+                        <outlet property="deleteButton" destination="vjO-gt-217" id="89X-cE-nXu"/>
+                        <outlet property="rightBarButtonItem" destination="8vJ-jV-VOF" id="AjV-hQ-0Ru"/>
+                        <outletCollection property="passcodeButtons" destination="utX-yh-Yjf" collectionClass="NSMutableArray" id="7PY-GV-Hrv"/>
+                        <outletCollection property="passcodeButtons" destination="hpa-2p-ekO" collectionClass="NSMutableArray" id="sJ7-ny-7Ko"/>
+                        <outletCollection property="passcodeButtons" destination="wfe-P7-Atr" collectionClass="NSMutableArray" id="0vU-6m-wub"/>
+                        <outletCollection property="passcodeButtons" destination="IvN-SC-eKr" collectionClass="NSMutableArray" id="eh5-RY-jRU"/>
+                        <outletCollection property="passcodeButtons" destination="sjV-tq-osQ" collectionClass="NSMutableArray" id="70W-bC-E8H"/>
+                        <outletCollection property="passcodeButtons" destination="Iw5-Bk-6Bk" collectionClass="NSMutableArray" id="wYh-bJ-td0"/>
+                        <outletCollection property="passcodeButtons" destination="Y6H-sQ-4pL" collectionClass="NSMutableArray" id="Lyd-13-7fH"/>
+                        <outletCollection property="passcodeButtons" destination="WWr-X6-ghv" collectionClass="NSMutableArray" id="5TA-Jg-xF6"/>
+                        <outletCollection property="passcodeButtons" destination="QuH-lH-8Jz" collectionClass="NSMutableArray" id="uRb-vD-ubP"/>
+                        <outletCollection property="passcodeButtons" destination="TLb-5l-AAv" collectionClass="NSMutableArray" id="840-hI-wEM"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1R0-Tx-Umw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -828,6 +942,7 @@ experience</string>
     </scenes>
     <resources>
         <image name="BaseBackdrop" width="605" height="417"/>
+        <image name="delete.left" catalog="system" width="128" height="102"/>
         <image name="square" catalog="system" width="128" height="114"/>
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

@@ -1,8 +1,0 @@
-# Xcode
-*.xcuserdata/
-*.xcuserstate
-DerivedData/
-build/
-Pods/
-*.log
-.DS_Store

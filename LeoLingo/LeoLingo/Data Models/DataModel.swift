@@ -7,6 +7,16 @@
 
 import Foundation
 
+struct Users {
+    var userName: String
+    var userImage: String
+    var userPhoneNumber: String
+    var userAge: Int
+    var userLevel: Level
+    var userBadges: [Badge]
+    var userCards: [Card]
+}
+
 struct WordReport {
     var attempts: Int
     var accuracy: Double

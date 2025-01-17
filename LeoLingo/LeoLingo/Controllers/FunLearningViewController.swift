@@ -11,8 +11,6 @@ class FunLearningViewController: UIViewController {
 
     @IBOutlet var headingLabel: UILabel!
     @IBOutlet var gamesCollectionView: UICollectionView!
-//    @IBOutlet var nextButton: UIButton!
-//    @IBOutlet var previousButton: UIButton!
     @IBOutlet var parentModeButton: UIButton!
     
     var currentIndex = 1
@@ -47,35 +45,11 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         currentIndex = previousIndex
     }
-
-//     private func updateButtonStates() {
-//        let visibleItems = gamesCollectionView.indexPathsForVisibleItems.sorted()
-//        if let currentIndex = visibleItems.first {
-//            previousButton.isEnabled = currentIndex.item > 0
-//            nextButton.isEnabled = currentIndex.item < gameImages.count - 1
-//        }
-//    }
 }
 
 extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
-//    func updateIndex() {
-//        let visibleRect = CGRect(origin: gamesCollectionView.contentOffset, size: gamesCollectionView.bounds.size)
-//        let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
-//                
-//        if let indexPath = gamesCollectionView.indexPathForItem(at: visiblePoint) {
-//            currentIndex = indexPath.item
-//            print(currentIndex)
-//        }
-//    }
-//    
-//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-//        updateIndex()
-//    }
-//    
-//    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-//        updateIndex()
-//    }
+
     
     func configureLayout() -> UICollectionViewLayout {
         // Create item size

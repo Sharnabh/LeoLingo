@@ -61,7 +61,11 @@ class LockScreenViewController: UIViewController {
                 // Enable the bar button item when passcode length is 4
                 if myPasscode.count == passCodeLength {
                     if myPasscode == code {
-                        performSegue(withIdentifier: "WordReportSegue", sender: self)
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let sceneDelegate = windowScene.delegate as? SceneDelegate {
+                            let splitVC = storyboard?.instantiateViewController(withIdentifier: "SplitViewController") as! UISplitViewController
+                            sceneDelegate.window?.rootViewController = splitVC
+                        }
                     } else {
                         print("Bhag")
                     }

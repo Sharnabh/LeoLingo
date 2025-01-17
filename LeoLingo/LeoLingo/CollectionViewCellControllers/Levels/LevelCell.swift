@@ -14,7 +14,7 @@ class LevelCell: UICollectionViewCell {
         
         
         
-        for i in 0...min(data.count, wordView.count) {
+        for i in 0..<min(data.count, wordView.count) {
             let (title, accuracy, attempts) = data[i]
             accuracyLabel[i].text = "Accuracy: \(accuracy)%"
             attemptsLabel[i].text = "Attempts: \(attempts)"
@@ -33,7 +33,4 @@ class LevelCell: UICollectionViewCell {
             }
         }
     }
-    
-    
-    
 }

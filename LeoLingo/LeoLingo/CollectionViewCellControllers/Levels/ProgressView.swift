@@ -25,12 +25,15 @@ class ProgressView: UIView {
         }
     
     private func setupView() {
+        self.backgroundColor = .none
+        
         // Title label in the center of the donut chart
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor.brown
+        titleLabel.textColor = UIColor(red: 123/255, green: 67/255, blue: 46/255, alpha: 1)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleLabel)
+        
         
         // Constraints to center the label
         NSLayoutConstraint.activate([
@@ -46,18 +49,15 @@ class ProgressView: UIView {
     
     private func createDonut(progress: CGFloat, color: UIColor) {
         
-        let lineWidth: CGFloat = 10
+        let lineWidth: CGFloat = 7
         let radius = min( bounds.width, bounds.height) / 2 - lineWidth
         
         let centerPoint = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
-        
-//         Background circle
-        let backgroundPath = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: -.pi / 2, endAngle: .pi * 1.5, clockwise: true)
-        backgroundLayer.path = backgroundPath.cgPath
-        backgroundLayer.strokeColor = UIColor.lightGray.cgColor
-        backgroundLayer.lineWidth = lineWidth
-        backgroundLayer.fillColor = UIColor.clear.cgColor
-        layer.addSublayer(backgroundLayer)
+
+        let innerPath = UIBezierPath(arcCenter: centerPoint, radius: radius + 5, startAngle: 0, endAngle: .pi * 2, clockwise: true)
+        innerLayer.path = innerPath.cgPath
+        innerLayer.fillColor = CGColor(red: 236/255, green: 204/255, blue: 67/255, alpha: 0.6)
+        layer.addSublayer(innerLayer)
         
         // Progress circle
         let progressPath = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: -.pi / 2, endAngle: (-.pi / 2  - .pi * 2 * progress), clockwise: false)
@@ -67,11 +67,7 @@ class ProgressView: UIView {
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineCap = .round
         layer.addSublayer(progressLayer)
-        
-        let innerPath = UIBezierPath(arcCenter: centerPoint, radius: radius - lineWidth, startAngle: 0, endAngle: .pi * 2, clockwise: true)
-        innerLayer.path = innerPath.cgPath
-        innerLayer.fillColor = UIColor.black.cgColor
-        layer.addSublayer(innerLayer)
+        bringSubviewToFront(titleLabel)
     }
 
     

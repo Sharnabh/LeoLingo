@@ -9,13 +9,13 @@ import Foundation
 
 struct Record {
     var attempts: Int
-    var accuracy: Double
-    var recording: [String]
+    var accuracy: [Double]!
+    var recording: [String]!
 }
 
 struct Word {
     var wordTitle: String
-    var wordImage: String
+    var wordImage: String!
     var record: [Record]
     var isPracticed: Bool
 }

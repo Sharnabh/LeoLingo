@@ -488,6 +488,9 @@
                                     <segment title="Intermediate"/>
                                     <segment title="Advance"/>
                                 </segments>
+                                <connections>
+                                    <action selector="levelChanged:" destination="5Kt-5q-4tn" eventType="valueChanged" id="Dya-Nf-VK3"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="1aI-Js-aoL"/>

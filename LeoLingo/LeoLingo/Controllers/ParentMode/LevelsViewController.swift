@@ -29,17 +29,28 @@ class LevelsViewController: UIViewController {
 //            ("Level 24", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")])        ]
 //    ]
     private let segmentedLevels = [
-            ("Level 1", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
-        ("Level 2", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
-        ("Level 3", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
-        ("Level 4", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")])
+            [
+                ("Level 1", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
+        ("Level 2", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")])
+            ],
+            [
+            ("Level 3", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
+            ("Level 4", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")])
+            ],
+            [
+            ("Level 5", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")]),
+            ("Level 6", "In this journey, we will imitate dogs and cows. Also we will practice basic words like mom and dada and some greetings.", [("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5"), ("Mom", 70, "3/5"), ("Dada", 85, "3/5"), ("Bye", 35, "3/5")])
+            ]
         ]
     
+    private var currentLevel: [(String, String, [(String, Int, String)])] = []
 
     @IBOutlet var headingView: UIView!
     @IBOutlet var levelsCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        currentLevel = segmentedLevels[0]
 
         navigationItem.hidesBackButton = true
         
@@ -60,14 +71,14 @@ class LevelsViewController: UIViewController {
         
     }
 
-//    @IBAction func levelChanged(_ sender: UISegmentedControl) {
-//        let selectedIndex = sender.selectedSegmentIndex
-//        currentLevel = segmentedLevels[selectedIndex]
-//        
-//        UIView.transition(with: levelsCollectionView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-//            self.levelsCollectionView.reloadData()
-//        })
-//    }
+    @IBAction func levelChanged(_ sender: UISegmentedControl) {
+        let selectedIndex = sender.selectedSegmentIndex
+        currentLevel = segmentedLevels[selectedIndex]
+        
+        UIView.transition(with: levelsCollectionView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.levelsCollectionView.reloadData()
+        })
+    }
 }
 
 extension LevelsViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -93,7 +104,7 @@ extension LevelsViewController: UICollectionViewDataSource, UICollectionViewDele
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = levelsCollectionView.dequeueReusableCell(withReuseIdentifier: "LevelCell", for: indexPath) as! LevelCell
-        let (level, description, data) = segmentedLevels[indexPath.item]
+        let (level, description, data) = currentLevel[indexPath.item]
         cell.configureData(level: level, description: description, data: data)
         cell.layer.cornerRadius = 30
         cell.layer.borderWidth = 5

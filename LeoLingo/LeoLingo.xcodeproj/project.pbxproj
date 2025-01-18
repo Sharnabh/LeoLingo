@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE717BB62D3C2BEF00F25F2F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CE717BB52D3C2BEF00F25F2F /* DGCharts */; };
+		CE717BB82D3C2BEF00F25F2F /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = CE717BB72D3C2BEF00F25F2F /* DGChartsDynamic */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CEBB42952D301D6D009859CD /* LeoLingo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeoLingo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE717BB82D3C2BEF00F25F2F /* DGChartsDynamic in Frameworks */,
+				CE717BB62D3C2BEF00F25F2F /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = LeoLingo;
 			packageProductDependencies = (
+				CE717BB52D3C2BEF00F25F2F /* DGCharts */,
+				CE717BB72D3C2BEF00F25F2F /* DGChartsDynamic */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -107,6 +116,9 @@
 			);
 			mainGroup = CEBB428C2D301D6D009859CD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE717BB42D3C2BEF00F25F2F /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
 			projectDirPath = "";
@@ -345,6 +357,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE717BB42D3C2BEF00F25F2F /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE717BB52D3C2BEF00F25F2F /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE717BB42D3C2BEF00F25F2F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		CE717BB72D3C2BEF00F25F2F /* DGChartsDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE717BB42D3C2BEF00F25F2F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGChartsDynamic;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CEBB428D2D301D6D009859CD /* Project object */;
 }

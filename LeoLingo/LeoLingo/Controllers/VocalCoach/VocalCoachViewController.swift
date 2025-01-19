@@ -8,7 +8,7 @@
 import UIKit
 
 //dummy
-var 
+//var 
 
 class VocalCoachViewController: UIViewController {
     @IBOutlet var practiceCardView: UIView!
@@ -52,15 +52,15 @@ class VocalCoachViewController: UIViewController {
         soundCards.register(UINib(nibName: "SoundCardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SoundCardCollectionViewCell")
     }
 }
-extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
-    }
-    
-        
-    }
-
+//extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        <#code#>
+//    }
+//    
+//        
+//    }
+//

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CECA75972D3CD9D300733E65 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CECA75962D3CD9D300733E65 /* DGCharts */; };
+		CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CE02829B2D3D072C00521C91 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CECA75972D3CD9D300733E65 /* DGCharts in Frameworks */,
+				CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +93,7 @@
 			);
 			name = LeoLingo;
 			packageProductDependencies = (
-				CECA75962D3CD9D300733E65 /* DGCharts */,
+				CE02829B2D3D072C00521C91 /* DGCharts */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -124,7 +124,7 @@
 			mainGroup = CEBB428C2D301D6D009859CD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CECA75952D3CD9D300733E65 /* XCRemoteSwiftPackageReference "Charts" */,
+				CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
@@ -366,7 +366,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CECA75952D3CD9D300733E65 /* XCRemoteSwiftPackageReference "Charts" */ = {
+		CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/danielgindi/Charts";
 			requirement = {
@@ -377,9 +377,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CECA75962D3CD9D300733E65 /* DGCharts */ = {
+		CE02829B2D3D072C00521C91 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CECA75952D3CD9D300733E65 /* XCRemoteSwiftPackageReference "Charts" */;
+			package = CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */;
 			productName = DGCharts;
 		};
 /* End XCSwiftPackageProductDependency section */

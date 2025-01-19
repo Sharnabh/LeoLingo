@@ -243,7 +243,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZJ4-tr-SOc" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bsi-hC-cFF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" backIndicatorImage="Image" id="bsi-hC-cFF">
                         <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -328,11 +328,10 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.98823529480000005" green="0.94509804249999996" blue="0.75686275960000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
-                                <rect key="frame" x="568" y="239" width="771" height="600"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" directionalLockEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
+                                <rect key="frame" x="584" y="239" width="792" height="600"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vB0-fz-oad">
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vB0-fz-oad">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -352,9 +351,9 @@
                     </view>
                     <navigationItem key="navigationItem" id="46g-yd-n8d"/>
                     <connections>
-                        <outlet property="WordLabel" destination="SSq-DF-5CO" id="WMf-7j-ezd"/>
-                        <outlet property="practiceCardView" destination="F2W-56-G4c" id="nO2-jl-udg"/>
-                        <outlet property="soundCards" destination="zmz-2j-SO4" id="Rdh-5P-zlf"/>
+                        <outlet property="WordLabel" destination="SSq-DF-5CO" id="ZVK-bI-jiz"/>
+                        <outlet property="practiceCardView" destination="F2W-56-G4c" id="I0P-ZS-Luq"/>
+                        <outlet property="soundCards" destination="zmz-2j-SO4" id="k3P-zf-f3j"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HXC-BQ-5KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -388,11 +387,39 @@
             </objects>
             <point key="canvasLocation" x="-157" y="2017"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="0tM-pb-qsZ">
+            <objects>
+                <viewController id="L4p-R8-fBD" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="7h9-qg-bH4">
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="9hA-Qu-ujo">
+                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="QrW-VH-IjV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="trailing" secondItem="QrW-VH-IjV" secondAttribute="trailing" id="2bs-Er-NQx"/>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="top" secondItem="7h9-qg-bH4" secondAttribute="top" id="2wQ-P1-PzK"/>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="leading" secondItem="QrW-VH-IjV" secondAttribute="leading" id="NS2-z3-8ko"/>
+                            <constraint firstAttribute="bottom" secondItem="9hA-Qu-ujo" secondAttribute="bottom" id="VRy-8J-UEi"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="vJJ-p4-loY"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aXI-qk-SYX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="865" y="739"/>
+        </scene>
     </scenes>
     <resources>
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>
         <image name="Greetbox" width="1274" height="1260"/>
+        <image name="Image" width="198" height="190"/>
         <image name="Mojo" width="1596" height="1834"/>
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>

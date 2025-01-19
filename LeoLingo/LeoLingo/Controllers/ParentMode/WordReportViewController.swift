@@ -175,7 +175,7 @@ extension WordReportViewController: WordReportHeaderViewDelegate {
     
     func didTapFilterButton(_ sender: UIButton) {
         let filterVC = FilterViewController()
-//        filterVC.delegate = self
+        filterVC.delegate = self
         filterVC.modalPresentationStyle = .popover
 
         if let popoverController = filterVC.popoverPresentationController {
@@ -189,10 +189,10 @@ extension WordReportViewController: WordReportHeaderViewDelegate {
     }
 }
 
-//extension WordReportViewController: FilterViewControllerDelegate {
-//    func didApplyFilter(averageAccuracy: Float, isPracticed: Bool, isPassed: Bool) {
-//        isFiltered = true
-//        filteredWords = allWords.filter { $0.isPracticed == isPracticed }
-//        reportCollectionView.reloadData()
-//    }
-//}
+extension WordReportViewController: FilterViewControllerDelegate {
+    func didApplyFilter(averageAccuracy: Float, isPracticed: Bool, isPassed: Bool) {
+        isFiltered = true
+        filteredWords = allWords.filter { $0.isPracticed == isPracticed }
+        reportCollectionView.reloadData()
+    }
+}

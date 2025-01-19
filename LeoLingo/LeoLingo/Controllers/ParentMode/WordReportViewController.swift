@@ -167,32 +167,19 @@ extension WordReportViewController: UICollectionViewDataSource, UICollectionView
 }
 
 extension WordReportViewController: WordReportHeaderViewDelegate {
+    func didTapFilterButton(_ filterSettings: FilterSettings) {
+        filteredWords = allWords.filter { item in
+            let passesFilter = (!filterSettings.accuracyFilterEnabled || Int(item.avgAccuracy) > filterSettings.accuracyValue)
+           let isPassed = !filterSettings.isPassed || item.isPassed
+           let isPracticed = !filterSettings.isPracticed || item.isPracticed
+           return passesFilter && isPassed && isPracticed
+       }
+        reportCollectionView.reloadData()
+    }
+    
     func didTapAllButton() {
         isFiltered = false
         filteredWords = allWords
         reportCollectionView.reloadData()
     }
-    
-    func didTapFilterButton(_ sender: UIButton) {
-        let filterVC = FilterViewController()
-//        filterVC.delegate = self
-        filterVC.modalPresentationStyle = .popover
-
-        if let popoverController = filterVC.popoverPresentationController {
-            popoverController.delegate = self
-            popoverController.sourceView = sender
-            popoverController.sourceRect = CGRect(x: view.bounds.midX, y: 100, width: 0, height: 0) // Position
-            popoverController.permittedArrowDirections = .up
-        }
-
-        present(filterVC, animated: true)
-    }
 }
-
-//extension WordReportViewController: FilterViewControllerDelegate {
-//    func didApplyFilter(averageAccuracy: Float, isPracticed: Bool, isPassed: Bool) {
-//        isFiltered = true
-//        filteredWords = allWords.filter { $0.isPracticed == isPracticed }
-//        reportCollectionView.reloadData()
-//    }
-//}

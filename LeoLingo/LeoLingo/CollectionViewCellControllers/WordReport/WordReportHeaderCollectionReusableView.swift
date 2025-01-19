@@ -9,7 +9,7 @@ import UIKit
 
 protocol WordReportHeaderViewDelegate: AnyObject {
     func didTapAllButton()
-    func didTapFilterButton()
+    func didTapFilterButton(_ sender: UIButton)
 }
 
 class WordReportHeaderCollectionReusableView: UICollectionReusableView {
@@ -69,8 +69,8 @@ class WordReportHeaderCollectionReusableView: UICollectionReusableView {
         self.delegate?.didTapAllButton()
     }
     
-    @objc private func filterButtonTapped() {
-        self.delegate?.didTapFilterButton()
+    @objc private func filterButtonTapped(_ sender: UIButton) {
+        self.delegate?.didTapFilterButton(sender)
     }
     
 }

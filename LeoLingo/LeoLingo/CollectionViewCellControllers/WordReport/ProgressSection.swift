@@ -20,6 +20,7 @@ class ProgressSection: UIView {
         guard let records = word.record,
               word.record != nil else {
             recordingSegment.isEnabled = false
+            graph.updateChartData(accuracyData: [0])
             return
         }
         

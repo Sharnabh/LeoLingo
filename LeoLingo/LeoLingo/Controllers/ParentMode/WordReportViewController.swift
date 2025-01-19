@@ -7,11 +7,12 @@
 
 import UIKit
 
-class WordReportViewController: UIViewController {
+class WordReportViewController: UIViewController, UIPopoverPresentationControllerDelegate {
 
-    @IBOutlet var headingLabel: UILabel!
+
     @IBOutlet var reportCollectionView: UICollectionView!
     @IBOutlet var progressSectionView: ProgressSection!
+    @IBOutlet var headingView: UIView!
     
     let allWords: [Word] = [
         Word(wordTitle: "A", record: Record(attempts: 5, accuracy: [30, 40, 70, 60, 90]), isPracticed: true),
@@ -19,20 +20,20 @@ class WordReportViewController: UIViewController {
         Word(wordTitle: "C", record: Record(attempts: 4, accuracy: [20, 30, 50, 70]), isPracticed: true),
         Word(wordTitle: "D", isPracticed: false),
         Word(wordTitle: "E", record: Record(attempts: 5, accuracy: [10, 20, 30, 40, 50]), isPracticed: true),
-        Word(wordTitle: "F", record: Record(attempts: 2, accuracy: [60, 70, 85]), isPracticed: true),
+        Word(wordTitle: "F", record: Record(attempts: 3, accuracy: [60, 70, 85]), isPracticed: true),
         Word(wordTitle: "G", record: Record(attempts: 3, accuracy: [25, 35, 55]), isPracticed: true),
         Word(wordTitle: "H", isPracticed: false),
-        Word(wordTitle: "I", record: Record(attempts: 1, accuracy: [90, 95]), isPracticed: true),
+        Word(wordTitle: "I", record: Record(attempts: 2, accuracy: [90, 95]), isPracticed: true),
         Word(wordTitle: "J", record: Record(attempts: 5, accuracy: [10, 15, 20, 25, 30]), isPracticed: true),
         Word(wordTitle: "K", record: Record(attempts: 3, accuracy: [40, 45, 55]), isPracticed: true),
         Word(wordTitle: "L", isPracticed: false),
         Word(wordTitle: "M", record: Record(attempts: 4, accuracy: [30, 35, 50, 60]), isPracticed: true),
-        Word(wordTitle: "N", record: Record(attempts: 1, accuracy: [85, 90]), isPracticed: true),
+        Word(wordTitle: "N", record: Record(attempts: 2, accuracy: [85, 90]), isPracticed: true),
         Word(wordTitle: "O", record: Record(attempts: 5, accuracy: [15, 25, 35, 45, 55]), isPracticed: true),
         Word(wordTitle: "P", isPracticed: false),
-        Word(wordTitle: "Q", record: Record(attempts: 2, accuracy: [65, 70, 85]), isPracticed: true),
+        Word(wordTitle: "Q", record: Record(attempts: 3, accuracy: [65, 70, 85]), isPracticed: true),
         Word(wordTitle: "R", record: Record(attempts: 4, accuracy: [50, 55, 60, 75]), isPracticed: true),
-        Word(wordTitle: "S", record: Record(attempts: 1, accuracy: [95, 100]), isPracticed: true),
+        Word(wordTitle: "S", record: Record(attempts: 2, accuracy: [95, 100]), isPracticed: true),
         Word(wordTitle: "T", isPracticed: false)
     ]
     
@@ -46,8 +47,12 @@ class WordReportViewController: UIViewController {
 
         navigationItem.hidesBackButton = true
         
-        headingLabel.layer.cornerRadius = 20
-        headingLabel.layer.masksToBounds = true
+        headingView.layer.shadowColor = UIColor.black.cgColor
+        headingView.layer.shadowOffset = CGSize(width: 0, height: 1)
+        headingView.layer.shadowOpacity = 0.5
+        headingView.layer.shadowRadius = 4
+        headingView.layer.cornerRadius = 20
+        headingView.layer.masksToBounds = false
         
         let wordReportNib = UINib(nibName: "WordReportCell", bundle: nil)
         reportCollectionView.register(wordReportNib, forCellWithReuseIdentifier: WordReportCollectionViewCell.identifier)
@@ -94,9 +99,6 @@ extension WordReportViewController: UICollectionViewDataSource, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionHeader else {
-            return UICollectionReusableView()
-        }
         
         let headerView = reportCollectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
@@ -166,12 +168,31 @@ extension WordReportViewController: UICollectionViewDataSource, UICollectionView
 
 extension WordReportViewController: WordReportHeaderViewDelegate {
     func didTapAllButton() {
-        print("All")
+        isFiltered = false
+        filteredWords = allWords
+        reportCollectionView.reloadData()
     }
     
-    func didTapFilterButton() {
-        print("Filter")
+    func didTapFilterButton(_ sender: UIButton) {
+        let filterVC = FilterViewController()
+        filterVC.delegate = self
+        filterVC.modalPresentationStyle = .popover
+
+        if let popoverController = filterVC.popoverPresentationController {
+            popoverController.delegate = self
+            popoverController.sourceView = sender
+            popoverController.sourceRect = CGRect(x: view.bounds.midX, y: 100, width: 0, height: 0) // Position
+            popoverController.permittedArrowDirections = .up
+        }
+
+        present(filterVC, animated: true)
     }
-    
-    
+}
+
+extension WordReportViewController: FilterViewControllerDelegate {
+    func didApplyFilter(averageAccuracy: Float, isPracticed: Bool, isPassed: Bool) {
+        isFiltered = true
+        filteredWords = allWords.filter { $0.isPracticed == isPracticed }
+        reportCollectionView.reloadData()
+    }
 }

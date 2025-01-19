@@ -296,16 +296,6 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ParentModeBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="5Yt-WJ-IOz">
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Word Reoprt" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g82-qi-xed">
-                                <rect key="frame" x="470" y="25" width="460" height="37"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="460" id="Fr9-FU-1uf"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
-                                <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nHH-Ni-Il0">
                                 <rect key="frame" x="1143" y="25" width="205" height="45.5"/>
                                 <size key="titleShadowOffset" width="2" height="2"/>
@@ -380,7 +370,7 @@
                                     </segmentedControl>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j6r-Ez-ono" userLabel="GraphView" customClass="ProgressGraphView" customModule="LeoLingo" customModuleProvider="target">
                                         <rect key="frame" x="348" y="8" width="340" height="192"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="MEu-Pw-iG4">
                                         <rect key="frame" x="125" y="83" width="143.5" height="62.5"/>
@@ -454,31 +444,52 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rhd-Bi-p11">
+                                <rect key="frame" x="470" y="25" width="460" height="40"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Word Report" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g82-qi-xed">
+                                        <rect key="frame" x="134" y="2" width="192" height="36"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
+                                        <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="g82-qi-xed" secondAttribute="trailing" constant="134" id="2t0-W2-mVZ"/>
+                                    <constraint firstItem="g82-qi-xed" firstAttribute="leading" secondItem="Rhd-Bi-p11" secondAttribute="leading" constant="134" id="DL4-5A-jLg"/>
+                                    <constraint firstItem="g82-qi-xed" firstAttribute="top" secondItem="Rhd-Bi-p11" secondAttribute="top" constant="2" id="Nkr-KO-OCD"/>
+                                    <constraint firstItem="g82-qi-xed" firstAttribute="centerY" secondItem="Rhd-Bi-p11" secondAttribute="centerY" id="c6Q-hr-g1O"/>
+                                    <constraint firstAttribute="width" constant="460" id="vhG-5a-qo5"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="gGb-WY-CX4"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="EOc-Dc-LSG" firstAttribute="trailing" secondItem="XU5-X8-k9P" secondAttribute="trailing" id="1fC-W3-Iuj"/>
-                            <constraint firstItem="g82-qi-xed" firstAttribute="leading" secondItem="Pzg-Yb-JjY" secondAttribute="leading" constant="470" id="26d-ej-D07"/>
                             <constraint firstAttribute="bottom" secondItem="5Yt-WJ-IOz" secondAttribute="bottom" id="3PE-MD-7qc"/>
                             <constraint firstItem="EOc-Dc-LSG" firstAttribute="leading" secondItem="gGb-WY-CX4" secondAttribute="leading" constant="171" id="3oI-gh-NlU"/>
+                            <constraint firstItem="Rhd-Bi-p11" firstAttribute="centerX" secondItem="EOc-Dc-LSG" secondAttribute="centerX" id="6Br-P9-6m8"/>
                             <constraint firstItem="EOc-Dc-LSG" firstAttribute="top" secondItem="gGb-WY-CX4" secondAttribute="top" constant="113" id="DgN-zr-XQu"/>
                             <constraint firstItem="EOc-Dc-LSG" firstAttribute="leading" secondItem="XU5-X8-k9P" secondAttribute="leading" id="Eeg-K1-eBH"/>
                             <constraint firstItem="5Yt-WJ-IOz" firstAttribute="top" secondItem="Pzg-Yb-JjY" secondAttribute="top" id="PhT-IF-fTo"/>
                             <constraint firstItem="5Yt-WJ-IOz" firstAttribute="trailing" secondItem="gGb-WY-CX4" secondAttribute="trailing" id="S5h-cz-6AC"/>
-                            <constraint firstItem="g82-qi-xed" firstAttribute="top" secondItem="Pzg-Yb-JjY" secondAttribute="top" constant="25" id="VTm-91-6gC"/>
                             <constraint firstAttribute="trailing" secondItem="nHH-Ni-Il0" secondAttribute="trailing" constant="28" id="aJF-eu-cgo"/>
+                            <constraint firstItem="nHH-Ni-Il0" firstAttribute="leading" secondItem="Rhd-Bi-p11" secondAttribute="trailing" constant="213" id="fbR-vD-jNP"/>
+                            <constraint firstItem="Rhd-Bi-p11" firstAttribute="leading" secondItem="Pzg-Yb-JjY" secondAttribute="leading" constant="470" id="fcQ-DX-32C"/>
+                            <constraint firstItem="EOc-Dc-LSG" firstAttribute="top" secondItem="Rhd-Bi-p11" secondAttribute="bottom" constant="122" id="jba-4y-RPP"/>
                             <constraint firstAttribute="bottom" secondItem="EOc-Dc-LSG" secondAttribute="bottom" constant="637" id="mjB-9Y-T4D"/>
-                            <constraint firstItem="EOc-Dc-LSG" firstAttribute="centerX" secondItem="g82-qi-xed" secondAttribute="centerX" id="n2k-XV-cAc"/>
                             <constraint firstItem="XU5-X8-k9P" firstAttribute="top" secondItem="EOc-Dc-LSG" secondAttribute="bottom" constant="39" id="oM2-xX-ep2"/>
                             <constraint firstItem="nHH-Ni-Il0" firstAttribute="top" secondItem="Pzg-Yb-JjY" secondAttribute="top" constant="25" id="pcn-pb-DHp"/>
+                            <constraint firstItem="Rhd-Bi-p11" firstAttribute="top" secondItem="nHH-Ni-Il0" secondAttribute="top" id="tR7-NK-ScP"/>
                             <constraint firstItem="gGb-WY-CX4" firstAttribute="bottom" secondItem="XU5-X8-k9P" secondAttribute="bottom" constant="57" id="tUW-GW-oiW"/>
                             <constraint firstItem="5Yt-WJ-IOz" firstAttribute="leading" secondItem="gGb-WY-CX4" secondAttribute="leading" id="tYM-rU-swd"/>
-                            <constraint firstItem="nHH-Ni-Il0" firstAttribute="leading" secondItem="g82-qi-xed" secondAttribute="trailing" constant="213" id="wKR-v3-Scs"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="headingLabel" destination="g82-qi-xed" id="eu4-qj-kyc"/>
+                        <outlet property="headingView" destination="Rhd-Bi-p11" id="pxd-UT-S1c"/>
                         <outlet property="progressSectionView" destination="EOc-Dc-LSG" id="J8r-hq-q9I"/>
                         <outlet property="reportCollectionView" destination="XU5-X8-k9P" id="HAn-Dd-2uq"/>
                     </connections>
@@ -825,7 +836,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

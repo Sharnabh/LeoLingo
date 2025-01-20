@@ -9,7 +9,7 @@ import UIKit
 
 protocol WordReportHeaderViewDelegate: AnyObject {
     func didTapAllButton()
-    func didTapFilterButton(_ sender: UIButton)
+    func didTapFilterButton()
 }
 
 class WordReportHeaderCollectionReusableView: UICollectionReusableView {
@@ -32,6 +32,7 @@ class WordReportHeaderCollectionReusableView: UICollectionReusableView {
         button.setTitleColor(UIColor(red: 139/255, green: 89/255, blue: 65/255, alpha: 1), for: .normal)
         return button
     }()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,13 +65,13 @@ class WordReportHeaderCollectionReusableView: UICollectionReusableView {
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         
     }
-    
+
     @objc private func allButtonTapped(){
         self.delegate?.didTapAllButton()
     }
     
-    @objc private func filterButtonTapped(_ sender: UIButton) {
-        self.delegate?.didTapFilterButton(sender)
+    @objc private func filterButtonTapped() {
+        self.delegate?.didTapFilterButton()
     }
     
 }

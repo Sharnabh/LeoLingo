@@ -28,13 +28,20 @@ struct Word {
         
         return (accuracy * 10).rounded() / 10
     }
+    
+    var isPassed: Bool {
+        guard let record = record, let accuracy = record.accuracy else { return false }
+        return accuracy.contains(where: { $0 > 70 })
+    }
 }
 
 
 struct Level {
     var levelTitle: String
-    var levelDescription: String
     var words: [Word]
+    var isCompleted: Bool {
+        return words.allSatisfy { $0.isPassed }
+    }
 }
 
 struct Card {
@@ -48,10 +55,17 @@ struct Badge {
     var isAchieved: Bool
 }
 
-struct JungleRUn {
+struct JungleRun {
     var backgroundImage: [String]
     var avatarImage: [String]
     var noOfLives: Int
     var coins: Int
     var diamonds: Int
+}
+
+struct FilterSettings {
+    let isPassed: Bool
+    let isPracticed: Bool
+    let accuracyFilterEnabled: Bool
+    let accuracyValue: Int
 }

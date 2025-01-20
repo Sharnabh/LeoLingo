@@ -9,4 +9,13 @@ import UIKit
 
 class SoundCardCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet var imageView: UIImageView!
+    
+    func updateSoundCard(with indexPath: IndexPath) {
+        imageView.image = UIImage(named: soundCardsImage[indexPath.row])
+    }
+    
+    
+    
+    
 }

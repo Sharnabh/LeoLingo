@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ewx-xf-xPk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ZJ4-tr-SOc">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -12,7 +12,7 @@
         <!--Home Page View Controller-->
         <scene sceneID="2rB-2J-Uru">
             <objects>
-                <viewController storyboardIdentifier="NameAndAgeVC" id="ewx-xf-xPk" customClass="HomePageViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HomePageViewController" id="ewx-xf-xPk" customClass="HomePageViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KqN-9q-X8E">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -26,7 +26,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="Vocal coach button"/>
                                 <connections>
-                                    <segue destination="KCK-Yd-hQ4" kind="show" id="WgT-bs-b9R"/>
+                                    <segue destination="KCK-Yd-hQ4" kind="show" id="PKm-Re-gei"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eZ-k1-SyR">
@@ -194,10 +194,10 @@
             </objects>
             <point key="canvasLocation" x="-157" y="-112"/>
         </scene>
-        <!--View Controller-->
+        <!--Greet View Controller-->
         <scene sceneID="7vR-XP-CNe">
             <objects>
-                <viewController id="KCK-Yd-hQ4" sceneMemberID="viewController">
+                <viewController id="KCK-Yd-hQ4" customClass="GreetViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PSu-Ov-vbh">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -206,9 +206,27 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Mojo" translatesAutoresizingMaskIntoConstraints="NO" id="imP-M5-XCB">
-                                <rect key="frame" x="209" y="178" width="558" height="676"/>
+                                <rect key="frame" x="177" y="178" width="558" height="676"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Greetbox" translatesAutoresizingMaskIntoConstraints="NO" id="LpW-Qv-oIp">
+                                <rect key="frame" x="615" y="178" width="516" height="631"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mtr-wE-p5K">
+                                <rect key="frame" x="743" y="298" width="341" height="194"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="70"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK0-bS-OZV">
+                                <rect key="frame" x="809" y="500" width="208" height="220"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="200"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="gEc-iy-Y2O"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -220,6 +238,10 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="c8d-Y2-MSt"/>
+                    <connections>
+                        <outlet property="greetEmojiLabel" destination="bK0-bS-OZV" id="V4Q-5v-0jo"/>
+                        <outlet property="greetLabel" destination="Mtr-wE-p5K" id="Uh3-qi-Yxm"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDj-x3-LaU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -230,7 +252,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZJ4-tr-SOc" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bsi-hC-cFF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" backIndicatorImage="Image" id="bsi-hC-cFF">
                         <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -241,7 +263,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G8U-9H-xem" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1017" y="140"/>
+            <point key="canvasLocation" x="-970" y="-112"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="5s8-Pn-FXJ">
@@ -273,7 +295,7 @@
         <!--Vocal Coach View Controller-->
         <scene sceneID="d0C-Dt-il3">
             <objects>
-                <viewController id="ahS-AV-GsZ" customClass="VocalCoachViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VocalCoachViewController" id="ahS-AV-GsZ" customClass="VocalCoachViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lGV-7d-bCp">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -292,10 +314,10 @@
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qmh-lr-hrs">
                                         <rect key="frame" x="13" y="522" width="374" height="64"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Continue" cornerStyle="large">
                                             <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="18"/>
+                                            <color key="baseBackgroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         </buttonConfiguration>
                                     </button>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="WordBox" translatesAutoresizingMaskIntoConstraints="NO" id="8O1-YX-ga0">
@@ -312,11 +334,10 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.98823529480000005" green="0.94509804249999996" blue="0.75686275960000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
-                                <rect key="frame" x="568" y="239" width="771" height="600"/>
+                            <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" directionalLockEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
+                                <rect key="frame" x="584" y="239" width="792" height="600"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vB0-fz-oad">
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vB0-fz-oad">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -334,21 +355,93 @@
                             <constraint firstItem="ILi-hF-L0A" firstAttribute="top" secondItem="lGV-7d-bCp" secondAttribute="top" id="jJq-6p-Utj"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="46g-yd-n8d"/>
+                    <navigationItem key="navigationItem" id="46g-yd-n8d">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="jm0-Ar-scI"/>
+                    </navigationItem>
                     <connections>
-                        <outlet property="WordLabel" destination="SSq-DF-5CO" id="WMf-7j-ezd"/>
-                        <outlet property="practiceCardView" destination="F2W-56-G4c" id="nO2-jl-udg"/>
-                        <outlet property="soundCards" destination="zmz-2j-SO4" id="Rdh-5P-zlf"/>
+                        <outlet property="WordLabel" destination="SSq-DF-5CO" id="ZVK-bI-jiz"/>
+                        <outlet property="practiceCardView" destination="F2W-56-G4c" id="I0P-ZS-Luq"/>
+                        <outlet property="soundCards" destination="zmz-2j-SO4" id="k3P-zf-f3j"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HXC-BQ-5KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-147.38372093023256" y="1309.8837209302326"/>
+            <point key="canvasLocation" x="-157" y="1284"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="EWS-Mh-7zW">
+            <objects>
+                <viewController id="VSb-Si-JHL" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="I4h-ne-fTj">
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6el-kL-dsL">
+                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbY-kx-zHj">
+                                <rect key="frame" x="496" y="193" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fEn-98-eKn">
+                                <rect key="frame" x="506" y="203" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="TPY-iH-bfp"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6el-kL-dsL" firstAttribute="top" secondItem="I4h-ne-fTj" secondAttribute="top" id="Qjb-Oq-4yb"/>
+                            <constraint firstItem="6el-kL-dsL" firstAttribute="leading" secondItem="TPY-iH-bfp" secondAttribute="leading" id="cS2-qf-Gds"/>
+                            <constraint firstItem="6el-kL-dsL" firstAttribute="trailing" secondItem="TPY-iH-bfp" secondAttribute="trailing" id="hV7-74-fvP"/>
+                            <constraint firstAttribute="bottom" secondItem="6el-kL-dsL" secondAttribute="bottom" id="uI9-J3-iZf"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="e5B-2y-37T"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Swe-v0-05a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-157" y="2017"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="0tM-pb-qsZ">
+            <objects>
+                <viewController id="L4p-R8-fBD" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="7h9-qg-bH4">
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="9hA-Qu-ujo">
+                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="QrW-VH-IjV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="trailing" secondItem="QrW-VH-IjV" secondAttribute="trailing" id="2bs-Er-NQx"/>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="top" secondItem="7h9-qg-bH4" secondAttribute="top" id="2wQ-P1-PzK"/>
+                            <constraint firstItem="9hA-Qu-ujo" firstAttribute="leading" secondItem="QrW-VH-IjV" secondAttribute="leading" id="NS2-z3-8ko"/>
+                            <constraint firstAttribute="bottom" secondItem="9hA-Qu-ujo" secondAttribute="bottom" id="VRy-8J-UEi"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="vJJ-p4-loY"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aXI-qk-SYX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2251.3081395348836" y="738.95348837209303"/>
         </scene>
     </scenes>
     <resources>
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>
+        <image name="Greetbox" width="1274" height="1260"/>
+        <image name="Image" width="198" height="190"/>
         <image name="Mojo" width="1596" height="1834"/>
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>

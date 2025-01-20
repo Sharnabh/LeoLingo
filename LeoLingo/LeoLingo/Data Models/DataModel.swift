@@ -28,6 +28,16 @@ struct Word {
     var wordImage: String
     var wordReports: [WordReport]
     var isPracticed: Bool
+    
+    var avgAccuracy: Double {
+        guard let record = record,
+              self.record != nil,
+              record.attempts != 0 else { return 0.0 }
+        
+        let accuracy = record.accuracy.reduce(0.0, +) / Double(record.attempts)
+        
+        return (accuracy * 10).rounded() / 10
+    }
 }
 
 struct Level {

@@ -7,6 +7,9 @@
 
 import UIKit
 
+//dummy
+//var 
+
 class VocalCoachViewController: UIViewController {
     @IBOutlet var practiceCardView: UIView!
     

@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CE02829B2D3D072C00521C91 /* DGCharts */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		CEBB42952D301D6D009859CD /* LeoLingo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeoLingo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CECA75912D3CD99600733E65 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,7 +36,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +46,6 @@
 			isa = PBXGroup;
 			children = (
 				CEBB42972D301D6D009859CD /* LeoLingo */,
-				CECA75902D3CD96B00733E65 /* Frameworks */,
 				CEBB42962D301D6D009859CD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,14 +56,6 @@
 				CEBB42952D301D6D009859CD /* LeoLingo.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		CECA75902D3CD96B00733E65 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CECA75912D3CD99600733E65 /* Charts.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,7 +78,6 @@
 			);
 			name = LeoLingo;
 			packageProductDependencies = (
-				CE02829B2D3D072C00521C91 /* DGCharts */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -123,9 +107,6 @@
 			);
 			mainGroup = CEBB428C2D301D6D009859CD;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
 			projectDirPath = "";
@@ -364,25 +345,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielgindi/Charts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		CE02829B2D3D072C00521C91 /* DGCharts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */;
-			productName = DGCharts;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CEBB428D2D301D6D009859CD /* Project object */;
 }

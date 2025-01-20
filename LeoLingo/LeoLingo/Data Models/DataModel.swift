@@ -7,7 +7,17 @@
 
 import Foundation
 
-struct Record {
+struct Users {
+    var userName: String
+    var userImage: String
+    var userPhoneNumber: String
+    var userAge: Int
+    var userLevel: Level
+    var userBadges: [Badge]
+    var userCards: [Card]
+}
+
+struct WordReport {
     var attempts: Int
     var accuracy: [Double]!
     var recording: [String]!
@@ -15,8 +25,13 @@ struct Record {
 
 struct Word {
     var wordTitle: String
+<<<<<<< HEAD
+    var wordImage: String
+    var wordReports: [WordReport]
+=======
     var wordImage: String!
     var record: Record!
+>>>>>>> Development
     var isPracticed: Bool
     
     var avgAccuracy: Double {
@@ -48,7 +63,7 @@ struct Badge {
     var isAchieved: Bool
 }
 
-struct JungleRUn {
+struct JungleRun {
     var backgroundImage: [String]
     var avatarImage: [String]
     var noOfLives: Int

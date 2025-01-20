@@ -38,8 +38,10 @@ struct Word {
 
 struct Level {
     var levelTitle: String
-    var levelDescription: String
     var words: [Word]
+    var isCompleted: Bool {
+        return words.allSatisfy { $0.isPassed }
+    }
 }
 
 struct Card {

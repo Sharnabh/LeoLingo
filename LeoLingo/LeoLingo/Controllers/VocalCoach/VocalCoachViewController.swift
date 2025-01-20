@@ -7,9 +7,6 @@
 
 import UIKit
 
-//dummy
-var 
-
 class VocalCoachViewController: UIViewController {
     @IBOutlet var practiceCardView: UIView!
     
@@ -54,11 +51,11 @@ class VocalCoachViewController: UIViewController {
 }
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
+        return UICollectionViewCell()
     }
     
         

@@ -12,7 +12,7 @@
         <!--Home Page View Controller-->
         <scene sceneID="2rB-2J-Uru">
             <objects>
-                <viewController storyboardIdentifier="NameAndAgeVC" id="ewx-xf-xPk" customClass="HomePageViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HomePageViewController" id="ewx-xf-xPk" customClass="HomePageViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KqN-9q-X8E">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -26,7 +26,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="Vocal coach button"/>
                                 <connections>
-                                    <segue destination="KCK-Yd-hQ4" kind="show" id="abX-MB-9lQ"/>
+                                    <segue destination="KCK-Yd-hQ4" kind="show" id="PKm-Re-gei"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eZ-k1-SyR">
@@ -194,10 +194,10 @@
             </objects>
             <point key="canvasLocation" x="-157" y="-112"/>
         </scene>
-        <!--View Controller-->
+        <!--Greet View Controller-->
         <scene sceneID="7vR-XP-CNe">
             <objects>
-                <viewController id="KCK-Yd-hQ4" sceneMemberID="viewController">
+                <viewController id="KCK-Yd-hQ4" customClass="GreetViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PSu-Ov-vbh">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -209,19 +209,24 @@
                                 <rect key="frame" x="177" y="178" width="558" height="676"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VRl-Cl-Ijl">
-                                <rect key="frame" x="757" y="862" width="75" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
-                                <connections>
-                                    <segue destination="ahS-AV-GsZ" kind="show" id="K4P-wb-jcv"/>
-                                </connections>
-                            </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Greetbox" translatesAutoresizingMaskIntoConstraints="NO" id="LpW-Qv-oIp">
                                 <rect key="frame" x="615" y="178" width="516" height="631"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mtr-wE-p5K">
+                                <rect key="frame" x="743" y="298" width="341" height="194"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="70"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK0-bS-OZV">
+                                <rect key="frame" x="809" y="500" width="208" height="220"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="200"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="gEc-iy-Y2O"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -233,6 +238,10 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="c8d-Y2-MSt"/>
+                    <connections>
+                        <outlet property="greetEmojiLabel" destination="bK0-bS-OZV" id="V4Q-5v-0jo"/>
+                        <outlet property="greetLabel" destination="Mtr-wE-p5K" id="Uh3-qi-Yxm"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDj-x3-LaU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -254,7 +263,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G8U-9H-xem" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1017" y="140"/>
+            <point key="canvasLocation" x="-970" y="-112"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="5s8-Pn-FXJ">
@@ -286,7 +295,7 @@
         <!--Vocal Coach View Controller-->
         <scene sceneID="d0C-Dt-il3">
             <objects>
-                <viewController id="ahS-AV-GsZ" customClass="VocalCoachViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VocalCoachViewController" id="ahS-AV-GsZ" customClass="VocalCoachViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lGV-7d-bCp">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -311,7 +320,7 @@
                                             <color key="baseBackgroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         </buttonConfiguration>
                                         <connections>
-                                            <segue destination="VSb-Si-JHL" kind="show" id="cUc-qX-3b0"/>
+                                            <segue destination="VSb-Si-JHL" kind="show" id="Scc-Zp-j4s"/>
                                         </connections>
                                     </button>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="WordBox" translatesAutoresizingMaskIntoConstraints="NO" id="8O1-YX-ga0">
@@ -328,7 +337,7 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.98823529480000005" green="0.94509804249999996" blue="0.75686275960000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" directionalLockEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
+                            <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" directionalLockEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zmz-2j-SO4">
                                 <rect key="frame" x="584" y="239" width="792" height="600"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vB0-fz-oad">
@@ -349,7 +358,9 @@
                             <constraint firstItem="ILi-hF-L0A" firstAttribute="top" secondItem="lGV-7d-bCp" secondAttribute="top" id="jJq-6p-Utj"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="46g-yd-n8d"/>
+                    <navigationItem key="navigationItem" id="46g-yd-n8d">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="jm0-Ar-scI"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="WordLabel" destination="SSq-DF-5CO" id="ZVK-bI-jiz"/>
                         <outlet property="practiceCardView" destination="F2W-56-G4c" id="I0P-ZS-Luq"/>
@@ -358,18 +369,18 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HXC-BQ-5KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-147.38372093023256" y="1309.8837209302326"/>
+            <point key="canvasLocation" x="-157" y="1284"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="EWS-Mh-7zW">
             <objects>
                 <viewController id="VSb-Si-JHL" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="I4h-ne-fTj">
-                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="640"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6el-kL-dsL">
-                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                                <rect key="frame" x="0.0" y="0.0" width="580" height="640"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TPY-iH-bfp"/>
@@ -412,7 +423,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aXI-qk-SYX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="865" y="739"/>
+            <point key="canvasLocation" x="2251.3081395348836" y="738.95348837209303"/>
         </scene>
     </scenes>
     <resources>

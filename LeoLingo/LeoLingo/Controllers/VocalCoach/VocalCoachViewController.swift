@@ -32,6 +32,7 @@ class VocalCoachViewController: UIViewController {
         practiceCardView.layer.shadowOpacity = 0.62
         practiceCardView.layer.shadowOffset = CGSize(width: 0, height: 1)
         practiceCardView.layer.shadowRadius = 10
+        view.bringSubviewToFront(practiceCardView)
     }
     
     func setupCollectionViewLayout() {
@@ -42,7 +43,22 @@ class VocalCoachViewController: UIViewController {
         layout.itemSize = CGSize(width: 380, height: 280)
         soundCards.collectionViewLayout = layout
     }
-}
+//    override func viewWillDisappear(_ animated: Bool) {
+//            super.viewWillDisappear(animated)
+//            
+//            // Check if the current view controller is being popped
+//            if self.isMovingFromParent {
+//                // Create your desired view controller
+//                if let navigationController = navigationController {
+//                    if let desiredViewController = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+//                        // Set the desired view controller as the root
+//                        navigationController.setViewControllers([desiredViewController], animated: true)
+//                    }
+//                }
+//            }
+//        }
+ }
+
 
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

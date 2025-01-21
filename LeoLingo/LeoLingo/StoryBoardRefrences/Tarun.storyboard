@@ -169,7 +169,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mojo" translatesAutoresizingMaskIntoConstraints="NO" id="imP-M5-XCB">
-                                <rect key="frame" x="177" y="178" width="558" height="676"/>
+                                <rect key="frame" x="177" y="178" width="1596" height="676"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Greetbox" translatesAutoresizingMaskIntoConstraints="NO" id="LpW-Qv-oIp">
                                 <rect key="frame" x="615" y="178" width="516" height="631"/>
@@ -455,7 +455,7 @@
         <!--Popover View Controller-->
         <scene sceneID="zI7-B6-Zhg">
             <objects>
-                <viewController id="6m7-ga-Hgr" customClass="PopoverViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PopoverViewController" id="6m7-ga-Hgr" customClass="PopoverViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KnN-fM-fhX">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -463,10 +463,26 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6Db-Gd-8nG">
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
-                                <rect key="frame" x="480" y="330" width="416" height="313"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YSN-6q-Nuz">
+                                <rect key="frame" x="133" y="666" width="1139" height="140"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
+                                <rect key="frame" x="466" y="243" width="445" height="415"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VWA-aM-Cvc">
+                                <rect key="frame" x="645" y="814" width="88" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Proceed"/>
+                                <connections>
+                                    <action selector="proceedButtonTapped:" destination="6m7-ga-Hgr" eventType="touchUpInside" id="o9T-UQ-Tox"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="45S-IK-clZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -478,6 +494,10 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7c3-aY-bnT"/>
+                    <connections>
+                        <outlet property="congratsLabel" destination="YSN-6q-Nuz" id="hET-3k-Fl0"/>
+                        <outlet property="levelBadge" destination="zpM-4f-gwg" id="aRf-hh-3lJ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="myn-nB-1y2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -485,6 +505,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="1" width="512" height="512"/>
         <image name="21" width="512" height="512"/>
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>

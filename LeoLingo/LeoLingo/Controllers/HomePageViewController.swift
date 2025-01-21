@@ -12,16 +12,11 @@ class HomePageViewController: UIViewController {
     @IBOutlet var timeLeft: UILabel!
     @IBOutlet var timeLeftBar: UIProgressView!
     
+    @IBOutlet var practicesView: UIView!
+    @IBOutlet var badgesView: UIView!
     @IBOutlet var levelProgress: UIProgressView!
     @IBOutlet var levelView: UIView!
-    @IBOutlet var switchModeView: UIView!
-    
-    @IBOutlet var badgesView: UICollectionView!
-    
-    @IBOutlet var profileImageView: UIImageView!
-    @IBOutlet var practicesView: UICollectionView!
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLevelView()
@@ -39,9 +34,9 @@ class HomePageViewController: UIViewController {
 
           // Drop shadow
           levelView.layer.shadowColor = UIColor.black.cgColor
-          levelView.layer.shadowOpacity = 0.62
-          levelView.layer.shadowOffset = CGSize(width: 0, height: 16)  //
-          levelView.layer.shadowRadius = 43
+          levelView.layer.shadowOpacity = 0.6
+          levelView.layer.shadowOffset = CGSize(width: 0, height: 10)  //
+          levelView.layer.shadowRadius = 20
           
           
           // Level progress
@@ -60,9 +55,9 @@ class HomePageViewController: UIViewController {
           badgesView.clipsToBounds = false
 
           badgesView.layer.shadowColor = UIColor.black.cgColor
-          badgesView.layer.shadowOpacity = 0.62
+          badgesView.layer.shadowOpacity = 0.4
           badgesView.layer.shadowOffset = CGSize(width: 0, height: 1)
-          badgesView.layer.shadowRadius = 10
+          badgesView.layer.shadowRadius = 5
           
           //recent practices
           practicesView.layer.cornerRadius = 21  // Rounded corners
@@ -71,21 +66,21 @@ class HomePageViewController: UIViewController {
           practicesView.clipsToBounds = false  // Clips content to rounded corners
 
           practicesView.layer.shadowColor = UIColor.black.cgColor
-          practicesView.layer.shadowOpacity = 0.62  // 62% opacity
+          practicesView.layer.shadowOpacity = 0.4  // 62% opacity
           practicesView.layer.shadowOffset = CGSize(width: 0, height: 1)  // Offset of 16pt downward
-          practicesView.layer.shadowRadius = 10  // Blur radius of 43pt
+          practicesView.layer.shadowRadius = 5  // Blur radius of 43pt
           
           
-          //sswitch mode view
-          switchModeView.layer.cornerRadius = 25
-          switchModeView.layer.opacity = 0.77
-          switchModeView.layer.shadowColor = UIColor.black.cgColor
-          switchModeView.layer.shadowOpacity = 0.22
-          switchModeView.layer.shadowOffset = CGSize(width: 0, height: 0.2)
-          switchModeView.layer.shadowRadius = 1
-          
-          profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
-          profileImageView.clipsToBounds = true
+          //switch mode view
+//          switchModeView.layer.cornerRadius = 25
+//          switchModeView.layer.opacity = 0.77
+//          switchModeView.layer.shadowColor = UIColor.black.cgColor
+//          switchModeView.layer.shadowOpacity = 0.22
+//          switchModeView.layer.shadowOffset = CGSize(width: 0, height: 0.2)
+//          switchModeView.layer.shadowRadius = 1
+//          
+//          profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
+//          profileImageView.clipsToBounds = true
 
       }
      

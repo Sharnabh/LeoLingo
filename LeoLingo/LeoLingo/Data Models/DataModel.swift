@@ -9,14 +9,14 @@ import Foundation
 
 struct Record {
     var attempts: Int
-    var accuracy: [Double]!
-    var recording: [String]!
+    var accuracy: [Double]?
+    var recording: [String]?
 }
 
 struct Word {
     var wordTitle: String
-    var wordImage: String!
-    var record: Record!
+    var wordImage: String?
+    var record: Record?
     var isPracticed: Bool
     
     var avgAccuracy: Double {
@@ -24,7 +24,7 @@ struct Word {
               self.record != nil,
               record.attempts != 0 else { return 0.0 }
         
-        let accuracy = record.accuracy.reduce(0.0, +) / Double(record.attempts)
+        let accuracy = record.accuracy!.reduce(0.0, +) / Double(record.attempts)
         
         return (accuracy * 10).rounded() / 10
     }

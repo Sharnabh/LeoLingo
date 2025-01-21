@@ -26,7 +26,7 @@ class RecorrdingView: UIView {
             return
         }
         
-        recordCount = record.recording.count
+        recordCount = record.recording!.count
         recordingTableView.delegate = self
         recordingTableView.dataSource = self
         recordingTableView.reloadData()

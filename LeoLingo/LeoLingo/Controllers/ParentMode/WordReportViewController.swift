@@ -74,6 +74,15 @@ class WordReportViewController: UIViewController {
         reportCollectionView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
         reportCollectionView.layer.borderWidth = 5
         reportCollectionView.layer.cornerRadius = 0
+        
+        filterView.layer.cornerRadius = 20
+        filterView.layer.shadowColor = UIColor.black.cgColor
+        filterView.layer.shadowOffset = CGSize(width: 4, height: 4)
+        filterView.layer.shadowOpacity = 0.4
+        filterView.layer.shadowRadius = 5
+        filterView.clipsToBounds = false
+        
+        
 
         levelsTableView.delegate = self
         levelsTableView.dataSource = self
@@ -126,11 +135,11 @@ class WordReportViewController: UIViewController {
                 return allWords
             case .accurate:
                 return allWords.filter { word in
-                    word.record?.accuracy.contains { $0 >= 70 } ?? false
+                    word.record?.accuracy!.contains { $0 >= 70 } ?? false
                 }
             case .inaccurate:
                 return allWords.filter { word in
-                    word.record?.accuracy.allSatisfy { $0 < 70 } ?? false
+                    word.record?.accuracy!.allSatisfy { $0 < 70 } ?? false
                 }
             }
     }
@@ -142,11 +151,11 @@ class WordReportViewController: UIViewController {
                 return level.words
             case .accurate:
                 return level.words.filter { word in
-                    word.record?.accuracy.contains { $0 >= 70 } ?? false
+                    word.record?.accuracy!.contains { $0 >= 70 } ?? false
                 }
             case .inaccurate:
                 return level.words.filter { word in
-                    word.record?.accuracy.allSatisfy { $0 < 70 } ?? false
+                    word.record?.accuracy!.allSatisfy { $0 < 70 } ?? false
                 }
             }
     }
@@ -169,7 +178,8 @@ extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedRow = indexPath.row
-        levelAverageLabel.text = "\(levels[selectedRow].avgAccuracy)%"
+//        levelAverageLabel.text = "\(levels[selectedRow].avgAccuracy)%"
+        levelAverageLabel.text = String(format: "%.1f%%", levels[selectedRow].avgAccuracy)
         isFilteringAllLevels = false
         reportCollectionView.reloadData()
     }
@@ -214,7 +224,7 @@ extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDa
         accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)
         
         if let record = word.record {
-            accuracyGraph.updateChartData(accuracyData: record.accuracy)
+            accuracyGraph.updateChartData(accuracyData: record.accuracy!)
             recordingView.configureTableData(with: record, isEnabled: true)
         } else {
             accuracyGraph.updateChartData(accuracyData: [0])

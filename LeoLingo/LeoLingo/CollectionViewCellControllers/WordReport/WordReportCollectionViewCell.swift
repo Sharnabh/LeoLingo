@@ -39,7 +39,7 @@ class WordReportCollectionViewCell: UICollectionViewCell {
             
             view.configure(title: title, progress: Double(accuracy)/100.0, color: color)
             accuracyLabel.text = "\(accuracy)%"
-            attemptsLabel.text = String(word.record.attempts)
+            attemptsLabel.text = String(word.record!.attempts)
         case false:
             color = UIColor.systemGray
             

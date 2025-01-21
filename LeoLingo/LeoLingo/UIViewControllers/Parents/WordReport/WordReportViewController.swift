@@ -49,6 +49,7 @@ class WordReportViewController: UIViewController {
 
 
     @IBOutlet var levelsTableView: UITableView!
+    @IBOutlet var levelsView: UIView!
     @IBOutlet var reportCollectionView: UICollectionView!
     @IBOutlet var recordingView: RecorrdingView!
     
@@ -61,6 +62,18 @@ class WordReportViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        recordingView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        recordingView.layer.borderWidth = 3
+        recordingView.layer.cornerRadius = 0
+        
+        levelsView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        levelsView.layer.borderWidth = 5
+        levelsView.layer.cornerRadius = 0
+        
+        reportCollectionView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        reportCollectionView.layer.borderWidth = 5
+        reportCollectionView.layer.cornerRadius = 0
 
         levelsTableView.delegate = self
         levelsTableView.dataSource = self
@@ -70,6 +83,8 @@ class WordReportViewController: UIViewController {
         
         reportCollectionView.delegate = self
         reportCollectionView.dataSource = self
+        
+        filteredWords = levels.flatMap { $0.words }
         
     }
 
@@ -185,19 +200,27 @@ extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let word = filteredWords[indexPath.item]
+        
+        var word: Word
+        switch isFilteringAllLevels {
+        case true:
+             word = filteredWords[indexPath.item]
+        case false:
+             word = levels[selectedRow].words[indexPath.item]
+        }
+        
                 
-                wordLabel.text = word.wordTitle
-                accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)  // Format to 1 decimal place
-                
-                if let record = word.record {
-                    accuracyGraph.updateChartData(accuracyData: record.accuracy)
-                    recordingView.configureTableData(with: record, isEnabled: true)
-                } else {
-                    accuracyGraph.updateChartData(accuracyData: [0])
-                    recordingView.configureTableData(with: nil, isEnabled: false)
-                }
-            }
+        wordLabel.text = word.wordTitle
+        accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)
+        
+        if let record = word.record {
+            accuracyGraph.updateChartData(accuracyData: record.accuracy)
+            recordingView.configureTableData(with: record, isEnabled: true)
+        } else {
+            accuracyGraph.updateChartData(accuracyData: [0])
+            recordingView.configureTableData(with: nil, isEnabled: false)
+        }
+    }
     }
 
 

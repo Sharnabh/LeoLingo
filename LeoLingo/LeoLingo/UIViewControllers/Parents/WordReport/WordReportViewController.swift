@@ -43,6 +43,10 @@ class WordReportViewController: UIViewController {
     ]
     
     var selectedRow: Int = 0
+    var selectedFilter: FIlterOptions = .all
+    private var isFilteringAllLevels = false
+    private var filteredWords: [Word] = []
+
 
     @IBOutlet var levelsTableView: UITableView!
     @IBOutlet var reportCollectionView: UICollectionView!
@@ -71,10 +75,67 @@ class WordReportViewController: UIViewController {
 
     @IBAction func filterButtonTapped(_ sender: UIButton) {
         UIView.transition(with: filterView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            self.filterView.isHidden.toggle()
-            self.filterView.configureTableView()
-        })
+                self.filterView.isHidden.toggle()
+                self.filterView.configureTableView()
+            }) { _ in
+                if let selectedOption = self.filterView.option {
+                    sender.setTitle(selectedOption, for: .normal)
+                    self.isFilteringAllLevels = true
+                    self.selectedFilter = FIlterOptions(rawValue: selectedOption) ?? .all
+                    self.applyFilter(option: selectedOption)
+                    
+                    
+                }
+            }
     }
+    
+    private func applyFilter(option: String) {
+        // If "All" is selected, show all words across all levels
+        if isFilteringAllLevels {
+                filteredWords = getFilteredWords() // Apply the filter across all levels
+            } else if let level = levels[safe: selectedRow] {
+                // If a specific level is selected, show words from that level only
+                filteredWords = getFilteredWords(for: level) // Apply the filter for the selected level
+            }
+            
+            // Reload collection view to reflect filtered words
+            reportCollectionView.reloadData()
+    }
+
+    
+    private func getFilteredWords() -> [Word] {
+        let allWords = levels.flatMap { $0.words }
+
+            switch selectedFilter {
+            case .all:
+                return allWords
+            case .accurate:
+                return allWords.filter { word in
+                    word.record?.accuracy.contains { $0 >= 70 } ?? false
+                }
+            case .inaccurate:
+                return allWords.filter { word in
+                    word.record?.accuracy.allSatisfy { $0 < 70 } ?? false
+                }
+            }
+    }
+
+    
+    private func getFilteredWords(for level: Level) -> [Word] {
+        switch selectedFilter {
+            case .all:
+                return level.words
+            case .accurate:
+                return level.words.filter { word in
+                    word.record?.accuracy.contains { $0 >= 70 } ?? false
+                }
+            case .inaccurate:
+                return level.words.filter { word in
+                    word.record?.accuracy.allSatisfy { $0 < 70 } ?? false
+                }
+            }
+    }
+
 }
 
 extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
@@ -86,7 +147,7 @@ extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = levelsTableView.dequeueReusableCell(withIdentifier: "LevelCell", for: indexPath) as! LevelsTableViewCell
         let level = levels[indexPath.row]
-        print(level.isCompleted)
+        
         cell.configureCell(level: level.levelTitle, completed: level.isCompleted)
         return cell
     }
@@ -94,42 +155,54 @@ extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedRow = indexPath.row
         levelAverageLabel.text = "\(levels[selectedRow].avgAccuracy)%"
+        isFilteringAllLevels = false
         reportCollectionView.reloadData()
     }
 }
 
 extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        4
+        return isFilteringAllLevels ? filteredWords.count : levels[selectedRow].words.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = reportCollectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
-        let level = levels[selectedRow].words
-        let word = level[indexPath.item]
-        
-        cell.updateLabel(with: word)
-        
-        return cell
+        let cell = reportCollectionView.dequeueReusableCell(
+                    withReuseIdentifier: WordReportCollectionViewCell.identifier,
+                    for: indexPath
+                ) as! WordReportCollectionViewCell
+
+        switch isFilteringAllLevels {
+            case true:
+            let word = filteredWords[indexPath.item]
+            cell.updateLabel(with: word)
+        case false:
+            let level = levels[selectedRow]
+            let word = level.words[indexPath.item]
+            cell.updateLabel(with: word)
+        }
+                
+            return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let level = levels[selectedRow].words
-            
-        // Ensure indexPath.item is within bounds to avoid crashes
-        guard indexPath.item < level.count else { return }
-        
-        let word = level[indexPath.item]
-        
-        wordLabel.text = word.wordTitle
-        accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)  // Format to 1 decimal place
-        
-        if let record = word.record {
-            accuracyGraph.updateChartData(accuracyData: record.accuracy)
-            recordingView.configureTableData(with: record, isEnabled: true)
-        } else {
-            accuracyGraph.updateChartData(accuracyData: [0])
-            recordingView.configureTableData(with: nil, isEnabled: false)
-        }
+        let word = filteredWords[indexPath.item]
+                
+                wordLabel.text = word.wordTitle
+                accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)  // Format to 1 decimal place
+                
+                if let record = word.record {
+                    accuracyGraph.updateChartData(accuracyData: record.accuracy)
+                    recordingView.configureTableData(with: record, isEnabled: true)
+                } else {
+                    accuracyGraph.updateChartData(accuracyData: [0])
+                    recordingView.configureTableData(with: nil, isEnabled: false)
+                }
+            }
+    }
+
+
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return index >= 0 && index < count ? self[index] : nil
     }
 }

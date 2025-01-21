@@ -10,7 +10,6 @@ import UIKit
 class FilterView: UIView {
 
     @IBOutlet var filterTableView: UITableView!
-    var filterOptions: [String] = ["All", "Accurate", "Inaccurate"]
     var option: String?
     var previouslySelectedIndexPath: IndexPath?
     
@@ -27,27 +26,44 @@ class FilterView: UIView {
 
 extension FilterView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        filterOptions.count
+        FIlterOptions.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = filterTableView.dequeueReusableCell(withIdentifier: "FilterOption", for: indexPath)
-        cell.textLabel?.text = filterOptions[indexPath.row]
+        let optionValue = FIlterOptions.allCases[indexPath.row].rawValue
+        cell.textLabel?.text = optionValue
         
+        // Clear previous checkmarks to avoid multiple selections
+        cell.accessoryType = .none
+
+        // Check if the current option is selected, apply checkmark accordingly
+        if option == optionValue {
+            cell.accessoryType = .checkmark
+            previouslySelectedIndexPath = indexPath
+        }
+
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let previouslySelectedIndexPath = previouslySelectedIndexPath {
             if let previousCell = tableView.cellForRow(at: previouslySelectedIndexPath) {
-                // Reset the color of the previously selected item
+                // Deselect the previously selected cell
                 previousCell.accessoryType = .none
             }
         }
-        
+
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
+
+        // Select the new cell
         cell.accessoryType = .checkmark
+        previouslySelectedIndexPath = indexPath
+
+        // Store the selected option
+        option = FIlterOptions.allCases[indexPath.row].rawValue
+        
+        
     }
     
 }

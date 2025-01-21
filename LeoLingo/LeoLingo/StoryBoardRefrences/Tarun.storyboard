@@ -368,10 +368,10 @@
             </objects>
             <point key="canvasLocation" x="-157" y="1284"/>
         </scene>
-        <!--View Controller-->
+        <!--Pactice Screen View Controller-->
         <scene sceneID="EWS-Mh-7zW">
             <objects>
-                <viewController id="VSb-Si-JHL" sceneMemberID="viewController">
+                <viewController id="VSb-Si-JHL" customClass="PacticeScreenViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="I4h-ne-fTj">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -379,20 +379,34 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6el-kL-dsL">
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbY-kx-zHj">
-                                <rect key="frame" x="496" y="193" width="42" height="21"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="ball" translatesAutoresizingMaskIntoConstraints="NO" id="2e5-px-tAE">
+                                <rect key="frame" x="187" y="327" width="438" height="507"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="mojo2" translatesAutoresizingMaskIntoConstraints="NO" id="O8z-jA-JrD">
+                                <rect key="frame" x="594" y="391" width="370" height="401"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="practiceBox" translatesAutoresizingMaskIntoConstraints="NO" id="X6W-Ke-O0j">
+                                <rect key="frame" x="887" y="151" width="359" height="308"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U01-YN-9SK">
+                                <rect key="frame" x="937" y="230" width="260" height="112"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="42"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fEn-98-eKn">
-                                <rect key="frame" x="506" y="203" width="42" height="21"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="97r-Dm-Q4G">
+                                <rect key="frame" x="572" y="863" width="60" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Next"/>
+                                <connections>
+                                    <action selector="nextButtonTapped:" destination="VSb-Si-JHL" eventType="touchUpInside" id="XCl-ax-bOD"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TPY-iH-bfp"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -404,10 +418,15 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="e5B-2y-37T"/>
+                    <connections>
+                        <outlet property="directionLabel" destination="U01-YN-9SK" id="uUA-G4-W3s"/>
+                        <outlet property="mojoImage" destination="O8z-jA-JrD" id="reB-Fl-dGI"/>
+                        <outlet property="wordImage" destination="2e5-px-tAE" id="oxU-hg-3Fu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Swe-v0-05a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-157" y="2017"/>
+            <point key="canvasLocation" x="-157.41279069767441" y="2016.8604651162791"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="0tM-pb-qsZ">
@@ -445,7 +464,10 @@
         <image name="Mojo" width="1596" height="1834"/>
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>
+        <image name="ball" width="1756" height="1454"/>
+        <image name="mojo2" width="1332" height="1202"/>
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="practiceBox" width="1164" height="882"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

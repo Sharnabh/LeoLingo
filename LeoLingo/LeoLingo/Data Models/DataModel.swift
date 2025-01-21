@@ -54,6 +54,12 @@ struct Level {
     }
 }
 
+enum FIlterOptions: String, CaseIterable {
+    case all = "All"
+    case accurate = "Accurate"
+    case inaccurate = "Inaccurate"
+}
+
 struct Card {
     var cardTitle: String
     var words: [Word]

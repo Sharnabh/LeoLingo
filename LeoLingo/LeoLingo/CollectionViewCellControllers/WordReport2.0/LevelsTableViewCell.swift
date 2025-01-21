@@ -28,7 +28,7 @@ class LevelsTableViewCell: UITableViewCell {
         switch completed {
              
         case true:
-            completedImageView.image = UIImage(named: "completed")
+            completedImageView.image = UIImage(named: "CheckMark")
         case false:
             completedImageView.isHidden = true
         }

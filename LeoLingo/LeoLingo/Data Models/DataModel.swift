@@ -39,8 +39,18 @@ struct Word {
 struct Level {
     var levelTitle: String
     var words: [Word]
+    
+    var avgAccuracy: Double {
+        let totalAccuracy = words.reduce(0) { sum, word in
+            sum + word.avgAccuracy
+        }
+        
+        let average = totalAccuracy / Double(words.count)
+        return (average * 10).rounded() / 10
+    }
+    
     var isCompleted: Bool {
-        return words.allSatisfy { $0.isPassed }
+        return !words.contains { !$0.isPassed }
     }
 }
 

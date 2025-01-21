@@ -49,7 +49,7 @@ class ProgressView: UIView {
     
     private func createDonut(progress: CGFloat, color: UIColor) {
         
-        let lineWidth: CGFloat = 7
+        let lineWidth: CGFloat = 4
         let radius = min( bounds.width, bounds.height) / 2 - lineWidth
         
         let centerPoint = CGPoint(x: bounds.width / 2, y: bounds.height / 2)

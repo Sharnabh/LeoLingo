@@ -9,7 +9,7 @@ import UIKit
 
 class SideBarTableViewController: UITableViewController{
     
-    let items: [[String]] = [["Word Report", "Levels", "Badges"], ["Account", "Notifications"]]
+    let items: [[String]] = [["Word Report"], ["Account", "Notifications"]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,10 +67,6 @@ class SideBarTableViewController: UITableViewController{
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
             secondaryVC = storyboard.instantiateViewController(withIdentifier: "WordReport")
-        case (0, 1):
-            secondaryVC = storyboard.instantiateViewController(withIdentifier: "Levels")
-        case (0, 2):
-            secondaryVC = storyboard.instantiateViewController(withIdentifier: "Badges")
         case (1, 0):
             secondaryVC = storyboard.instantiateViewController(withIdentifier: "Account")
         case (1, 1):

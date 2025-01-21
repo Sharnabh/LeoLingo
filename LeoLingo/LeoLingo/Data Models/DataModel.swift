@@ -61,8 +61,9 @@ struct Card {
 
 struct Badge {
     var badgeTitle: String
+    var badgeDescription: String
     var badgeImage: String
-    var isAchieved: Bool
+    var isEarned: Bool
 }
 
 struct JungleRun {

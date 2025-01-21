@@ -93,7 +93,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="0.98431372640000003" green="0.96862745289999996" blue="0.89411771299999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="Cdf-cA-try" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="4BK-iS-PSY"/>
                             <constraint firstItem="Cdf-cA-try" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="HFC-Tk-3Wo"/>

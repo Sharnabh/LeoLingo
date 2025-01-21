@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DashboardParentModeViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class DashboardViewController: UIViewController {
     
     
     
@@ -36,8 +36,8 @@ class DashboardParentModeViewController: UIViewController, UICollectionViewDataS
         super.viewDidLoad()
         updateView()
 
-        collectionView.dataSource = self
-        collectionView.delegate = self
+//        collectionView.dataSource = self
+//        collectionView.delegate = self
         collectionView.register(UINib(nibName: "WordReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "WordCell")
         
         configureFlowLayout()
@@ -50,7 +50,7 @@ class DashboardParentModeViewController: UIViewController, UICollectionViewDataS
 //    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 //        <#code#>
 //    }
-//    
+    
     private func configureFlowLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal

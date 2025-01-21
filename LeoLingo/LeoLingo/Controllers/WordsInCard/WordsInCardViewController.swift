@@ -24,6 +24,12 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName: "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CardCell")
+        collectionView.register(
+            UINib(nibName: "CollectionHeaderView", bundle: nil),
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "HeaderView"
+        )
+
         
         configureFlowLayout()
     }
@@ -35,6 +41,8 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         layout.minimumInteritemSpacing = 20
         layout.itemSize = CGSize(width: 265, height: 290)
         layout.sectionInset = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30)
+        layout.headerReferenceSize = CGSize(width: collectionView.bounds.width, height: 60)
+        
         
         collectionView.collectionViewLayout = layout
     }
@@ -59,4 +67,17 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         cell.layer.shadowRadius = 4
         return cell
     }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: "HeaderView",
+                for: indexPath
+            ) as! HeaderCollectionReusableView
+            header.configure(title: "My Header", progress: 0.5)
+            return header
+        }
+        return UICollectionReusableView()
+    }
+
 }

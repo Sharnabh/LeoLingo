@@ -43,20 +43,22 @@ class VocalCoachViewController: UIViewController {
         layout.itemSize = CGSize(width: 380, height: 280)
         soundCards.collectionViewLayout = layout
     }
-//    override func viewWillDisappear(_ animated: Bool) {
-//            super.viewWillDisappear(animated)
-//            
-//            // Check if the current view controller is being popped
-//            if self.isMovingFromParent {
-//                // Create your desired view controller
-//                if let navigationController = navigationController {
-//                    if let desiredViewController = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
-//                        // Set the desired view controller as the root
-//                        navigationController.setViewControllers([desiredViewController], animated: true)
-//                    }
-//                }
-//            }
-//        }
+    @IBAction func continueButtonTapped(_ sender: UIButton) {
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            
+            // Check if the current view controller is being popped
+            if self.isMovingFromParent {
+                // Create your desired view controller
+                if let navigationController = navigationController {
+                    if let desiredViewController = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+                        // Set the desired view controller as the root
+                        navigationController.setViewControllers([desiredViewController], animated: true)
+                    }
+                }
+            }
+        }
  }
 
 

@@ -758,6 +758,14 @@
             </objects>
             <point key="canvasLocation" x="3790.9883720930229" y="359.88372093023258"/>
         </scene>
+        <!--Storyboard Reference-->
+        <scene sceneID="2IG-vC-vWz">
+            <objects>
+                <viewControllerPlaceholder id="d3p-fY-302" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UsQ-Zv-KYM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3419" y="966"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="sBP-dt-oea">
             <objects>
@@ -1103,6 +1111,9 @@
                                 <buttonConfiguration key="configuration" style="plain" image="arrow.up.arrow.down" catalog="system" imagePlacement="trailing" title="Inaccurate" titleAlignment="center">
                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="15"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <action selector="filterButtonTapped:" destination="TXi-iD-fc7" eventType="touchUpInside" id="Eu2-GH-pnA"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q7C-sD-8kZ">
                                 <rect key="frame" x="660" y="57" width="31" height="30"/>
@@ -1134,6 +1145,40 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fRx-c0-oYo" customClass="FilterView" customModule="LeoLingo" customModuleProvider="target">
+                                <rect key="frame" x="792" y="43" width="248" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="i6m-jC-doS">
+                                        <rect key="frame" x="0.0" y="0.0" width="248" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <prototypes>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FilterOption" textLabel="gsz-16-FjC" style="IBUITableViewCellStyleDefault" id="k2n-8I-sBa">
+                                                <rect key="frame" x="0.0" y="50" width="248" height="43.5"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="k2n-8I-sBa" id="WmD-wG-mAc">
+                                                    <rect key="frame" x="0.0" y="0.0" width="248" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gsz-16-FjC">
+                                                            <rect key="frame" x="16" y="0.0" width="216" height="43.5"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </tableViewCellContentView>
+                                            </tableViewCell>
+                                        </prototypes>
+                                    </tableView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
+                                <connections>
+                                    <outlet property="filterTableView" destination="i6m-jC-doS" id="cWq-iE-57a"/>
+                                </connections>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="EbS-hv-UFT"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -1141,6 +1186,7 @@
                     <connections>
                         <outlet property="accuracyGraph" destination="evE-lv-cYo" id="kGR-4r-ele"/>
                         <outlet property="accuracyLabel" destination="J0u-Eh-IWF" id="FLZ-kl-mjD"/>
+                        <outlet property="filterView" destination="fRx-c0-oYo" id="06K-2W-OMu"/>
                         <outlet property="levelAverageLabel" destination="Rhx-1s-0xQ" id="CYZ-wq-ZU0"/>
                         <outlet property="levelsTableView" destination="Ibc-Vc-DsT" id="H4r-vm-sbc"/>
                         <outlet property="recordingView" destination="pg4-sK-4qF" id="nKX-Na-FZl"/>
@@ -1151,6 +1197,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QE8-ui-Nxx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2925" y="966.56976744186045"/>
+        </scene>
+        <!--Storyboard Reference-->
+        <scene sceneID="iHM-0B-22a">
+            <objects>
+                <viewControllerPlaceholder id="W4D-z2-ihY" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VA0-Kg-8PU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3548" y="966"/>
         </scene>
     </scenes>
     <resources>

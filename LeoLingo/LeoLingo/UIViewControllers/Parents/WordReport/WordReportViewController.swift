@@ -53,6 +53,7 @@ class WordReportViewController: UIViewController {
     @IBOutlet var accuracyLabel: UILabel!
     @IBOutlet var accuracyGraph: ProgressGraphView!
     
+    @IBOutlet var filterView: FilterView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +69,12 @@ class WordReportViewController: UIViewController {
         
     }
 
+    @IBAction func filterButtonTapped(_ sender: UIButton) {
+        UIView.transition(with: filterView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.filterView.isHidden.toggle()
+            self.filterView.configureTableView()
+        })
+    }
 }
 
 extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {

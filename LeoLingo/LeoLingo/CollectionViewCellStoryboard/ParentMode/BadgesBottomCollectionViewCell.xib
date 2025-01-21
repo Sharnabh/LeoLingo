@@ -23,8 +23,8 @@
                             <constraint firstAttribute="height" constant="150" id="kQi-od-t8l"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ypn-Ip-iIb">
-                        <rect key="frame" x="190" y="84.5" width="42" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ypn-Ip-iIb">
+                        <rect key="frame" x="190" y="85" width="192" height="20.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -37,6 +37,7 @@
                 <constraint firstAttribute="bottom" secondItem="No3-yt-mjk" secondAttribute="bottom" constant="20" id="5HB-Jf-rv2"/>
                 <constraint firstItem="No3-yt-mjk" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="HLP-PY-k0l"/>
                 <constraint firstItem="ypn-Ip-iIb" firstAttribute="leading" secondItem="No3-yt-mjk" secondAttribute="trailing" constant="20" id="WJ5-pd-oGv"/>
+                <constraint firstAttribute="trailing" secondItem="ypn-Ip-iIb" secondAttribute="trailing" constant="20" id="hVp-8d-e91"/>
                 <constraint firstItem="No3-yt-mjk" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="20" id="uOl-z7-PTU"/>
             </constraints>
             <size key="customSize" width="174" height="134"/>

@@ -44,13 +44,13 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         layoutMain = UICollectionViewFlowLayout()
         if let layout = layoutMain {
-            layout.itemSize = CGSize(width: 450, height: 150)
+            layout.itemSize = CGSize(width: view.bounds.width/3, height: 150)
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             badgescollectionView.collectionViewLayout = layout
             badgescollectionView.delegate = self
             badgescollectionView.dataSource = self
-            badgesEarnedCollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
-            badgesEarnedCollectionView.layer.cornerRadius = 20
+            badgescollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
+            badgescollectionView.layer.cornerRadius = 20
             let BadgesNib = UINib(nibName: "BadgesBottomCollectionViewCell", bundle: nil)
             badgescollectionView.register(BadgesNib, forCellWithReuseIdentifier: BadgesBottomCollectionViewCell.identifier)
         }

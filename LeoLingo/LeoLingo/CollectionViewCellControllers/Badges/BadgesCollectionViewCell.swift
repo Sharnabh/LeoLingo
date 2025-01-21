@@ -15,8 +15,7 @@ class BadgesCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = 75
+        imageView.layer.masksToBounds = true 
         return imageView
     }()
     

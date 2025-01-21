@@ -9,4 +9,10 @@ import UIKit
 
 class SoundSelectedCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet var letterLabel: UILabel!
+    @IBOutlet var wordLabel: UILabel!
+    func configureCell(with letter: String, words: [String]) {
+        letterLabel.text = letter
+        wordLabel.text = words.joined(separator: ", ")
+    }
 }

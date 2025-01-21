@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="First" id="Hru-2P-UZ6" customClass="SoundCardCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="380" height="280"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="8Z5-k8-nIU">
+                <rect key="frame" x="0.0" y="0.0" width="380" height="280"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Non-ee-TeM" customClass="SoundCardCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="380" height="280"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Z4-1X-hFC">
+                                <rect key="frame" x="0.0" y="0.0" width="380" height="280"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="1Z4-1X-hFC" secondAttribute="trailing" id="56o-Gq-rOa"/>
+                            <constraint firstItem="1Z4-1X-hFC" firstAttribute="leading" secondItem="Non-ee-TeM" secondAttribute="leading" id="Q79-Rc-oid"/>
+                            <constraint firstAttribute="bottom" secondItem="1Z4-1X-hFC" secondAttribute="bottom" id="Thp-aY-nrn"/>
+                            <constraint firstItem="1Z4-1X-hFC" firstAttribute="top" secondItem="Non-ee-TeM" secondAttribute="top" id="zdJ-Sx-Rdn"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Non-ee-TeM" firstAttribute="leading" secondItem="8Z5-k8-nIU" secondAttribute="leading" id="HGk-er-DUj"/>
+                    <constraint firstItem="Non-ee-TeM" firstAttribute="top" secondItem="8Z5-k8-nIU" secondAttribute="top" id="LuU-ZW-Mt8"/>
+                    <constraint firstAttribute="trailing" secondItem="Non-ee-TeM" secondAttribute="trailing" id="hZ3-81-Of8"/>
+                    <constraint firstAttribute="bottom" secondItem="Non-ee-TeM" secondAttribute="bottom" id="oHv-7M-MXA"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="302" height="249"/>
+            <connections>
+                <outlet property="imageView" destination="1Z4-1X-hFC" id="JcP-hs-rZX"/>
+            </connections>
+            <point key="canvasLocation" x="190.97560975609755" y="85.932203389830519"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

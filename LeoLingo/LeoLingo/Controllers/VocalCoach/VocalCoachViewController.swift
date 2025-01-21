@@ -43,23 +43,32 @@ class VocalCoachViewController: UIViewController {
         layout.itemSize = CGSize(width: 380, height: 280)
         soundCards.collectionViewLayout = layout
     }
-    @IBAction func continueButtonTapped(_ sender: UIButton) {
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-            
-            // Check if the current view controller is being popped
-            if self.isMovingFromParent {
-                // Create your desired view controller
-                if let navigationController = navigationController {
-                    if let desiredViewController = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
-                        // Set the desired view controller as the root
-                        navigationController.setViewControllers([desiredViewController], animated: true)
-                    }
-                }
-            }
-        }
- }
+  @IBAction func continueButtonTapped(_ sender: UIButton) {
+//           performSegue(withIdentifier: "PracticeScreenSegue", sender: self)
+     }
+//       
+//       override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//           if segue.identifier == "PracticeScreenSegue" {
+//               if let destinationVC = segue.destination as? PracticeScreenViewController {
+//                   // Pass any necessary data to the PracticeScreenViewController
+//                   // Example: destinationVC.someProperty = someValue
+//               }
+//           }
+//       }
+       
+       override func viewWillDisappear(_ animated: Bool) {
+           super.viewWillDisappear(animated)
+           
+           // Handle navigation when the view controller is popped
+           if self.isMovingFromParent {
+               if let navigationController = navigationController {
+                   if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+                       navigationController.setViewControllers([homeVC], animated: true)
+                   }
+               }
+           }
+       }
+   }
 
 
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {

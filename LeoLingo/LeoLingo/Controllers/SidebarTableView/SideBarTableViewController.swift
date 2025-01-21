@@ -66,7 +66,7 @@ class SideBarTableViewController: UITableViewController{
         
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
-            secondaryVC = storyboard.instantiateViewController(withIdentifier: "WordReport")
+            secondaryVC = storyboard.instantiateViewController(withIdentifier: "WordReportMain")
         case (1, 0):
             secondaryVC = storyboard.instantiateViewController(withIdentifier: "Account")
         case (1, 1):

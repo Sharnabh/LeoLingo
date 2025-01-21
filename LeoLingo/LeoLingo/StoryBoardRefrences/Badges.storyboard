@@ -17,15 +17,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="ParentModeBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="zKp-bp-6jj">
-                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
-                                <color key="backgroundColor" red="0.98431372640000003" green="0.96862745289999996" blue="0.89411771299999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cdf-cA-try">
-                                <rect key="frame" x="162" y="162" width="1052" height="708"/>
+                                <rect key="frame" x="10" y="98" width="1356" height="836"/>
                                 <subviews>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="RUT-wS-bk9">
-                                        <rect key="frame" x="20" y="54" width="1012" height="200"/>
+                                        <rect key="frame" x="20" y="54" width="1316" height="200"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="200" id="bMz-01-B1h"/>
@@ -48,7 +44,7 @@
                                         </cells>
                                     </collectionView>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dRH-Ag-csn">
-                                        <rect key="frame" x="20" y="308" width="1012" height="390"/>
+                                        <rect key="frame" x="20" y="308" width="1316" height="518"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3VW-4i-Yue">
                                             <size key="itemSize" width="128" height="128"/>
@@ -101,12 +97,11 @@
                         <constraints>
                             <constraint firstItem="Cdf-cA-try" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="4BK-iS-PSY"/>
                             <constraint firstItem="Cdf-cA-try" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="HFC-Tk-3Wo"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="centerX" secondItem="zKp-bp-6jj" secondAttribute="centerX" id="Lv4-7H-VkP"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="162" id="S33-Km-JbY"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="138" id="duI-wh-KMn"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="centerY" secondItem="zKp-bp-6jj" secondAttribute="centerY" id="sN4-CA-gdy"/>
+                            <constraint firstItem="Cdf-cA-try" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="10" id="S33-Km-JbY"/>
+                            <constraint firstItem="Cdf-cA-try" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="duI-wh-KMn"/>
                         </constraints>
                     </view>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="badgesEarnedCollectionView" destination="RUT-wS-bk9" id="6RJ-Qq-6iI"/>
                         <outlet property="badgescollectionView" destination="dRH-Ag-csn" id="3Bd-3S-JoB"/>
@@ -118,7 +113,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ParentModeBackdrop" width="2390" height="1670"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

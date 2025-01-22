@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ZJ4-tr-SOc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ewx-xf-xPk">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -28,18 +28,21 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="Vocal coach button"/>
                                         <connections>
-                                            <segue destination="KCK-Yd-hQ4" kind="show" id="PKm-Re-gei"/>
+                                            <action selector="vocalCoachButtonTapped:" destination="ewx-xf-xPk" eventType="touchUpInside" id="oBA-aY-jOB"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eZ-k1-SyR">
                                         <rect key="frame" x="327" y="0.0" width="220" height="228"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="Fun Learning Button"/>
+                                        <connections>
+                                            <action selector="funLearningButtonTapped:" destination="ewx-xf-xPk" eventType="touchUpInside" id="sWz-sp-UTS"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hxu-Ht-lfG">
-                                <rect key="frame" x="383" y="25" width="611" height="50"/>
+                                <rect key="frame" x="383" y="25" width="665" height="50"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Practice Duration" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RmN-f2-tyW">
                                         <rect key="frame" x="25" y="15" width="132" height="21"/>
@@ -72,10 +75,10 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INK-tR-QxJ">
-                                <rect key="frame" x="1146" y="25" width="205" height="45.5"/>
+                                <rect key="frame" x="1200" y="25" width="151" height="45.5"/>
                                 <size key="titleShadowOffset" width="2" height="2"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Go to Kids Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
+                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
                                     <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
                                     <backgroundConfiguration key="background">
                                         <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -84,6 +87,9 @@
                                     <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <action selector="kidsModeButtonTapped:" destination="ewx-xf-xPk" eventType="touchUpInside" id="ixY-AW-FB9"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dct-6M-gWp">
                                 <rect key="frame" x="374" y="224" width="367" height="367"/>
@@ -160,7 +166,7 @@
         <!--Greet View Controller-->
         <scene sceneID="7vR-XP-CNe">
             <objects>
-                <viewController id="KCK-Yd-hQ4" customClass="GreetViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VocalCoachGreeting" id="KCK-Yd-hQ4" customClass="GreetViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PSu-Ov-vbh">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -169,10 +175,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mojo" translatesAutoresizingMaskIntoConstraints="NO" id="imP-M5-XCB">
-                                <rect key="frame" x="177" y="178" width="1596" height="676"/>
+                                <rect key="frame" x="177" y="128" width="1596" height="726"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Greetbox" translatesAutoresizingMaskIntoConstraints="NO" id="LpW-Qv-oIp">
-                                <rect key="frame" x="615" y="178" width="516" height="631"/>
+                                <rect key="frame" x="615" y="128" width="516" height="681"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mtr-wE-p5K">
                                 <rect key="frame" x="743" y="298" width="341" height="194"/>
@@ -214,24 +220,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDj-x3-LaU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-157.41279069767441" y="595.93023255813955"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="BZk-Go-Fz5">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZJ4-tr-SOc" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" backIndicatorImage="Image" id="bsi-hC-cFF">
-                        <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ewx-xf-xPk" kind="relationship" relationship="rootViewController" id="sKk-WC-a1S"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="G8U-9H-xem" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-970" y="-112"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="5s8-Pn-FXJ">
@@ -451,7 +439,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aXI-qk-SYX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2944.6220930232557" y="738.95348837209303"/>
+            <point key="canvasLocation" x="865" y="723"/>
         </scene>
         <!--Popover View Controller-->
         <scene sceneID="zI7-B6-Zhg">
@@ -507,7 +495,7 @@
         <!--Navigation Controller-->
         <scene sceneID="gNR-0R-wrt">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="oAn-cd-sHJ" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="VocalCoachNavControl" automaticallyAdjustsScrollViewInsets="NO" id="oAn-cd-sHJ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wYU-oc-Ccs">
                         <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
@@ -529,7 +517,6 @@
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>
         <image name="Greetbox" width="1274" height="1260"/>
-        <image name="Image" width="198" height="190"/>
         <image name="Mojo" width="1596" height="1834"/>
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>

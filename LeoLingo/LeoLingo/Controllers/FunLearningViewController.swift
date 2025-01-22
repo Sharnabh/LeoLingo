@@ -45,6 +45,14 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         currentIndex = previousIndex
     }
+    
+    @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
+        if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
+            parentHomeVC.modalPresentationStyle = .fullScreen
+            self.present(parentHomeVC, animated: true, completion: nil)
+        }
+    }
 }
 
 extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewDataSource {

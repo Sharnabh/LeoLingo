@@ -13,7 +13,7 @@
         <!--Fun Learning View Controller-->
         <scene sceneID="Ivd-LC-U9p">
             <objects>
-                <viewController id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FunLearningVC" id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kX9-gt-BHf">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -65,10 +65,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
-                                <rect key="frame" x="1129.5" y="25" width="221.5" height="46"/>
+                                <rect key="frame" x="1200" y="25" width="151" height="46"/>
                                 <size key="titleShadowOffset" width="2" height="2"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Go to Parent Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
+                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
                                     <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
                                     <backgroundConfiguration key="background">
                                         <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -77,6 +77,9 @@
                                     <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <action selector="kidsModeButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="wbt-cu-y34"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="R9T-Zw-OeI"/>

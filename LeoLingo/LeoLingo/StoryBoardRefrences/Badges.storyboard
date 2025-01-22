@@ -18,10 +18,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cdf-cA-try">
-                                <rect key="frame" x="10" y="98" width="1356" height="836"/>
+                                <rect key="frame" x="10" y="98" width="1350" height="898"/>
                                 <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Badges Earned" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="53R-w0-Nva">
+                                        <rect key="frame" x="16" y="16" width="164.5" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
+                                        <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="RUT-wS-bk9">
-                                        <rect key="frame" x="20" y="54" width="1316" height="190"/>
+                                        <rect key="frame" x="24" y="53" width="1302" height="190"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="190" id="bMz-01-B1h"/>
@@ -43,8 +49,14 @@
                                             </collectionViewCell>
                                         </cells>
                                     </collectionView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Badges" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ZX-Eh-RLX">
+                                        <rect key="frame" x="16" y="251" width="82.5" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
+                                        <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dRH-Ag-csn">
-                                        <rect key="frame" x="20" y="298" width="1316" height="528"/>
+                                        <rect key="frame" x="24" y="288" width="1302" height="594"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3VW-4i-Yue">
                                             <size key="itemSize" width="128" height="128"/>
@@ -63,42 +75,30 @@
                                             </collectionViewCell>
                                         </cells>
                                     </collectionView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Badges Earned" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="53R-w0-Nva">
-                                        <rect key="frame" x="8" y="8" width="211" height="36"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                                        <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Badges" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ZX-Eh-RLX">
-                                        <rect key="frame" x="8" y="252" width="106" height="36"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                                        <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.98431372640000003" green="0.96862745289999996" blue="0.89411771299999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="dRH-Ag-csn" secondAttribute="trailing" constant="20" id="2HE-re-GLy"/>
-                                    <constraint firstItem="RUT-wS-bk9" firstAttribute="top" secondItem="53R-w0-Nva" secondAttribute="bottom" constant="10" id="5qq-bi-md2"/>
-                                    <constraint firstItem="RUT-wS-bk9" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="20" id="AXS-sq-sGB"/>
-                                    <constraint firstItem="53R-w0-Nva" firstAttribute="top" secondItem="Cdf-cA-try" secondAttribute="topMargin" id="FvH-cJ-Y7z"/>
-                                    <constraint firstAttribute="trailing" secondItem="RUT-wS-bk9" secondAttribute="trailing" constant="20" id="JeZ-Ca-dlt"/>
-                                    <constraint firstItem="53R-w0-Nva" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leadingMargin" id="NLa-Mr-y5G"/>
-                                    <constraint firstItem="dRH-Ag-csn" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="20" id="YSS-Qa-e6T"/>
-                                    <constraint firstItem="dRH-Ag-csn" firstAttribute="top" secondItem="8ZX-Eh-RLX" secondAttribute="bottom" constant="10" id="eOT-Of-WnE"/>
-                                    <constraint firstAttribute="bottom" secondItem="dRH-Ag-csn" secondAttribute="bottom" constant="10" id="iiW-G0-haK"/>
-                                    <constraint firstItem="8ZX-Eh-RLX" firstAttribute="top" secondItem="RUT-wS-bk9" secondAttribute="bottom" constant="8" id="oBm-sc-LPx"/>
-                                    <constraint firstItem="8ZX-Eh-RLX" firstAttribute="leading" secondItem="53R-w0-Nva" secondAttribute="leading" id="vLa-PZ-hc9"/>
+                                    <constraint firstItem="8ZX-Eh-RLX" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="16" id="6m7-6q-iiQ"/>
+                                    <constraint firstItem="53R-w0-Nva" firstAttribute="top" secondItem="Cdf-cA-try" secondAttribute="top" constant="16" id="83N-05-kAd"/>
+                                    <constraint firstItem="53R-w0-Nva" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="16" id="E5f-O3-3uP"/>
+                                    <constraint firstItem="8ZX-Eh-RLX" firstAttribute="top" secondItem="RUT-wS-bk9" secondAttribute="bottom" constant="8" id="IHE-qY-ZOG"/>
+                                    <constraint firstItem="RUT-wS-bk9" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="24" id="M9F-gR-Fz7"/>
+                                    <constraint firstItem="RUT-wS-bk9" firstAttribute="top" secondItem="53R-w0-Nva" secondAttribute="bottom" constant="8" id="Ov0-bK-tII"/>
+                                    <constraint firstAttribute="bottom" secondItem="dRH-Ag-csn" secondAttribute="bottom" constant="16" id="P7h-0j-afi"/>
+                                    <constraint firstItem="dRH-Ag-csn" firstAttribute="top" secondItem="8ZX-Eh-RLX" secondAttribute="bottom" constant="8" id="Sfp-l2-5xM"/>
+                                    <constraint firstItem="RUT-wS-bk9" firstAttribute="centerX" secondItem="Cdf-cA-try" secondAttribute="centerX" id="bgz-mF-U5T"/>
+                                    <constraint firstItem="dRH-Ag-csn" firstAttribute="trailing" secondItem="RUT-wS-bk9" secondAttribute="trailing" id="mvD-jJ-w2z"/>
+                                    <constraint firstItem="dRH-Ag-csn" firstAttribute="leading" secondItem="Cdf-cA-try" secondAttribute="leading" constant="24" id="qhy-iR-bXW"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" red="0.98431372640000003" green="0.96862745289999996" blue="0.89411771299999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="4BK-iS-PSY"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="HFC-Tk-3Wo"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="10" id="S33-Km-JbY"/>
-                            <constraint firstItem="Cdf-cA-try" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="duI-wh-KMn"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="Cdf-cA-try" secondAttribute="trailing" constant="16" id="VbU-LM-iQk"/>
+                            <constraint firstItem="Cdf-cA-try" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="10" id="YFr-w7-btA"/>
+                            <constraint firstItem="Cdf-cA-try" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="dtk-5q-OZp"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="Cdf-cA-try" secondAttribute="bottom" constant="16" id="vAm-BZ-bxc"/>
                         </constraints>
                     </view>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>

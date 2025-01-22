@@ -8,6 +8,10 @@ class JungleRunViewController: UIViewController {
     @IBOutlet var diamondLabel: UILabel!
     
     @IBOutlet var tapGesture: UITapGestureRecognizer!
+    
+    @IBOutlet var controlsView: UIView!
+    
+    
     var hearts: [UIImageView] = []
     var coins: [UIImageView] = []
     
@@ -29,6 +33,10 @@ class JungleRunViewController: UIViewController {
         setupTapGesture()
         startBackgroundAnimation()
         startGameLoop()
+        controlsView.layer.borderWidth = 5
+        controlsView.layer.cornerRadius = 21
+        controlsView.layer.borderColor  = UIColor(red: 36/255, green: 61/255, blue: 35/255, alpha: 1).cgColor
+        
     }
     
     // MARK: - Background Setup

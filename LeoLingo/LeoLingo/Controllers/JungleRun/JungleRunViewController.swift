@@ -1,5 +1,7 @@
 import UIKit
 
+
+
 class JungleRunViewController: UIViewController {
     @IBOutlet var backgroundImage1: UIImageView!
     @IBOutlet var backgroundImage2: UIImageView!
@@ -7,9 +9,10 @@ class JungleRunViewController: UIViewController {
     @IBOutlet var coinLabel: UILabel!
     @IBOutlet var diamondLabel: UILabel!
     
+    @IBOutlet var pauseButton: UIButton!
     @IBOutlet var tapGesture: UITapGestureRecognizer!
     
-    @IBOutlet var controlsView: UIView!
+    @IBOutlet var pauseMenu: UIView!
     
     
     var hearts: [UIImageView] = []
@@ -22,23 +25,63 @@ class JungleRunViewController: UIViewController {
     var wordCoinTimer: Timer?
     var wordCoin: UIImageView?
     var gameTimer: CADisplayLink?
-
+    var isPaused: Bool = false
+    var coinSpawnCount: Int = 0
+    var gameData = JungleRun()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupBackground()
-        setupLion()
-        setupLabels()
-        setupHearts()
-        setupTapGesture()
-        startBackgroundAnimation()
-        startGameLoop()
-        controlsView.layer.borderWidth = 5
-        controlsView.layer.cornerRadius = 21
-        controlsView.layer.borderColor  = UIColor(red: 36/255, green: 61/255, blue: 35/255, alpha: 1).cgColor
-        
+               setupLion()
+               setupLabels()
+               setupHearts()
+               setupTapGesture()
+               
+               startBackgroundAnimation()
+               startGameLoop()
+               
+               pauseMenu.layer.borderWidth = 5
+               pauseMenu.layer.cornerRadius = 21
+               pauseMenu.layer.borderColor = UIColor(red: 36/255, green: 61/255, blue: 35/255, alpha: 1).cgColor
+               pauseMenu.isHidden = true
     }
-    
+    // MARK: - Pause Button Action
+        @IBAction func pauseButtonTapped(_ sender: UIButton) {
+            isPaused = true
+                    gameTimer?.isPaused = true
+                    wordCoinTimer?.invalidate()
+                    pauseMenu.isHidden = false
+        }
+        
+        // MARK: - Resume Button Action
+        @IBAction func resumeButtonTapped(_ sender: UIButton) {
+            isPaused = false
+                    gameTimer?.isPaused = false
+                    startGameLoop()
+                    pauseMenu.isHidden = true
+        }
+        
+        // MARK: - Restart Button Action
+        @IBAction func restartButtonTapped(_ sender: UIButton) {
+            pauseMenu.isHidden = true // Hide the pause menu
+            resetGameState()
+            startGameLoop()
+        }
+        
+        // MARK: - Quit Button Action
+        @IBAction func quitButtonTapped(_ sender: UIButton) {
+            if let homePageVC = storyboard?.instantiateViewController(withIdentifier: "JungleRunHomeViewController") as? JungleRunHomeViewController {
+                    // Pass the stored data to the home page
+                    homePageVC.coinScore = gameData.coins
+                    homePageVC.diamondScore = gameData.diamonds
+                    
+                    // Navigate to the home page
+                    navigationController?.pushViewController(homePageVC, animated: true)
+                }
+        }
+        
     // MARK: - Background Setup
     func setupBackground() {
         // Set up the first background image
@@ -51,7 +94,7 @@ class JungleRunViewController: UIViewController {
         backgroundImage2 = UIImageView(frame: CGRect(x: view.bounds.width, y: 0, width: view.bounds.width, height: view.bounds.height))
         backgroundImage2.image = UIImage(named: "JungleRunBackground2")
         backgroundImage2.contentMode = .scaleAspectFill
-        view.addSubview(backgroundImage2)
+       view.addSubview(backgroundImage2)
     }
 
 
@@ -67,27 +110,7 @@ class JungleRunViewController: UIViewController {
                self.backgroundImage2.frame.origin.x = self.view.bounds.width
            })
        }
-//    func startBackgroundAnimation() {
-//        let screenWidth = view.bounds.width
-//        let animationDuration: TimeInterval = 10 // Adjust for desired speed
-//        
-//        // Animate both background images
-//        UIView.animate(withDuration: animationDuration, delay: 0, options: [.curveLinear, .repeat], animations: {
-//            self.backgroundImage1.frame.origin.x -= screenWidth
-//            self.backgroundImage2.frame.origin.x -= screenWidth
-//        }, completion: nil)
-//        
-//        // Use a timer to reset positions when images move out of view
-//        Timer.scheduledTimer(withTimeInterval: animationDuration, repeats: true) { _ in
-//            if self.backgroundImage1.frame.maxX <= 0 {
-//                self.backgroundImage1.frame.origin.x = self.backgroundImage2.frame.maxX
-//            }
-//            if self.backgroundImage2.frame.maxX <= 0 {
-//                self.backgroundImage2.frame.origin.x = self.backgroundImage1.frame.maxX
-//            }
-//        }
-//    }
-//    
+
     // MARK: - Lion Setup
     func setupLion() {
             let lionSize = CGSize(width: 150, height: 150) // Updated lion size
@@ -100,10 +123,11 @@ class JungleRunViewController: UIViewController {
     // MARK: - UI Setup
     func setupLabels() {
         coinLabel.text = "🪙 0"
-        coinLabel.textColor = .white
-        
-        diamondLabel.text = "💎 0"
-        diamondLabel.textColor = .white
+                coinLabel.textColor = .white
+                view.addSubview(coinLabel)
+                diamondLabel.text = "💎 0"
+                diamondLabel.textColor = .white
+                view.addSubview(diamondLabel)
     }
     
     func setupHearts() {
@@ -117,91 +141,126 @@ class JungleRunViewController: UIViewController {
     
     // MARK: - Game Logic
     func startGameLoop() {
-            gameTimer = CADisplayLink(target: self, selector: #selector(updateGame))
-            gameTimer?.add(to: .main, forMode: .default)
-            spawnCoins()
+        gameTimer = CADisplayLink(target: self, selector: #selector(updateGame))
+                gameTimer?.add(to: .main, forMode: .default)
+                spawnCoins()
         }
         
         @objc func updateGame() {
             detectCollisions()
         }
-        
+    
+    // dummy use 
+    func generateRandomWord() -> String {
+            let words = ["Cat", "Dog", "Lion", "Tree", "Car"]
+            return words.randomElement() ?? "Word"
+        }
     func spawnCoins() {
-            Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
-                let isWordCoin = Bool.random()
-                let coinImageName = isWordCoin ? "wordCoin" : "valueCoin"
-                let coin = UIImageView(image: UIImage(named: coinImageName))
-                let randomY = self.view.bounds.height - CGFloat.random(in: 300...400) // Random height for variety
-                coin.frame = CGRect(x: self.view.bounds.width, y: randomY, width: 100, height: 100) // Updated coin size
-                self.view.addSubview(coin)
-                self.coins.append(coin)
-                
-                UIView.animate(withDuration: 5.0, delay: 0, options: .curveLinear, animations: {
-                    coin.frame.origin.x = -50
-                }, completion: { _ in
-                    if let index = self.coins.firstIndex(of: coin) {
-                        self.coins.remove(at: index)
-                    }
-                    coin.removeFromSuperview()
-                })
-            }
+        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
+                   self.coinSpawnCount += 1
+                   let isWordCoin = self.coinSpawnCount % 6 == 0 // Spawn a word coin every 6th coin
+                   let coinImageName = isWordCoin ? "wordCoin" : "valueCoin"
+                   let coin = UIImageView(image: UIImage(named: coinImageName))
+                   
+                   if isWordCoin {
+                       self.gameData.word = self.generateRandomWord()
+                       // Optionally add a label inside the word coin
+                   }
+                   
+                   let randomY = self.view.bounds.height - CGFloat.random(in: 300...400)
+                   coin.frame = CGRect(x: self.view.bounds.width, y: randomY, width: 100, height: 100)
+                   self.view.addSubview(coin)
+                   self.coins.append(coin)
+                   
+                   UIView.animate(withDuration: 5.0, delay: 0, options: .curveLinear, animations: {
+                       coin.frame.origin.x = -50
+                   }, completion: { _ in
+                       if let index = self.coins.firstIndex(of: coin) {
+                           self.coins.remove(at: index)
+                       }
+                       coin.removeFromSuperview()
+                   })
+               }
         }
 
     
     func detectCollisions() {
-            for coin in coins {
-                if let coinFrame = coin.layer.presentation()?.frame,
-                   let lionFrame = lionImageView.layer.presentation()?.frame,
-                   lionFrame.intersects(coinFrame) {
-                    if coin.image == UIImage(named: "valueCoin") {
-                        coinValue += 100
-                        updateCoinLabel()
-                    } else if coin.image == UIImage(named: "wordCoin") {
-                        handleWordCoin(coin)
-                    }
-                    coin.removeFromSuperview()
-                    if let index = coins.firstIndex(of: coin) {
-                        coins.remove(at: index)
+        for coin in coins {
+                    if let coinFrame = coin.layer.presentation()?.frame,
+                       let lionFrame = lionImageView.layer.presentation()?.frame,
+                       lionFrame.intersects(coinFrame) {
+                        if coin.image == UIImage(named: "valueCoin") {
+                            gameData.coins += 100
+                            updateCoinLabel()
+                        } else if coin.image == UIImage(named: "wordCoin") {
+                            handleWordCoin(coin)
+                        }
+                        coin.removeFromSuperview()
+                        if let index = coins.firstIndex(of: coin) {
+                            coins.remove(at: index)
+                        }
                     }
                 }
-            }
         }
     
     func handleWordCoin(_ coin: UIImageView) {
-        wordCoin = coin
-        wordCoinTimer?.invalidate()
-        wordCoinTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
-            self.wordCoin?.removeFromSuperview()
-            self.wordCoin = nil
-            self.loseHeart()
-        }
+        UIView.animate(withDuration: 0.3, animations: {
+                // Enlarge the word coin on collision
+                coin.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            }, completion: { _ in
+                self.gameData.isAccurate = Bool.random() // Simulate accuracy check
+                if self.gameData.isAccurate {
+                    // If accurate, increase diamonds
+                    self.gameData.diamonds += 1
+                    self.updateDiamondLabel()
+                } else {
+                    // If not accurate, lose a heart
+                    self.loseHeart()
+                }
+                coin.removeFromSuperview() // Remove the word coin
+                if let index = self.coins.firstIndex(of: coin) {
+                    self.coins.remove(at: index)
+                }
+            })
     }
     
     func updateCoinLabel() {
         
-        coinLabel.text = "🪙 \(String(describing: coinValue))"
+        coinLabel.text = "🪙 \(gameData.coins)"
     }
     
-    func updateDiamondLevel() {
-        diamondLabel.text = "💎 \(String(describing: coinValue))"
+    func updateDiamondLabel() {
+        diamondLabel.text = "💎 \(gameData.diamonds)"
     }
     
     func loseHeart() {
         if remainingHearts > 0 {
-            remainingHearts -= 1
-            hearts[remainingHearts].isHidden = true
-        }
-        if remainingHearts == 0 {
-            gameOver()
-        }
+               remainingHearts -= 1
+               hearts[remainingHearts].isHidden = true
+           }
+           if remainingHearts == 0 {
+               gameOver()
+           }
     }
     
     func gameOver() {
-        print("Game Over")
         gameTimer?.invalidate()
-        wordCoinTimer?.invalidate()
+               wordCoinTimer?.invalidate()
+               
+               let alert = UIAlertController(title: "Game Over", message: "Your Score: \(gameData.coins)", preferredStyle: .alert)
+               alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+               present(alert, animated: true, completion: nil)
     }
-    
+    // MARK: - Reset Game State
+        func resetGameState() {
+            gameData = JungleRun()
+                    for heart in hearts {
+                        heart.isHidden = false
+                    }
+                    updateCoinLabel()
+                    updateDiamondLabel()
+        }
+        
     // MARK: - Gesture Handling
     func setupTapGesture() {
            // Add tap gesture to detect screen taps

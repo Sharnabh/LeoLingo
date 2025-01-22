@@ -72,7 +72,7 @@ class PracticeScreenViewController: UIViewController {
     func updateUI() {
         let currentData = Data[0][currentIndex]
         directionLabel.text = ""
-        wordImage.image = UIImage(named: currentData.wordImage)
+        wordImage.image = UIImage(named: currentData.wordImage!)
         mojoImage.image = UIImage(named: "mojo2") // Update as needed
         
         
@@ -123,7 +123,7 @@ class PracticeScreenViewController: UIViewController {
         }
         
         func showLevelChangePopover() {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
             if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
                 popoverVC.modalPresentationStyle = .overFullScreen
                 popoverVC.modalTransitionStyle = .crossDissolve

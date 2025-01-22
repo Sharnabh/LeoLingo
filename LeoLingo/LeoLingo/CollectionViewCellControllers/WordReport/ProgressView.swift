@@ -32,6 +32,7 @@ class ProgressView: UIView {
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor(red: 123/255, green: 67/255, blue: 46/255, alpha: 1)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.adjustsFontSizeToFitWidth = true
         addSubview(titleLabel)
         
         

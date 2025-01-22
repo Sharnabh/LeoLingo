@@ -10,7 +10,7 @@ import UIKit
 class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     var badges: [Badge] = [
-        Badge(badgeTitle: "Busy Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
+        Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
         Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
         Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
         Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: true),

@@ -72,7 +72,7 @@ class PracticeScreenViewController: UIViewController {
     func updateUI() {
         let currentData = Data[0][currentIndex]
         directionLabel.text = ""
-        wordImage.image = UIImage(named: currentData.wordImage)
+        wordImage.image = UIImage(named: currentData.wordImage!)
         mojoImage.image = UIImage(named: "mojo2") // Update as needed
         
         

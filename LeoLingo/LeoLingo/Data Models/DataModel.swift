@@ -17,7 +17,7 @@ struct Word {
     var wordTitle: String
     var wordImage: String?
     var record: Record?
-    var isPracticed: Bool?
+    var isPracticed: Bool = false
     
     var avgAccuracy: Double {
         guard let record = record,

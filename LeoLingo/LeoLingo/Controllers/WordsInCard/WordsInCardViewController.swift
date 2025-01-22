@@ -5,15 +5,15 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     @IBOutlet weak var collectionView: UICollectionView!
     
     let items = [
-        ("Rat", "image1"),
-        ("Carrot", "image1"),
-        ("Arm", "image1"),
-        ("Deer", "image1"),
-        ("Rabbit", "image1"),
-        ("Shirt", "image1"),
-        ("Horse", "image1"),
-        ("Earth", "image1"),
-        ("Food", "image1")
+        ("Rat", "rat"),
+        ("Carrot", "carrot"),
+        ("Deer", "deer"),
+        ("Rabbit", "rabbit"),
+        ("Shirt", "shirt"),
+        ("Horse", "horse"),
+        ("Earth", "earth"),
+        ("Write", "write"),
+        ("Correct", "correct")
     ]
     
     override func viewDidLoad() {
@@ -24,15 +24,10 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName: "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CardCell")
-        collectionView.register(
-            UINib(nibName: "CollectionHeaderView", bundle: nil),
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "HeaderView"
-        )
-
-        
         configureFlowLayout()
     }
+    
+    
     
     private func configureFlowLayout() {
         let layout = UICollectionViewFlowLayout()
@@ -41,9 +36,6 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         layout.minimumInteritemSpacing = 20
         layout.itemSize = CGSize(width: 265, height: 290)
         layout.sectionInset = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30)
-        layout.headerReferenceSize = CGSize(width: collectionView.bounds.width, height: 60)
-        
-        
         collectionView.collectionViewLayout = layout
     }
     
@@ -56,9 +48,10 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         let (name, imageName) = items[indexPath.item]
         cell.configure(name: name, imageName: imageName)
         
-        collectionView.layer.borderWidth = 5
-        collectionView.layer.borderColor = UIColor.orange.cgColor
         collectionView.layer.cornerRadius = 27
+        collectionView.layer.borderWidth = 3
+        collectionView.layer.borderColor = UIColor(red: 225/255, green: 168/255, blue: 63/255, alpha: 1.0).cgColor
+        collectionView.clipsToBounds = true
         cell.layer.cornerRadius = 21
         
         cell.layer.shadowColor = UIColor.black.cgColor
@@ -67,17 +60,6 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         cell.layer.shadowRadius = 4
         return cell
     }
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionHeader {
-            let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: "HeaderView",
-                for: indexPath
-            ) as! HeaderCollectionReusableView
-            header.configure(title: "My Header", progress: 0.5)
-            return header
-        }
-        return UICollectionReusableView()
-    }
+    
 
 }

@@ -1,8 +1,40 @@
+////
+////  DashboardParentModeViewController.swift
+////  LeoLingo
+////
+////  Created by Batch - 2 on 21/01/25.
+////
 //
-//  DashboardParentModeViewController.swift
-//  LeoLingo
+//import UIKit
 //
-//  Created by Batch - 2 on 21/01/25.
+//class DashboardParentModeViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+//    
+//    
+//    
+//    @IBOutlet var levelView: UIView!
+//    
+//    @IBOutlet var levelBadgeImage: UIImageView!
+//    
+//    @IBOutlet var practiceTimeView: UIView!
+//    
+//    @IBOutlet var practiceTime: UILabel!
+//    @IBOutlet var averageAccuracyView: UIView!
+//    @IBOutlet var badgesEarnedView: UIView!
+//    @IBOutlet var mostInaccurateView: UIView!
+//    @IBOutlet var mojoSuggestion: UIView!
+//    @IBOutlet var beginnerProgressBar: UIProgressView!
+//    @IBOutlet var collectionView: UICollectionView!
+//  
+//    @IBOutlet var averageAccuracy: UILabel!
+//    
+//    @IBOutlet var badge1Image: UIImageView!
+//    
+//    @IBOutlet var badge2Image: UIImageView!
+//    
+//    
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        updateView()
 //
 
 import UIKit

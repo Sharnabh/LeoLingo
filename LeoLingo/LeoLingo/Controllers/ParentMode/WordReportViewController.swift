@@ -63,15 +63,15 @@ class WordReportViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        recordingView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        recordingView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
         recordingView.layer.borderWidth = 3
         recordingView.layer.cornerRadius = 0
         
-        levelsView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        levelsView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
         levelsView.layer.borderWidth = 5
         levelsView.layer.cornerRadius = 0
         
-        reportCollectionView.layer.borderColor = UIColor(red: 239/255, green: 212/255, blue: 155/255, alpha: 1).cgColor
+        reportCollectionView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
         reportCollectionView.layer.borderWidth = 5
         reportCollectionView.layer.cornerRadius = 0
         

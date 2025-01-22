@@ -21,10 +21,10 @@
                                 <rect key="frame" x="10" y="98" width="1356" height="836"/>
                                 <subviews>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="RUT-wS-bk9">
-                                        <rect key="frame" x="20" y="54" width="1316" height="200"/>
+                                        <rect key="frame" x="20" y="54" width="1316" height="190"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="bMz-01-B1h"/>
+                                            <constraint firstAttribute="height" constant="190" id="bMz-01-B1h"/>
                                         </constraints>
                                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="5qk-IS-zrk">
                                             <size key="itemSize" width="128" height="128"/>
@@ -44,7 +44,7 @@
                                         </cells>
                                     </collectionView>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dRH-Ag-csn">
-                                        <rect key="frame" x="20" y="308" width="1316" height="518"/>
+                                        <rect key="frame" x="20" y="298" width="1316" height="528"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3VW-4i-Yue">
                                             <size key="itemSize" width="128" height="128"/>
@@ -70,7 +70,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Badges" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ZX-Eh-RLX">
-                                        <rect key="frame" x="8" y="262" width="106" height="36"/>
+                                        <rect key="frame" x="8" y="252" width="106" height="36"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
                                         <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>

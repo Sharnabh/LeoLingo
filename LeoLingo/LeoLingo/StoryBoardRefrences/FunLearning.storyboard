@@ -42,7 +42,7 @@
                                 </cells>
                             </collectionView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fun Learning" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kT7-al-VhL">
-                                <rect key="frame" x="458" y="44" width="460" height="41"/>
+                                <rect key="frame" x="458" y="25" width="460" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
                                 <color key="textColor" red="0.52941176470588236" green="0.34901960784313724" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
@@ -65,7 +65,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
-                                <rect key="frame" x="1129.5" y="49" width="221.5" height="46"/>
+                                <rect key="frame" x="1129.5" y="25" width="221.5" height="46"/>
                                 <size key="titleShadowOffset" width="2" height="2"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Go to Parent Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
@@ -94,10 +94,10 @@
                             <constraint firstItem="GAa-jl-gfM" firstAttribute="leading" secondItem="n0F-IR-SxY" secondAttribute="trailing" constant="8" symbolic="YES" id="QSb-fv-z6q"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="top" secondItem="kT7-al-VhL" secondAttribute="bottom" constant="198" id="RYJ-Ge-4c7"/>
                             <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="kT7-al-VhL" secondAttribute="trailing" constant="458" id="Wez-tZ-lcC"/>
-                            <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="20" id="X4X-MI-QMr"/>
+                            <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="X4X-MI-QMr"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="231" id="bHw-SI-LKT"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="wo7-9d-hYw" secondAttribute="trailing" constant="8" id="bdy-QT-IWy"/>
-                            <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
+                            <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="s3s-3a-nJ3"/>
                             <constraint firstItem="GAa-jl-gfM" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="450" id="vUO-jG-r8Y"/>
                         </constraints>

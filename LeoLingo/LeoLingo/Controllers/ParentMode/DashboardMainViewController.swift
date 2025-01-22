@@ -1,27 +1,26 @@
 //
-//  ParentModeViewController.swift
+//  BadgesMainViewController.swift
 //  LeoLingo
 //
-//  Created by Batch - 2 on 21/01/25.
+//  Created by Batch - 2 on 22/01/25.
 //
 
 import UIKit
 
-class WordReportMain: UIViewController {
+class DashboardMainViewController: UIViewController {
 
-    @IBOutlet var wordReportView: UIView!
+    @IBOutlet var dashbaordView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        wordReportView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
-        wordReportView.layer.borderWidth = 5
-        wordReportView.layer.cornerRadius = 20
-        wordReportView.clipsToBounds = true
+        dashbaordView.backgroundColor = .none
+        dashbaordView.layer.borderColor = .none
+        dashbaordView.layer.borderWidth = 0
     }
     
     @IBAction func switchToKidsMode(_ sender: UIButton) {
         let alertVC = UIAlertController(title: "Do you want to exit Parent mode", message: nil, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in 
+        alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
             let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
             if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
                 homeVC.modalPresentationStyle = .fullScreen
@@ -34,5 +33,4 @@ class WordReportMain: UIViewController {
         self.present(alertVC, animated: true)
         
     }
-    
 }

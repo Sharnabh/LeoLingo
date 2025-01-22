@@ -42,6 +42,17 @@ class DashboardViewController: UIViewController {
         ]),
     ]
     
+    var badges: [Badge] = [
+        Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
+        Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
+        Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
+        Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: true),
+        Badge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny", isEarned: false),
+        Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
+    ]
+    
+    var earnedBadges: [Badge] = []
+    
     var minAccuracyWords: [Word]?
     
     
@@ -62,14 +73,26 @@ class DashboardViewController: UIViewController {
     @IBOutlet var averageAccuracy: UILabel!
     
     @IBOutlet var badge1Image: UIImageView!
+    @IBOutlet var badge1Label: UILabel!
     
     @IBOutlet var badge2Image: UIImageView!
+    @IBOutlet var badge2Label: UILabel!
     
     @IBOutlet var averageAccuracyLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateView()
+        
+        earnedBadges = badges.filter { $0.isEarned }
+        
+        badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
+        badge1Label.text = earnedBadges[0].badgeTitle
+        badge1Label.adjustsFontSizeToFitWidth = true
+        
+        badge2Image.image = UIImage(named: earnedBadges[1].badgeImage)
+        badge2Label.text = earnedBadges[1].badgeTitle
+        badge2Label.adjustsFontSizeToFitWidth = true
         
         let words = levels.flatMap { $0.words }
         let wordsWithRecord = words.filter { $0.record != nil }
@@ -131,6 +154,11 @@ class DashboardViewController: UIViewController {
     @IBAction func seeAllButtonTapped(_ sender: UIButton) {
         if let tabBarController = self.tabBarController {
             tabBarController.selectedIndex = 1
+        }
+    }
+    @IBAction func moreBadgesButtonTapped(_ sender: UIButton) {
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 2
         }
     }
 }

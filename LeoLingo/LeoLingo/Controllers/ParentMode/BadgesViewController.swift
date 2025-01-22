@@ -18,7 +18,9 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
         Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
     ]
     
-    var earnedBadges: [Badge] = []
+    var earnedBadges: [Badge] = [
+        Badge(badgeTitle: "Beginner", badgeDescription: " ", badgeImage: "bronze-medal", isEarned: true)
+    ]
     
     @IBOutlet weak var badgesEarnedCollectionView: UICollectionView!
     var layout: UICollectionViewFlowLayout?
@@ -29,18 +31,17 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let padding = CGFloat(40)
         layout = UICollectionViewFlowLayout()
         if let layout = layout {
             layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: 150, height: 150)
-            layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            layout.itemSize = CGSize(width: 150, height: 175)
             badgesEarnedCollectionView.collectionViewLayout = layout
             badgesEarnedCollectionView.delegate = self
             badgesEarnedCollectionView.dataSource = self
             badgesEarnedCollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
             badgesEarnedCollectionView.layer.cornerRadius = 20
-            badgesEarnedCollectionView.register(BadgesCollectionViewCell.self, forCellWithReuseIdentifier: BadgesCollectionViewCell.identifier)
+            let badgesNib = UINib(nibName: "BadgesCollectionViewCell", bundle: nil)
+            badgesEarnedCollectionView.register(badgesNib, forCellWithReuseIdentifier: BadgesCollectionViewCell.identifier)
         }
         layoutMain = UICollectionViewFlowLayout()
         if let layout = layoutMain {
@@ -62,14 +63,12 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            var earnedBadgesCounter = 0
             for badge in badges {
                 if badge.isEarned {
-                    earnedBadgesCounter += 1
                     earnedBadges.append(badge)
                 }
             }
-            return earnedBadgesCounter
+            return earnedBadges.count
         }
         return badges.count
     }

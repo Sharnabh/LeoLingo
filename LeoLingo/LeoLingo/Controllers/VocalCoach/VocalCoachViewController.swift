@@ -20,6 +20,16 @@ class VocalCoachViewController: UIViewController {
         
         let firstNib = UINib(nibName: "SoundCards", bundle: nil)
         soundCards.register(firstNib, forCellWithReuseIdentifier: "First")
+        
+        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButtonItem
+    }
+    
+    @objc private func backButtonTapped() {
+        if let presentingVC = self.presentingViewController?.presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        }
+
     }
     
     func updatePracticeCardView() {

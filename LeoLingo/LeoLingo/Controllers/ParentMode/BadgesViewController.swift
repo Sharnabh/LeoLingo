@@ -10,7 +10,7 @@ import UIKit
 class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     var badges: [Badge] = [
-        Badge(badgeTitle: "Busy Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
+        Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
         Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
         Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
         Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: true),
@@ -34,7 +34,7 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
         if let layout = layout {
             layout.scrollDirection = .horizontal
             layout.itemSize = CGSize(width: 150, height: 150)
-            layout.sectionInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+            layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             badgesEarnedCollectionView.collectionViewLayout = layout
             badgesEarnedCollectionView.delegate = self
             badgesEarnedCollectionView.dataSource = self
@@ -78,7 +78,7 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
         if collectionView == badgesEarnedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
             
-            cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)")
+            cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
             
             return cell
         }

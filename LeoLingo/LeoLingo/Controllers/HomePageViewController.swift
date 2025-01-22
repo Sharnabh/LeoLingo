@@ -84,15 +84,26 @@ class HomePageViewController: UIViewController {
 
       }
      
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
+        if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
+            parentHomeVC.modalPresentationStyle = .fullScreen
+            self.present(parentHomeVC, animated: true, completion: nil)
+        }
     }
-    */
-
+    @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+            vocalCoachVC.modalPresentationStyle = .fullScreen
+            self.present(vocalCoachVC, animated: true, completion: nil)
+        }
+    }
+    @IBAction func funLearningButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
+        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
+            funLearningVC.modalPresentationStyle = .fullScreen
+            self.present(funLearningVC, animated: true, completion: nil)
+        }
+    }
+    
 }

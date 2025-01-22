@@ -42,9 +42,12 @@ class GreetViewController: UIViewController {
     }
         func transitionToNextViewController() {
             // Transition to the next view controller
-            if let nextViewController = storyboard?.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-                        navigationController?.pushViewController(nextViewController, animated: true)
-                    }        }
+            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+            if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachNavControl") as? UINavigationController {
+                nextViewController.modalPresentationStyle = .fullScreen
+                self.present(nextViewController, animated: true, completion: nil)
+            }
+        }
         
     
 }

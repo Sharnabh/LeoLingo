@@ -34,7 +34,23 @@ class LockScreenViewController: UIViewController {
         passcodeView.layer.borderWidth = 2
         passcodeView.layer.borderColor = CGColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
         passcodeView.layer.cornerRadius = 30
+        
     }
+    
+    @IBAction func backButtonTapped1(_ sender: UIBarButtonItem) {
+//        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+//        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+//            homeVC.modalPresentationStyle = .fullScreen
+//            self.present(homeVC, animated: true, completion: nil)
+//        }
+        self.dismiss(animated: true)
+    }
+    
+//    @objc func backButtonTapped() {
+//        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+//        let vc = storyboard.instantiateViewController(withIdentifier: "HomePageViewController")
+//        self.present(vc, animated: true)
+//    }
     
     func configureCircleView(circleView: UIView) {
         circleView.layer.cornerRadius = circleView.frame.size.width / 2
@@ -63,8 +79,8 @@ class LockScreenViewController: UIViewController {
                     if myPasscode == code {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let sceneDelegate = windowScene.delegate as? SceneDelegate {
-                            let splitVC = storyboard?.instantiateViewController(withIdentifier: "SplitViewController") as! UISplitViewController
-                            sceneDelegate.window?.rootViewController = splitVC
+                            let tabBarBC = storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
+                            sceneDelegate.window?.rootViewController = tabBarBC
                         }
                     } else {
                         print("Bhag")

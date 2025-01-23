@@ -2,197 +2,240 @@
 //  WordReportViewController.swift
 //  LeoLingo
 //
-//  Created by Sharnabh on 16/01/25.
+//  Created by Batch - 2 on 20/01/25.
 //
 
 import UIKit
 
-class WordReportViewController: UIViewController, UIPopoverPresentationControllerDelegate {
-
-
-    @IBOutlet var reportCollectionView: UICollectionView!
-    @IBOutlet var progressSectionView: ProgressSection!
-    @IBOutlet var headingView: UIView!
+class WordReportViewController: UIViewController {
     
-    let allWords: [Word] = [
-        Word(wordTitle: "A", record: Record(attempts: 5, accuracy: [30, 40, 70, 60, 90]), isPracticed: true),
-        Word(wordTitle: "B", record: Record(attempts: 3, accuracy: [50, 60, 80]), isPracticed: true),
-        Word(wordTitle: "C", record: Record(attempts: 4, accuracy: [20, 30, 50, 70]), isPracticed: true),
-        Word(wordTitle: "D", isPracticed: false),
-        Word(wordTitle: "E", record: Record(attempts: 5, accuracy: [10, 20, 30, 40, 50]), isPracticed: true),
-        Word(wordTitle: "F", record: Record(attempts: 3, accuracy: [60, 70, 85]), isPracticed: true),
-        Word(wordTitle: "G", record: Record(attempts: 3, accuracy: [25, 35, 55]), isPracticed: true),
-        Word(wordTitle: "H", isPracticed: false),
-        Word(wordTitle: "I", record: Record(attempts: 2, accuracy: [90, 95]), isPracticed: true),
-        Word(wordTitle: "J", record: Record(attempts: 5, accuracy: [10, 15, 20, 25, 30]), isPracticed: true),
-        Word(wordTitle: "K", record: Record(attempts: 3, accuracy: [40, 45, 55]), isPracticed: true),
-        Word(wordTitle: "L", isPracticed: false),
-        Word(wordTitle: "M", record: Record(attempts: 4, accuracy: [30, 35, 50, 60]), isPracticed: true),
-        Word(wordTitle: "N", record: Record(attempts: 2, accuracy: [85, 90]), isPracticed: true),
-        Word(wordTitle: "O", record: Record(attempts: 5, accuracy: [15, 25, 35, 45, 55]), isPracticed: true),
-        Word(wordTitle: "P", isPracticed: false),
-        Word(wordTitle: "Q", record: Record(attempts: 3, accuracy: [65, 70, 85]), isPracticed: true),
-        Word(wordTitle: "R", record: Record(attempts: 4, accuracy: [50, 55, 60, 75]), isPracticed: true),
-        Word(wordTitle: "S", record: Record(attempts: 2, accuracy: [95, 100]), isPracticed: true),
-        Word(wordTitle: "T", isPracticed: false)
+    private let levels: [Level] = [
+        Level(levelTitle: "Level 1", levelImage: "1", words: [
+            Word(wordTitle: "A", record: Record(attempts: 5, accuracy: [30, 40, 70, 60, 90], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
+            Word(wordTitle: "B", record: Record(attempts: 3, accuracy: [50, 60, 80], recording: ["1", "2", "3"]), isPracticed: true),
+            Word(wordTitle: "C", record: Record(attempts: 4, accuracy: [20, 30, 50, 70], recording: ["1", "2", "3", "4"]), isPracticed: true),
+            Word(wordTitle: "D", record: Record(attempts: 2, accuracy: [50, 80], recording: ["1", "2"]), isPracticed: true)
+        ]),
+        Level(levelTitle: "Level 2", levelImage: "2", words: [
+            Word(wordTitle: "E", record: Record(attempts: 5, accuracy: [10, 20, 30, 40, 50], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
+            Word(wordTitle: "F", record: Record(attempts: 3, accuracy: [60, 70, 85], recording: ["1", "2", "3"]), isPracticed: true),
+            Word(wordTitle: "G", record: Record(attempts: 3, accuracy: [25, 35, 55], recording: ["1", "2", "3"]), isPracticed: true),
+            Word(wordTitle: "H", isPracticed: false)
+        ]),
+        Level(levelTitle: "Level 3", levelImage: "3", words: [
+            Word(wordTitle: "I", record: Record(attempts: 2, accuracy: [90, 95], recording: ["1", "2"]), isPracticed: true),
+            Word(wordTitle: "J", record: Record(attempts: 5, accuracy: [10, 15, 20, 25, 30], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
+            Word(wordTitle: "K", record: Record(attempts: 3, accuracy: [40, 45, 55], recording: ["1", "2", "3"]), isPracticed: true),
+            Word(wordTitle: "L", isPracticed: false)
+        ]),
+        Level(levelTitle: "Level 4", levelImage: "4", words: [
+            Word(wordTitle: "M", record: Record(attempts: 4, accuracy: [30, 35, 50, 60], recording: ["1", "2", "3", "4"]), isPracticed: true),
+            Word(wordTitle: "N", record: Record(attempts: 2, accuracy: [85, 90], recording: ["1", "2"]), isPracticed: true),
+            Word(wordTitle: "O", record: Record(attempts: 5, accuracy: [15, 25, 35, 45, 55], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
+            Word(wordTitle: "P", isPracticed: false)
+        ]),
+        Level(levelTitle: "Level 5", levelImage: "5", words: [
+            Word(wordTitle: "Q", record: Record(attempts: 3, accuracy: [65, 70, 85], recording: ["1", "2", "3"]), isPracticed: true),
+            Word(wordTitle: "R", record: Record(attempts: 4, accuracy: [50, 55, 60, 75], recording: ["1", "2", "3", "4"]), isPracticed: true),
+            Word(wordTitle: "S", record: Record(attempts: 2, accuracy: [95, 100], recording: ["1", "2"]), isPracticed: true),
+            Word(wordTitle: "T", isPracticed: false)
+        ]),
     ]
     
-    var previouslySelectedIndexPath: IndexPath?
+    var selectedRow: Int = 0
+    var selectedFilter: FIlterOptions = .all
+    private var isFilteringAllLevels = false
+    private var filteredWords: [Word] = []
 
-    var filteredWords: [Word] = []
-    var isFiltered: Bool = false
+
+    @IBOutlet var levelsTableView: UITableView!
+    @IBOutlet var levelsView: UIView!
+    @IBOutlet var reportCollectionView: UICollectionView!
+    @IBOutlet var recordingView: RecorrdingView!
+    
+    @IBOutlet var levelAverageLabel: UILabel!
+    @IBOutlet var wordLabel: UILabel!
+    @IBOutlet var accuracyLabel: UILabel!
+    @IBOutlet var accuracyGraph: ProgressGraphView!
+    
+    @IBOutlet var filterView: FilterView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.hidesBackButton = true
         
-        headingView.layer.shadowColor = UIColor.black.cgColor
-        headingView.layer.shadowOffset = CGSize(width: 0, height: 1)
-        headingView.layer.shadowOpacity = 0.5
-        headingView.layer.shadowRadius = 4
-        headingView.layer.cornerRadius = 20
-        headingView.layer.masksToBounds = false
+        recordingView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
+        recordingView.layer.borderWidth = 3
+        recordingView.layer.cornerRadius = 0
         
-        let wordReportNib = UINib(nibName: "WordReportCell", bundle: nil)
-        reportCollectionView.register(wordReportNib, forCellWithReuseIdentifier: WordReportCollectionViewCell.identifier)
-        reportCollectionView.register(WordReportHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: WordReportHeaderCollectionReusableView.identifier)
-        reportCollectionView.setCollectionViewLayout(setupLayout(), animated: true)
-        reportCollectionView.layer.cornerRadius = 20
+        levelsView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
+        levelsView.layer.borderWidth = 5
+        levelsView.layer.cornerRadius = 0
+        
+        reportCollectionView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
         reportCollectionView.layer.borderWidth = 5
-        reportCollectionView.layer.borderColor = UIColor(red: 225/255, green: 168/255, blue: 63/255, alpha: 1).cgColor
+        reportCollectionView.layer.cornerRadius = 0
         
-        filteredWords = allWords
+        filterView.layer.cornerRadius = 20
+        filterView.layer.shadowColor = UIColor.black.cgColor
+        filterView.layer.shadowOffset = CGSize(width: 4, height: 4)
+        filterView.layer.shadowOpacity = 0.4
+        filterView.layer.shadowRadius = 5
+        filterView.clipsToBounds = false
+        
+        
+
+        levelsTableView.delegate = self
+        levelsTableView.dataSource = self
+        
+        let reportNib = UINib(nibName: "WordReportCollectionViewCell", bundle: nil)
+        reportCollectionView.register(reportNib, forCellWithReuseIdentifier: WordReportCollectionViewCell.identifier)
         
         reportCollectionView.delegate = self
         reportCollectionView.dataSource = self
         
-        progressSectionView.layer.cornerRadius = 20
-        progressSectionView.layer.borderWidth = 5
-        progressSectionView.layer.borderColor = UIColor(red: 225/255, green: 168/255, blue: 63/255, alpha: 1).cgColor
+        filteredWords = levels.flatMap { $0.words }
+        
+    }
+
+    @IBAction func filterButtonTapped(_ sender: UIButton) {
+        UIView.transition(with: filterView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                self.filterView.isHidden.toggle()
+                self.filterView.configureTableView()
+            }) { _ in
+                if let selectedOption = self.filterView.option {
+                    sender.setTitle(selectedOption, for: .normal)
+                    self.isFilteringAllLevels = true
+                    self.selectedFilter = FIlterOptions(rawValue: selectedOption) ?? .all
+                    self.applyFilter(option: selectedOption)
+                    
+                    
+                }
+            }
+    }
+    
+    private func applyFilter(option: String) {
+        // If "All" is selected, show all words across all levels
+        if isFilteringAllLevels {
+                filteredWords = getFilteredWords() // Apply the filter across all levels
+            } else if let level = levels[safe: selectedRow] {
+                // If a specific level is selected, show words from that level only
+                filteredWords = getFilteredWords(for: level) // Apply the filter for the selected level
+            }
+            
+            // Reload collection view to reflect filtered words
+            reportCollectionView.reloadData()
+    }
+
+    
+    private func getFilteredWords() -> [Word] {
+        let allWords = levels.flatMap { $0.words }
+
+            switch selectedFilter {
+            case .all:
+                return allWords
+            case .accurate:
+                return allWords.filter { word in
+                    word.record?.accuracy!.contains { $0 >= 70 } ?? false
+                }
+            case .inaccurate:
+                return allWords.filter { word in
+                    word.record?.accuracy!.allSatisfy { $0 < 70 } ?? false
+                }
+            }
+    }
+
+    
+    private func getFilteredWords(for level: Level) -> [Word] {
+        switch selectedFilter {
+            case .all:
+                return level.words
+            case .accurate:
+                return level.words.filter { word in
+                    word.record?.accuracy!.contains { $0 >= 70 } ?? false
+                }
+            case .inaccurate:
+                return level.words.filter { word in
+                    word.record?.accuracy!.allSatisfy { $0 < 70 } ?? false
+                }
+            }
     }
 
 }
 
-
-extension WordReportViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
     
-    private func setupLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 7)
-//        group.interItemSpacing = .fixed(30)
-        
-        let section = NSCollectionLayoutSection(group: group)
-//        section.interGroupSpacing = 30
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
-        let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-        header.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 40)
-        section.boundarySupplementaryItems = [header]
-        
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        
-        return layout
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            levels.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = levelsTableView.dequeueReusableCell(withIdentifier: "LevelCell", for: indexPath) as! LevelsTableViewCell
+        let level = levels[indexPath.row]
         
-        let headerView = reportCollectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: WordReportHeaderCollectionReusableView.identifier,
-            for: indexPath) as! WordReportHeaderCollectionReusableView
-        
-        headerView.delegate = self  // Set delegate
-        
-        return headerView
+        cell.configureCell(level: level.levelTitle, completed: level.isCompleted)
+        return cell
     }
-
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedRow = indexPath.row
+//        levelAverageLabel.text = "\(levels[selectedRow].avgAccuracy)%"
+        levelAverageLabel.text = String(format: "%.1f%%", levels[selectedRow].avgAccuracy)
+        isFilteringAllLevels = false
+        reportCollectionView.reloadData()
+    }
+}
+
+extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isFiltered ? filteredWords.count : allWords.count
+        return isFilteringAllLevels ? filteredWords.count : levels[selectedRow].words.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = reportCollectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
-        let word = filteredWords[indexPath.item]
-        
-        cell.backgroundColor = .white
-        cell.layer.cornerRadius = 10
-        cell.layer.shadowColor = UIColor.black.cgColor
-        cell.layer.shadowOffset = CGSize(width: 0, height: 1)
-        cell.layer.shadowRadius = 4
-        cell.layer.shadowOpacity = 0.5
-        cell.layer.masksToBounds = false
-        
-        cell.updateLabel(with: word.wordTitle)
-        
-        return cell
-    }
+        let cell = reportCollectionView.dequeueReusableCell(
+                    withReuseIdentifier: WordReportCollectionViewCell.identifier,
+                    for: indexPath
+                ) as! WordReportCollectionViewCell
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 1. Deselect the previously selected item (if exists)
-        if let previouslySelectedIndexPath = previouslySelectedIndexPath {
-            if let previousCell = collectionView.cellForItem(at: previouslySelectedIndexPath) as? WordReportCollectionViewCell {
-                // Reset the color of the previously selected item
-                previousCell.backgroundColor = .white
-                previousCell.wordLabel.textColor = .black
-                previousCell.layer.cornerRadius = 10
-                previousCell.layer.shadowColor = UIColor.black.cgColor
-                previousCell.layer.shadowOffset = CGSize(width: 0, height: 1)
-                previousCell.layer.shadowRadius = 4
-                previousCell.layer.shadowOpacity = 0.5
-                previousCell.layer.masksToBounds = false // or your original color
-            }
+        switch isFilteringAllLevels {
+            case true:
+            let word = filteredWords[indexPath.item]
+            cell.updateLabel(with: word)
+        case false:
+            let level = levels[selectedRow]
+            let word = level.words[indexPath.item]
+            cell.updateLabel(with: word)
         }
-        
-        // 2. Select the new item
-        guard let cell = collectionView.cellForItem(at: indexPath) as? WordReportCollectionViewCell else { return }
-        
-        let word = filteredWords[indexPath.item]
-        cell.backgroundColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1)
-        cell.wordLabel.textColor = .white
-        cell.updateLabel(with: word.wordTitle)
-        cell.layer.cornerRadius = 10
-        
-        // 3. Update the progress section view
-        progressSectionView.configureView(word: word)
-        
-        // 4. Save the current selected indexPath for later deselection
-        previouslySelectedIndexPath = indexPath
-    }
-
-}
-
-extension WordReportViewController: WordReportHeaderViewDelegate {
-    func didTapAllButton() {
-        isFiltered = false
-        filteredWords = allWords
-        reportCollectionView.reloadData()
+                
+            return cell
     }
     
-    func didTapFilterButton(_ sender: UIButton) {
-        let filterVC = FilterViewController()
-//        filterVC.delegate = self
-        filterVC.modalPresentationStyle = .popover
-
-        if let popoverController = filterVC.popoverPresentationController {
-            popoverController.delegate = self
-            popoverController.sourceView = sender
-            popoverController.sourceRect = CGRect(x: view.bounds.midX, y: 100, width: 0, height: 0) // Position
-            popoverController.permittedArrowDirections = .up
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        var word: Word
+        switch isFilteringAllLevels {
+        case true:
+             word = filteredWords[indexPath.item]
+        case false:
+             word = levels[selectedRow].words[indexPath.item]
         }
+        
+                
+        wordLabel.text = word.wordTitle
+        accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)
+        
+        if let record = word.record {
+            accuracyGraph.updateChartData(accuracyData: record.accuracy!)
+            recordingView.configureTableData(with: record, isEnabled: true)
+        } else {
+            accuracyGraph.updateChartData(accuracyData: [0])
+            recordingView.configureTableData(with: nil, isEnabled: false)
+        }
+    }
+    }
 
-        present(filterVC, animated: true)
+
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return index >= 0 && index < count ? self[index] : nil
     }
 }
-
-//extension WordReportViewController: FilterViewControllerDelegate {
-//    func didApplyFilter(averageAccuracy: Float, isPracticed: Bool, isPassed: Bool) {
-//        isFiltered = true
-//        filteredWords = allWords.filter { $0.isPracticed == isPracticed }
-//        reportCollectionView.reloadData()
-//    }
-//}

@@ -20,6 +20,7 @@ class LetterSearchedCollectionViewCell: UICollectionViewCell {
     var indexPath: IndexPath?
     
     func configureCell(with word: String, at indexPath: IndexPath) {
+        searchedWordLabel.adjustsFontSizeToFitWidth = true
         searchedWordLabel.text =  word
         self.indexPath = indexPath
     }

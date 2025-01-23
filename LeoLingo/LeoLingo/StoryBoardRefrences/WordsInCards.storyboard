@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="m55-yv-aUA">
+    <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Words In Card View Controller-->
+        <scene sceneID="p8l-uA-0xg">
+            <objects>
+                <viewController storyboardIdentifier="WordsInCards" id="m55-yv-aUA" customClass="WordsInCardViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Fqh-Vm-tAy">
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="CdV-SM-tw1">
+                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                            </imageView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="xRv-xT-mT9">
+                                <rect key="frame" x="120" y="205" width="1136" height="660"/>
+                                <color key="backgroundColor" red="0.99183267350000004" green="0.98502975699999995" blue="0.94117015599999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="660" id="gr2-De-L6F"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="FXh-pm-13k">
+                                    <size key="itemSize" width="150" height="149"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="" id="TMY-4w-bNq">
+                                        <rect key="frame" x="0.0" y="0.0" width="150" height="149"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="fhH-Fn-Oyc">
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="149"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="150" height="149"/>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="kq9-ZC-Zxq"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="CdV-SM-tw1" secondAttribute="bottom" id="BUy-af-qSY"/>
+                            <constraint firstItem="CdV-SM-tw1" firstAttribute="trailing" secondItem="kq9-ZC-Zxq" secondAttribute="trailing" id="FGK-jx-AVq"/>
+                            <constraint firstItem="CdV-SM-tw1" firstAttribute="top" secondItem="Fqh-Vm-tAy" secondAttribute="top" id="KHd-57-sqv"/>
+                            <constraint firstItem="xRv-xT-mT9" firstAttribute="leading" secondItem="kq9-ZC-Zxq" secondAttribute="leading" constant="120" id="cvs-P4-1wO"/>
+                            <constraint firstItem="xRv-xT-mT9" firstAttribute="centerX" secondItem="CdV-SM-tw1" secondAttribute="centerX" id="l5O-hL-hpn"/>
+                            <constraint firstItem="xRv-xT-mT9" firstAttribute="top" secondItem="kq9-ZC-Zxq" secondAttribute="top" constant="181" id="mjK-jJ-SQ7"/>
+                            <constraint firstItem="CdV-SM-tw1" firstAttribute="centerX" secondItem="Fqh-Vm-tAy" secondAttribute="centerX" id="nyf-Wz-ba2"/>
+                            <constraint firstItem="CdV-SM-tw1" firstAttribute="leading" secondItem="kq9-ZC-Zxq" secondAttribute="leading" id="o5o-92-byW"/>
+                            <constraint firstItem="CdV-SM-tw1" firstAttribute="centerY" secondItem="Fqh-Vm-tAy" secondAttribute="centerY" id="wbw-fN-DLy"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="collectionView" destination="xRv-xT-mT9" id="F8s-aJ-scl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SWN-lT-Shf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="700.72674418604652" y="8.720930232558139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="BaseBackdrop" width="605" height="417"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

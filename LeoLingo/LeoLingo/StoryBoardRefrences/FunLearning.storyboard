@@ -13,7 +13,7 @@
         <!--Fun Learning View Controller-->
         <scene sceneID="Ivd-LC-U9p">
             <objects>
-                <viewController id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FunLearningVC" id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kX9-gt-BHf">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -42,7 +42,7 @@
                                 </cells>
                             </collectionView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fun Learning" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kT7-al-VhL">
-                                <rect key="frame" x="458" y="25" width="460" height="41"/>
+                                <rect key="frame" x="458" y="25" width="460" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
                                 <color key="textColor" red="0.52941176470588236" green="0.34901960784313724" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
@@ -65,10 +65,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
-                                <rect key="frame" x="1134" y="25" width="222" height="46"/>
+                                <rect key="frame" x="1200" y="25" width="151" height="46"/>
                                 <size key="titleShadowOffset" width="2" height="2"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Go to Parent Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
+                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
                                     <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
                                     <backgroundConfiguration key="background">
                                         <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -77,6 +77,9 @@
                                     <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <action selector="kidsModeButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="wbt-cu-y34"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="R9T-Zw-OeI"/>
@@ -86,12 +89,13 @@
                             <constraint firstItem="R9T-Zw-OeI" firstAttribute="bottom" secondItem="n0F-IR-SxY" secondAttribute="bottom" constant="190" id="2f8-el-2Ad"/>
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" id="52Z-eg-oaY"/>
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" id="9bK-Bh-mr3"/>
-                            <constraint firstItem="t3N-lJ-2Oc" firstAttribute="trailing" secondItem="kX9-gt-BHf" secondAttribute="trailing" constant="-20" id="Eho-fx-8KF"/>
+                            <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="t3N-lJ-2Oc" secondAttribute="trailing" constant="25" id="Eho-fx-8KF"/>
                             <constraint firstAttribute="bottom" secondItem="lzE-zW-nlS" secondAttribute="bottom" id="IR5-4i-zz0"/>
                             <constraint firstItem="wo7-9d-hYw" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="450" id="JXm-mz-IcV"/>
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="trailing" secondItem="R9T-Zw-OeI" secondAttribute="trailing" id="N8d-Sa-UEm"/>
                             <constraint firstItem="kT7-al-VhL" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="458" id="NiA-3p-6uX"/>
-                            <constraint firstItem="GAa-jl-gfM" firstAttribute="leading" secondItem="n0F-IR-SxY" secondAttribute="trailing" constant="8" id="Uem-Zb-7W1"/>
+                            <constraint firstItem="GAa-jl-gfM" firstAttribute="leading" secondItem="n0F-IR-SxY" secondAttribute="trailing" constant="8" symbolic="YES" id="QSb-fv-z6q"/>
+                            <constraint firstItem="n0F-IR-SxY" firstAttribute="top" secondItem="kT7-al-VhL" secondAttribute="bottom" constant="198" id="RYJ-Ge-4c7"/>
                             <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="kT7-al-VhL" secondAttribute="trailing" constant="458" id="Wez-tZ-lcC"/>
                             <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="X4X-MI-QMr"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="231" id="bHw-SI-LKT"/>

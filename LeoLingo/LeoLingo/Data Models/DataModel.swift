@@ -81,11 +81,10 @@ struct Badge {
 }
 
 struct JungleRun {
-    var backgroundImage: [String]
-    var avatarImage: [String]
-    var noOfLives: Int
-    var coins: Int
-    var diamonds: Int
+    var coins: Int = 0
+    var diamonds: Int = 0
+    var word: String?
+    var isAccurate: Bool = false
 }
 
 struct FilterSettings {

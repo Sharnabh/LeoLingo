@@ -12,56 +12,56 @@
         <!--Jungle Run Home View Controller-->
         <scene sceneID="5OS-T8-Mhz">
             <objects>
-                <viewController storyboardIdentifier="JungleRunHomeViewController" id="LQ0-5B-dYw" customClass="JungleRunHomeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="JungleRunHome" id="LQ0-5B-dYw" customClass="JungleRunHomeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ity-d2-iMe">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="JungleRunLogo" translatesAutoresizingMaskIntoConstraints="NO" id="Ujf-pj-Dt6">
-                                <rect key="frame" x="0.0" y="50" width="1180" height="770"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="JungleRunLogo" translatesAutoresizingMaskIntoConstraints="NO" id="Ujf-pj-Dt6">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tht-Oj-tup">
-                                <rect key="frame" x="539.5" y="498" width="101" height="62"/>
-                                <color key="tintColor" red="0.14509806040000001" green="0.231372565" blue="0.13725490870000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Play">
-                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="40"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="playButtonTapped:" destination="LQ0-5B-dYw" eventType="touchUpInside" id="9Wz-eh-Ix2"/>
-                                </connections>
-                            </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="6fV-jA-T9S">
-                                <rect key="frame" x="78" y="222" width="94" height="96"/>
+                                <rect key="frame" x="101" y="222" width="74.5" height="96"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="njh-yN-Xtl">
-                                        <rect key="frame" x="0.0" y="0.0" width="94" height="48"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="njh-yN-Xtl">
+                                        <rect key="frame" x="0.0" y="0.0" width="74.5" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wiv-1N-5LX">
-                                        <rect key="frame" x="0.0" y="48" width="94" height="48"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                        <rect key="frame" x="0.0" y="60" width="74.5" height="36"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tht-Oj-tup">
+                                <rect key="frame" x="503" y="470" width="174.5" height="150.5"/>
+                                <color key="tintColor" red="0.14509806040000001" green="0.231372565" blue="0.13725490870000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="play.circle.fill" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="100"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="playButtonTapped:" destination="LQ0-5B-dYw" eventType="touchUpInside" id="9Wz-eh-Ix2"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="niM-og-lMd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Ujf-pj-Dt6" firstAttribute="top" secondItem="Ity-d2-iMe" secondAttribute="topMargin" constant="-24" id="OPP-nB-bpF"/>
+                            <constraint firstAttribute="bottom" secondItem="Ujf-pj-Dt6" secondAttribute="bottom" id="Icy-UH-RIV"/>
+                            <constraint firstItem="Ujf-pj-Dt6" firstAttribute="top" secondItem="Ity-d2-iMe" secondAttribute="topMargin" constant="-74" id="OPP-nB-bpF"/>
                             <constraint firstItem="niM-og-lMd" firstAttribute="bottom" secondItem="Ujf-pj-Dt6" secondAttribute="bottom" constant="-20" id="T0N-Ud-mnN"/>
                             <constraint firstItem="niM-og-lMd" firstAttribute="trailing" secondItem="Ujf-pj-Dt6" secondAttribute="trailing" id="WG7-al-kMQ"/>
                             <constraint firstItem="Tht-Oj-tup" firstAttribute="centerX" secondItem="Ity-d2-iMe" secondAttribute="centerX" id="aDs-FF-cRk"/>
                             <constraint firstItem="niM-og-lMd" firstAttribute="bottom" secondItem="6fV-jA-T9S" secondAttribute="bottom" constant="482" id="i3N-MY-ZC4"/>
-                            <constraint firstItem="6fV-jA-T9S" firstAttribute="leading" secondItem="niM-og-lMd" secondAttribute="leading" constant="78" id="kbF-kr-Put"/>
                             <constraint firstItem="6fV-jA-T9S" firstAttribute="top" secondItem="niM-og-lMd" secondAttribute="top" constant="148" id="lib-aS-Q8f"/>
+                            <constraint firstItem="6fV-jA-T9S" firstAttribute="leading" secondItem="niM-og-lMd" secondAttribute="leading" constant="101" id="q9K-5n-yTM"/>
                             <constraint firstItem="Ujf-pj-Dt6" firstAttribute="leading" secondItem="niM-og-lMd" secondAttribute="leading" id="sv6-jy-ety"/>
-                            <constraint firstItem="Tht-Oj-tup" firstAttribute="centerY" secondItem="Ujf-pj-Dt6" secondAttribute="centerY" constant="94" id="tIR-Vg-4Pj"/>
-                            <constraint firstItem="niM-og-lMd" firstAttribute="trailing" secondItem="6fV-jA-T9S" secondAttribute="trailing" constant="1008" id="zgf-yy-0qU"/>
+                            <constraint firstItem="Tht-Oj-tup" firstAttribute="centerY" secondItem="Ujf-pj-Dt6" secondAttribute="centerY" constant="135" id="tIR-Vg-4Pj"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="G8O-wb-ub0"/>
@@ -82,6 +82,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7O-Mf-cRM">
+                                <rect key="frame" x="1072" y="51" width="54" height="52"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain">
+                                    <imageReference key="image" image="pause.circle.fill" catalog="system" symbolScale="large" variableValue="1"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="45"/>
+                                    <color key="baseForegroundColor" red="0.14509806040000001" green="0.2352941036" blue="0.13725490870000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="pauseButtonTapped:" destination="uiu-Eo-igq" eventType="touchUpInside" id="4Zw-zh-FB3"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="stb-EY-EEs">
                                 <rect key="frame" x="20" y="186" width="98" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -96,18 +108,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7O-Mf-cRM">
-                                <rect key="frame" x="1072" y="51" width="54" height="52"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain">
-                                    <imageReference key="image" image="pause.circle.fill" catalog="system" symbolScale="large" variableValue="1"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="45"/>
-                                    <color key="baseForegroundColor" red="0.14509806040000001" green="0.2352941036" blue="0.13725490870000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="pauseButtonTapped:" destination="uiu-Eo-igq" eventType="touchUpInside" id="4Zw-zh-FB3"/>
-                                </connections>
-                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zOz-Et-zeB">
                                 <rect key="frame" x="454" y="273" width="272" height="274"/>
                                 <subviews>
@@ -182,7 +182,6 @@
                         <outlet property="diamondLabel" destination="stb-EY-EEs" id="uoQ-tc-KPl"/>
                         <outlet property="pauseButton" destination="j7O-Mf-cRM" id="qGq-rp-6aX"/>
                         <outlet property="pauseMenu" destination="zOz-Et-zeB" id="THz-lR-drm"/>
-                        <outlet property="tapGesture" destination="v5M-lp-SvS" id="U0e-K9-hAl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O9U-B6-CyT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -210,7 +209,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="JungleRunLogo" width="1452" height="1026"/>
+        <image name="JungleRunLogo" width="1462" height="1014"/>
         <image name="arrow.clockwise.circle.fill" catalog="system" width="128" height="123"/>
         <image name="delete.left.fill" catalog="system" width="128" height="102"/>
         <image name="pause.circle.fill" catalog="system" width="128" height="123"/>

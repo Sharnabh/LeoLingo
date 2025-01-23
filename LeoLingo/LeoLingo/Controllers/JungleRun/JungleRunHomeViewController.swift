@@ -20,8 +20,10 @@ class JungleRunHomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        coinScoreLabel.text = "Coins: \(coinScore)"
-                diamondScoreLabel.text = "Diamonds: \(diamondScore)"
+        coinScoreLabel.text = "💰Coins: \(coinScore)"
+                diamondScoreLabel.text = "💎 Diamonds: \(diamondScore)"
+        coinScoreLabel.textColor = .systemBrown
+        diamondScoreLabel.textColor = .systemBrown
     }
     
     @IBAction func playButtonTapped(_ sender: UIButton) {

@@ -33,10 +33,10 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     private func configureFlowLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
-        layout.minimumInteritemSpacing = 20
-        layout.itemSize = CGSize(width: 265, height: 290)
-        layout.sectionInset = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30)
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.itemSize = CGSize(width: 250, height: 250)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         collectionView.collectionViewLayout = layout
     }
     

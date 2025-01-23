@@ -19,6 +19,10 @@ class GreetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        greetLabel.adjustsFontSizeToFitWidth = true
+        greetEmojiLabel.adjustsFontSizeToFitWidth = true
+        
+        
         startAnimations()
         // Do any additional setup after loading the view.
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {

@@ -8,7 +8,7 @@
 import Foundation
 
 struct Record {
-    var attempts: Int
+    var attempts: Int = 0
     var accuracy: [Double]?
     var recording: [String]?
 }
@@ -70,7 +70,7 @@ struct Badge {
     var badgeTitle: String
     var badgeDescription: String
     var badgeImage: String
-    var isEarned: Bool
+    var isEarned: Bool = false
 }
 
 struct JungleRun {

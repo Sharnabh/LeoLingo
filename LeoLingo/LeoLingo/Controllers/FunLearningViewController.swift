@@ -20,6 +20,10 @@ class FunLearningViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButtonItem
+        navigationItem.leftBarButtonItem?.tintColor = .white
+        
         let gameCellNib = UINib(nibName: "FunLearningGamesCollectionViewCell", bundle: nil)
         gamesCollectionView.register(gameCellNib, forCellWithReuseIdentifier: "FunLearningGamesCollectionViewCell")
         gamesCollectionView.setCollectionViewLayout(configureLayout(), animated: true)
@@ -31,6 +35,14 @@ class FunLearningViewController: UIViewController {
         
         gamesCollectionView.delegate = self
         gamesCollectionView.dataSource = self
+    }
+    
+    @objc private func backButtonTapped() {
+        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            funLearningVC.modalPresentationStyle = .fullScreen
+            present(funLearningVC, animated: true)
+        }
     }
 
     @IBAction func nextButtonTapped(_ sender: UIButton) {
@@ -105,5 +117,16 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 1
+        {
+            let storyboard = UIStoryboard(name: "JungleRun", bundle: nil)
+            if let vc = storyboard.instantiateViewController(withIdentifier: "jungleRunNav") as? UINavigationController {
+                vc.modalPresentationStyle = .fullScreen
+                present(vc, animated: true)
+            }
+            
+        }
+    }
     
 }

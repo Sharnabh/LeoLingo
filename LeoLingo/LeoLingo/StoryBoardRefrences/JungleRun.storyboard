@@ -192,7 +192,7 @@
         <!--Navigation Controller-->
         <scene sceneID="Uf7-hG-XD2">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bhS-Rj-Syv" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="jungleRunNav" automaticallyAdjustsScrollViewInsets="NO" id="bhS-Rj-Syv" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wDr-br-iAp">
                         <rect key="frame" x="0.0" y="24" width="1180" height="50"/>

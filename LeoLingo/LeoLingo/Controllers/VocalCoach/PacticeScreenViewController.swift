@@ -95,6 +95,7 @@ class PracticeScreenViewController: UIViewController {
             levels[levelIndex].words[currentIndex].record = Record(attempts: 0, accuracy: [], recording: [])
         }
         
+        levels[levelIndex].words[currentIndex].isPracticed = true
         levels[levelIndex].words[currentIndex].record?.accuracy?.append(contentsOf: accuracies)
         levels[levelIndex].words[currentIndex].record?.attempts += attempts
     }

@@ -4,7 +4,7 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-//    var selectedItem: Int?
+    var selectedItem: String?
     
     let items = [
         ("Wrist", "wrist"),

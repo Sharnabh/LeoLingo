@@ -24,6 +24,17 @@ class JungleRunHomeViewController: UIViewController {
                 diamondScoreLabel.text = "💎 Diamonds: \(diamondScore)"
         coinScoreLabel.textColor = .systemBrown
         diamondScoreLabel.textColor = .systemBrown
+        
+        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButtonItem
+    }
+    
+    @objc private func backButtonTapped() {
+        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            funLearningVC.modalPresentationStyle = .fullScreen
+            present(funLearningVC, animated: true)
+        }
     }
     
     @IBAction func playButtonTapped(_ sender: UIButton) {

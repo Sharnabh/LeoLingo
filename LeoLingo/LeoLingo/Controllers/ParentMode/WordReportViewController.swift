@@ -10,31 +10,31 @@ import UIKit
 class WordReportViewController: UIViewController {
     
     private let levels: [Level] = [
-        Level(levelTitle: "Level 1", words: [
+        Level(levelTitle: "Level 1", levelImage: "1", words: [
             Word(wordTitle: "A", record: Record(attempts: 5, accuracy: [30, 40, 70, 60, 90], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
             Word(wordTitle: "B", record: Record(attempts: 3, accuracy: [50, 60, 80], recording: ["1", "2", "3"]), isPracticed: true),
             Word(wordTitle: "C", record: Record(attempts: 4, accuracy: [20, 30, 50, 70], recording: ["1", "2", "3", "4"]), isPracticed: true),
             Word(wordTitle: "D", record: Record(attempts: 2, accuracy: [50, 80], recording: ["1", "2"]), isPracticed: true)
         ]),
-        Level(levelTitle: "Level 2", words: [
+        Level(levelTitle: "Level 2", levelImage: "2", words: [
             Word(wordTitle: "E", record: Record(attempts: 5, accuracy: [10, 20, 30, 40, 50], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
             Word(wordTitle: "F", record: Record(attempts: 3, accuracy: [60, 70, 85], recording: ["1", "2", "3"]), isPracticed: true),
             Word(wordTitle: "G", record: Record(attempts: 3, accuracy: [25, 35, 55], recording: ["1", "2", "3"]), isPracticed: true),
             Word(wordTitle: "H", isPracticed: false)
         ]),
-        Level(levelTitle: "Level 3", words: [
+        Level(levelTitle: "Level 3", levelImage: "3", words: [
             Word(wordTitle: "I", record: Record(attempts: 2, accuracy: [90, 95], recording: ["1", "2"]), isPracticed: true),
             Word(wordTitle: "J", record: Record(attempts: 5, accuracy: [10, 15, 20, 25, 30], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
             Word(wordTitle: "K", record: Record(attempts: 3, accuracy: [40, 45, 55], recording: ["1", "2", "3"]), isPracticed: true),
             Word(wordTitle: "L", isPracticed: false)
         ]),
-        Level(levelTitle: "Level 4", words: [
+        Level(levelTitle: "Level 4", levelImage: "4", words: [
             Word(wordTitle: "M", record: Record(attempts: 4, accuracy: [30, 35, 50, 60], recording: ["1", "2", "3", "4"]), isPracticed: true),
             Word(wordTitle: "N", record: Record(attempts: 2, accuracy: [85, 90], recording: ["1", "2"]), isPracticed: true),
             Word(wordTitle: "O", record: Record(attempts: 5, accuracy: [15, 25, 35, 45, 55], recording: ["1", "2", "3", "4", "5"]), isPracticed: true),
             Word(wordTitle: "P", isPracticed: false)
         ]),
-        Level(levelTitle: "Level 5", words: [
+        Level(levelTitle: "Level 5", levelImage: "5", words: [
             Word(wordTitle: "Q", record: Record(attempts: 3, accuracy: [65, 70, 85], recording: ["1", "2", "3"]), isPracticed: true),
             Word(wordTitle: "R", record: Record(attempts: 4, accuracy: [50, 55, 60, 75], recording: ["1", "2", "3", "4"]), isPracticed: true),
             Word(wordTitle: "S", record: Record(attempts: 2, accuracy: [95, 100], recording: ["1", "2"]), isPracticed: true),

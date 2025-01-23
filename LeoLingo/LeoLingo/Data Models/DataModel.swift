@@ -7,8 +7,15 @@
 
 import Foundation
 
+struct UserData {
+    var name: String
+    var phoneNumber: String
+    var password: String
+    var passcode: String
+}
+
 struct Record {
-    var attempts: Int
+    var attempts: Int = 0
     var accuracy: [Double]?
     var recording: [String]?
 }
@@ -38,6 +45,7 @@ struct Word {
 
 struct Level {
     var levelTitle: String
+    var levelImage: String
     var words: [Word]
     
     var avgAccuracy: Double {
@@ -69,7 +77,7 @@ struct Badge {
     var badgeTitle: String
     var badgeDescription: String
     var badgeImage: String
-    var isEarned: Bool
+    var isEarned: Bool = false
 }
 
 struct JungleRun {

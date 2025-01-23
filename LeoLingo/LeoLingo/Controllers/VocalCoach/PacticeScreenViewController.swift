@@ -1,58 +1,5 @@
 import UIKit
 
-
-
-let mojoData1: [Word] = [
-    Word(wordTitle: "Rabbit", wordImage: "bunny"),
-    Word(wordTitle: "Cat", wordImage: "cat"),
-    Word(wordTitle: "Dog", wordImage: "dog"),
-    Word(wordTitle: "Elephant", wordImage: "elephant"),
-    Word(wordTitle: "Bee", wordImage: "bee"),
-    Word(wordTitle: "Owl", wordImage: "owl")
-]
-
-let mojoData2: [Word] = [
-    Word(wordTitle: "Rabbit", wordImage: "bunny"),
-    Word(wordTitle: "Cat", wordImage: "cat"),
-    Word(wordTitle: "Dog", wordImage: "dog"),
-    Word(wordTitle: "Elephant", wordImage: "elephant"),
-    Word(wordTitle: "Bee", wordImage: "bee"),
-    Word(wordTitle: "Owl", wordImage: "owl")
-]
-
-let mojoData3: [Word] = [
-    Word(wordTitle: "Rabbit", wordImage: "bunny"),
-    Word(wordTitle: "Cat", wordImage: "cat"),
-    Word(wordTitle: "Dog", wordImage: "dog"),
-    Word(wordTitle: "Elephant", wordImage: "elephant"),
-    Word(wordTitle: "Bee", wordImage: "bee"),
-    Word(wordTitle: "Owl", wordImage: "owl")
-]
-
-let mojoData4: [Word] = [
-    Word(wordTitle: "Rabbit", wordImage: "bunny"),
-    Word(wordTitle: "Cat", wordImage: "cat"),
-    Word(wordTitle: "Dog", wordImage: "dog"),
-    Word(wordTitle: "Elephant", wordImage: "elephant"),
-    Word(wordTitle: "Bee", wordImage: "bee"),
-    Word(wordTitle: "Owl", wordImage: "owl")
-]
-
-let mojoData5: [Word] = [
-    Word(wordTitle: "Rabbit", wordImage: "bunny"),
-    Word(wordTitle: "Cat", wordImage: "cat"),
-    Word(wordTitle: "Dog", wordImage: "dog"),
-    Word(wordTitle: "Elephant", wordImage: "elephant"),
-    Word(wordTitle: "Bee", wordImage: "bee"),
-    Word(wordTitle: "Owl", wordImage: "owl")
-]
-
-let Data: [[Word]] = [mojoData1, mojoData2, mojoData3, mojoData4, mojoData5]
-
-func getDirection(for index: Int, at levelIndex: Int) -> String {
-    let data = Data[levelIndex][index]
-    return "This is \(data.wordTitle). Say \(data.wordTitle)."
-}
 //var levelIndex = 0
 //var currentIndex = 0
 var mojoImageData = ["mojo2", "mojoHearing"]
@@ -74,6 +21,11 @@ class PracticeScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
+    }
+    
+    func getDirection(for index: Int, at levelIndex: Int) -> String {
+        let data = levels[levelIndex].words[index]
+        return "This is \(data.wordTitle). Say \(data.wordTitle)."
     }
     
     func updateUI() {

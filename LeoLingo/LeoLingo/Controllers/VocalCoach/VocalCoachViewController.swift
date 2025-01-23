@@ -97,11 +97,11 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedItem = indexPath.row // or use your data source
         let storyboard = UIStoryboard(name: "WordsInCards", bundle: nil)
         if let detailVC = storyboard.instantiateViewController(withIdentifier: "WordsInCards") as? WordsInCardViewController {
-            detailVC.selectedItem = selectedItem // Pass data to the next VC
-            navigationController?.pushViewController(detailVC, animated: true)
+//            detailVC.selectedItem = selectedItem // Pass data to the next VC
+            detailVC.modalPresentationStyle = .fullScreen
+            present(detailVC, animated: true)
         }
     }
 }

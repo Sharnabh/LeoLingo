@@ -99,8 +99,21 @@ class DataController {
         self.user.append(user)
     }
     
+    func allUsers() -> [UserData] {
+        return user
+    }
+    
+    func updatePasscode(_ passcode: String) {
+        
+        self.user[0].passcode = passcode
+    }
+    
     func allLevels() -> [Level] {
         return levels
+    }
+    
+    func updateLevels(_ levels: [Level]) {
+        self.levels = levels
     }
     
     func levelData(at index: Int) -> Level {
@@ -116,6 +129,15 @@ class DataController {
         levels[index].words[wordIndex].record?.attempts += 1
         if let accuracy = accuracy {
             levels[index].words[wordIndex].record?.accuracy?.append(accuracy)
+        }
+    }
+    
+    func findUser(byPhone phoneNumber: String) -> UserData? {
+        
+        if user.contains(where: { $0.phoneNumber == phoneNumber }) {
+            return user.first(where: { $0.phoneNumber == phoneNumber })
+        } else {
+            return nil
         }
     }
     

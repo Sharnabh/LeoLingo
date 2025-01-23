@@ -171,6 +171,7 @@ extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDa
         case false:
             let level = levels[selectedRow]
             let word = level.words[indexPath.item]
+            print(word)
             cell.updateLabel(with: word)
         }
                 

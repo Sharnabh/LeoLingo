@@ -8,8 +8,16 @@ class VocalCoachViewController: UIViewController {
     @IBOutlet var soundCards: UICollectionView!
     @IBOutlet var WordLabel: UILabel!
     
+    let levels = DataController.shared.allLevels()
+    var words: [Word] = []
+    var word: Word!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        words = levels.flatMap { $0.words }
+        word = words.first{ $0.isPracticed == false }
+        WordLabel.text = word?.wordTitle
         
         updatePracticeCardView()
         setupCollectionViewLayout()
@@ -99,9 +107,9 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "WordsInCards", bundle: nil)
         if let detailVC = storyboard.instantiateViewController(withIdentifier: "WordsInCards") as? WordsInCardViewController {
-//            detailVC.selectedItem = selectedItem // Pass data to the next VC
-            detailVC.modalPresentationStyle = .fullScreen
-            present(detailVC, animated: true)
+            
+            // Pass the selected item (for example, an image name)
+            navigationController?.pushViewController(detailVC, animated: true)
         }
     }
 }

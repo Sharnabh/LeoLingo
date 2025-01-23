@@ -4,16 +4,17 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     
     @IBOutlet weak var collectionView: UICollectionView!
     
+    var selectedItem: Int?
+    
     let items = [
-        ("Rat", "rat"),
-        ("Carrot", "carrot"),
-        ("Deer", "deer"),
-        ("Rabbit", "rabbit"),
-        ("Shirt", "shirt"),
-        ("Horse", "horse"),
-        ("Earth", "earth"),
-        ("Write", "write"),
-        ("Correct", "correct")
+        ("Wrist", "wrist"),
+        ("Lips", "lips"),
+        ("Eye", "eye"),
+        ("Ear", "ear"),
+        ("Thumb", "thumb"),
+        ("Finger", "finger"),
+        ("Nose", "nose"),
+        ("Palm", "palm")
     ]
     
     override func viewDidLoad() {

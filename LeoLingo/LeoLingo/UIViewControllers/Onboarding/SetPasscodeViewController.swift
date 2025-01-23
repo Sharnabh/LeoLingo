@@ -22,6 +22,7 @@ class SetPasscodeViewController: UIViewController {
     
     var myPasscode: String = ""
     let passCodeLength: Int = 4
+    var phoneNumber = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +45,29 @@ class SetPasscodeViewController: UIViewController {
         navigationItem.leftBarButtonItem = backButton
         
         rightBarButtonItem.tintColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1)
+        
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonTapped))
+        navigationItem.rightBarButtonItem = doneButton
+    }
+    
+    @objc private func doneButtonTapped() {
+        var user = DataController.shared.allUsers()[0]
+        print(user)
+        DataController.shared.updatePasscode(myPasscode)
+        
+        print(user)
+        let storyBoard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let homeVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            homeVC.modalPresentationStyle = .fullScreen
+            present(homeVC, animated: true)
+        }
+    }
+    
+    func setPhoneNumber() {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress before popping
+            phoneNumber = questionnaireVC.returnPhoneNumber()
+        }
     }
     
     @objc private func backButtonTapped() {

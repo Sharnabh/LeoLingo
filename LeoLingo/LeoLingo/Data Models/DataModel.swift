@@ -11,7 +11,7 @@ struct UserData {
     var name: String
     var phoneNumber: String
     var password: String
-    var passcode: String
+    var passcode: String?
 }
 
 struct Record {

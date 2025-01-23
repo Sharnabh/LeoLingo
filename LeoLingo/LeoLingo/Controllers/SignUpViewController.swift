@@ -63,6 +63,8 @@ extension SignUpViewController: UICollectionViewDelegate, UICollectionViewDataSo
 
 // MARK: - SignUpCellDelegate
 extension SignUpViewController: SignUpCellDelegate {
+    
+    
     func switchToQuestionnaireVC() {
         let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
         if let destinationVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
@@ -82,27 +84,22 @@ extension SignUpViewController: SignUpCellDelegate {
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
-            let exists = CoreDataManager.shared.findUser(byPhone: phone) != nil
+            let exists = DataController.shared.findUser(byPhone: phone) != nil
             completion(exists)
         }
     }
     
     func signUp(name: String, phone: String, password: String) {
         // Create new user in Core Data
-        let context = CoreDataManager.shared.context
-        let newUser = User(context: context)
-        newUser.parentName = name
-        newUser.phoneNumber = phone
-        newUser.password = password
+        let user = UserData(name: name, phoneNumber: phone, password: password)
+        DataController.shared.createUser(user: user)
+        print(DataController.shared.findUser(byPhone: phone))
         
-        do {
-            try context.save()
-            showAlert(message: "Sign up successful!")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.switchToQuestionnaireVC()
-            }
-        } catch {
-            showAlert(message: "Error creating user: \(error.localizedDescription)")
+        showAlert(message: "Sign up successful!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            let vc = QuestionnaireViewController()
+            vc.getPhoneNumber(phone: phone)
+            self?.switchToQuestionnaireVC()
         }
     }
 }

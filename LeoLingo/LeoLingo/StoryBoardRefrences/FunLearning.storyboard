@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dNv-Th-DI3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9fp-ro-O0h">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -55,7 +55,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GAa-jl-gfM">
-                                <rect key="frame" x="1153" y="474" width="46" height="34"/>
+                                <rect key="frame" x="1153" y="524" width="46" height="34"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="arrowtriangle.forward.fill" catalog="system"/>
                                 <connections>
@@ -63,7 +63,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wo7-9d-hYw">
-                                <rect key="frame" x="177" y="474" width="46" height="34"/>
+                                <rect key="frame" x="177" y="524" width="46" height="34"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="arrowtriangle.backward.fill" catalog="system"/>
                                 <connections>
@@ -118,7 +118,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pGA-nV-vB3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="68.644067796610173" y="-2.1951219512195124"/>
+            <point key="canvasLocation" x="761.77325581395348" y="-2.3255813953488373"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="QZp-Jt-zrZ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="9fp-ro-O0h" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wm2-g2-q7L">
+                        <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dNv-Th-DI3" kind="relationship" relationship="rootViewController" id="6p8-1K-uqP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="biK-g8-x7d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="68.45930232558139" y="-2.3255813953488373"/>
         </scene>
     </scenes>
     <resources>

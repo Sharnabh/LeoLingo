@@ -9,7 +9,7 @@ import Foundation
 
 class DataController {
     private var levels: [Level] = []
-    private var user: UserData
+    private var user: [UserData] = []
     
     static var shared = DataController()
     
@@ -95,7 +95,7 @@ class DataController {
 
     }
     
-    func createUser(user: userData) {
+    func createUser(user: UserData) {
         self.user.append(user)
     }
     

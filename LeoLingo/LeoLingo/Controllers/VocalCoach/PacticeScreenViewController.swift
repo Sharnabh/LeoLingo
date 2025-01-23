@@ -59,7 +59,7 @@ var mojoImageData = ["mojo2", "mojoHearing"]
 
 class PracticeScreenViewController: UIViewController {
     
-    var levels = DataController.shared.levels
+    var levels = DataController.shared.allLevels()
     
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
@@ -149,9 +149,11 @@ class PracticeScreenViewController: UIViewController {
             currentIndex = 0
             levelIndex = (levelIndex + 1) % levels.count
             
+            DataController.shared.updateLevels(levels)
             showLevelChangePopover()
             showConfettiEffect()
         } else {
+            DataController.shared.updateLevels(levels)
             updateUI()
         }
     }

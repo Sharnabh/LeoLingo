@@ -19,11 +19,15 @@ class LockScreenViewController: UIViewController {
     @IBOutlet var circleView4: UIView!
     @IBOutlet var passcodeView: UIView!
     var myPasscode: String = ""
-    let code: String = "1234"
+    let user = DataController.shared.allUsers()
+    var code = ""
     let passCodeLength = 4
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        code = user[0].passcode ?? "1234"
+        print(user[0])
 
         configureCircleView(circleView: circleView1)
         configureCircleView(circleView: circleView2)

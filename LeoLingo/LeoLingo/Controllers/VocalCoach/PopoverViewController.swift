@@ -13,20 +13,31 @@ class PopoverViewController: UIViewController {
     @IBOutlet var congratsLabel: UILabel!
     
     var message: String?
-       var onProceed: (() -> Void)?
-    
+    var imageName: String?
+    var onProceed: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        congratsLabel.text = message
-        // Do any additional setup after loading the view.
-    }
-    @IBAction func proceedButtonTapped(_ sender: UIButton) {
-            dismiss(animated: true) {
-                self.onProceed?()
-            }
+        
+        if let message = message {
+            congratsLabel.text = message
         }
+        
+        if let imageName = imageName, let image = UIImage(named: imageName) {
+            levelBadge.image = image
+        } else {
+            levelBadge.image = UIImage(named: "defaultBadge") 
+        }
+    }
+    
+    @IBAction func proceedButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true) {
+            self.onProceed?()
+        }
+    }
 
- 
-
+    func configurePopover(message: String, image: String) {
+        self.message = message
+        self.imageName = image
+    }
 }

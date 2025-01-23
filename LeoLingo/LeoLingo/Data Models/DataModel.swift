@@ -7,6 +7,13 @@
 
 import Foundation
 
+struct UserData {
+    var name: String
+    var phoneNumber: String
+    var password: String
+    var passcode: String
+}
+
 struct Record {
     var attempts: Int
     var accuracy: [Double]?

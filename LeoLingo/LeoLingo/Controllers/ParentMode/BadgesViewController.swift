@@ -8,19 +8,6 @@
 import UIKit
 
 class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-
-    var badges: [Badge] = [
-        Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
-        Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
-        Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
-        Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: true),
-        Badge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny", isEarned: false),
-        Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
-    ]
-    
-    var earnedBadges: [Badge] = [
-        Badge(badgeTitle: "Beginner", badgeDescription: " ", badgeImage: "bronze-medal", isEarned: true)
-    ]
     
     @IBOutlet weak var badgesEarnedCollectionView: UICollectionView!
     var layout: UICollectionViewFlowLayout?
@@ -63,25 +50,29 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            for badge in badges {
+            for badge in BadgesDataController.shared.getBadges() {
                 if badge.isEarned {
-                    earnedBadges.append(badge)
+                    BadgesDataController.shared.appendEarnedBadge(badge)
                 }
             }
-            return earnedBadges.count
+            return BadgesDataController.shared.countEarnedBadges()
         }
-        return badges.count
+        return BadgesDataController.shared.countBadges()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == badgesEarnedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
             
+            let earnedBadges = BadgesDataController.shared.getEarnedBadges()
+            
             cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
             
             return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
+        
+        let badges = BadgesDataController.shared.getBadges()
         
         cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
         

@@ -59,7 +59,7 @@ var mojoImageData = ["mojo2", "mojoHearing"]
 
 class PracticeScreenViewController: UIViewController {
     
-    var levels = DataController.shared.levels
+    var levels = DataController.shared.allLevels()
     
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!

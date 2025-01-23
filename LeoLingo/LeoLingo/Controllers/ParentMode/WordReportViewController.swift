@@ -65,23 +65,22 @@ class WordReportViewController: UIViewController {
         
         recordingView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
         recordingView.layer.borderWidth = 3
-        recordingView.layer.cornerRadius = 0
+        recordingView.layer.cornerRadius = 10
         
         levelsView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
-        levelsView.layer.borderWidth = 5
-        levelsView.layer.cornerRadius = 0
+        levelsView.layer.borderWidth = 3
+        levelsView.layer.cornerRadius = 10
         
         reportCollectionView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
-        reportCollectionView.layer.borderWidth = 5
-        reportCollectionView.layer.cornerRadius = 0
+        reportCollectionView.layer.borderWidth = 3
+        reportCollectionView.layer.cornerRadius = 10
         
-        filterView.layer.cornerRadius = 20
+        filterView.layer.cornerRadius = 10
         filterView.layer.shadowColor = UIColor.black.cgColor
         filterView.layer.shadowOffset = CGSize(width: 4, height: 4)
         filterView.layer.shadowOpacity = 0.4
         filterView.layer.shadowRadius = 5
         filterView.clipsToBounds = false
-        
         
 
         levelsTableView.delegate = self

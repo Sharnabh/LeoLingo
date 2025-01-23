@@ -38,6 +38,7 @@ struct Word {
 
 struct Level {
     var levelTitle: String
+    var levelImage: String
     var words: [Word]
     
     var avgAccuracy: Double {

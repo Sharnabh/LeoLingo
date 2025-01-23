@@ -22,6 +22,7 @@ class VocalCoachViewController: UIViewController {
         soundCards.register(firstNib, forCellWithReuseIdentifier: "First")
         
         let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        backButtonItem.tintColor = .white
         navigationItem.leftBarButtonItem = backButtonItem
     }
     

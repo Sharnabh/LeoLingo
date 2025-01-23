@@ -21,6 +21,10 @@ class PracticeScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
+        
+        directionLabel.adjustsFontSizeToFitWidth = true
+        
+        
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {
@@ -37,6 +41,8 @@ class PracticeScreenViewController: UIViewController {
         let direction = "This is \(currentData.wordTitle). Say \(currentData.wordTitle)."
         animateWordImage()
         typeEffect(text: direction, label: directionLabel)
+        nextButton.layer.cornerRadius = 21
+        
     }
     
     func animateWordImage() {

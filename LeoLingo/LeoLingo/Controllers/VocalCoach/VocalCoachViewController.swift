@@ -5,6 +5,7 @@ class VocalCoachViewController: UIViewController {
     @IBOutlet var practiceCardView: UIView!
     @IBOutlet var soundCards: UICollectionView!
     @IBOutlet var wordLabel: UILabel!
+    @IBOutlet weak var headingTitle: UILabel!
     
     let levels = DataController.shared.allLevels()
     var words: [Word] = []
@@ -12,6 +13,9 @@ class VocalCoachViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        headingTitle.layer.cornerRadius = 21
+        headingTitle.layer.masksToBounds = true
         
         words = levels.flatMap { $0.words }
         word = words.first{ $0.isPracticed == false }
@@ -36,7 +40,6 @@ class VocalCoachViewController: UIViewController {
         if let presentingVC = self.presentingViewController?.presentingViewController {
             presentingVC.dismiss(animated: true, completion: nil)
         }
-        
     }
     
     func updatePracticeCardView() {
@@ -57,22 +60,13 @@ class VocalCoachViewController: UIViewController {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = 16
-        layout.itemSize = CGSize(width: 380, height: 280)
+        layout.itemSize = CGSize(width: 380, height: 260)
         soundCards.collectionViewLayout = layout
     }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
-        //      performSegue(withIdentifier: "PracticeScreenSegue", sender: self)
+        
     }
-    //
-    //       override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    //           if segue.identifier == "PracticeScreenSegue" {
-    //               if let destinationVC = segue.destination as? PracticeScreenViewController {
-    //                   // Pass any necessary data to the PracticeScreenViewController
-    //                   // Example: destinationVC.someProperty = someValue
-    //               }
-    //           }
-    //       }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -86,10 +80,12 @@ class VocalCoachViewController: UIViewController {
             }
         }
     }
+    
 }
 
 
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return CardsDataController.shared.countCards()
     }
@@ -111,4 +107,5 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
             navigationController?.pushViewController(detailVC, animated: true)
         }
     }
+    
 }

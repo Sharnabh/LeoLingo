@@ -1,12 +1,10 @@
 import UIKit
 
-// Dummy data for sound cards
-let soundCardsImage: [String] = ["Earlywords", "BodyParts", "Earlywords", "BodyParts", "Earlywords", "BodyParts","Earlywords", "BodyParts", "Earlywords", "BodyParts", "Earlywords", "BodyParts"]
-
 class VocalCoachViewController: UIViewController {
+    
     @IBOutlet var practiceCardView: UIView!
     @IBOutlet var soundCards: UICollectionView!
-    @IBOutlet var WordLabel: UILabel!
+    @IBOutlet var wordLabel: UILabel!
     
     let levels = DataController.shared.allLevels()
     var words: [Word] = []
@@ -17,7 +15,7 @@ class VocalCoachViewController: UIViewController {
         
         words = levels.flatMap { $0.words }
         word = words.first{ $0.isPracticed == false }
-        WordLabel.text = word?.wordTitle
+        wordLabel.text = word?.wordTitle
         
         updatePracticeCardView()
         setupCollectionViewLayout()
@@ -38,7 +36,7 @@ class VocalCoachViewController: UIViewController {
         if let presentingVC = self.presentingViewController?.presentingViewController {
             presentingVC.dismiss(animated: true, completion: nil)
         }
-
+        
     }
     
     func updatePracticeCardView() {
@@ -57,50 +55,50 @@ class VocalCoachViewController: UIViewController {
     func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
-        layout.minimumInteritemSpacing = 20
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 16
         layout.itemSize = CGSize(width: 380, height: 280)
         soundCards.collectionViewLayout = layout
     }
-  @IBAction func continueButtonTapped(_ sender: UIButton) {
-//           performSegue(withIdentifier: "PracticeScreenSegue", sender: self)
-     }
-//       
-//       override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//           if segue.identifier == "PracticeScreenSegue" {
-//               if let destinationVC = segue.destination as? PracticeScreenViewController {
-//                   // Pass any necessary data to the PracticeScreenViewController
-//                   // Example: destinationVC.someProperty = someValue
-//               }
-//           }
-//       }
-       
-       override func viewWillDisappear(_ animated: Bool) {
-           super.viewWillDisappear(animated)
-           
-           // Handle navigation when the view controller is popped
-           if self.isMovingFromParent {
-               if let navigationController = navigationController {
-                   if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
-                       navigationController.setViewControllers([homeVC], animated: true)
-                   }
-               }
-           }
-       }
-   }
+    
+    @IBAction func continueButtonTapped(_ sender: UIButton) {
+        //      performSegue(withIdentifier: "PracticeScreenSegue", sender: self)
+    }
+    //
+    //       override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    //           if segue.identifier == "PracticeScreenSegue" {
+    //               if let destinationVC = segue.destination as? PracticeScreenViewController {
+    //                   // Pass any necessary data to the PracticeScreenViewController
+    //                   // Example: destinationVC.someProperty = someValue
+    //               }
+    //           }
+    //       }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Handle navigation when the view controller is popped
+        if self.isMovingFromParent {
+            if let navigationController = navigationController {
+                if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+                    navigationController.setViewControllers([homeVC], animated: true)
+                }
+            }
+        }
+    }
+}
 
 
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return soundCardsImage.count
+        return CardsDataController.shared.countCards()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "First", for: indexPath) as! SoundCardCollectionViewCell
         cell.layer.cornerRadius = 21
         cell.backgroundColor = .clear
-        let imageName = soundCardsImage[indexPath.item]
-        cell.imageView.image = UIImage(named: imageName)
+        cell.updateSoundCard(with: indexPath)
         
         return cell
     }

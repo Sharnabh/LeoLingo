@@ -9,9 +9,7 @@ import Foundation
 
 class DataController {
     private var levels: [Level] = []
-    private var user: [UserData] = [
-        UserData(name: "", phoneNumber: "", password: "", passcode: "1234")
-    ]
+    private var user: [UserData] = [UserData(name: "Joy", phoneNumber: "1234567890", password: "123", passcode: "2580")]
     
     static var shared = DataController()
     

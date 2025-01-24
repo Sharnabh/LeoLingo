@@ -12,7 +12,7 @@
         <!--Jungle Run Home View Controller-->
         <scene sceneID="5OS-T8-Mhz">
             <objects>
-                <viewController storyboardIdentifier="JungleRunHomeViewController" id="LQ0-5B-dYw" customClass="JungleRunHomeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="JungleRunHome" id="LQ0-5B-dYw" customClass="JungleRunHomeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ity-d2-iMe">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

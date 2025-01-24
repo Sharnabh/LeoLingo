@@ -54,7 +54,7 @@ class JungleRunViewController: UIViewController {
         // MARK: - Pause Button Action
         @IBAction func pauseButtonTapped(_ sender: UIButton) {
             isPaused = true
-            gameTimer?.isPaused = true
+            gameTimer?.isPaused = true 
             wordCoinTimer?.invalidate()
             pauseMenu.isHidden = false
             stopBackgroundAnimation()
@@ -79,17 +79,19 @@ class JungleRunViewController: UIViewController {
 
         // MARK: - Quit Button Action
         @IBAction func quitButtonTapped(_ sender: UIButton) {
-            guard let storyboard = self.storyboard else { return }
-             guard let homePageVC = storyboard.instantiateViewController(withIdentifier: "JungleRunHome") as? JungleRunHomeViewController else { return }
+            let homePageVC = JungleRunHomeViewController()
 
-             homePageVC.coinScore = gameData.coins
-             homePageVC.diamondScore = gameData.diamonds
+            homePageVC.updateScore(coin: gameData.coins, diamond: gameData.diamonds)
+            
+//             homePageVC.coinScore = gameData.coins
+//             homePageVC.diamondScore = gameData.diamonds
 
-             let navigationController = UINavigationController(rootViewController: homePageVC)
-             self.dismiss(animated: true) {
-               UIApplication.shared.windows.first?.rootViewController = navigationController
-               UIApplication.shared.windows.first?.makeKeyAndVisible()
-             }
+//             let navigationController = UINavigationController(rootViewController: homePageVC)
+             self.dismiss(animated: true)
+//            {
+//               UIApplication.shared.windows.first?.rootViewController = navigationController
+//               UIApplication.shared.windows.first?.makeKeyAndVisible()
+//             }
         }
 
         // MARK: - Background Setup

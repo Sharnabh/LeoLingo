@@ -28,6 +28,7 @@ class WordReportViewController: UIViewController {
     @IBOutlet var accuracyGraph: ProgressGraphView!
     
     @IBOutlet var filterView: FilterView!
+    @IBOutlet var filterButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,19 +67,37 @@ class WordReportViewController: UIViewController {
     }
 
     @IBAction func filterButtonTapped(_ sender: UIButton) {
-        UIView.transition(with: filterView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                self.filterView.isHidden.toggle()
-                self.filterView.configureTableView()
-            }) { _ in
-                if let selectedOption = self.filterView.option {
-                    sender.setTitle(selectedOption, for: .normal)
-                    self.isFilteringAllLevels = true
-                    self.selectedFilter = FIlterOptions(rawValue: selectedOption) ?? .all
-                    self.applyFilter(option: selectedOption)
-                    
-                    
-                }
+//        UIView.transition(with: filterView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+//                self.filterView.isHidden.toggle()
+//                self.filterView.configureTableView()
+//            }) { _ in
+//                if let selectedOption = self.filterView.option {
+//                    sender.setTitle(selectedOption, for: .normal)
+//                    self.isFilteringAllLevels = true
+//                    self.selectedFilter = FIlterOptions(rawValue: selectedOption) ?? .all
+//                    self.applyFilter(option: selectedOption)
+//                    
+//                    
+//                }
+//            }
+        
+        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
+        if let filterViewController = storyboard.instantiateViewController(withIdentifier: "FilterViewController") as? FilterViewController {
+            filterViewController.modalPresentationStyle = .popover
+            
+            if let popover = filterViewController.popoverPresentationController {
+                popover.sourceView = sender
+                popover.sourceRect = sender.bounds
+                popover.permittedArrowDirections = .up
+                popover.delegate = self
             }
+            
+            filterViewController.preferredContentSize = CGSize(width: 250, height: 130)
+            filterViewController.delegate = self
+            present(filterViewController, animated: true, completion: nil)
+        }
+            
+            
     }
     
     private func applyFilter(option: String) {
@@ -206,5 +225,20 @@ extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDa
 extension Array {
     subscript(safe index: Int) -> Element? {
         return index >= 0 && index < count ? self[index] : nil
+    }
+}
+
+extension WordReportViewController: FilterViewControllerDelegate {
+    func didSelectFilterOption(_ option: String) {
+        filterButton.setTitle(option, for: .normal)
+        isFilteringAllLevels = true
+        selectedFilter = FIlterOptions(rawValue: option) ?? .all
+        applyFilter(option: option)
+    }
+}
+
+extension WordReportViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
     }
 }

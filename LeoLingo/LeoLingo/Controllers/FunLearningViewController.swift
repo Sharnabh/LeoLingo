@@ -38,11 +38,7 @@ class FunLearningViewController: UIViewController {
     }
     
     @objc private func backButtonTapped() {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-            funLearningVC.modalPresentationStyle = .fullScreen
-            present(funLearningVC, animated: true)
-        }
+        self.dismiss(animated: true)
     }
 
     @IBAction func nextButtonTapped(_ sender: UIButton) {

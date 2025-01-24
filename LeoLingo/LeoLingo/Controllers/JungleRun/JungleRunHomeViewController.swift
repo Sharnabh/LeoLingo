@@ -29,19 +29,20 @@ class JungleRunHomeViewController: UIViewController {
         navigationItem.leftBarButtonItem = backButtonItem
     }
     
+    func updateScore(coin: Int, diamond: Int) {
+        self.coinScore = coin
+        self.diamondScore = diamond
+    }
+    
     @objc private func backButtonTapped() {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-            funLearningVC.modalPresentationStyle = .fullScreen
-            present(funLearningVC, animated: true)
-        }
+        self.dismiss(animated: true)
     }
     
     @IBAction func playButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "JungleRun", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "JungleRunViewController") as? JungleRunViewController {
-            vocalCoachVC.modalPresentationStyle = .fullScreen
-            self.present(vocalCoachVC, animated: true, completion: nil)
+        if let gameVC = storyboard.instantiateViewController(withIdentifier: "JungleRunViewController") as? JungleRunViewController {
+            gameVC.modalPresentationStyle = .fullScreen
+            self.present(gameVC, animated: true, completion: nil)
         }
     }
     

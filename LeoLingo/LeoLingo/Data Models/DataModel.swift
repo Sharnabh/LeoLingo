@@ -68,8 +68,13 @@ enum FIlterOptions: String, CaseIterable {
     case inaccurate = "Inaccurate"
 }
 
+struct CardGroup {
+    var cards: [Card]
+}
+
 struct Card {
     var cardTitle: String
+    var cardImage: String
     var words: [Word]
 }
 

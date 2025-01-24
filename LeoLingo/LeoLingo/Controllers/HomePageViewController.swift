@@ -8,6 +8,7 @@
 import UIKit
 
 class HomePageViewController: UIViewController {
+    
     @IBOutlet var remainingTimeView: UIView!
     @IBOutlet var timeLeft: UILabel!
     @IBOutlet var timeLeftBar: UIProgressView!

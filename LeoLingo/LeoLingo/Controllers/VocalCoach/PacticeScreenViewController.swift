@@ -1,9 +1,5 @@
 import UIKit
 
-//var levelIndex = 0
-//var currentIndex = 0
-var mojoImageData = ["mojo2", "mojoHearing"]
-
 class PracticeScreenViewController: UIViewController {
     
     var levels = DataController.shared.allLevels()
@@ -13,6 +9,9 @@ class PracticeScreenViewController: UIViewController {
     @IBOutlet var wordImage: UIImageView!
     @IBOutlet var nextButton: UIButton!
     @IBOutlet var wrongButton: UIButton!
+    @IBOutlet weak var headingTitle: UILabel!
+    
+    var mojoImageData = ["mojo2", "mojoHearing"]
     
     var levelIndex = 0
     var currentIndex = 0
@@ -20,6 +19,10 @@ class PracticeScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        headingTitle.layer.cornerRadius = 21
+        headingTitle.layer.masksToBounds = true
+        
         updateUI()
         
         directionLabel.adjustsFontSizeToFitWidth = true
@@ -45,6 +48,7 @@ class PracticeScreenViewController: UIViewController {
         
     }
     
+    //MARK: - Animation
     func animateWordImage() {
         wordImage.transform = CGAffineTransform(translationX: 0, y: -500)
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [], animations: {

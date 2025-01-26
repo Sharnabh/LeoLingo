@@ -12,6 +12,8 @@ struct UserData {
     var phoneNumber: String
     var password: String
     var passcode: String?
+    var userLevels: [Level]
+    var userBadges: [Badge]
 }
 
 struct Record {

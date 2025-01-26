@@ -48,6 +48,7 @@
                                 <rect key="frame" x="458" y="25" width="460" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="460" id="9DZ-Dw-bot"/>
                                     <constraint firstAttribute="height" constant="60" id="n63-eY-xdh"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
@@ -97,10 +98,9 @@
                             <constraint firstAttribute="bottom" secondItem="lzE-zW-nlS" secondAttribute="bottom" id="IR5-4i-zz0"/>
                             <constraint firstItem="wo7-9d-hYw" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="450" id="JXm-mz-IcV"/>
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="trailing" secondItem="R9T-Zw-OeI" secondAttribute="trailing" id="N8d-Sa-UEm"/>
-                            <constraint firstItem="kT7-al-VhL" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="458" id="NiA-3p-6uX"/>
                             <constraint firstItem="GAa-jl-gfM" firstAttribute="leading" secondItem="n0F-IR-SxY" secondAttribute="trailing" constant="8" symbolic="YES" id="QSb-fv-z6q"/>
-                            <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="kT7-al-VhL" secondAttribute="trailing" constant="458" id="Wez-tZ-lcC"/>
                             <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="X4X-MI-QMr"/>
+                            <constraint firstItem="kT7-al-VhL" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="aaU-9M-GSk"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="centerY" secondItem="kX9-gt-BHf" secondAttribute="centerY" constant="110" id="bdM-v9-vdh"/>
                             <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
                             <constraint firstItem="wo7-9d-hYw" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="177" id="q0R-6Z-tKG"/>

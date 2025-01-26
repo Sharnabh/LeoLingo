@@ -9,7 +9,7 @@ import UIKit
 
 class WordReportViewController: UIViewController {
     
-    private let levels: [Level] = DataController.shared.allLevels()
+    private let levels: [Level] = DataController.shared.getAllLevels()
     
     var selectedRow: Int = 0
     var selectedFilter: FIlterOptions = .all

@@ -7,7 +7,7 @@ class VocalCoachViewController: UIViewController {
     @IBOutlet var wordLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
     
-    let levels = DataController.shared.allLevels()
+    let levels = DataController.shared.getAllLevels()
     var words: [Word] = []
     var word: Word!
     

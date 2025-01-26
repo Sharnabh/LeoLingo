@@ -41,7 +41,7 @@ import UIKit
 
 class DashboardViewController: UIViewController {
     
-    private let levels: [Level] = DataController.shared.allLevels()
+    private let levels: [Level] = DataController.shared.getAllLevels()
     
     var earnedBadges: [Badge] = BadgesDataController.shared.getEarnedBadges()
     

@@ -30,7 +30,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         updateLevelView()
         generateCollectionViewLayout()
         
-        let words = DataController.shared.allLevels().flatMap { $0.words }
+        let words = DataController.shared.getAllLevels().flatMap { $0.words }
         let newWords = words.filter { $0.record != nil }
         sortedWords = newWords.reversed()
         // Do any additional setup after loading the view.

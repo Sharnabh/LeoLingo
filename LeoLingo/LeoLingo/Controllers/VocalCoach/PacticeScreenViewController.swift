@@ -2,7 +2,7 @@ import UIKit
 
 class PracticeScreenViewController: UIViewController {
     
-    var levels = DataController.shared.allLevels()
+    var levels = DataController.shared.getAllLevels()
     
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!

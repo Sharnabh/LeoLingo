@@ -9,7 +9,7 @@ import Foundation
 
 class DataController {
     private var levels: [Level] = []
-    private var user: [UserData] = [UserData(name: "Joy", phoneNumber: "1234567890", password: "123", passcode: "2580")]
+    private var user: [UserData] = []
     
     static var shared = DataController()
     
@@ -108,7 +108,7 @@ class DataController {
         self.user[0].passcode = passcode
     }
     
-    func allLevels() -> [Level] {
+    func getAllLevels() -> [Level] {
         return levels
     }
     

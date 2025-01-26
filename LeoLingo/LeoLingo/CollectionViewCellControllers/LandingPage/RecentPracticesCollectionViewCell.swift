@@ -30,22 +30,34 @@ class RecentPracticesCollectionViewCell: UICollectionViewCell {
         // Initialization code
     }
     
-    func configure(with name: Word) {
-        let title = name.wordTitle
+    func updateLabel(with word: Word) {
+        let title = word.wordTitle
         var maxAccuracy: Double?
         var color: UIColor
-        maxAccuracy = name.record?.accuracy!.max()
-        guard let accuracy = maxAccuracy else { return }
-        switch accuracy {
-        case 1..<70:
-            color = UIColor.systemRed
-        case 70...100:
-            color = UIColor.systemGreen
-        default:
+        switch word.isPracticed {
+        case true:
+            guard let record = word.record,
+                  let accuracy = record.accuracy,
+                  !accuracy.isEmpty else { return }
+            maxAccuracy = accuracy.max()
+            guard let accuracy = maxAccuracy,
+                  let view = imageView as? ProgressView else { return }
+            switch accuracy {
+            case 1..<70:
+                color = UIColor.systemRed
+            case 70...100:
+                color = UIColor.systemGreen
+            default:
+                color = UIColor.systemGray
+            }
+            
+            view.configure(title: title, progress: Double(accuracy)/100.0, color: color)
+        case false:
             color = UIColor.systemGray
+            
+            guard let view = imageView as? ProgressView else { return }
+            view.configure(title: title, progress: 100.0, color: color)
         }
-        guard let imageView = imageView as? ProgressView else { return }
-        imageView.configure(title: title, progress: 100.0, color: color)
     }
 
 }

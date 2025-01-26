@@ -24,12 +24,9 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rt6-eM-jZN">
                                 <rect key="frame" x="246" y="123" width="718" height="588"/>
                                 <subviews>
-                                    <navigationBar contentMode="scaleToFill" ambiguous="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2gq-sh-wmi">
-                                        <rect key="frame" x="0.0" y="0.0" width="884" height="50"/>
+                                    <navigationBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2gq-sh-wmi">
+                                        <rect key="frame" x="0.0" y="0.0" width="718" height="50"/>
                                         <color key="backgroundColor" red="0.98039823770000001" green="0.95686084029999996" blue="0.90196478369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="715" id="4e0-di-BnR"/>
-                                        </constraints>
                                         <color key="barTintColor" red="0.98039823770000001" green="0.95686084029999996" blue="0.90196478369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <items>
                                             <navigationItem id="iRX-he-i6Q">
@@ -241,8 +238,12 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.98039823770000001" green="0.95686084029999996" blue="0.90196478369999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="2gq-sh-wmi" secondAttribute="trailing" id="9GB-y0-4gy"/>
+                                    <constraint firstItem="2gq-sh-wmi" firstAttribute="centerX" secondItem="Rt6-eM-jZN" secondAttribute="centerX" id="DAf-LC-roI"/>
                                     <constraint firstItem="LEf-bX-H7a" firstAttribute="centerX" secondItem="Rt6-eM-jZN" secondAttribute="centerX" id="HrR-zu-uTu"/>
+                                    <constraint firstItem="2gq-sh-wmi" firstAttribute="top" secondItem="Rt6-eM-jZN" secondAttribute="top" id="aHH-o3-7yG"/>
                                     <constraint firstItem="LEf-bX-H7a" firstAttribute="centerY" secondItem="Rt6-eM-jZN" secondAttribute="centerY" id="fAU-VB-rRN"/>
+                                    <constraint firstItem="2gq-sh-wmi" firstAttribute="leading" secondItem="Rt6-eM-jZN" secondAttribute="leading" id="tNE-WK-SAa"/>
                                 </constraints>
                             </view>
                         </subviews>

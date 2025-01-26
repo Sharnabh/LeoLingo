@@ -76,7 +76,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         practicesLayout = UICollectionViewFlowLayout()
         if let layout = practicesLayout {
-            layout.itemSize = CGSize(width: 90, height: 90)
+            layout.itemSize = CGSize(width: 126, height: 126)
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             layout.scrollDirection = .horizontal
             recentPracticesCollectionView.collectionViewLayout = layout

@@ -27,7 +27,8 @@ class BadgesDataController {
             Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
         ]
         earnedBadges = [
-            Badge(badgeTitle: "Beginner", badgeDescription: " ", badgeImage: "bronze-medal", isEarned: true)
+            Badge(badgeTitle: "Beginner", badgeDescription: " ", badgeImage: "bronze-medal", isEarned: true),
+            Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: true)
         ]
     }
     
@@ -49,6 +50,10 @@ class BadgesDataController {
     
     func countEarnedBadges() -> Int {
         return earnedBadges.count
+    }
+    
+    func updateBadgeStatus(_ badge: Badge) {
+        earnedBadges.append(badge)
     }
     
 }

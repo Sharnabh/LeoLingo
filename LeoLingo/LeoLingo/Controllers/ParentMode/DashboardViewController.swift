@@ -43,16 +43,7 @@ class DashboardViewController: UIViewController {
     
     private let levels: [Level] = DataController.shared.allLevels()
     
-    var badges: [Badge] = [
-        Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: true),
-        Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
-        Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
-        Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: true),
-        Badge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny", isEarned: false),
-        Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
-    ]
-    
-    var earnedBadges: [Badge] = []
+    var earnedBadges: [Badge] = BadgesDataController.shared.getEarnedBadges()
     
     var minAccuracyWords: [Word]?
     
@@ -84,9 +75,7 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateView()
-        
-        earnedBadges = badges.filter { $0.isEarned }
-        
+                
         badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
         badge1Label.text = earnedBadges[0].badgeTitle
         badge1Label.adjustsFontSizeToFitWidth = true

@@ -26,7 +26,7 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
             badgesEarnedCollectionView.delegate = self
             badgesEarnedCollectionView.dataSource = self
             badgesEarnedCollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
-            badgesEarnedCollectionView.layer.cornerRadius = 20
+            badgesEarnedCollectionView.layer.cornerRadius = 21
             let badgesNib = UINib(nibName: "BadgesCollectionViewCell", bundle: nil)
             badgesEarnedCollectionView.register(badgesNib, forCellWithReuseIdentifier: BadgesCollectionViewCell.identifier)
         }
@@ -38,7 +38,7 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
             badgescollectionView.delegate = self
             badgescollectionView.dataSource = self
             badgescollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
-            badgescollectionView.layer.cornerRadius = 20
+            badgescollectionView.layer.cornerRadius = 21
             let BadgesNib = UINib(nibName: "BadgesBottomCollectionViewCell", bundle: nil)
             badgescollectionView.register(BadgesNib, forCellWithReuseIdentifier: BadgesBottomCollectionViewCell.identifier)
         }

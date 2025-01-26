@@ -50,11 +50,6 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            for badge in BadgesDataController.shared.getBadges() {
-                if badge.isEarned {
-                    BadgesDataController.shared.appendEarnedBadge(badge)
-                }
-            }
             return BadgesDataController.shared.countEarnedBadges()
         }
         return BadgesDataController.shared.countBadges()

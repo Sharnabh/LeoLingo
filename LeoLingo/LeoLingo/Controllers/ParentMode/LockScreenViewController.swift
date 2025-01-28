@@ -19,7 +19,7 @@ class LockScreenViewController: UIViewController {
     @IBOutlet var circleView4: UIView!
     @IBOutlet var passcodeView: UIView!
     var myPasscode: String = ""
-    let user = DataController.shared.allUsers()
+    let user = DataController.shared.getallUsers()
     var code = ""
     let passCodeLength = 4
     

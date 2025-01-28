@@ -13,6 +13,7 @@ struct UserData {
     var password: String
     var passcode: String?
     var userLevels: [Level]
+    var userEarnedBadges: [Badge]
     var userBadges: [Badge]
 }
 

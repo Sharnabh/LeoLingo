@@ -167,9 +167,11 @@ class PracticeScreenViewController: UIViewController {
     func navigateToFunLearning() {
         let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
         if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
-            funLearningVC.modalPresentationStyle = .fullScreen
-            present(funLearningVC, animated: true)
+//            funLearningVC.modalPresentationStyle = .fullScreen
+//            present(funLearningVC, animated: true)
+            self.navigationController?.pushViewController(funLearningVC, animated: true)
         }
+        
     }
     
     func showConfettiEffect() {

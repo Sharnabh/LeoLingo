@@ -38,7 +38,28 @@ class FunLearningViewController: UIViewController {
     }
     
     @objc private func backButtonTapped() {
-        self.dismiss(animated: true)
+        if let presentingViewController = self.presentingViewController,
+           presentingViewController is HomePageViewController {
+            self.dismiss(animated: true)
+        } else {
+            guard let navigationController = self.navigationController else {
+                    print("No navigation controller found")
+                    return
+                }
+                
+                // Look for `A` in the navigation stack
+                for viewController in navigationController.viewControllers {
+                    if viewController is VocalCoachViewController {
+                        navigationController.popToViewController(viewController, animated: true)
+                        return
+                    }
+                }
+                
+            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                navigationController.setViewControllers([vocalCoachVC], animated: true)
+            }
+        }
     }
 
     @IBAction func nextButtonTapped(_ sender: UIButton) {

@@ -10,6 +10,7 @@ import UIKit
 protocol LogInCellDelegate: AnyObject {
     func showAlert(message: String)
     func switchToSignUpVC()
+    func switchToLandingPage()
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void)
     func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void)
 }
@@ -102,7 +103,7 @@ class LogInCollectionViewCell: UICollectionViewCell {
             if !success {
                 self?.delegate?.showAlert(message: "Incorrect password")
             } else {
-                self?.delegate?.showAlert(message: "LogIn Successful")
+                self?.delegate?.switchToLandingPage()
             }
         }
     }

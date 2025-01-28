@@ -29,10 +29,10 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         super.viewDidLoad()
         updateLevelView()
         generateCollectionViewLayout()
-        
         let words = DataController.shared.getAllLevels().flatMap { $0.words }
         let newWords = words.filter { $0.record != nil }
-        sortedWords = newWords.reversed()
+        sortedWords = Array(newWords.reversed().prefix(3))
+        
         // Do any additional setup after loading the view.
     }
     
@@ -55,6 +55,10 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         guard let word = sortedWords else { return cell }
         cell.updateLabel(with: word[indexPath.item])
+        cell.accuracyLabel.isHidden = true
+        cell.attemptsLabel.isHidden = true
+        cell.accuracy.isHidden = true
+        cell.attempts.isHidden = true
         
         return cell
     }
@@ -79,6 +83,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             layout.itemSize = CGSize(width: 126, height: 126)
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             layout.scrollDirection = .horizontal
+            layout.minimumLineSpacing = 10
+            layout.minimumInteritemSpacing = 0
+            
             recentPracticesCollectionView.collectionViewLayout = layout
             recentPracticesCollectionView.delegate = self
             recentPracticesCollectionView.dataSource = self
@@ -165,9 +172,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     @IBAction func funLearningButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
-        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
+        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningNavBar") as? UINavigationController {
             funLearningVC.modalPresentationStyle = .fullScreen
-            self.present(funLearningVC, animated: true, completion: nil)
+            present(funLearningVC, animated: true)
         }
     }
     

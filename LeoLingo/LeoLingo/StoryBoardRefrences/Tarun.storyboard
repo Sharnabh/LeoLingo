@@ -676,13 +676,13 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-G6-nIp">
-                                <rect key="frame" x="349" y="111" width="512" height="698"/>
+                                <rect key="frame" x="32" y="111" width="1146" height="698"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
-                                        <rect key="frame" x="0.0" y="0.0" width="512" height="507"/>
+                                        <rect key="frame" x="317" y="0.0" width="512" height="507"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YSN-6q-Nuz">
-                                        <rect key="frame" x="197.5" y="515" width="117" height="140"/>
+                                        <rect key="frame" x="514.5" y="515" width="117" height="140"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="140" id="Ji2-og-h3O"/>
                                         </constraints>
@@ -691,7 +691,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VWA-aM-Cvc">
-                                        <rect key="frame" x="212" y="663" width="88" height="35"/>
+                                        <rect key="frame" x="529" y="663" width="88" height="35"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="88" id="Lel-iY-SVG"/>
                                             <constraint firstAttribute="height" constant="35" id="oRg-eZ-8Pk"/>
@@ -711,11 +711,13 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="6Db-Gd-8nG" secondAttribute="bottom" id="8jj-VV-HGJ"/>
                             <constraint firstItem="jfY-G6-nIp" firstAttribute="centerX" secondItem="KnN-fM-fhX" secondAttribute="centerX" id="HF9-d4-VRF"/>
+                            <constraint firstItem="45S-IK-clZ" firstAttribute="trailing" secondItem="jfY-G6-nIp" secondAttribute="trailing" constant="32" id="IQb-se-V08"/>
                             <constraint firstItem="jfY-G6-nIp" firstAttribute="top" secondItem="KnN-fM-fhX" secondAttribute="top" constant="111" id="bGg-77-KIZ"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" id="e7b-KR-SI1"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="top" secondItem="KnN-fM-fhX" secondAttribute="top" id="n8s-sI-2gh"/>
                             <constraint firstAttribute="bottom" secondItem="jfY-G6-nIp" secondAttribute="bottom" constant="25" id="teN-GY-mDG"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="trailing" secondItem="45S-IK-clZ" secondAttribute="trailing" id="vnL-ii-kqI"/>
+                            <constraint firstItem="jfY-G6-nIp" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" constant="32" id="xf0-pA-eKU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7c3-aY-bnT"/>

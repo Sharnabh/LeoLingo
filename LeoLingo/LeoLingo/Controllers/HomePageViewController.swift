@@ -38,7 +38,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            return BadgesDataController.shared.countEarnedBadges()
+            return DataController.shared.countEarnedBadges()
         }
         return sortedWords?.count ?? 0
     }
@@ -47,7 +47,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if collectionView == badgesEarnedCollectionView {
             let cell = badgesEarnedCollectionView.dequeueReusableCell(withReuseIdentifier: BadgesEarnedCollectionViewCell.identifier, for: indexPath) as! BadgesEarnedCollectionViewCell
             
-            cell.configure(with: BadgesDataController.shared.getEarnedBadges()[indexPath.row].badgeImage)
+            cell.configure(with: DataController.shared.getEarnedBadges()[indexPath.row].badgeImage)
             
             return cell
         }

@@ -12,7 +12,7 @@ class SoundCardCollectionViewCell: UICollectionViewCell {
     @IBOutlet var imageView: UIImageView!
     
     func updateSoundCard(with indexPath: IndexPath) {
-        imageView.image = UIImage(named: CardsDataController.shared.getCards()[indexPath.row].cardImage)
+        imageView.image = UIImage(named: SampleDataController.shared.getCardsData()[indexPath.row].cardImage)
     }
     
 }

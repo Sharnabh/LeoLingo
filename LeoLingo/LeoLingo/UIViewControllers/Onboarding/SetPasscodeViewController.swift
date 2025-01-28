@@ -51,7 +51,7 @@ class SetPasscodeViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        var user = DataController.shared.allUsers()[0]
+        var user = DataController.shared.getallUsers()[0]
         print(user)
         DataController.shared.updatePasscode(myPasscode)
         

@@ -703,8 +703,8 @@ experience</string>
                         <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="vP3-Te-xel">
-                                <rect key="frame" x="10" y="84" width="864" height="652"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="22" translatesAutoresizingMaskIntoConstraints="NO" id="vP3-Te-xel">
+                                <rect key="frame" x="10" y="60" width="864" height="646.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Passcode for Parent Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pYx-zy-x6j">
                                         <rect key="frame" x="252" y="0.0" width="360" height="34"/>
@@ -715,8 +715,8 @@ experience</string>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="56" translatesAutoresizingMaskIntoConstraints="NO" id="kt5-Bv-AF0">
-                                        <rect key="frame" x="288" y="58" width="288" height="30"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="56" translatesAutoresizingMaskIntoConstraints="NO" id="kt5-Bv-AF0">
+                                        <rect key="frame" x="288" y="56" width="288" height="30"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZAC-zx-6EM">
                                                 <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
@@ -751,8 +751,8 @@ experience</string>
                                             <constraint firstAttribute="height" constant="30" id="xDc-hx-VVe"/>
                                         </constraints>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" alignment="center" spacing="36" translatesAutoresizingMaskIntoConstraints="NO" id="pc5-VA-XmQ">
-                                        <rect key="frame" x="257" y="112" width="350" height="348"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="36" translatesAutoresizingMaskIntoConstraints="NO" id="pc5-VA-XmQ">
+                                        <rect key="frame" x="257" y="108" width="350" height="348"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="o7c-XJ-zHX">
                                                 <rect key="frame" x="0.0" y="0.0" width="350" height="60"/>
@@ -895,8 +895,8 @@ experience</string>
                                             <constraint firstItem="64o-ia-w0h" firstAttribute="leading" secondItem="pc5-VA-XmQ" secondAttribute="leading" id="vOU-iy-OQr"/>
                                         </constraints>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="aIJ-HE-CEz">
-                                        <rect key="frame" x="377" y="484" width="110" height="168"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="aIJ-HE-CEz">
+                                        <rect key="frame" x="377" y="478" width="110" height="168.5"/>
                                     </stackView>
                                 </subviews>
                             </stackView>
@@ -906,8 +906,8 @@ experience</string>
                         <constraints>
                             <constraint firstItem="vP3-Te-xel" firstAttribute="leading" secondItem="iGD-HY-MKW" secondAttribute="leading" constant="10" id="23N-kr-fbb"/>
                             <constraint firstItem="iGD-HY-MKW" firstAttribute="trailing" secondItem="vP3-Te-xel" secondAttribute="trailing" constant="10" id="CWt-5M-rQX"/>
-                            <constraint firstItem="iGD-HY-MKW" firstAttribute="bottom" secondItem="vP3-Te-xel" secondAttribute="bottom" constant="10" id="kE0-Lh-mue"/>
-                            <constraint firstItem="vP3-Te-xel" firstAttribute="top" secondItem="iGD-HY-MKW" secondAttribute="top" constant="10" id="tZn-ju-04S"/>
+                            <constraint firstItem="vP3-Te-xel" firstAttribute="centerX" secondItem="bSN-gK-W5j" secondAttribute="centerX" id="DOd-CF-DSG"/>
+                            <constraint firstItem="vP3-Te-xel" firstAttribute="centerY" secondItem="bSN-gK-W5j" secondAttribute="centerY" id="eDW-kE-bH8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="3Fo-aT-5zr">
@@ -942,13 +942,13 @@ experience</string>
         <image name="delete.left" catalog="system" width="128" height="102"/>
         <image name="square" catalog="system" width="128" height="114"/>
         <namedColor name="AccentColor">
-            <color red="0.48600000143051147" green="0.74900001287460327" blue="0.25099998712539673" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.29399999976158142" green="0.55699998140335083" blue="0.31000000238418579" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

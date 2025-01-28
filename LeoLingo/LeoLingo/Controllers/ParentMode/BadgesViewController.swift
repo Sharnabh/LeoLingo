@@ -50,16 +50,16 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            return BadgesDataController.shared.countEarnedBadges()
+            return DataController.shared.countEarnedBadges()
         }
-        return BadgesDataController.shared.countBadges()
+        return DataController.shared.countBadges()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == badgesEarnedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
             
-            let earnedBadges = BadgesDataController.shared.getEarnedBadges()
+            let earnedBadges = DataController.shared.getEarnedBadges()
             
             cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
             
@@ -67,7 +67,7 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
         
-        let badges = BadgesDataController.shared.getBadges()
+        let badges = DataController.shared.getBadges()
         
         cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
         

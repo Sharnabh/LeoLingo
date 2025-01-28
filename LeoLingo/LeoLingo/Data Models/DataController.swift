@@ -91,13 +91,16 @@ class DataController {
             if i.badgeTitle == badge.badgeTitle {
                 user[0].userBadges[index].isEarned = true
             }
+        }
+        user[0].userEarnedBadges.append(badge)
+    }
+        
     func validateUser(phoneNumber: String, password: String) -> UserData? {
         if user.contains(where: {$0.phoneNumber == phoneNumber && $0.password == password}) {
             return user.first
         } else {
             return nil
         }
-        user[0].userEarnedBadges.append(badge)
     }
     
 }

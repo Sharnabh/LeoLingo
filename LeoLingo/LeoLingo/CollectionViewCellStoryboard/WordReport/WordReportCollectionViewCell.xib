@@ -83,7 +83,9 @@
             </collectionViewCellContentView>
             <size key="customSize" width="172" height="165"/>
             <connections>
+                <outlet property="accuracy" destination="Zpa-Yl-9FY" id="vj8-ib-d3M"/>
                 <outlet property="accuracyLabel" destination="wEd-pu-Tp1" id="m4c-Nq-WkA"/>
+                <outlet property="attempts" destination="r4o-x7-Vjv" id="GfS-CQ-qde"/>
                 <outlet property="attemptsLabel" destination="aod-1S-1m3" id="5Wk-vs-OC7"/>
                 <outlet property="progressView" destination="4b8-RQ-Z9T" id="953-6C-Cu7"/>
             </connections>

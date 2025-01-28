@@ -14,6 +14,8 @@ class WordReportCollectionViewCell: UICollectionViewCell {
     @IBOutlet var progressView: UIView!
     @IBOutlet var accuracyLabel: UILabel!
     @IBOutlet var attemptsLabel: UILabel!
+    @IBOutlet var accuracy: UILabel!
+    @IBOutlet var attempts: UILabel!
     
     
     func updateLabel(with word: Word) {

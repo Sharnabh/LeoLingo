@@ -30,6 +30,7 @@ class CardsDataController {
             Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
             Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
             Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
+            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
             Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: [])
         ]
     }

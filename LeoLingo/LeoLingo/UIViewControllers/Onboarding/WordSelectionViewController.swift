@@ -28,10 +28,10 @@ class WordSelectionViewController: UIViewController {
     
     var selectedItems: [String: [String]] = [:]
 
-
     @IBOutlet var searchedWordCollectionView: UICollectionView!
     @IBOutlet var searchBar: UITextField!
     @IBOutlet var selectedWordCollectionView: UICollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

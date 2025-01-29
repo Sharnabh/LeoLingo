@@ -17,6 +17,7 @@ class SpeechLevelViewController: UIViewController {
     ]
 
     @IBOutlet var speechLevelTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -50,7 +51,6 @@ class SpeechLevelViewController: UIViewController {
         }
     }
 }
-
 
 extension SpeechLevelViewController: UITableViewDelegate, UITableViewDataSource {
     

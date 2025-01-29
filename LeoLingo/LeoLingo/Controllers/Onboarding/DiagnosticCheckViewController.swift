@@ -8,12 +8,12 @@
 import UIKit
 
 class DiagnosticCheckViewController: UIViewController {
-
-    
     
     @IBOutlet var yesCheckmarkButton: UIButton!
     @IBOutlet var noCheckmarkButton: UIButton!
+    
     var isDiagnosed: Bool? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -1,8 +1,8 @@
+
 import UIKit
 
-
-
 class JungleRunViewController: UIViewController {
+    
     @IBOutlet var backgroundImage1: UIImageView!
     @IBOutlet var backgroundImage2: UIImageView!
     @IBOutlet var lionImageView: UIImageView!

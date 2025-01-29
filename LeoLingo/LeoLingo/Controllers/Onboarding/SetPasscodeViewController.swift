@@ -9,9 +9,6 @@ import UIKit
 
 class SetPasscodeViewController: UIViewController {
 
-    
-    
-    
     @IBOutlet var circleView1: UIView!
     @IBOutlet var circleView2: UIView!
     @IBOutlet var circleView3: UIView!

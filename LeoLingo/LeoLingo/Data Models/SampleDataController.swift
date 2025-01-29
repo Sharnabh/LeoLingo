@@ -110,17 +110,17 @@ class SampleDataController {
         cards = [
             Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
             Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
+            Card(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            Card(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            Card(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            Card(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
             Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
             Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: [])
+            Card(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            Card(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            Card(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            Card(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
+            Card(cardTitle: "EarlyWords", cardImage: "EarlyWords", words: [])
         ]
     }
     

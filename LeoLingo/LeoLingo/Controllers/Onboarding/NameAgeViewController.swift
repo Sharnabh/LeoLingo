@@ -35,8 +35,6 @@ class NameAgeViewController: UIViewController {
         
     }
     
-    
-    
     @IBAction func continueButtonTapped(_ sender: UIButton) {
         guard let name = childNameTextField.text, !name.trimmingCharacters(in: .whitespaces).isEmpty else {
             let alert = UIAlertController(title: "Missing Information", 

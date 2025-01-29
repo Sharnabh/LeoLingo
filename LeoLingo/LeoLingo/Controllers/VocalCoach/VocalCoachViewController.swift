@@ -19,7 +19,6 @@ class VocalCoachViewController: UIViewController {
         
         words = levels.flatMap { $0.words }
         word = words.first{ $0.isPracticed == false }
-        print(word)
         wordLabel.text = word?.wordTitle
         
         updatePracticeCardView()

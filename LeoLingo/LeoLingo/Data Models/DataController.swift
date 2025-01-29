@@ -16,7 +16,7 @@ class DataController {
     private init() {
         
     }
-    
+    // Users
     func createUser(user: UserData) {
         self.user.append(user)
     }
@@ -30,6 +30,24 @@ class DataController {
         self.user[0].passcode = passcode
     }
     
+    func findUser(byPhone phoneNumber: String) -> UserData? {
+        
+        if user.contains(where: { $0.phoneNumber == phoneNumber }) {
+            return user.first(where: { $0.phoneNumber == phoneNumber })
+        } else {
+            return nil
+        }
+    }
+    
+    func validateUser(phoneNumber: String, password: String) -> UserData? {
+        if user.contains(where: {$0.phoneNumber == phoneNumber && $0.password == password}) {
+            return user.first
+        } else {
+            return nil
+        }
+    }
+    
+    // Levels
     func getAllLevels() -> [Level] {
         return user[0].userLevels
     }
@@ -51,15 +69,6 @@ class DataController {
         user[0].userLevels[index].words[wordIndex].record?.attempts += 1
         if let accuracy = accuracy {
             user[0].userLevels[index].words[wordIndex].record?.accuracy?.append(accuracy)
-        }
-    }
-    
-    func findUser(byPhone phoneNumber: String) -> UserData? {
-        
-        if user.contains(where: { $0.phoneNumber == phoneNumber }) {
-            return user.first(where: { $0.phoneNumber == phoneNumber })
-        } else {
-            return nil
         }
     }
     
@@ -93,14 +102,6 @@ class DataController {
             }
         }
         user[0].userEarnedBadges.append(badge)
-    }
-        
-    func validateUser(phoneNumber: String, password: String) -> UserData? {
-        if user.contains(where: {$0.phoneNumber == phoneNumber && $0.password == password}) {
-            return user.first
-        } else {
-            return nil
-        }
     }
     
 }

@@ -55,7 +55,7 @@ class SampleDataController {
                 Word(wordTitle: "Flower", wordImage: "flower")
                 ]),
             Level(levelTitle: "Level 5", levelImage: "5", words: [
-                Word(wordTitle: "Lunch", wordImage: "luch"),
+                Word(wordTitle: "Lunch", wordImage: "lunch"),
                 Word(wordTitle: "Lips", wordImage: "lips"),
                 Word(wordTitle: "Lamp", wordImage: "lamp"),
                 Word(wordTitle: "Laugh", wordImage: "laugh"),
@@ -63,7 +63,7 @@ class SampleDataController {
                 Word(wordTitle: "Leaf", wordImage: "leaf")
                 ]),
             Level(levelTitle: "Level 6", levelImage: "6", words: [
-                Word(wordTitle: "Lion", wordImage: "lion"),
+                Word(wordTitle: "Lion", wordImage: "JungleLion"),
                 Word(wordTitle: "Wire", wordImage: "wire"),
                 Word(wordTitle: "Wrist", wordImage: "wrist"),
                 Word(wordTitle: "Watch", wordImage: "watch"),
@@ -109,7 +109,15 @@ class SampleDataController {
         ]
         cards = [
             Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
+            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: [
+                Word(wordTitle: "Wrist", wordImage: "wrist"),
+                Word(wordTitle: "Lips", wordImage: "lips"),
+                Word(wordTitle: "Eye", wordImage: "eye"),
+                Word(wordTitle: "Ear", wordImage: "ear"),
+                Word(wordTitle: "Thumb", wordImage: "thumb"),
+                Word(wordTitle: "Nose", wordImage: "nose"),
+                Word(wordTitle: "Palm", wordImage: "palm")
+            ]),
             Card(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
             Card(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
             Card(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),

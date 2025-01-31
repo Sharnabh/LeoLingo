@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class BadgesViewController: UIViewController {
     
     @IBOutlet weak var badgesEarnedCollectionView: UICollectionView!
     var layout: UICollectionViewFlowLayout?
@@ -18,6 +18,43 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        createLayout()
+    }
+}
+    
+extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == badgesEarnedCollectionView {
+            return DataController.shared.countEarnedBadges()
+        }
+        return DataController.shared.countBadges()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == badgesEarnedCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
+            
+            let earnedBadges = DataController.shared.getEarnedBadges()
+            
+            cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
+            
+            return cell
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
+        
+        let badges = DataController.shared.getBadges()
+        
+        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
+        
+        return cell
+    }
+    
+    func createLayout() {
         layout = UICollectionViewFlowLayout()
         if let layout = layout {
             layout.scrollDirection = .horizontal
@@ -42,35 +79,5 @@ class BadgesViewController: UIViewController, UICollectionViewDelegate, UICollec
             let BadgesNib = UINib(nibName: "BadgesBottomCollectionViewCell", bundle: nil)
             badgescollectionView.register(BadgesNib, forCellWithReuseIdentifier: BadgesBottomCollectionViewCell.identifier)
         }
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == badgesEarnedCollectionView {
-            return BadgesDataController.shared.countEarnedBadges()
-        }
-        return BadgesDataController.shared.countBadges()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == badgesEarnedCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
-            
-            let earnedBadges = BadgesDataController.shared.getEarnedBadges()
-            
-            cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
-            
-            return cell
-        }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
-        
-        let badges = BadgesDataController.shared.getBadges()
-        
-        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
-        
-        return cell
     }
 }

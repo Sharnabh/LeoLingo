@@ -8,11 +8,13 @@
 import Foundation
 
 struct UserData {
+    var id: UUID = UUID()
     var name: String
     var phoneNumber: String
     var password: String
     var passcode: String?
     var userLevels: [Level]
+    var userEarnedBadges: [Badge]
     var userBadges: [Badge]
 }
 
@@ -68,10 +70,6 @@ enum FIlterOptions: String, CaseIterable {
     case all = "All"
     case accurate = "Accurate"
     case inaccurate = "Inaccurate"
-}
-
-struct CardGroup {
-    var cards: [Card]
 }
 
 struct Card {

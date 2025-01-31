@@ -1,60 +1,79 @@
 //
-//  LockScreenViewController.swift
+//  SetPasscodeViewController.swift
 //  LeoLingo
 //
-//  Created by Sharnabh on 16/01/25.
+//  Created by Batch - 2 on 15/01/25.
 //
 
 import UIKit
 
-class LockScreenViewController: UIViewController {
+class SetPasscodeViewController: UIViewController {
 
-    
-    @IBOutlet var passcodeButtons: [UIButton]!
-    @IBOutlet var deleteButton: UIButton!
-    
     @IBOutlet var circleView1: UIView!
     @IBOutlet var circleView2: UIView!
     @IBOutlet var circleView3: UIView!
     @IBOutlet var circleView4: UIView!
-    @IBOutlet var passcodeView: UIView!
+    @IBOutlet var passcodeButtons: [UIButton]!
+    @IBOutlet var deleteButton: UIButton!
+    @IBOutlet var rightBarButtonItem: UIBarButtonItem!
+    
     var myPasscode: String = ""
-    let user = DataController.shared.getallUsers()
-    var code = ""
-    let passCodeLength = 4
+    let passCodeLength: Int = 4
+    var phoneNumber = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        code = user[0].passcode ?? "1234"
-        print(user[0])
 
         configureCircleView(circleView: circleView1)
         configureCircleView(circleView: circleView2)
         configureCircleView(circleView: circleView3)
         configureCircleView(circleView: circleView4)
+
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
+        let backButton =  UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
+        backButton.tintColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1)
         
-        passcodeView.layer.borderWidth = 2
-        passcodeView.layer.borderColor = CGColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
-        passcodeView.layer.cornerRadius = 30
+        navigationItem.leftBarButtonItem = backButton
         
+        rightBarButtonItem.tintColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1)
+        
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonTapped))
+        navigationItem.rightBarButtonItem = doneButton
     }
     
-    @IBAction func backButtonTapped1(_ sender: UIBarButtonItem) {
-//        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-//        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-//            homeVC.modalPresentationStyle = .fullScreen
-//            self.present(homeVC, animated: true, completion: nil)
-//        }
-        self.dismiss(animated: true)
+    @objc private func doneButtonTapped() {
+        var user = DataController.shared.getallUsers()[0]
+        print(user)
+        DataController.shared.updatePasscode(myPasscode)
+        
+        print(user)
+        let storyBoard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let homeVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            homeVC.modalPresentationStyle = .fullScreen
+            present(homeVC, animated: true)
+        }
     }
     
-//    @objc func backButtonTapped() {
-//        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-//        let vc = storyboard.instantiateViewController(withIdentifier: "HomePageViewController")
-//        self.present(vc, animated: true)
-//    }
+    func setPhoneNumber() {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress before popping
+            phoneNumber = questionnaireVC.returnPhoneNumber()
+        }
+    }
+    
+    @objc private func backButtonTapped() {
+        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+            // Update progress before popping
+            questionnaireVC.moveToPreviousStep()
+        }
+        navigationController?.popViewController(animated: true)
+    }
     
     func configureCircleView(circleView: UIView) {
         circleView.layer.cornerRadius = circleView.frame.size.width / 2
@@ -80,15 +99,7 @@ class LockScreenViewController: UIViewController {
                 
                 // Enable the bar button item when passcode length is 4
                 if myPasscode.count == passCodeLength {
-                    if myPasscode == code {
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let sceneDelegate = windowScene.delegate as? SceneDelegate {
-                            let tabBarBC = storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
-                            sceneDelegate.window?.rootViewController = tabBarBC
-                        }
-                    } else {
-                        print("Bhag")
-                    }
+                    navigationItem.rightBarButtonItem?.isEnabled = true
                 }
             }
         }
@@ -126,5 +137,4 @@ class LockScreenViewController: UIViewController {
         deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
         deleteButton.clipsToBounds = true
     }
-
 }

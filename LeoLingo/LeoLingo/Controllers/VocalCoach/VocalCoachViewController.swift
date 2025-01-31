@@ -87,7 +87,7 @@ class VocalCoachViewController: UIViewController {
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return CardsDataController.shared.countCards()
+        return SampleDataController.shared.countCards()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

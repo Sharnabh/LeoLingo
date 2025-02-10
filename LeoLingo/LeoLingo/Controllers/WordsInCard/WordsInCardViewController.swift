@@ -4,6 +4,8 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet var headingTitle: UILabel!
+    
     var selectedItem: String?
     
     let items = [
@@ -14,14 +16,16 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         ("Thumb", "thumb"),
         ("Finger", "finger"),
         ("Nose", "nose"),
-        ("Palm", "palm")
+        ("Palm", "palm"),
+        ("Leg", "leg")
     ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
        
-        
+        headingTitle.layer.cornerRadius = 21
+        headingTitle.layer.masksToBounds = true
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName: "CardCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CardCell")
@@ -33,10 +37,11 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
     private func configureFlowLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 8
+        layout.minimumLineSpacing = 25
         layout.minimumInteritemSpacing = 8
-        layout.itemSize = CGSize(width: 250, height: 250)
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        layout.itemSize = CGSize(width: 220, height: 220)
+        layout.sectionInset = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30)
+        
         collectionView.collectionViewLayout = layout
     }
     
@@ -51,7 +56,7 @@ class WordsInCardViewController: UIViewController, UICollectionViewDataSource, U
         
         collectionView.layer.cornerRadius = 27
         collectionView.layer.borderWidth = 3
-        collectionView.layer.borderColor = UIColor(red: 225/255, green: 168/255, blue: 63/255, alpha: 1.0).cgColor
+        collectionView.layer.borderColor = UIColor(red: 141/255, green: 91/255, blue: 66/255, alpha: 1.0).cgColor
         collectionView.clipsToBounds = true
         cell.layer.cornerRadius = 21
         

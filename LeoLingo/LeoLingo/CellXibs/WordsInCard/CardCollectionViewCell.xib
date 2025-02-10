@@ -10,43 +10,48 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CardCell" id="NvH-Xp-vVf" customClass="CardCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="265" height="290"/>
+            <rect key="frame" x="0.0" y="0.0" width="220" height="220"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="1Xj-nu-6SC">
-                <rect key="frame" x="0.0" y="0.0" width="265" height="290"/>
+                <rect key="frame" x="0.0" y="0.0" width="220" height="220"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YW7-vP-KVD">
-                        <rect key="frame" x="30" y="79" width="205" height="205"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="adO-ko-bcO">
+                        <rect key="frame" x="0.0" y="13" width="220" height="36"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="205" id="IIz-Qf-M7H"/>
-                            <constraint firstAttribute="height" constant="205" id="sFf-V5-pak"/>
+                            <constraint firstAttribute="height" constant="36" id="jZO-0S-O3n"/>
+                            <constraint firstAttribute="width" constant="220" id="nyv-tX-4xe"/>
                         </constraints>
-                    </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="adO-ko-bcO">
-                        <rect key="frame" x="96" y="13" width="73" height="36"/>
-                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="30"/>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                         <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YW7-vP-KVD">
+                        <rect key="frame" x="48" y="66" width="125" height="125"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="125" id="8Mh-Zp-vFj"/>
+                            <constraint firstAttribute="height" constant="125" id="xZg-dR-PRZ"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" red="0.9529411793" green="0.87450981139999995" blue="0.54901963470000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                 <constraints>
-                    <constraint firstItem="adO-ko-bcO" firstAttribute="centerX" secondItem="1Xj-nu-6SC" secondAttribute="centerX" id="2jW-fq-DF1"/>
-                    <constraint firstItem="YW7-vP-KVD" firstAttribute="leading" secondItem="1Xj-nu-6SC" secondAttribute="leading" constant="30" id="HWk-hG-oQJ"/>
-                    <constraint firstAttribute="bottom" secondItem="YW7-vP-KVD" secondAttribute="bottom" constant="6" id="P1d-wj-ycx"/>
-                    <constraint firstAttribute="trailing" secondItem="YW7-vP-KVD" secondAttribute="trailing" constant="30" id="WYC-XB-gxk"/>
-                    <constraint firstItem="adO-ko-bcO" firstAttribute="top" secondItem="1Xj-nu-6SC" secondAttribute="top" constant="13" id="YqH-TX-7HO"/>
-                    <constraint firstItem="YW7-vP-KVD" firstAttribute="top" secondItem="adO-ko-bcO" secondAttribute="bottom" constant="30" id="qlm-Cw-TAj"/>
-                    <constraint firstItem="YW7-vP-KVD" firstAttribute="top" secondItem="adO-ko-bcO" secondAttribute="bottom" constant="30" id="uNx-LU-62I"/>
+                    <constraint firstItem="adO-ko-bcO" firstAttribute="leading" secondItem="1Xj-nu-6SC" secondAttribute="leading" id="0HM-6H-8TQ"/>
+                    <constraint firstAttribute="trailing" secondItem="YW7-vP-KVD" secondAttribute="trailing" constant="47" id="0ue-vf-oJr"/>
+                    <constraint firstItem="YW7-vP-KVD" firstAttribute="leading" secondItem="1Xj-nu-6SC" secondAttribute="leading" constant="48" id="ABB-6Q-MoI"/>
+                    <constraint firstAttribute="trailing" secondItem="adO-ko-bcO" secondAttribute="trailing" id="Ewy-eH-Z8o"/>
+                    <constraint firstItem="YW7-vP-KVD" firstAttribute="top" secondItem="adO-ko-bcO" secondAttribute="bottom" constant="17" id="MrU-g0-X9g"/>
+                    <constraint firstItem="adO-ko-bcO" firstAttribute="top" secondItem="1Xj-nu-6SC" secondAttribute="top" constant="13" id="OhE-eY-JX7"/>
+                    <constraint firstItem="YW7-vP-KVD" firstAttribute="top" secondItem="adO-ko-bcO" secondAttribute="bottom" constant="17" id="nVd-gn-K7R"/>
+                    <constraint firstAttribute="bottom" secondItem="YW7-vP-KVD" secondAttribute="bottom" constant="29" id="wiT-Wm-BFx"/>
                 </constraints>
             </collectionViewCellContentView>
-            <size key="customSize" width="265" height="290"/>
+            <size key="customSize" width="269" height="289"/>
             <connections>
                 <outlet property="imageView" destination="YW7-vP-KVD" id="rzM-fk-KoW"/>
                 <outlet property="titleLabel" destination="adO-ko-bcO" id="Kgy-Oi-oro"/>
             </connections>
-            <point key="canvasLocation" x="325.2439024390244" y="195.76271186440678"/>
+            <point key="canvasLocation" x="19.756097560975608" y="98.644067796610173"/>
         </collectionViewCell>
     </objects>
 </document>

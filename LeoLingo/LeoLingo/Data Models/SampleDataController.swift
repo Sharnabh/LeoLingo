@@ -12,6 +12,7 @@ class SampleDataController {
     private var badges: [AppBadge] = []
     private var levels: [AppLevel] = []
     private var cards: [AppCard] = []
+    private var exercises: [String: Exercise] = [:]
     
     static var shared = SampleDataController()
     

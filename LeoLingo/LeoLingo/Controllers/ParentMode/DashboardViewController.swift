@@ -43,7 +43,7 @@ class DashboardViewController: UIViewController {
     
     private let levels: [Level] = DataController.shared.getAllLevels()
     
-    var earnedBadges: [Badge] = DataController.shared.getEarnedBadges()
+    var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()
     
     var minAccuracyWords: [Word]?
     

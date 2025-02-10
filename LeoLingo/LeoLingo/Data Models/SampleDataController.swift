@@ -9,10 +9,9 @@ import Foundation
 
 class SampleDataController {
     
-    private var badges: [Badge] = []
-    private var levels: [Level] = []
-    private var cards: [Card] = []
-    private var earnedBadges: [Badge] = []
+    private var badges: [AppBadge] = []
+    private var levels: [AppLevel] = []
+    private var cards: [AppCard] = []
     
     static var shared = SampleDataController()
     
@@ -22,129 +21,130 @@ class SampleDataController {
     
     func loadData() {
         levels = [
-            Level(levelTitle: "Level 1", levelImage: "1", words: [
-                Word(wordTitle: "A", wordImage: "a"),
-                Word(wordTitle: "Alarm", wordImage: "alarm"),
-                Word(wordTitle: "Army", wordImage: "army"),
-                Word(wordTitle: "Art", wordImage: "art"),
-                Word(wordTitle: "Apple", wordImage: "apple"),
-                Word(wordTitle: "Ant", wordImage: "ant")
+            AppLevel(levelTitle: "Level 1", levelImage: "1", words: [
+                AppWord(wordTitle: "A", wordImage: "a"),
+                AppWord(wordTitle: "Alarm", wordImage: "alarm"),
+                AppWord(wordTitle: "Army", wordImage: "army"),
+                AppWord(wordTitle: "Art", wordImage: "art"),
+                AppWord(wordTitle: "Apple", wordImage: "apple"),
+                AppWord(wordTitle: "Ant", wordImage: "ant")
                 ]),
-            Level(levelTitle: "Level 2", levelImage: "2", words: [
-                Word(wordTitle: "B", wordImage: "b"),
-                Word(wordTitle: "Black", wordImage: "black"),
-                Word(wordTitle: "Bread", wordImage: "bread"),
-                Word(wordTitle: "Broom", wordImage: "broom"),
-                Word(wordTitle: "Brick", wordImage: "brick"),
-                Word(wordTitle: "Brother", wordImage: "brother")
+            AppLevel(levelTitle: "Level 2", levelImage: "2", words: [
+                AppWord(wordTitle: "B", wordImage: "b"),
+                AppWord(wordTitle: "Black", wordImage: "black"),
+                AppWord(wordTitle: "Bread", wordImage: "bread"),
+                AppWord(wordTitle: "Broom", wordImage: "broom"),
+                AppWord(wordTitle: "Brick", wordImage: "brick"),
+                AppWord(wordTitle: "Brother", wordImage: "brother")
                 ]),
-            Level(levelTitle: "Level 3", levelImage: "3", words: [
-                Word(wordTitle: "R", wordImage: "r"),
-                Word(wordTitle: "Ring", wordImage: "ring"),
-                Word(wordTitle: "Rice", wordImage: "rice"),
-                Word(wordTitle: "Red", wordImage: "red"),
-                Word(wordTitle: "Read", wordImage: "read"),
-                Word(wordTitle: "Run", wordImage: "run")
+            AppLevel(levelTitle: "Level 3", levelImage: "3", words: [
+                AppWord(wordTitle: "R", wordImage: "r"),
+                AppWord(wordTitle: "Ring", wordImage: "ring"),
+                AppWord(wordTitle: "Rice", wordImage: "rice"),
+                AppWord(wordTitle: "Red", wordImage: "red"),
+                AppWord(wordTitle: "Read", wordImage: "read"),
+                AppWord(wordTitle: "Run", wordImage: "run")
                 ]),
-            Level(levelTitle: "Level 4", levelImage: "4", words: [
-                Word(wordTitle: "Fire", wordImage: "fire"),
-                Word(wordTitle: "Frog", wordImage: "frog"),
-                Word(wordTitle: "Fruit", wordImage: "fruits"),
-                Word(wordTitle: "Frame", wordImage: "frame"),
-                Word(wordTitle: "Flute", wordImage: "flute"),
-                Word(wordTitle: "Flower", wordImage: "flower")
+            AppLevel(levelTitle: "Level 4", levelImage: "4", words: [
+                AppWord(wordTitle: "Fire", wordImage: "fire"),
+                AppWord(wordTitle: "Frog", wordImage: "frog"),
+                AppWord(wordTitle: "Fruit", wordImage: "fruits"),
+                AppWord(wordTitle: "Frame", wordImage: "frame"),
+                AppWord(wordTitle: "Flute", wordImage: "flute"),
+                AppWord(wordTitle: "Flower", wordImage: "flower")
                 ]),
-            Level(levelTitle: "Level 5", levelImage: "5", words: [
-                Word(wordTitle: "Lunch", wordImage: "lunch"),
-                Word(wordTitle: "Lips", wordImage: "lips"),
-                Word(wordTitle: "Lamp", wordImage: "lamp"),
-                Word(wordTitle: "Laugh", wordImage: "laugh"),
-                Word(wordTitle: "Lamp", wordImage: "lamp"),
-                Word(wordTitle: "Leaf", wordImage: "leaf")
+            AppLevel(levelTitle: "Level 5", levelImage: "5", words: [
+                AppWord(wordTitle: "Lunch", wordImage: "lunch"),
+                AppWord(wordTitle: "Lips", wordImage: "lips"),
+                AppWord(wordTitle: "Lamp", wordImage: "lamp"),
+                AppWord(wordTitle: "Laugh", wordImage: "laugh"),
+                AppWord(wordTitle: "Lamp", wordImage: "lamp"),
+                AppWord(wordTitle: "Leaf", wordImage: "leaf")
                 ]),
-            Level(levelTitle: "Level 6", levelImage: "6", words: [
-                Word(wordTitle: "Lion", wordImage: "JungleLion"),
-                Word(wordTitle: "Wire", wordImage: "wire"),
-                Word(wordTitle: "Wrist", wordImage: "wrist"),
-                Word(wordTitle: "Watch", wordImage: "watch"),
-                Word(wordTitle: "Wall", wordImage: "wall"),
-                Word(wordTitle: "Market", wordImage: "market")
+            AppLevel(levelTitle: "Level 6", levelImage: "6", words: [
+                AppWord(wordTitle: "Lion", wordImage: "JungleLion"),
+                AppWord(wordTitle: "Wire", wordImage: "wire"),
+                AppWord(wordTitle: "Wrist", wordImage: "wrist"),
+                AppWord(wordTitle: "Watch", wordImage: "watch"),
+                AppWord(wordTitle: "Wall", wordImage: "wall"),
+                AppWord(wordTitle: "Market", wordImage: "market")
                 ]),
-            Level(levelTitle: "Level 7", levelImage: "7", words: [
-                Word(wordTitle: "City", wordImage: "city"),
-                Word(wordTitle: "Ear", wordImage: "ear"),
-                Word(wordTitle: "Eye", wordImage: "eye"),
-                Word(wordTitle: "Book", wordImage: "book"),
-                Word(wordTitle: "Pen", wordImage: "pen"),
-                Word(wordTitle: "Sun", wordImage: "sun")
+            AppLevel(levelTitle: "Level 7", levelImage: "7", words: [
+                AppWord(wordTitle: "City", wordImage: "city"),
+                AppWord(wordTitle: "Ear", wordImage: "ear"),
+                AppWord(wordTitle: "Eye", wordImage: "eye"),
+                AppWord(wordTitle: "Book", wordImage: "book"),
+                AppWord(wordTitle: "Pen", wordImage: "pen"),
+                AppWord(wordTitle: "Sun", wordImage: "sun")
                 ]),
-            Level(levelTitle: "Level 8", levelImage: "8", words: [
-                Word(wordTitle: "Sand", wordImage: "sand"),
-                Word(wordTitle: "Snow", wordImage: "snow"),
-                Word(wordTitle: "Sky", wordImage: "sky"),
-                Word(wordTitle: "Snake", wordImage: "snake"),
-                Word(wordTitle: "Sing", wordImage: "sing"),
-                Word(wordTitle: "Superhero", wordImage: "superhero")
+            AppLevel(levelTitle: "Level 8", levelImage: "8", words: [
+                AppWord(wordTitle: "Sand", wordImage: "sand"),
+                AppWord(wordTitle: "Snow", wordImage: "snow"),
+                AppWord(wordTitle: "Sky", wordImage: "sky"),
+                AppWord(wordTitle: "Snake", wordImage: "snake"),
+                AppWord(wordTitle: "Sing", wordImage: "sing"),
+                AppWord(wordTitle: "Superhero", wordImage: "superhero")
                 ]),
-            Level(levelTitle: "Level 9", levelImage: "9", words: [
-                Word(wordTitle: "School", wordImage: "school"),
-                Word(wordTitle: "Sweater", wordImage: "sweater"),
-                Word(wordTitle: "Swim", wordImage: "swim"),
-                Word(wordTitle: "Star", wordImage: "star"),
-                Word(wordTitle: "Soup", wordImage: "soup"),
-                Word(wordTitle: "Swan", wordImage: "swan")
+            AppLevel(levelTitle: "Level 9", levelImage: "9", words: [
+                AppWord(wordTitle: "School", wordImage: "school"),
+                AppWord(wordTitle: "Sweater", wordImage: "sweater"),
+                AppWord(wordTitle: "Swim", wordImage: "swim"),
+                AppWord(wordTitle: "Star", wordImage: "star"),
+                AppWord(wordTitle: "Soup", wordImage: "soup"),
+                AppWord(wordTitle: "Swan", wordImage: "swan")
                 ])
         ]
         badges = [
-            Badge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee", isEarned: false),
-            Badge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle", isEarned: false),
-            Badge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant", isEarned: false),
-            Badge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog", isEarned: false),
-            Badge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny", isEarned: false),
-            Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: false)
-        ]
-        earnedBadges = [
-            Badge(badgeTitle: "Beginner", badgeDescription: " ", badgeImage: "bronze-medal", isEarned: true),
-            Badge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion", isEarned: true)
+            AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee"),
+            AppBadge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle"),
+            AppBadge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant"),
+            AppBadge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog"),
+            AppBadge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny"),
+            AppBadge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion")
         ]
         cards = [
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: [
-                Word(wordTitle: "Wrist", wordImage: "wrist"),
-                Word(wordTitle: "Lips", wordImage: "lips"),
-                Word(wordTitle: "Eye", wordImage: "eye"),
-                Word(wordTitle: "Ear", wordImage: "ear"),
-                Word(wordTitle: "Thumb", wordImage: "thumb"),
-                Word(wordTitle: "Nose", wordImage: "nose"),
-                Word(wordTitle: "Palm", wordImage: "palm")
+            AppCard(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
+            AppCard(cardTitle: "BodyParts", cardImage: "BodyParts", words: [
+                AppWord(wordTitle: "Wrist", wordImage: "wrist"),
+                AppWord(wordTitle: "Lips", wordImage: "lips"),
+                AppWord(wordTitle: "Eye", wordImage: "eye"),
+                AppWord(wordTitle: "Ear", wordImage: "ear"),
+                AppWord(wordTitle: "Thumb", wordImage: "thumb"),
+                AppWord(wordTitle: "Nose", wordImage: "nose"),
+                AppWord(wordTitle: "Palm", wordImage: "palm")
             ]),
-            Card(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
-            Card(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
-            Card(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
-            Card(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
-            Card(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
-            Card(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
-            Card(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
-            Card(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
-            Card(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
-            Card(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
-            Card(cardTitle: "EarlyWords", cardImage: "EarlyWords", words: [])
+            AppCard(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            AppCard(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            AppCard(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            AppCard(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
+            AppCard(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
+            AppCard(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
+            AppCard(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            AppCard(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            AppCard(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            AppCard(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
+            AppCard(cardTitle: "EarlyWords", cardImage: "EarlyWords", words: [])
         ]
     }
     
-    func getLevelsData() -> [Level] {
+    func getLevelsData() -> [AppLevel] {
         return levels
     }
     
-    func getBadgesData() -> [Badge] {
+    func getBadgesData() -> [AppBadge] {
         return badges
     }
     
-    func getEarnedBadgesData() -> [Badge] {
-        return earnedBadges
+    func getBadges(by id: UUID) -> AppBadge? {
+        for badge in badges {
+            if badge.id == id {
+                return badge
+            }
+        }
+        return nil
     }
     
-    func getCardsData() -> [Card] {
+    func getCardsData() -> [AppCard] {
         return cards
     }
     

@@ -91,9 +91,8 @@ extension SignUpViewController: SignUpCellDelegate {
     
     func signUp(name: String, phone: String, password: String) {
         // Create new user in Core Data
-        let user = UserData(name: name, phoneNumber: phone, password: password, userLevels: SampleDataController.shared.getLevelsData(), userEarnedBadges: SampleDataController.shared.getEarnedBadgesData(), userBadges: SampleDataController.shared.getBadgesData())
+        let user = UserData(name: name, phoneNumber: phone, password: password, userLevels: DataController.shared.getUserLevelsData(), userEarnedBadges: DataController.shared.getUserEarnedBadges(), userBadges: DataController.shared.getUserBadgesData())
         DataController.shared.createUser(user: user)
-        print(DataController.shared.findUser(byPhone: phone))
         
         showAlert(message: "Sign up successful!")
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in

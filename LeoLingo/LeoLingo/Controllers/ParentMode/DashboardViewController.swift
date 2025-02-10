@@ -62,8 +62,6 @@ class DashboardViewController: UIViewController {
     @IBOutlet var mojoSuggestion: UIView!
     @IBOutlet var beginnerProgressBar: UIProgressView!
     @IBOutlet var collectionView: UICollectionView!
-    
-    
   
 
     @IBOutlet var exerciseForW2: WKWebView!
@@ -215,7 +213,6 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
         return cell
     }
     
-   
+    
+    
 }
-
-

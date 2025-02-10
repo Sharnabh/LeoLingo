@@ -159,7 +159,10 @@ extension WordReportViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = levelsTableView.dequeueReusableCell(withIdentifier: "LevelCell", for: indexPath) as! LevelsTableViewCell
         let level = levels[indexPath.row]
         
-        cell.configureCell(level: level.levelTitle, completed: level.isCompleted)
+        if let appLevel = DataController.shared.getLevel(by: level.id) {
+            cell.configureCell(level: appLevel.levelTitle, completed: level.isCompleted)
+        }
+        
         return cell
     }
     
@@ -207,9 +210,10 @@ extension WordReportViewController: UICollectionViewDelegate, UICollectionViewDa
              word = levels[selectedRow].words[indexPath.item]
         }
         
-                
-        wordLabel.text = word.wordTitle
-        accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)
+        if let appWord = DataController.shared.wordData(by: word.id) {
+            wordLabel.text = appWord.wordTitle
+            accuracyLabel.text = String(format: "%.1f%%", word.avgAccuracy)
+        }
         
         if let record = word.record {
             accuracyGraph.updateChartData(accuracyData: record.accuracy!)

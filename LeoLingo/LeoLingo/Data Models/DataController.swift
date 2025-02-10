@@ -10,13 +10,44 @@ import Foundation
 class DataController {
     
     private var user: [UserData] = []
-    
+    private var app: AppData = AppData(levels: SampleDataController.shared.getLevelsData(), badges: SampleDataController.shared.getBadgesData())
     static var shared = DataController()
     
     private init() {
         
     }
     // Users
+    func getUserLevelsData() -> [Level] {
+        var levels: [Level] = []
+        for level in app.levels {
+            var words: [Word] = []
+            for word in level.words {
+                words.append(Word(id: word.id))
+            }
+            levels.append(Level(id: level.id, words: words))
+        }
+        return levels
+    }
+    
+    func getUserBadgesData() -> [Badge] {
+        var badges: [Badge] = []
+        for badge in app.badges {
+            badges.append(Badge(id: badge.id, isEarned: true))
+        }
+        return badges
+    }
+    
+    func getUserEarnedBadges() -> [Badge] {
+        var badges: [Badge] = getUserBadgesData()
+        var earnedBadges: [Badge] = []
+        for badge in badges {
+            if badge.isEarned {
+                earnedBadges.append(badge)
+            }
+        }
+        return earnedBadges
+    }
+    
     func createUser(user: UserData) {
         self.user.append(user)
     }
@@ -52,6 +83,15 @@ class DataController {
         return user[0].userLevels
     }
     
+    func getLevel(by id: UUID) -> AppLevel? {
+        for level in app.levels {
+            if level.id == id {
+                return level
+            }
+        }
+        return nil
+    }
+    
     func updateLevels(_ levels: [Level]) {
         user[0].userLevels = levels
     }
@@ -72,17 +112,33 @@ class DataController {
         }
     }
     
+    func wordData(by id: UUID) -> AppWord? {
+        var words = app.levels.flatMap { $0.words }
+        for word in words {
+            if word.id == id {
+                return word
+            }
+        }
+        return nil
+    }
+    
     // Badges
-    func getBadges() -> [Badge] {
-        return user[0].userBadges
+    func getBadges() -> [AppBadge] {
+        return app.badges
     }
     
     func countBadges() -> Int {
-        return user[0].userBadges.count
+        return app.badges.count
     }
     
-    func getEarnedBadges() -> [Badge] {
-        return user[0].userEarnedBadges
+    func getEarnedBadges() -> [AppBadge] {
+        var earnedBadges: [AppBadge] = []
+        for badge in user[0].userEarnedBadges {
+            print(badge)
+            if let earnedBadge = SampleDataController.shared.getBadges(by: badge.id) {                earnedBadges.append(earnedBadge)
+            }
+        }
+        return earnedBadges
     }
     
     func appendEarnedBadge(_ badge: Badge) {
@@ -93,11 +149,20 @@ class DataController {
         return user[0].userEarnedBadges.count
     }
     
+    func addEarnedBadges() {
+        for badge in app.badges {
+            var badges: Badge = Badge(id: badge.id, isEarned: true)
+            if badges.isEarned {
+                user[0].userEarnedBadges.append(badges)
+            }
+        }
+    }
+    
     func updateBadgeStatus(_ badge: Badge) {
         var index = 0
         for i in user[0].userBadges {
             index += 1
-            if i.badgeTitle == badge.badgeTitle {
+            if i.id == badge.id {
                 user[0].userBadges[index].isEarned = true
             }
         }

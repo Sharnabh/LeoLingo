@@ -31,17 +31,19 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {
-        let data = levels[levelIndex].words[index]
+        let level = DataController.shared.getLevel(by: levels[levelIndex].id)
+        let data = level!.words[index]
         return "This is \(data.wordTitle). Say \(data.wordTitle)."
     }
     
     func updateUI() {
         let currentData = levels[levelIndex].words[currentIndex]
         directionLabel.text = ""
-        wordImage.image = UIImage(named: currentData.wordImage!)
+        let word = DataController.shared.wordData(by: currentData.id)!
+        wordImage.image = UIImage(named: word.wordImage)
         mojoImage.image = UIImage(named: "mojo2")
         
-        let direction = "This is \(currentData.wordTitle). Say \(currentData.wordTitle)."
+        let direction = "This is \(word.wordTitle). Say \(word.wordTitle)."
         animateWordImage()
         typeEffect(text: direction, label: directionLabel)
         nextButton.layer.cornerRadius = 21
@@ -139,7 +141,8 @@ class PracticeScreenViewController: UIViewController {
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
             popoverVC.modalPresentationStyle = .overFullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
-            popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: levels[levelIndex].levelImage)
+            var level = DataController.shared.getLevel(by: levels[levelIndex].id)
+            popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level!.levelImage)
             popoverVC.onProceed = { [weak self] in
                 self?.updateUI()
             }

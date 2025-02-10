@@ -19,6 +19,7 @@ class VocalCoachViewController: UIViewController {
         
         words = levels.flatMap { $0.words }
         word = words.first{ $0.isPracticed == false }
+        let word = DataController.shared.wordData(by: word.id)
         wordLabel.text = word?.wordTitle
         
         updatePracticeCardView()

@@ -38,11 +38,12 @@
 //
 
 import UIKit
+import WebKit
 
 class DashboardViewController: UIViewController {
     
     private let levels: [Level] = DataController.shared.getAllLevels()
-    
+    private let exercises: [String : Exercise] = SampleDataController.shared.getExercisesData()
     var earnedBadges: [Badge] = DataController.shared.getEarnedBadges()
     
     var minAccuracyWords: [Word]?
@@ -61,8 +62,13 @@ class DashboardViewController: UIViewController {
     @IBOutlet var mojoSuggestion: UIView!
     @IBOutlet var beginnerProgressBar: UIProgressView!
     @IBOutlet var collectionView: UICollectionView!
+    
+    
   
-    @IBOutlet var averageAccuracy: UILabel!
+
+    @IBOutlet var exerciseForW2: WKWebView!
+    
+  @IBOutlet var averageAccuracy: UILabel!
     
     @IBOutlet var badge1Image: UIImageView!
     @IBOutlet var badge1Label: UILabel!
@@ -98,6 +104,7 @@ class DashboardViewController: UIViewController {
         collectionView.register(UINib(nibName: "WordReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "WordCell")
         
         configureFlowLayout()
+        updateExerciseForWords()
     }
     
     
@@ -151,6 +158,36 @@ class DashboardViewController: UIViewController {
             tabBarController.selectedIndex = 2
         }
     }
+    func updateExerciseForWords() {
+        guard let words = minAccuracyWords, words.count >= 2 else { return }
+        
+        
+        let word1 = words[0].wordTitle
+        let word2 = words[1].wordTitle
+        
+        print(word1)
+        print(word2)
+      
+        let firstLetter1 = String(word1.prefix(1)).lowercased()
+        let firstLetter2 = String(word2.prefix(1)).lowercased()
+        print(firstLetter1)
+        print(firstLetter2)
+        
+        if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
+            
+          
+            descriptionW1.text = exercise1.description
+            descriptionW2.text = exercise2.description
+            print(exercise1.description)
+            print(exercise1.description)
+           
+            if let url1 = URL(string: exercise1.videos.first ?? ""), let url2 = URL(string: exercise2.videos.first ?? "") {
+                excerciseForW1.load(URLRequest(url: url1))
+                exerciseForW2.load(URLRequest(url: url2))
+            }
+        }
+    }
+    
 }
 
 extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -178,6 +215,7 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
         return cell
     }
     
-    
-    
+   
 }
+
+

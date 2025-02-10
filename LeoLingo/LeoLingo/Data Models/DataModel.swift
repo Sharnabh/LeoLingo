@@ -98,3 +98,8 @@ struct FilterSettings {
     let accuracyFilterEnabled: Bool
     let accuracyValue: Int
 }
+
+struct Exercise {
+    let description: String
+    let videos: [String]
+}

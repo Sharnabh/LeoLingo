@@ -65,6 +65,14 @@ extension LogInViewController: UICollectionViewDelegate, UICollectionViewDataSou
 
 // MARK: - LogInCellDelegate
 extension LogInViewController: LogInCellDelegate {
+    func switchToLandingPage() {
+        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let landingPage = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            landingPage.modalPresentationStyle = .fullScreen
+            present(landingPage, animated: true)
+        }
+    }
+    
     func showAlert(message: String) {
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -80,14 +88,14 @@ extension LogInViewController: LogInCellDelegate {
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
-            let exists = CoreDataManager.shared.findUser(byPhone: phone) != nil
+            let exists = DataController.shared.findUser(byPhone: phone) != nil
             completion(exists)
         }
     }
     
     func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
-            let user = CoreDataManager.shared.validateUser(phoneNumber: phone, password: password)
+            let user = DataController.shared.validateUser(phoneNumber: phone, password: password)
             completion(user != nil)
         }
     }

@@ -44,6 +44,18 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body Parts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EMz-jz-ETg">
+                                <rect key="frame" x="458" y="54" width="460" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="460" id="2jl-eQ-QcT"/>
+                                    <constraint firstAttribute="height" constant="60" id="JUR-5c-jfy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="29"/>
+                                <color key="textColor" red="0.52941176469999995" green="0.34901960780000002" blue="0.25490196079999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="kq9-ZC-Zxq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -61,6 +73,7 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="xRv-xT-mT9" id="F8s-aJ-scl"/>
+                        <outlet property="headingTitle" destination="EMz-jz-ETg" id="yHz-hw-yvm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SWN-lT-Shf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

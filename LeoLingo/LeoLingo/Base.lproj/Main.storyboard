@@ -62,14 +62,6 @@
             </objects>
             <point key="canvasLocation" x="-281" y="863"/>
         </scene>
-        <!--Questionnaire-->
-        <scene sceneID="Bev-DK-9Yr">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Questionnaire" id="ALH-8T-U74" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4Xj-m9-jHr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="641"/>
-        </scene>
         <!--Log In View Controller-->
         <scene sceneID="hVp-PR-TXh">
             <objects>
@@ -141,30 +133,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q8W-gb-EKU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-977" y="139"/>
-        </scene>
-        <!--Storyboard Reference-->
-        <scene sceneID="dAg-3H-yMU">
-            <objects>
-                <viewControllerPlaceholder id="auY-R7-qgd" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="STc-T6-jBU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="693"/>
-        </scene>
-        <!--FunLearning-->
-        <scene sceneID="0sn-8a-ied">
-            <objects>
-                <viewControllerPlaceholder storyboardName="FunLearning" id="mEG-Y8-daL" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Yoe-V3-ZtW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="756"/>
-        </scene>
-        <!--Tarun-->
-        <scene sceneID="GCQ-Hh-hEg">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Tarun" id="to0-1A-Jfx" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tQC-mw-dfu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="823"/>
         </scene>
     </scenes>
     <resources>

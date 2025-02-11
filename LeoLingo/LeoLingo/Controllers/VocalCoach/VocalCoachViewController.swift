@@ -19,6 +19,7 @@ class VocalCoachViewController: UIViewController {
         
         words = levels.flatMap { $0.words }
         word = words.first{ $0.isPracticed == false }
+        let word = DataController.shared.wordData(by: word.id)
         wordLabel.text = word?.wordTitle
         
         updatePracticeCardView()
@@ -87,7 +88,7 @@ class VocalCoachViewController: UIViewController {
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return CardsDataController.shared.countCards()
+        return SampleDataController.shared.countCards()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

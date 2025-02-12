@@ -8,13 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CE02829B2D3D072C00521C91 /* DGCharts */; };
-		FF27F0A82D5B7DEC0047A17F /* WordReportMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF27F0A72D5B7DEC0047A17F /* WordReportMainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CEBB42952D301D6D009859CD /* LeoLingo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeoLingo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CECA75912D3CD99600733E65 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
-		FF27F0A72D5B7DEC0047A17F /* WordReportMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordReportMainViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -53,7 +51,6 @@
 		CEBB428C2D301D6D009859CD = {
 			isa = PBXGroup;
 			children = (
-				FF27F0A72D5B7DEC0047A17F /* WordReportMainViewController.swift */,
 				CEBB42972D301D6D009859CD /* LeoLingo */,
 				CECA75902D3CD96B00733E65 /* Frameworks */,
 				CEBB42962D301D6D009859CD /* Products */,
@@ -154,7 +151,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF27F0A82D5B7DEC0047A17F /* WordReportMainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

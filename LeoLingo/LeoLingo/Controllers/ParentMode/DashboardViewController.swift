@@ -48,6 +48,8 @@ class DashboardViewController: UIViewController {
     
     var minAccuracyWords: [Word]?
     
+    @IBOutlet var descriptionW1: UILabel!
+    @IBOutlet var descriptionW2: UILabel!
     
     @IBOutlet var levelView: UIView!
     
@@ -64,6 +66,7 @@ class DashboardViewController: UIViewController {
     @IBOutlet var collectionView: UICollectionView!
   
 
+    @IBOutlet var exerciseForW1: WKWebView!
     @IBOutlet var exerciseForW2: WKWebView!
     
   @IBOutlet var averageAccuracy: UILabel!
@@ -159,33 +162,38 @@ class DashboardViewController: UIViewController {
     func updateExerciseForWords() {
         guard let words = minAccuracyWords, words.count >= 2 else { return }
         
-        
         let word1 = words[0].wordTitle
         let word2 = words[1].wordTitle
         
         print(word1)
         print(word2)
-      
+        
         let firstLetter1 = String(word1.prefix(1)).lowercased()
         let firstLetter2 = String(word2.prefix(1)).lowercased()
+        
         print(firstLetter1)
         print(firstLetter2)
         
         if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
-            
-          
+            // Update UI elements
             descriptionW1.text = exercise1.description
             descriptionW2.text = exercise2.description
+            
             print(exercise1.description)
-            print(exercise1.description)
-           
-            if let url1 = URL(string: exercise1.videos.first ?? ""), let url2 = URL(string: exercise2.videos.first ?? "") {
-                excerciseForW1.load(URLRequest(url: url1))
+            print(exercise2.description) // Corrected the duplicate print statement
+            
+            if let videoURL1 = exercise1.videos.first, let url1 = URL(string: videoURL1),
+               let videoURL2 = exercise2.videos.first, let url2 = URL(string: videoURL2) {
+                exerciseForW1.load(URLRequest(url: url1))
                 exerciseForW2.load(URLRequest(url: url2))
+            } else {
+                print("Invalid video URL(s) for exercises.")
             }
+        } else {
+            print("No matching exercises found for letters \(firstLetter1) and \(firstLetter2)")
         }
     }
-    
+
 }
 
 extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {

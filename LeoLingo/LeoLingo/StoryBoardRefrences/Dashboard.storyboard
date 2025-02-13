@@ -282,46 +282,60 @@
                                                         <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="45" translatesAutoresizingMaskIntoConstraints="NO" id="ghG-Ek-icp">
-                                                        <rect key="frame" x="75" y="92" width="250" height="335"/>
-                                                        <subviews>
-                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xvy-kc-R5K">
-                                                                <rect key="frame" x="0.0" y="0.0" width="250" height="145"/>
-                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="TbP-Wd-MF1"/>
-                                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="145" id="pM1-jp-by2"/>
-                                                                </constraints>
-                                                                <wkWebViewConfiguration key="configuration">
-                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                                                    <wkPreferences key="preferences"/>
-                                                                </wkWebViewConfiguration>
-                                                            </wkWebView>
-                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0B4-BX-VBf">
-                                                                <rect key="frame" x="0.0" y="190" width="250" height="145"/>
-                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="250" id="TGQ-2Z-pxa"/>
-                                                                    <constraint firstAttribute="height" constant="145" id="i5J-pX-bmn"/>
-                                                                </constraints>
-                                                                <wkWebViewConfiguration key="configuration">
-                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                                                    <wkPreferences key="preferences"/>
-                                                                </wkWebViewConfiguration>
-                                                            </wkWebView>
-                                                        </subviews>
-                                                    </stackView>
+                                                    <wkWebView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xvy-kc-R5K">
+                                                        <rect key="frame" x="121" y="300" width="250" height="145"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <wkWebViewConfiguration key="configuration">
+                                                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                            <wkPreferences key="preferences"/>
+                                                        </wkWebViewConfiguration>
+                                                    </wkWebView>
+                                                    <wkWebView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0B4-BX-VBf">
+                                                        <rect key="frame" x="121" y="98" width="250" height="145"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <wkWebViewConfiguration key="configuration">
+                                                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                            <wkPreferences key="preferences"/>
+                                                        </wkWebViewConfiguration>
+                                                    </wkWebView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Description :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7gU-90-HmT">
+                                                        <rect key="frame" x="16" y="60" width="97" height="21"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vIL-Bq-QHk">
+                                                        <rect key="frame" x="16" y="257" width="92" height="21"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CS6-Gj-zWJ">
+                                                        <rect key="frame" x="121" y="59" width="250" height="21"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFV-Gb-7Yo">
+                                                        <rect key="frame" x="121" y="257" width="250" height="21"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="ghG-Ek-icp" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="75" id="DAU-cp-t3O"/>
                                                     <constraint firstAttribute="trailing" secondItem="vsN-yK-qm8" secondAttribute="trailing" id="Iww-o3-bZy"/>
                                                     <constraint firstAttribute="bottom" secondItem="vsN-yK-qm8" secondAttribute="bottom" id="Jje-19-h9S"/>
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="top" constant="16" id="L0y-BY-PFs"/>
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16" id="VTb-Xn-ple"/>
-                                                    <constraint firstItem="ghG-Ek-icp" firstAttribute="top" secondItem="HVp-36-1Cb" secondAttribute="bottom" constant="40" id="Wbl-Qe-Ol7"/>
                                                     <constraint firstItem="vsN-yK-qm8" firstAttribute="leading" secondItem="HVp-36-1Cb" secondAttribute="trailing" constant="117" id="epA-Un-SM1"/>
-                                                    <constraint firstAttribute="bottom" secondItem="ghG-Ek-icp" secondAttribute="bottom" constant="30" id="tui-Yg-KkU"/>
                                                     <constraint firstItem="vsN-yK-qm8" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="topMargin" constant="-8" id="xHd-vK-fqe"/>
                                                 </constraints>
                                             </view>
@@ -363,6 +377,9 @@
                         <outlet property="badgesEarnedView" destination="opb-es-kKC" id="Bz3-aZ-qIK"/>
                         <outlet property="beginnerProgressBar" destination="XYm-6Y-OSx" id="JlV-bU-KEx"/>
                         <outlet property="collectionView" destination="RJw-5g-1Ly" id="UP4-0M-0a5"/>
+                        <outlet property="descriptionW1" destination="CS6-Gj-zWJ" id="lD1-By-aJg"/>
+                        <outlet property="descriptionW2" destination="iFV-Gb-7Yo" id="NuA-KF-drD"/>
+                        <outlet property="exerciseForW1" destination="0B4-BX-VBf" id="1uO-Ux-gve"/>
                         <outlet property="exerciseForW2" destination="Xvy-kc-R5K" id="tyM-eN-5cx"/>
                         <outlet property="levelBadgeImage" destination="Ze3-e6-px9" id="xwu-jm-Tj6"/>
                         <outlet property="levelView" destination="Oad-mJ-XkG" id="n9J-ph-xmM"/>
@@ -374,7 +391,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M6c-eg-Njy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1269.4214876033059" y="540.28776978417272"/>
+            <point key="canvasLocation" x="1031.9008264462809" y="468.34532374100723"/>
         </scene>
     </scenes>
     <resources>

@@ -12,6 +12,7 @@ class SampleDataController {
     private var badges: [AppBadge] = []
     private var levels: [AppLevel] = []
     private var cards: [AppCard] = []
+    private var exercises: [String: Exercise] = [:]
     
     static var shared = SampleDataController()
     
@@ -125,6 +126,73 @@ class SampleDataController {
             AppCard(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
             AppCard(cardTitle: "EarlyWords", cardImage: "EarlyWords", words: [])
         ]
+        
+        exercises = [
+            "b": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/746Aq0ndZy0"]
+            ),
+            "c": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/0z80Zt66RcU"]
+            ),
+            "d": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
+            "f": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/xA61MYdspgM"]
+            ),
+            "g": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/bSlb9yscpbw"]
+            ),
+            "h": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/3-qJF9ZstLQ"]
+            ),
+            "j": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/xETjN3Y24cQ"]
+            ),
+            "k": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/JwKKfHIpOX8"]
+            ),
+            "l": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/_IAEg3igJVI"]
+            ),
+            "m": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/0VCeITL8P4E"]
+            ),
+            "n": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/oun0cGPMHZQ"]
+            ),
+            "p": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/yJK2UZ2YkwA"]
+            ),
+            "r": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/dgAwcWO72z0"]
+            ),
+            "s": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/KRbxUiF2dkw"]
+            ),
+            "t": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/j1ia8QFUIyg"]
+            ),
+            "w": Exercise(
+                description: "Your child is doing good. Try the suggested exercise to help him.",
+                videos: ["https://youtu.be/WHP9rOFibd4"]
+            )
+        ]
     }
     
     func getLevelsData() -> [AppLevel] {
@@ -151,5 +219,7 @@ class SampleDataController {
     func countCards() -> Int {
         return cards.count
     }
-    
+    func getExercisesData() -> [String : Exercise] {
+        return exercises
+    }
 }

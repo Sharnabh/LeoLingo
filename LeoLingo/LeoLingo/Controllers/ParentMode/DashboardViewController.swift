@@ -38,15 +38,18 @@
 //
 
 import UIKit
+import WebKit
 
 class DashboardViewController: UIViewController {
     
     private let levels: [Level] = DataController.shared.getAllLevels()
-    
+    private let exercises: [String : Exercise] = SampleDataController.shared.getExercisesData()
     var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()
     
     var minAccuracyWords: [Word]?
     
+    @IBOutlet var descriptionW1: UILabel!
+    @IBOutlet var descriptionW2: UILabel!
     
     @IBOutlet var levelView: UIView!
     
@@ -61,7 +64,11 @@ class DashboardViewController: UIViewController {
     @IBOutlet var mojoSuggestion: UIView!
     @IBOutlet var beginnerProgressBar: UIProgressView!
     @IBOutlet var collectionView: UICollectionView!
-  
+    
+    
+    @IBOutlet var exerciseForW1: WKWebView!
+    @IBOutlet var exerciseForW2: WKWebView!
+    
     @IBOutlet var averageAccuracy: UILabel!
     
     @IBOutlet var badge1Image: UIImageView!
@@ -75,7 +82,7 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateView()
-                
+        
         badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
         badge1Label.text = earnedBadges[0].badgeTitle
         badge1Label.adjustsFontSizeToFitWidth = true
@@ -89,15 +96,17 @@ class DashboardViewController: UIViewController {
         let sortedWords = wordsWithRecord.sorted { $0.avgAccuracy < $1.avgAccuracy }
         minAccuracyWords = Array(sortedWords.prefix(2))
         
+        
         let sectionAvgAccuracy = levels.reduce(0.0) { $0 + $1.avgAccuracy} / Double(levels.count)
         averageAccuracyLabel.text = String(format: "%.1f%%", sectionAvgAccuracy)
         
-
+        
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName: "WordReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "WordCell")
         
         configureFlowLayout()
+        updateExerciseForWords()
     }
     
     
@@ -106,7 +115,7 @@ class DashboardViewController: UIViewController {
         levelView.layer.borderWidth = 3
         levelView.layer.borderColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0).cgColor
         levelView.clipsToBounds = false
-
+        
         // Drop shadow
         levelView.layer.shadowColor = UIColor.black.cgColor
         levelView.layer.shadowOpacity = 0.4
@@ -151,33 +160,100 @@ class DashboardViewController: UIViewController {
             tabBarController.selectedIndex = 2
         }
     }
-}
-
-extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func getAppWordTitle(for word: Word, appLevels: [AppLevel]) -> String? {
+       
+        for appLevel in appLevels {
+            if let appWord = appLevel.words.first(where: { $0.id == word.id }) {
+               
+                return appWord.wordTitle
+            }
+        }
+        return nil
+    }
     
-    private func configureFlowLayout() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        layout.itemSize = CGSize(width: 150, height: 180)
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+    
+    func updateExerciseForWords() {
+        guard let words = minAccuracyWords, words.count >= 2 else { return }
         
-        collectionView.collectionViewLayout = layout
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        minAccuracyWords?.count ?? 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+        guard let words = minAccuracyWords, words.count >= 2 else { return }
         
-        guard let word = minAccuracyWords else { return cell }
-        cell.updateLabel(with: word[indexPath.item])
-        return cell
+        let appLevels = SampleDataController.shared.getLevelsData()
+        
+        if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
+           let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
+            
+            
+            print(word1Title)
+            print(word2Title)
+            
+            
+            if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
+               let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
+                
+              
+                print(word1Title)
+                print(word2Title)
+                
+                
+             
+                let firstLetter1 = word1Title.first?.lowercased() ?? ""
+                let firstLetter2 = word2Title.first?.lowercased() ?? ""
+                
+                print(firstLetter1)
+                print(firstLetter2)
+                
+                if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
+                    
+                    descriptionW1.text = exercise1.description
+                    descriptionW2.text = exercise2.description
+                    
+                    print(exercise1.description)
+                    print(exercise2.description)
+                    
+                
+                    if let videoURL1 = exercise1.videos.first, let url1 = URL(string: videoURL1),
+                       let videoURL2 = exercise2.videos.first, let url2 = URL(string: videoURL2) {
+                        exerciseForW1.load(URLRequest(url: url1))
+                        exerciseForW2.load(URLRequest(url: url2))
+                    } else {
+                        print("Invalid video URL(s) for exercises.")
+                    }
+                } else {
+                    print("No matching exercises found for letters \(firstLetter1) and \(firstLetter2)")
+                }
+            }
+            
+            
+        }
     }
-    
-    
-    
 }
+        
+        extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+            
+            private func configureFlowLayout() {
+                let layout = UICollectionViewFlowLayout()
+                layout.scrollDirection = .horizontal
+                layout.minimumLineSpacing = 10
+                layout.minimumInteritemSpacing = 10
+                layout.itemSize = CGSize(width: 150, height: 180)
+                layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+                
+                collectionView.collectionViewLayout = layout
+            }
+            
+            func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+                minAccuracyWords?.count ?? 1
+            }
+            
+            func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+                
+                guard let word = minAccuracyWords else { return cell }
+                cell.updateLabel(with: word[indexPath.item])
+                return cell
+            }
+            
+            
+            
+        }
+    

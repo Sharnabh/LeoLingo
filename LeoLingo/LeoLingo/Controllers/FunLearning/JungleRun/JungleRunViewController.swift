@@ -88,21 +88,17 @@ class JungleRunViewController: UIViewController {
 
 //             let navigationController = UINavigationController(rootViewController: homePageVC)
              self.dismiss(animated: true)
-//            {
-//               UIApplication.shared.windows.first?.rootViewController = navigationController
-//               UIApplication.shared.windows.first?.makeKeyAndVisible()
-//             }
+          
         }
 
         // MARK: - Background Setup
         func setupBackground() {
-            // Set up the first background image
+           
             backgroundImage1 = UIImageView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
             backgroundImage1.image = UIImage(named: "JungleRunBackground1")
             backgroundImage1.contentMode = .scaleAspectFill
             view.addSubview(backgroundImage1)
 
-            // Set up the second background image, positioned to the right of the first
             backgroundImage2 = UIImageView(frame: CGRect(x: view.bounds.width, y: 0, width: view.bounds.width, height: view.bounds.height))
             backgroundImage2.image = UIImage(named: "JungleRunBackground2")
             backgroundImage2.contentMode = .scaleAspectFill
@@ -225,19 +221,19 @@ class JungleRunViewController: UIViewController {
 
         func handleWordCoin(_ coin: UIImageView) {
             UIView.animate(withDuration: 0.3, animations: {
-                // Enlarge the word coin on collision
+               
                 coin.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             }, completion: { _ in
-                self.gameData.isAccurate = Bool.random() // Simulate accuracy check
+                self.gameData.isAccurate = Bool.random()
                 if self.gameData.isAccurate {
-                    // If accurate, increase diamonds
+                    
                     self.gameData.diamonds += 1
                     self.updateDiamondLabel()
                 } else {
-                    // If not accurate, lose a heart
+                    
                     self.loseHeart()
                 }
-                coin.removeFromSuperview() // Remove the word coin
+                coin.removeFromSuperview()
                 if let index = self.coins.firstIndex(of: coin) {
                     self.coins.remove(at: index)
                 }

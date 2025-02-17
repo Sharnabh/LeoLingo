@@ -135,7 +135,8 @@ class DataController {
         var earnedBadges: [AppBadge] = []
         for badge in user[0].userEarnedBadges {
             print(badge)
-            if let earnedBadge = SampleDataController.shared.getBadges(by: badge.id) {                earnedBadges.append(earnedBadge)
+            if let earnedBadge = SampleDataController.shared.getBadges(by: badge.id) {
+                earnedBadges.append(earnedBadge)
             }
         }
         return earnedBadges

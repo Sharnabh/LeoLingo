@@ -143,17 +143,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         practicesView.layer.shadowOffset = CGSize(width: 0, height: 1)  // Offset of 16pt downward
         practicesView.layer.shadowRadius = 5  // Blur radius of 43pt
 
-        //switch mode view
-        //          switchModeView.layer.cornerRadius = 25
-        //          switchModeView.layer.opacity = 0.77
-        //          switchModeView.layer.shadowColor = UIColor.black.cgColor
-        //          switchModeView.layer.shadowOpacity = 0.22
-        //          switchModeView.layer.shadowOffset = CGSize(width: 0, height: 0.2)
-        //          switchModeView.layer.shadowRadius = 1
-        //
-        //          profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
-        //          profileImageView.clipsToBounds = true
-
+       
     }
      
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {

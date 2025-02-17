@@ -7,36 +7,71 @@
 
 import UIKit
 
-class NewWordReportViewController: UIViewController {
+class NewWordReportViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
     @IBOutlet weak var filterButton: UIButton!
     
     @IBOutlet var wordTypeButtons: [UIButton]!
+    
+    @IBOutlet weak var wordCollectionView: UICollectionView!
+    
+    @IBOutlet weak var levelAverageAccuracy: UILabel!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        wordCollectionView.delegate = self
+        wordCollectionView.dataSource = self
 
-        // Do any additional setup after loading the view.
+       
     }
     
-    
+   
     @IBAction func wordTypeSelected(_ sender: UIButton) {
         sender.tintColor = UIColor(red: 225/255, green: 168/255, blue: 63/255, alpha: 1.0)
         sender.setTitleColor(.white, for: .normal)
-
         
     }
     
     
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        <#code#>
     }
-    */
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WordCell", for: indexPath) as? WordReportCollectionViewCell ?? <#default value#>
+                
+                
+                
+                
+                
 
-}
+                return cell
+            }
+    }
+
+
+//extension newWordReportViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return wordsData.count
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WordCell", for: indexPath) as! WordCell
+//        
+//        let wordItem = wordsData[indexPath.row]
+//        
+//        cell.wordLabel.text = wordItem.word
+//        cell.attemptsLabel.text = "Attempts \(wordItem.attempts)/5"
+//        cell.progressView.progress = wordItem.accuracy
+//
+//        if wordItem.accuracy < 0.4 {
+//            cell.progressView.tintColor = UIColor.red
+//        } else {
+//            cell.progressView.tintColor = UIColor.green
+//        }
+//
+//        return cell
+//    }
+//}

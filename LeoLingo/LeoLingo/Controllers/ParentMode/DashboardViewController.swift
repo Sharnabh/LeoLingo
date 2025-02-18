@@ -5,37 +5,7 @@
 ////  Created by Batch - 2 on 21/01/25.
 ////
 //
-//import UIKit
-//
-//class DashboardParentModeViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-//    
-//    
-//    
-//    @IBOutlet var levelView: UIView!
-//    
-//    @IBOutlet var levelBadgeImage: UIImageView!
-//    
-//    @IBOutlet var practiceTimeView: UIView!
-//    
-//    @IBOutlet var practiceTime: UILabel!
-//    @IBOutlet var averageAccuracyView: UIView!
-//    @IBOutlet var badgesEarnedView: UIView!
-//    @IBOutlet var mostInaccurateView: UIView!
-//    @IBOutlet var mojoSuggestion: UIView!
-//    @IBOutlet var beginnerProgressBar: UIProgressView!
-//    @IBOutlet var collectionView: UICollectionView!
-//  
-//    @IBOutlet var averageAccuracy: UILabel!
-//    
-//    @IBOutlet var badge1Image: UIImageView!
-//    
-//    @IBOutlet var badge2Image: UIImageView!
-//    
-//    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        updateView()
-//
+
 
 import UIKit
 import WebKit
@@ -82,6 +52,40 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateView()
+        
+        // Configure WebViews for video playback
+        exerciseForW1.backgroundColor = .clear
+        exerciseForW1.isOpaque = false
+        exerciseForW1.scrollView.isScrollEnabled = false
+        exerciseForW1.configuration.allowsInlineMediaPlayback = true
+        exerciseForW1.configuration.mediaTypesRequiringUserActionForPlayback = []
+        
+        exerciseForW2.backgroundColor = .clear
+        exerciseForW2.isOpaque = false
+        exerciseForW2.scrollView.isScrollEnabled = false
+        exerciseForW2.configuration.allowsInlineMediaPlayback = true
+        exerciseForW2.configuration.mediaTypesRequiringUserActionForPlayback = []
+        
+        // Set fixed frame for WebViews to maintain 16:9 ratio
+        exerciseForW1.frame = CGRect(x: exerciseForW1.frame.origin.x,
+                                   y: exerciseForW1.frame.origin.y,
+                                   width: 250,
+                                   height: 149)
+        exerciseForW2.frame = CGRect(x: exerciseForW2.frame.origin.x,
+                                   y: exerciseForW2.frame.origin.y,
+                                   width: 250,
+                                   height: 149)
+        
+        // Add border and corner radius to WebViews
+        exerciseForW1.layer.borderWidth = 1
+        exerciseForW1.layer.borderColor = UIColor.lightGray.cgColor
+        exerciseForW1.layer.cornerRadius = 8
+        exerciseForW1.clipsToBounds = true
+        
+        exerciseForW2.layer.borderWidth = 1
+        exerciseForW2.layer.borderColor = UIColor.lightGray.cgColor
+        exerciseForW2.layer.cornerRadius = 8
+        exerciseForW2.clipsToBounds = true
         
         badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
         badge1Label.text = earnedBadges[0].badgeTitle
@@ -171,10 +175,48 @@ class DashboardViewController: UIViewController {
         return nil
     }
     
+    func convertToEmbedURL(_ youtubeURL: String) -> String {
+        // Extract video ID from YouTube URL
+        if let videoID = youtubeURL.components(separatedBy: "/").last {
+            // Create embed URL with custom parameters for clean player
+            return "https://www.youtube.com/embed/\(videoID)?showinfo=0&controls=1&rel=0&modestbranding=1"
+        }
+        return youtubeURL
+    }
+    
+    func createVideoHTML(embedURL: String) -> String {
+        return """
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body { margin: 0; background-color: transparent; }
+                .video-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+                iframe {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="video-container">
+                <iframe src="\(embedURL)" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </body>
+        </html>
+        """
+    }
     
     func updateExerciseForWords() {
-        guard let words = minAccuracyWords, words.count >= 2 else { return }
-        
         guard let words = minAccuracyWords, words.count >= 2 else { return }
         
         let appLevels = SampleDataController.shared.getLevelsData()
@@ -182,48 +224,29 @@ class DashboardViewController: UIViewController {
         if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
            let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
             
+            let firstLetter1 = word1Title.first?.lowercased() ?? ""
+            let firstLetter2 = word2Title.first?.lowercased() ?? ""
             
-            print(word1Title)
-            print(word2Title)
-            
-            
-            if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
-               let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
+            if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
                 
-              
-                print(word1Title)
-                print(word2Title)
+                descriptionW1.text = exercise1.description
+                descriptionW2.text = exercise2.description
                 
-                
-             
-                let firstLetter1 = word1Title.first?.lowercased() ?? ""
-                let firstLetter2 = word2Title.first?.lowercased() ?? ""
-                
-                print(firstLetter1)
-                print(firstLetter2)
-                
-                if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
+                if let videoURL1 = exercise1.videos.first,
+                   let videoURL2 = exercise2.videos.first {
+                    // Convert to embed URLs
+                    let embedURL1 = convertToEmbedURL(videoURL1)
+                    let embedURL2 = convertToEmbedURL(videoURL2)
                     
-                    descriptionW1.text = exercise1.description
-                    descriptionW2.text = exercise2.description
+                    // Create HTML with proper sizing
+                    let html1 = createVideoHTML(embedURL: embedURL1)
+                    let html2 = createVideoHTML(embedURL: embedURL2)
                     
-                    print(exercise1.description)
-                    print(exercise2.description)
-                    
-                
-                    if let videoURL1 = exercise1.videos.first, let url1 = URL(string: videoURL1),
-                       let videoURL2 = exercise2.videos.first, let url2 = URL(string: videoURL2) {
-                        exerciseForW1.load(URLRequest(url: url1))
-                        exerciseForW2.load(URLRequest(url: url2))
-                    } else {
-                        print("Invalid video URL(s) for exercises.")
-                    }
-                } else {
-                    print("No matching exercises found for letters \(firstLetter1) and \(firstLetter2)")
+                    // Load HTML content
+                    exerciseForW1.loadHTMLString(html1, baseURL: nil)
+                    exerciseForW2.loadHTMLString(html2, baseURL: nil)
                 }
             }
-            
-            
         }
     }
 }

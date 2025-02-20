@@ -151,6 +151,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
             parentHomeVC.modalPresentationStyle = .fullScreen
             self.present(parentHomeVC, animated: true, completion: nil)
+            
         }
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {

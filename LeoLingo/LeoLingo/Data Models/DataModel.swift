@@ -44,9 +44,12 @@ struct Word {
     var avgAccuracy: Double {
         guard let record = record,
               self.record != nil,
-              record.attempts != 0 else { return 0.0 }
+              record.attempts != 0,
+              let accuracies = record.accuracy else { return 0.0 }
         
-        let accuracy = record.accuracy!.reduce(0.0, +) / Double(record.attempts)
+        // Cap individual accuracies at 100%
+        let cappedAccuracies = accuracies.map { min(100.0, max(0.0, $0)) }
+        let accuracy = cappedAccuracies.reduce(0.0, +) / Double(record.attempts)
         
         return (accuracy * 10).rounded() / 10
     }

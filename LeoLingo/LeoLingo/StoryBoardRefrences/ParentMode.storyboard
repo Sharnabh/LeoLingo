@@ -443,7 +443,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jbn-L2-LZz">
                                 <rect key="frame" x="123" y="123" width="964" height="588"/>
                                 <connections>
-                                    <segue destination="TXi-iD-fc7" kind="embed" id="btR-jv-heh"/>
+                                    <segue destination="aoN-ul-383" kind="embed" id="02F-1j-JEj"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -464,13 +464,14 @@
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Progress" id="ehf-Dj-1od"/>
+                    <size key="freeformSize" width="1210" height="834"/>
                     <connections>
                         <outlet property="wordReportView" destination="Jbn-L2-LZz" id="jI2-cH-l7y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mam-kT-gQR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3587" y="673"/>
+            <point key="canvasLocation" x="3832" y="672"/>
         </scene>
         <!--Word Report View Controller-->
         <scene sceneID="k2G-yu-wH8">
@@ -800,7 +801,22 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QE8-ui-Nxx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4313" y="673"/>
+            <point key="canvasLocation" x="5007" y="26"/>
+        </scene>
+        <!--New Word Report View Controller-->
+        <scene sceneID="5gS-lu-gub">
+            <objects>
+                <viewController id="aoN-ul-383" customClass="NewWordReportViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="sno-36-eyL">
+                        <rect key="frame" x="0.0" y="0.0" width="964" height="588"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="xjX-rB-JUA"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OHy-nm-yDG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4692" y="672"/>
         </scene>
         <!--Dashboard-->
         <scene sceneID="iHM-0B-22a">
@@ -810,7 +826,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VA0-Kg-8PU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4094" y="-95"/>
+            <point key="canvasLocation" x="4107" y="-71"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="PnE-4d-SqQ">
@@ -826,7 +842,6 @@
                         <segue destination="xtU-ci-dnY" kind="relationship" relationship="viewControllers" id="2A5-Wc-z9h"/>
                         <segue destination="V61-xc-AZL" kind="relationship" relationship="viewControllers" id="oPU-DB-hPA"/>
                         <segue destination="Bw4-Kr-cE6" kind="relationship" relationship="viewControllers" id="jXo-CJ-7du"/>
-                        <segue destination="hVB-IE-gNi" kind="relationship" relationship="viewControllers" id="agK-0w-qMJ"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EfX-ES-txf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -947,7 +962,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uxr-hM-gfN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3586.9186046511627" y="-95.348837209302332"/>
+            <point key="canvasLocation" x="3587" y="-71"/>
         </scene>
         <!--Filter View Controller-->
         <scene sceneID="lEq-Xu-lxo">
@@ -1023,15 +1038,9 @@
                                     <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
-                                <connections>
-                                    <action selector="switchToKidsMode:" destination="hVB-IE-gNi" eventType="touchUpInside" id="KRV-UQ-RkO"/>
-                                </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tKr-V1-7h9">
                                 <rect key="frame" x="123" y="123" width="964" height="588"/>
-                                <connections>
-                                    <segue destination="aPD-LH-Euh" kind="embed" id="Pof-KI-YET"/>
-                                </connections>
                             </containerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="BUx-yk-zeD"/>
@@ -1100,9 +1109,6 @@
                                                             <color key="baseForegroundColor" red="0.88235294819999999" green="0.65882354970000001" blue="0.2470588088" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                             <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </buttonConfiguration>
-                                                        <connections>
-                                                            <action selector="wordTypeSelected:" destination="aPD-LH-Euh" eventType="touchUpInside" id="pwy-Xu-24q"/>
-                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fug-YJ-xtz">
                                                         <rect key="frame" x="91" y="0.0" width="100" height="37"/>
@@ -1116,9 +1122,6 @@
                                                             <color key="baseForegroundColor" red="0.88235294819999999" green="0.65882354970000001" blue="0.2470588088" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                             <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </buttonConfiguration>
-                                                        <connections>
-                                                            <action selector="wordTypeSelected:" destination="aPD-LH-Euh" eventType="touchUpInside" id="XyL-Vs-fz8"/>
-                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2fa-Mh-BCf">
                                                         <rect key="frame" x="202" y="0.0" width="110" height="37"/>
@@ -1132,9 +1135,6 @@
                                                             <color key="baseForegroundColor" red="0.88235294819999999" green="0.65882354970000001" blue="0.2470588088" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                             <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </buttonConfiguration>
-                                                        <connections>
-                                                            <action selector="wordTypeSelected:" destination="aPD-LH-Euh" eventType="touchUpInside" id="lgr-p6-zhK"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -1231,14 +1231,6 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <size key="freeformSize" width="964" height="588"/>
-                    <connections>
-                        <outlet property="filterButton" destination="STg-XV-bXp" id="aFW-8z-qLt"/>
-                        <outlet property="levelAverageAccuracy" destination="Mp7-Oy-iSi" id="uHg-tA-qSR"/>
-                        <outlet property="wordCollectionView" destination="hPe-pF-Cok" id="Q32-9C-hsb"/>
-                        <outletCollection property="wordTypeButtons" destination="mNR-vD-ovP" collectionClass="NSMutableArray" id="tJs-Hr-SsI"/>
-                        <outletCollection property="wordTypeButtons" destination="fug-YJ-xtz" collectionClass="NSMutableArray" id="Y04-2H-9QE"/>
-                        <outletCollection property="wordTypeButtons" destination="2fa-Mh-BCf" collectionClass="NSMutableArray" id="RG6-Ef-h3t"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FtX-g8-LMF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

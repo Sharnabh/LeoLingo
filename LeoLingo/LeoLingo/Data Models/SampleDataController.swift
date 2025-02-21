@@ -12,6 +12,7 @@ class SampleDataController {
     private var badges: [AppBadge] = []
     private var levels: [AppLevel] = []
     private var cards: [AppCard] = []
+    private var levelCards : [LevelCard] = []
     private var exercises: [String: Exercise] = [:]
     
     static var shared = SampleDataController()
@@ -87,6 +88,14 @@ class SampleDataController {
                 AppWord(wordTitle: "Superhero", wordImage: "superhero")
                 ]),
             AppLevel(levelTitle: "Level 9", levelImage: "9", words: [
+                AppWord(wordTitle: "School", wordImage: "school"),
+                AppWord(wordTitle: "Sweater", wordImage: "sweater"),
+                AppWord(wordTitle: "Swim", wordImage: "swim"),
+                AppWord(wordTitle: "Star", wordImage: "star"),
+                AppWord(wordTitle: "Soup", wordImage: "soup"),
+                AppWord(wordTitle: "Swan", wordImage: "swan")
+                ]),
+            AppLevel(levelTitle: "Level 10", levelImage: "10", words: [
                 AppWord(wordTitle: "School", wordImage: "school"),
                 AppWord(wordTitle: "Sweater", wordImage: "sweater"),
                 AppWord(wordTitle: "Swim", wordImage: "swim"),
@@ -193,6 +202,10 @@ class SampleDataController {
                 videos: ["https://youtu.be/WHP9rOFibd4"]
             )
         ]
+        let levelCardImages = ["Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10"]
+       
+        levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
+        
     }
     
     func getLevelsData() -> [AppLevel] {
@@ -221,5 +234,11 @@ class SampleDataController {
     }
     func getExercisesData() -> [String : Exercise] {
         return exercises
+    }
+    func getLevelCards() -> [LevelCard] {
+        return levelCards
+    }
+    func countLevelCards() -> Int {
+        return levelCards.count
     }
 }

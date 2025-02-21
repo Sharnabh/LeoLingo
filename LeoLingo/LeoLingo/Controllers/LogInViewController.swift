@@ -88,6 +88,7 @@ extension LogInViewController: LogInCellDelegate {
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
+            // Check if the phone number matches our sample user
             let exists = DataController.shared.findUser(byPhone: phone) != nil
             completion(exists)
         }
@@ -95,8 +96,14 @@ extension LogInViewController: LogInCellDelegate {
     
     func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
-            let user = DataController.shared.validateUser(phoneNumber: phone, password: password)
-            completion(user != nil)
+            // Validate against our sample user credentials
+            if let user = DataController.shared.validateUser(phoneNumber: phone, password: password) {
+                // User found and password matches
+                completion(true)
+            } else {
+                // Either user not found or password doesn't match
+                completion(false)
+            }
         }
     }
 }

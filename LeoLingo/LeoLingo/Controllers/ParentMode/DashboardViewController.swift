@@ -87,23 +87,32 @@ class DashboardViewController: UIViewController {
         exerciseForW2.layer.cornerRadius = 8
         exerciseForW2.clipsToBounds = true
         
-        badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
-        badge1Label.text = earnedBadges[0].badgeTitle
-        badge1Label.adjustsFontSizeToFitWidth = true
+        // Add safety checks for badges
+        if !earnedBadges.isEmpty {
+            badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
+            badge1Label.text = earnedBadges[0].badgeTitle
+            badge1Label.adjustsFontSizeToFitWidth = true
+            
+            if earnedBadges.count > 1 {
+                badge2Image.image = UIImage(named: earnedBadges[1].badgeImage)
+                badge2Label.text = earnedBadges[1].badgeTitle
+                badge2Label.adjustsFontSizeToFitWidth = true
+            }
+        }
         
-        badge2Image.image = UIImage(named: earnedBadges[1].badgeImage)
-        badge2Label.text = earnedBadges[1].badgeTitle
-        badge2Label.adjustsFontSizeToFitWidth = true
-        
+        // Calculate average accuracy only for words with records
         let words = levels.flatMap { $0.words }
         let wordsWithRecord = words.filter { $0.record != nil }
-        let sortedWords = wordsWithRecord.sorted { $0.avgAccuracy < $1.avgAccuracy }
-        minAccuracyWords = Array(sortedWords.prefix(2))
         
-        
-        let sectionAvgAccuracy = levels.reduce(0.0) { $0 + $1.avgAccuracy} / Double(levels.count)
-        averageAccuracyLabel.text = String(format: "%.1f%%", sectionAvgAccuracy)
-        
+        if !wordsWithRecord.isEmpty {
+            let sortedWords = wordsWithRecord.sorted { $0.avgAccuracy < $1.avgAccuracy }
+            minAccuracyWords = Array(sortedWords.prefix(2))
+            
+            let sectionAvgAccuracy = wordsWithRecord.reduce(0.0) { $0 + $1.avgAccuracy } / Double(wordsWithRecord.count)
+            averageAccuracyLabel.text = String(format: "%.1f%%", sectionAvgAccuracy)
+        } else {
+            averageAccuracyLabel.text = "0.0%"
+        }
         
         collectionView.dataSource = self
         collectionView.delegate = self

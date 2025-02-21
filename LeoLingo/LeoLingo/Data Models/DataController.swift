@@ -14,8 +14,36 @@ class DataController {
     static var shared = DataController()
     
     private init() {
-        
+        // Add sample user during initialization
+        createSampleUser()
     }
+    
+    private func createSampleUser() {
+        // Create sample user with levels and badges
+        let sampleLevels = getUserLevelsData()
+        let sampleBadges = getUserBadgesData()
+        
+        // Create earned badges (at least 2 for the dashboard)
+        var earnedBadges = [Badge]()
+        for badge in sampleBadges.prefix(2) {
+            var earnedBadge = badge
+            earnedBadge.isEarned = true
+            earnedBadges.append(earnedBadge)
+        }
+        
+        let sampleUser = UserData(
+            name: "Sample User",
+            phoneNumber: "123",
+            password: "123",
+            passcode: "0000",
+            userLevels: sampleLevels,
+            userEarnedBadges: earnedBadges,
+            userBadges: sampleBadges
+        )
+        
+        createUser(user: sampleUser)
+    }
+    
     // Users
     func getUserLevelsData() -> [Level] {
         var levels: [Level] = []
@@ -71,15 +99,12 @@ class DataController {
     }
     
     func validateUser(phoneNumber: String, password: String) -> UserData? {
-        if user.contains(where: {$0.phoneNumber == phoneNumber && $0.password == password}) {
-            return user.first
-        } else {
-            return nil
-        }
+        return user.first(where: { $0.phoneNumber == phoneNumber && $0.password == password })
     }
     
     // Levels
     func getAllLevels() -> [Level] {
+        guard !user.isEmpty else { return [] }
         return user[0].userLevels
     }
     
@@ -93,19 +118,33 @@ class DataController {
     }
     
     func updateLevels(_ levels: [Level]) {
+        guard !user.isEmpty else { return }
         user[0].userLevels = levels
     }
     
     func levelData(at index: Int) -> Level {
+        guard !user.isEmpty,
+              index < user[0].userLevels.count else { 
+            // Return an empty level instead of nil
+            return Level(id: UUID(), words: [])
+        }
         return user[0].userLevels[index]
     }
     
     func updateWordPraticeStatus(at index: Int, wordIndex: Int, accuracy: Double?) {
+        guard !user.isEmpty,
+              index < user[0].userLevels.count,
+              wordIndex < user[0].userLevels[index].words.count else { return }
+        
         user[0].userLevels[index].words[wordIndex].isPracticed = true
         updateWordRecord(at: index, wordIndex: wordIndex, accuracy: accuracy)
     }
     
     func updateWordRecord(at index: Int, wordIndex: Int, accuracy: Double?) {
+        guard !user.isEmpty,
+              index < user[0].userLevels.count,
+              wordIndex < user[0].userLevels[index].words.count else { return }
+        
         user[0].userLevels[index].words[wordIndex].record?.attempts += 1
         if let accuracy = accuracy {
             user[0].userLevels[index].words[wordIndex].record?.accuracy?.append(accuracy)

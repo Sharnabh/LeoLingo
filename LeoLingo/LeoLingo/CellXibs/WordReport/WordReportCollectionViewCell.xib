@@ -81,6 +81,7 @@
                     <constraint firstAttribute="trailing" secondItem="bxX-mH-FhA" secondAttribute="trailing" constant="15" id="kKj-Tb-HWF"/>
                 </constraints>
             </collectionViewCellContentView>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <size key="customSize" width="172" height="165"/>
             <connections>
                 <outlet property="accuracy" destination="Zpa-Yl-9FY" id="vj8-ib-d3M"/>
@@ -89,7 +90,7 @@
                 <outlet property="attemptsLabel" destination="aod-1S-1m3" id="5Wk-vs-OC7"/>
                 <outlet property="progressView" destination="4b8-RQ-Z9T" id="953-6C-Cu7"/>
             </connections>
-            <point key="canvasLocation" x="151.82926829268291" y="3.5593220338983054"/>
+            <point key="canvasLocation" x="151.46341463414635" y="3.5593220338983054"/>
         </collectionViewCell>
     </objects>
     <resources>

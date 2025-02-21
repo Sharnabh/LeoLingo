@@ -28,6 +28,7 @@ class VocalCoachViewController: UIViewController {
         soundCards.delegate = self
         soundCards.dataSource = self
         soundCards.backgroundColor = .clear
+        soundCards.isUserInteractionEnabled = true
         
         let firstNib = UINib(nibName: "SoundCards", bundle: nil)
         soundCards.register(firstNib, forCellWithReuseIdentifier: "First")
@@ -88,24 +89,35 @@ class VocalCoachViewController: UIViewController {
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return SampleDataController.shared.countCards()
+        return SampleDataController.shared.countLevelCards()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "First", for: indexPath) as! SoundCardCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "First", for: indexPath) as! LevelCardCollectionViewCell
         cell.layer.cornerRadius = 21
         cell.backgroundColor = .clear
-        cell.updateSoundCard(with: indexPath)
+        cell.isUserInteractionEnabled = true
+        cell.contentView.isUserInteractionEnabled = true
+        cell.updatelevelCard(with: indexPath)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "WordsInCards", bundle: nil)
-        if let detailVC = storyboard.instantiateViewController(withIdentifier: "WordsInCards") as? WordsInCardViewController {
-            
-            // Pass the selected item (for example, an image name)
-            navigationController?.pushViewController(detailVC, animated: true)
+        print("Selected level card at index: \(indexPath.item)")
+        
+        // Create and configure LevelCardViewController with proper initialization
+        let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)
+        levelCardVC.title = "Level \(indexPath.item + 1)"
+        
+        // Push to navigation controller
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(levelCardVC, animated: true)
+        } else {
+            print("Navigation controller is nil")
+            // Fallback to present modally
+            levelCardVC.modalPresentationStyle = .fullScreen
+            present(levelCardVC, animated: true, completion: nil)
         }
     }
     

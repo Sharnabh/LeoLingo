@@ -456,7 +456,6 @@
                                         </buttonConfiguration>
                                         <connections>
                                             <action selector="continueButtonTapped:" destination="ahS-AV-GsZ" eventType="touchUpInside" id="qzR-Of-srE"/>
-                                            <segue destination="VSb-Si-JHL" kind="show" id="I58-3Q-eIc"/>
                                         </connections>
                                     </button>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="WordBox" translatesAutoresizingMaskIntoConstraints="NO" id="8O1-YX-ga0">
@@ -738,24 +737,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="myn-nB-1y2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="511" y="2096"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="gNR-0R-wrt">
-            <objects>
-                <navigationController storyboardIdentifier="VocalCoachNavControl" automaticallyAdjustsScrollViewInsets="NO" id="oAn-cd-sHJ" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wYU-oc-Ccs">
-                        <rect key="frame" x="0.0" y="24" width="1210" height="50"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ahS-AV-GsZ" kind="relationship" relationship="rootViewController" id="TBg-IC-vIH"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="O71-Ja-4Wd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-966" y="1335"/>
         </scene>
     </scenes>
     <resources>

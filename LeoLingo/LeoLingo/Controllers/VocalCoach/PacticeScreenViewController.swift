@@ -94,6 +94,10 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
+        
+        // Save current progress
+        UserDefaults.standard.set(levelIndex, forKey: "LastPracticedLevelIndex")
+        UserDefaults.standard.set(currentIndex, forKey: "LastPracticedWordIndex")
     }
     
     private func setupMicButton() {

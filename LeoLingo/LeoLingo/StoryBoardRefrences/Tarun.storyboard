@@ -280,6 +280,7 @@
                     <connections>
                         <outlet property="badgesEarnedCollectionView" destination="wOt-KL-0Ad" id="XQS-5E-GiZ"/>
                         <outlet property="badgesView" destination="92f-Yx-evU" id="fyB-Gd-BlX"/>
+                        <outlet property="levelImageView" destination="EmU-07-Qnb" id="FiJ-O7-4zn"/>
                         <outlet property="levelProgress" destination="NJp-jF-c0A" id="tAW-Bq-0mD"/>
                         <outlet property="levelView" destination="Dct-6M-gWp" id="L6x-z9-bmj"/>
                         <outlet property="practicesView" destination="hgz-VL-LQq" id="khu-Cb-CAX"/>

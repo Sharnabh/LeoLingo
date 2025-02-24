@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import LocalAuthentication
 
 class LockScreenViewController: UIViewController {
 
@@ -39,6 +40,8 @@ class LockScreenViewController: UIViewController {
         passcodeView.layer.borderColor = CGColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
         passcodeView.layer.cornerRadius = 30
         
+        // Request Face ID authentication when view loads
+        authenticateWithFaceID()
     }
     
     @IBAction func backButtonTapped1(_ sender: UIBarButtonItem) {
@@ -87,7 +90,18 @@ class LockScreenViewController: UIViewController {
                             sceneDelegate.window?.rootViewController = tabBarBC
                         }
                     } else {
-                        print("Bhag")
+                        // Provide haptic feedback
+                        let generator = UINotificationFeedbackGenerator()
+                        generator.notificationOccurred(.error)
+                        
+                        // Shake animation
+                        shakePasscodeView()
+                        
+                        // Clear the passcode after wrong attempt
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.myPasscode = ""
+                            self.updateCircleViews()
+                        }
                     }
                 }
             }
@@ -109,6 +123,41 @@ class LockScreenViewController: UIViewController {
             case 2: circleView3.backgroundColor = .black
             case 3: circleView4.backgroundColor = .black
             default: break
+            }
+        }
+    }
+    
+    private func shakePasscodeView() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0]
+        passcodeView.layer.add(animation, forKey: "shake")
+    }
+    
+    private func authenticateWithFaceID() {
+        let context = LAContext()
+        var error: NSError?
+        
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            let reason = "Unlock Parent Mode"
+            
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] success, error in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    
+                    if success {
+                        // Navigate to parent mode on success
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let sceneDelegate = windowScene.delegate as? SceneDelegate {
+                            let tabBarBC = self.storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
+                            sceneDelegate.window?.rootViewController = tabBarBC
+                        }
+                    } else {
+                        // Face ID failed or was cancelled, user can still use passcode
+                        print("Face ID authentication failed")
+                    }
+                }
             }
         }
     }

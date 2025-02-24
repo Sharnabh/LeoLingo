@@ -271,9 +271,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
-            vocalCoachVC.modalPresentationStyle = .fullScreen
-            self.present(vocalCoachVC, animated: true, completion: nil)
+        if UserDefaults.standard.bool(forKey: GreetViewController.greetingShownKey) {
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachNavControl") as? UINavigationController {
+                vocalCoachVC.modalPresentationStyle = .fullScreen
+                self.present(vocalCoachVC, animated: true, completion: nil)
+            }
+        } else {
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+                vocalCoachVC.modalPresentationStyle = .fullScreen
+                self.present(vocalCoachVC, animated: true, completion: nil)
+            }
         }
     }
     @IBAction func funLearningButtonTapped(_ sender: UIButton) {

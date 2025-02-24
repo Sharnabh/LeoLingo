@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CE02829B2D3D072C00521C91 /* DGCharts */; };
+		CEA8A0012D6CEBD500E0CC77 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0002D6CEBD500E0CC77 /* Auth */; };
+		CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0022D6CEBD500E0CC77 /* Functions */; };
+		CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0042D6CEBD500E0CC77 /* PostgREST */; };
+		CEA8A0072D6CEBD500E0CC77 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0062D6CEBD500E0CC77 /* Realtime */; };
+		CEA8A0092D6CEBD500E0CC77 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0082D6CEBD500E0CC77 /* Storage */; };
+		CEA8A00B2D6CEBD500E0CC77 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A00A2D6CEBD500E0CC77 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +46,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE02829C2D3D072C00521C91 /* DGCharts in Frameworks */,
+				CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */,
+				CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */,
+				CEA8A00B2D6CEBD500E0CC77 /* Supabase in Frameworks */,
+				CEA8A0012D6CEBD500E0CC77 /* Auth in Frameworks */,
+				CEA8A0092D6CEBD500E0CC77 /* Storage in Frameworks */,
+				CEA8A0072D6CEBD500E0CC77 /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +103,12 @@
 			);
 			name = LeoLingo;
 			packageProductDependencies = (
-				CE02829B2D3D072C00521C91 /* DGCharts */,
+				CEA8A0002D6CEBD500E0CC77 /* Auth */,
+				CEA8A0022D6CEBD500E0CC77 /* Functions */,
+				CEA8A0042D6CEBD500E0CC77 /* PostgREST */,
+				CEA8A0062D6CEBD500E0CC77 /* Realtime */,
+				CEA8A0082D6CEBD500E0CC77 /* Storage */,
+				CEA8A00A2D6CEBD500E0CC77 /* Supabase */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -124,7 +139,7 @@
 			mainGroup = CEBB428C2D301D6D009859CD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */,
+				CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
@@ -368,21 +383,46 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */ = {
+		CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielgindi/Charts";
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.1.0;
+				minimumVersion = 2.5.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CE02829B2D3D072C00521C91 /* DGCharts */ = {
+		CEA8A0002D6CEBD500E0CC77 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CE02829A2D3D072C00521C91 /* XCRemoteSwiftPackageReference "Charts" */;
-			productName = DGCharts;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		CEA8A0022D6CEBD500E0CC77 /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		CEA8A0042D6CEBD500E0CC77 /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		CEA8A0062D6CEBD500E0CC77 /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		CEA8A0082D6CEBD500E0CC77 /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		CEA8A00A2D6CEBD500E0CC77 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

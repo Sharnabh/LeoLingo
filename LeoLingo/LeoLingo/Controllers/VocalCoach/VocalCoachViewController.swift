@@ -12,7 +12,7 @@ class VocalCoachViewController: UIViewController {
     var word: Word!
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
         button.backgroundColor = .white
         button.layer.cornerRadius = 20
         button.layer.shadowColor = UIColor.black.cgColor
@@ -20,7 +20,7 @@ class VocalCoachViewController: UIViewController {
         button.layer.shadowRadius = 4
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -59,11 +59,12 @@ class VocalCoachViewController: UIViewController {
         backButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            backButton.widthAnchor.constraint(equalToConstant: 40),
+            backButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-    
     @objc private func backButtonTapped() {
         if let navigationController = self.navigationController {
             if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {

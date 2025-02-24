@@ -37,7 +37,7 @@ class PracticeScreenViewController: UIViewController {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
         button.backgroundColor = .white
         button.layer.cornerRadius = 20
         button.layer.shadowColor = UIColor.black.cgColor
@@ -45,7 +45,7 @@ class PracticeScreenViewController: UIViewController {
         button.layer.shadowRadius = 4
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -57,8 +57,6 @@ class PracticeScreenViewController: UIViewController {
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
     @IBOutlet var wordImage: UIImageView!
-    @IBOutlet var nextButton: UIButton!
-    @IBOutlet var wrongButton: UIButton!
     @IBOutlet weak var headingTitle: UILabel!
     
     var mojoImageData = ["mojo2", "mojoHearing"]
@@ -125,8 +123,8 @@ class PracticeScreenViewController: UIViewController {
             ]
         } else {
             gradientLayer.colors = [
-                UIColor.blue.cgColor,
-                UIColor.purple.cgColor
+                UIColor.green.cgColor,
+                UIColor.blue.cgColor
             ]
         }
         
@@ -143,7 +141,7 @@ class PracticeScreenViewController: UIViewController {
         // Configure button content
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 30)
         let image = UIImage(systemName: isListening ? "waveform.circle.fill" : "mic.circle.fill", withConfiguration: imageConfig)
-        let text = isListening ? "Listening..." : "Speak the Word!"
+        let text = isListening ? "Listening..." : "Speak"
         
         let attributedString = NSMutableAttributedString()
         
@@ -467,7 +465,7 @@ class PracticeScreenViewController: UIViewController {
             }
         }
         
-        nextButton.layer.cornerRadius = 21
+        
     }
     
     //MARK: - Animation

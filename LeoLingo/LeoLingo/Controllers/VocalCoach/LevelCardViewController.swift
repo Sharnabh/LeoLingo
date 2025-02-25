@@ -67,12 +67,14 @@ class LevelCardViewController: UIViewController {
         self.selectedLevelIndex = selectedLevelIndex
         self.levels = DataController.shared.getAllLevels()
         super.init(nibName: nil, bundle: nil)
+        self.modalPresentationStyle = .fullScreen
     }
     
     required init?(coder: NSCoder) {
         self.selectedLevelIndex = 0
         self.levels = DataController.shared.getAllLevels()
         super.init(coder: coder)
+        self.modalPresentationStyle = .fullScreen
     }
     
     // MARK: - View Lifecycle
@@ -97,6 +99,7 @@ class LevelCardViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.decelerationRate = .fast
         collectionView.register(LevelCardCell.self, forCellWithReuseIdentifier: "LevelCardCell")
+        collectionView.isPagingEnabled = true
         
         view.addSubview(collectionView)
         view.addSubview(speakButton)
@@ -106,6 +109,15 @@ class LevelCardViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         requestSpeechAuthorization()
+        
+        // Set navigation bar appearance
+        navigationController?.navigationBar.tintColor = .darkGray
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
         
         // Scroll to the selected level's first word
         DispatchQueue.main.async { [weak self] in
@@ -127,18 +139,14 @@ class LevelCardViewController: UIViewController {
             speakButton.heightAnchor.constraint(equalToConstant: 50),
             speakButton.widthAnchor.constraint(equalToConstant: 200)
         ])
-        
-        // Add a back button if needed
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.left"),
-            style: .plain,
-            target: self,
-            action: #selector(backButtonTapped)
-        )
     }
     
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        if let navigationController = self.navigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     @objc private func speakButtonTapped() {

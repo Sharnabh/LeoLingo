@@ -6,6 +6,8 @@
 	<string>Required for checking the pronounciation</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Required for speech recognition</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We need to use Face ID to unlock Parent Mode securely</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

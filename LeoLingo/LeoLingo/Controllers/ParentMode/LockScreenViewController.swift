@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import LocalAuthentication
+import AudioToolbox
 
 class LockScreenViewController: UIViewController {
 
@@ -23,6 +25,10 @@ class LockScreenViewController: UIViewController {
     var code = ""
     let passCodeLength = 4
     
+    // Use both impact and notification feedback
+    private let impactGenerator = UIImpactFeedbackGenerator(style: .rigid)
+    private let notificationGenerator = UINotificationFeedbackGenerator()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,6 +45,12 @@ class LockScreenViewController: UIViewController {
         passcodeView.layer.borderColor = CGColor(red: 170/255, green: 102/255, blue: 71/255, alpha: 1)
         passcodeView.layer.cornerRadius = 30
         
+        // Request Touch ID authentication when view loads
+        authenticateWithTouchID()
+        
+        // Prepare both generators
+        impactGenerator.prepare()
+        notificationGenerator.prepare()
     }
     
     @IBAction func backButtonTapped1(_ sender: UIBarButtonItem) {
@@ -87,7 +99,24 @@ class LockScreenViewController: UIViewController {
                             sceneDelegate.window?.rootViewController = tabBarBC
                         }
                     } else {
-                        print("Bhag")
+                        // Trigger both feedbacks for stronger effect
+                        impactGenerator.impactOccurred(intensity: 1.0)
+                        notificationGenerator.notificationOccurred(.error)
+                        
+                        // Play system sound for wrong passcode
+                        AudioServicesPlaySystemSound(1521) // "Wrong Password" vibration
+                        
+                        // Shake animation
+                        shakePasscodeView()
+                        
+                        // Clear the passcode after wrong attempt
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.myPasscode = ""
+                            self.updateCircleViews()
+                            // Prepare for next use
+                            self.impactGenerator.prepare()
+                            self.notificationGenerator.prepare()
+                        }
                     }
                 }
             }
@@ -109,6 +138,61 @@ class LockScreenViewController: UIViewController {
             case 2: circleView3.backgroundColor = .black
             case 3: circleView4.backgroundColor = .black
             default: break
+            }
+        }
+    }
+    
+    private func shakePasscodeView() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0]
+        passcodeView.layer.add(animation, forKey: "shake")
+    }
+    
+    private func authenticateWithTouchID() {
+        let context = LAContext()
+        var error: NSError?
+        
+        // Check if device can use biometric authentication
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            let reason = "Unlock Parent Mode"
+            
+            // Check specific biometry type
+            switch context.biometryType {
+            case .touchID:
+                // Proceed with Touch ID
+                context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] success, error in
+                    DispatchQueue.main.async {
+                        guard let self = self else { return }
+                        
+                        if success {
+                            // Navigate to parent mode on success
+                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                               let sceneDelegate = windowScene.delegate as? SceneDelegate {
+                                let tabBarBC = self.storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
+                                sceneDelegate.window?.rootViewController = tabBarBC
+                            }
+                        } else {
+                            // Touch ID failed or was cancelled, user can still use passcode
+                            if let error = error {
+                                print("Touch ID authentication failed: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+            case .faceID:
+                // Skip biometric authentication if Face ID is available instead of Touch ID
+                print("Face ID is not supported in this version")
+            case .none:
+                print("No biometric authentication available")
+            @unknown default:
+                print("Unknown biometry type")
+            }
+        } else {
+            // Handle the case where biometric authentication is not available
+            if let error = error {
+                print("Biometric authentication not available: \(error.localizedDescription)")
             }
         }
     }

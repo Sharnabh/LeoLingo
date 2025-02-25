@@ -7,7 +7,8 @@
 
 import UIKit
 
-class HomePageViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class HomePageViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
+    @IBOutlet var levelImageView: UIImageView!
     
     @IBOutlet var remainingTimeView: UIView!
     @IBOutlet var timeLeft: UILabel!
@@ -25,6 +26,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     var practicesLayout: UICollectionViewFlowLayout?
     var sortedWords: [Word]?
     
+    var timer: Timer?
+        var selectedDuration: TimeInterval = 1800 // Default 30 minutes
+        var startTime: Date?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLevelView()
@@ -32,10 +38,119 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         let words = DataController.shared.getAllLevels().flatMap { $0.words }
         let newWords = words.filter { $0.record != nil }
         sortedWords = Array(newWords.reversed().prefix(3))
-        
+        setupTimeView()
+        updateLevelImage()
         // Do any additional setup after loading the view.
     }
     
+    func updateLevelImage() {
+        let levels = DataController.shared.getAllLevels()
+        var currentLevel: Level? = nil
+        
+        // Find the first incomplete level
+        for level in levels {
+            let totalWords = level.words.count
+            let completedWords = level.words.filter { $0.isPassed }.count
+            
+            if completedWords < totalWords {
+                currentLevel = level
+                break
+            }
+        }
+        
+        // Update level image and progress
+        if let level = currentLevel {
+            // Get AppLevel using the existing getLevel method
+            if let appLevel = DataController.shared.getLevel(by: level.id) {
+                levelImageView.image = UIImage(named: appLevel.levelImage)
+            }
+            
+            let totalWords = level.words.count
+            let completedWords = level.words.filter { $0.isPassed }.count
+            let progress = Float(completedWords) / Float(totalWords)
+            levelProgress.progress = progress
+        } else {
+            // All levels completed, show the final level image
+            if let lastLevel = levels.last,
+               let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
+                levelImageView.image = UIImage(named: lastAppLevel.levelImage)
+                levelProgress.progress = 1.0
+            }
+        }
+    }
+
+    func setupTimeView() {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDurationPicker))
+            remainingTimeView.addGestureRecognizer(tapGesture)
+            remainingTimeView.isUserInteractionEnabled = true
+            startTimer()
+        }
+        
+        @objc func showDurationPicker() {
+            let popoverVC = UIViewController()
+            popoverVC.preferredContentSize = CGSize(width: 250, height: 180)
+            
+            let tableView = UITableView(frame: .zero, style: .plain)
+            tableView.delegate = self
+            tableView.dataSource = self
+            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DurationCell")
+            
+            popoverVC.view = tableView
+            
+            popoverVC.modalPresentationStyle = .popover
+            if let presentationController = popoverVC.popoverPresentationController {
+                presentationController.sourceView = remainingTimeView
+                presentationController.sourceRect = remainingTimeView.bounds
+                presentationController.permittedArrowDirections = .any
+                presentationController.delegate = self
+            }
+            
+            present(popoverVC, animated: true)
+        }
+        
+        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return 3
+        }
+        
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "DurationCell", for: indexPath)
+            let durations = ["30 minutes", "45 minutes", "60 minutes"]
+            cell.textLabel?.text = durations[indexPath.row]
+            cell.textLabel?.textColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0)
+            cell.backgroundColor = .white
+            return cell
+        }
+        
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            let durations: [TimeInterval] = [1800, 2700, 3600] // 30, 45, 60 minutes in seconds
+            selectedDuration = durations[indexPath.row]
+            startTimer()
+            dismiss(animated: true)
+        }
+        
+        func startTimer() {
+            timer?.invalidate()
+            startTime = Date()
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+                self?.updateTimeDisplay()
+            }
+        }
+        
+    func updateTimeDisplay() {
+            guard let startTime = startTime else { return }
+            let elapsedTime = Date().timeIntervalSince(startTime)
+            let remainingTime = max(selectedDuration - elapsedTime, 0)
+            
+            let minutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
+            
+            timeLeft.text = "\(minutes) min"
+            timeLeftBar.progress = Float(1 - (elapsedTime / selectedDuration))
+            
+            if remainingTime <= 0 {
+                timer?.invalidate()
+            }
+        }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
             return DataController.shared.countEarnedBadges()
@@ -156,9 +271,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
-            vocalCoachVC.modalPresentationStyle = .fullScreen
-            self.present(vocalCoachVC, animated: true, completion: nil)
+        if UserDefaults.standard.bool(forKey: GreetViewController.greetingShownKey) {
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                vocalCoachVC.modalPresentationStyle = .fullScreen
+                self.present(vocalCoachVC, animated: true, completion: nil)
+            }
+        } else {
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+                vocalCoachVC.modalPresentationStyle = .fullScreen
+                self.present(vocalCoachVC, animated: true, completion: nil)
+            }
         }
     }
     @IBAction func funLearningButtonTapped(_ sender: UIButton) {
@@ -169,4 +291,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     
+}
+extension HomePageViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
+    }
 }

@@ -11,8 +11,28 @@ class VocalCoachViewController: UIViewController {
     var words: [Word] = []
     var word: Word!
     
+    private lazy var backButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 30
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.layer.shadowOpacity = 0.2
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
+            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        
+        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupBackButton()
         
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
@@ -32,15 +52,38 @@ class VocalCoachViewController: UIViewController {
         
         let firstNib = UINib(nibName: "SoundCards", bundle: nil)
         soundCards.register(firstNib, forCellWithReuseIdentifier: "First")
-        
-        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
-        backButtonItem.tintColor = .white
-        navigationItem.leftBarButtonItem = backButtonItem
     }
     
+    private func setupBackButton() {
+        view.addSubview(backButton)
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.widthAnchor.constraint(equalToConstant: 60),
+            backButton.heightAnchor.constraint(equalToConstant: 60)
+        ])
+    }
     @objc private func backButtonTapped() {
-        if let presentingVC = self.presentingViewController?.presentingViewController {
-            presentingVC.dismiss(animated: true, completion: nil)
+        if let navigationController = self.navigationController {
+            // First try to find HomePageViewController in the navigation stack
+            for viewController in navigationController.viewControllers {
+                if viewController is HomePageViewController {
+                    navigationController.popToViewController(viewController, animated: true)
+                    return
+                }
+            }
+            
+            // If not found in stack, create and set a new HomePageViewController
+            if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+                navigationController.setViewControllers([homeVC], animated: true)
+            }
+        } else {
+            // If no navigation controller, handle modal dismissal
+            if let presentingVC = self.presentingViewController {
+                presentingVC.dismiss(animated: true, completion: nil)
+            }
         }
     }
     
@@ -67,13 +110,23 @@ class VocalCoachViewController: UIViewController {
     }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
-        
+        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        if let practiceVC = storyboard.instantiateViewController(withIdentifier: "PracticeScreenViewController") as? PracticeScreenViewController {
+            practiceVC.levelIndex = UserDefaults.standard.integer(forKey: "LastPracticedLevelIndex")
+            practiceVC.currentIndex = UserDefaults.standard.integer(forKey: "LastPracticedWordIndex")
+            
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(practiceVC, animated: true)
+            } else {
+                practiceVC.modalPresentationStyle = .fullScreen
+                present(practiceVC, animated: true, completion: nil)
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // Handle navigation when the view controller is popped
         if self.isMovingFromParent {
             if let navigationController = navigationController {
                 if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
@@ -82,9 +135,7 @@ class VocalCoachViewController: UIViewController {
             }
         }
     }
-    
 }
-
 
 extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -106,19 +157,15 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Selected level card at index: \(indexPath.item)")
         
-        // Create and configure LevelCardViewController with proper initialization
         let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)
         levelCardVC.title = "Level \(indexPath.item + 1)"
         
-        // Push to navigation controller
         if let navigationController = self.navigationController {
             navigationController.pushViewController(levelCardVC, animated: true)
         } else {
             print("Navigation controller is nil")
-            // Fallback to present modally
             levelCardVC.modalPresentationStyle = .fullScreen
             present(levelCardVC, animated: true, completion: nil)
         }
     }
-    
 }

@@ -19,6 +19,8 @@ class GreetViewController: UIViewController {
     var greetingIndex = 0
     var emojiIndex = 0
     
+    static let greetingShownKey = "hasShownVocalCoachGreeting"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,9 +53,13 @@ class GreetViewController: UIViewController {
     }
     
     func transitionToNextViewController() {
+        // Set the flag indicating the greeting has been shown
+        UserDefaults.standard.set(true, forKey: GreetViewController.greetingShownKey)
+        UserDefaults.standard.synchronize()
+        
         // Transition to the next view controller
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachNavControl") as? UINavigationController {
+        if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewControl") as? VocalCoachViewController {
             nextViewController.modalPresentationStyle = .fullScreen
             self.present(nextViewController, animated: true, completion: nil)
         }

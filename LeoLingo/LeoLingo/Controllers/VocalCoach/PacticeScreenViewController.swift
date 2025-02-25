@@ -37,15 +37,15 @@ class PracticeScreenViewController: UIViewController {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
         button.backgroundColor = .white
-        button.layer.cornerRadius = 20
+        button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 4
+        button.layer.shadowRadius = 6
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -57,8 +57,6 @@ class PracticeScreenViewController: UIViewController {
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
     @IBOutlet var wordImage: UIImageView!
-    @IBOutlet var nextButton: UIButton!
-    @IBOutlet var wrongButton: UIButton!
     @IBOutlet weak var headingTitle: UILabel!
     
     var mojoImageData = ["mojo2", "mojoHearing"]
@@ -94,6 +92,10 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
+        
+        // Save current progress
+        UserDefaults.standard.set(levelIndex, forKey: "LastPracticedLevelIndex")
+        UserDefaults.standard.set(currentIndex, forKey: "LastPracticedWordIndex")
     }
     
     private func setupMicButton() {
@@ -121,8 +123,8 @@ class PracticeScreenViewController: UIViewController {
             ]
         } else {
             gradientLayer.colors = [
-                UIColor.blue.cgColor,
-                UIColor.purple.cgColor
+                UIColor.green.cgColor,
+                UIColor.blue.cgColor
             ]
         }
         
@@ -139,7 +141,7 @@ class PracticeScreenViewController: UIViewController {
         // Configure button content
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 30)
         let image = UIImage(systemName: isListening ? "waveform.circle.fill" : "mic.circle.fill", withConfiguration: imageConfig)
-        let text = isListening ? "Listening..." : "Speak the Word!"
+        let text = isListening ? "Listening..." : "Speak"
         
         let attributedString = NSMutableAttributedString()
         
@@ -463,7 +465,7 @@ class PracticeScreenViewController: UIViewController {
             }
         }
         
-        nextButton.layer.cornerRadius = 21
+        
     }
     
     //MARK: - Animation
@@ -700,9 +702,9 @@ class PracticeScreenViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            backButton.widthAnchor.constraint(equalToConstant: 40),
-            backButton.heightAnchor.constraint(equalToConstant: 40)
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.widthAnchor.constraint(equalToConstant: 60),
+            backButton.heightAnchor.constraint(equalToConstant: 60)
         ])
         
         // Ensure the button is always on top of other views
@@ -710,7 +712,26 @@ class PracticeScreenViewController: UIViewController {
     }
     
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        if let navigationController = self.navigationController {
+            // First try to find VocalCoachViewController in the navigation stack
+            for viewController in navigationController.viewControllers {
+                if viewController is VocalCoachViewController {
+                    navigationController.popToViewController(viewController, animated: true)
+                    return
+                }
+            }
+            
+            // If not found in stack, create and set a new VocalCoachViewController
+            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                navigationController.setViewControllers([vocalCoachVC], animated: true)
+            }
+        } else {
+            // If no navigation controller, handle modal dismissal
+            if let presentingVC = self.presentingViewController {
+                presentingVC.dismiss(animated: true, completion: nil)
+            }
+        }
     }
 }
 

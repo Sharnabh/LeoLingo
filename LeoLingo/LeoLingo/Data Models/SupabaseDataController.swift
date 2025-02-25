@@ -8,6 +8,14 @@ class SupabaseDataController {
     private let sampleData = SampleDataController.shared
     private var currentUser: UserData?
     
+    // Add property to store current phone number
+    private var currentPhoneNumber: String?
+    
+    // Add public getter for phone number
+    public var phoneNumber: String? {
+        get { currentPhoneNumber }
+    }
+    
     private init() {
         supabase = SupabaseClient(
             supabaseURL: URL(string: "https://eqxvelgsouxgvnfyfphp.supabase.co")!,
@@ -33,6 +41,8 @@ class SupabaseDataController {
                 .execute()
                 .value
             
+            // Store phone number on successful sign up
+            self.currentPhoneNumber = phoneNumber
             try await initializeUserData(userId: response.id)
             return try await getUser(byPhone: phoneNumber)
         } catch {
@@ -84,6 +94,8 @@ class SupabaseDataController {
                 throw SupabaseError.invalidCredentials
             }
             
+            // Store phone number on successful sign in
+            self.currentPhoneNumber = phoneNumber
             return try await getUser(byPhone: phoneNumber)
         } catch {
             throw SupabaseError.networkError(error)
@@ -331,14 +343,14 @@ class SupabaseDataController {
     
     // MARK: - Database Models
     
-    private struct User: Codable {
-        let id: UUID
-        let name: String
-        let phone_number: String
-        let password: String
-        let passcode: String?
+    public struct User: Codable {
+        public let id: UUID
+        public let name: String
+        public let phone_number: String
+        public let password: String
+        public let passcode: String?
         
-        init(name: String, phone_number: String, password: String) {
+        public init(name: String, phone_number: String, password: String) {
             self.id = UUID()
             self.name = name
             self.phone_number = phone_number
@@ -401,11 +413,48 @@ class SupabaseDataController {
             self.earned_at = nil
         }
     }
+    
+    // Add this new method
+    public func getAllUsers() async throws -> [User] {
+        do {
+            let response: [User] = try await supabase
+                .from("users")
+                .select()
+                .execute()
+                .value
+            return response
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Add new method to update passcode
+    public func updatePasscode(passcode: String) async throws {
+        guard let phoneNumber = currentPhoneNumber else {
+            throw SupabaseError.userNotLoggedIn
+        }
+        
+        do {
+            try await supabase
+                .from("users")
+                .update(["passcode": passcode])
+                .eq("phone_number", value: phoneNumber)
+                .execute()
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Add sign out method
+    public func signOut() {
+        currentPhoneNumber = nil
+        currentUser = nil
+    }
 }
 
 // MARK: - Error Types
 
-enum SupabaseError: LocalizedError {
+public enum SupabaseError: LocalizedError {
     case userNotFound
     case invalidCredentials
     case networkError(Error)
@@ -414,7 +463,7 @@ enum SupabaseError: LocalizedError {
     case invalidData
     case userNotLoggedIn
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .userNotFound:
             return "User not found"

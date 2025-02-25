@@ -72,7 +72,7 @@ struct FilterOptionsView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             // Filter Options
             VStack(spacing: 0) {  // Add VStack with zero spacing
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -107,7 +107,11 @@ struct FilterOptionsView: View {
                                     selectedLevel = selectedLevel == level ? nil : level
                                 }
                             )
+                            .cornerRadius(10)
+                            .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 4)
                         }
+
+                        
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)
@@ -124,7 +128,7 @@ struct FilterOptionsView: View {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 1) {
                     ForEach(filteredWords, id: \.0) { word, accuracy, attempts in
                         WordCardView(
                             word: word,
@@ -144,10 +148,8 @@ struct FilterOptionsView: View {
                         }
                     }
                 }
-                .padding(.horizontal)
             }
         }
-        .padding(.vertical)
         .background(Color(UIColor.systemBackground))
     }
     
@@ -168,11 +170,12 @@ struct FilterLabel: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(Color.white)
-        .foregroundColor(.accentColor)
+        .foregroundColor(Color(red: 83/255, green: 183/255, blue: 53/255))
         .cornerRadius(20)
+        .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 4)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.accentColor, lineWidth: 1)
+                .stroke(Color.white, lineWidth: 1)
         )
     }
 }
@@ -187,12 +190,14 @@ struct LevelButton: View {
             Text("Level \(level)")
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(isSelected ? Color.accentColor : Color.white)
-                .foregroundColor(isSelected ? .white : .accentColor)
+            
+                .background(isSelected ? Color(red: 225/255, green: 168/255, blue: 63/255) : Color.white)
+                .foregroundColor(isSelected ? .white : Color(red: 225/255, green: 168/255, blue: 63/255))
                 .cornerRadius(20)
+            
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.accentColor, lineWidth: 1)
+                        .stroke(isSelected ? Color(red: 225/255, green: 168/255, blue: 63/255) : Color.white, lineWidth: 1)
                 )
 //                .shadow(radius: 2)
         }

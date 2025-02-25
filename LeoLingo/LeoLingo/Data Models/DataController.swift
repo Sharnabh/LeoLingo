@@ -166,6 +166,15 @@ class DataController {
         return app.badges
     }
     
+    func getBadgesStatus(_ badge: AppBadge) -> Bool {
+        for i in user[0].userBadges {
+            if i.id == badge.id {
+                return i.isEarned
+            }
+        }
+        return false
+    }
+    
     func countBadges() -> Int {
         return app.badges.count
     }

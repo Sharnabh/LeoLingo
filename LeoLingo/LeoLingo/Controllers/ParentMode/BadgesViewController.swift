@@ -48,8 +48,9 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
         
         let badges = DataController.shared.getBadges()
+        let status = DataController.shared.getBadgesStatus(badges[indexPath.row])
         
-        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
+        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)", status: status)
         
         return cell
     }

@@ -27,9 +27,14 @@ class BadgesBottomCollectionViewCell: UICollectionViewCell {
         // Initialization code
     }
 
-    func configure(with name: String, description: String) {
+    func configure(with name: String, description: String, status: Bool) {
         imageView.image = UIImage(named: name)
         descriptionLabel.text = description
+        if !status {
+            imageView.alpha = 0.4
+        } else {
+            imageView.alpha = 1
+        }
     }
 
 }

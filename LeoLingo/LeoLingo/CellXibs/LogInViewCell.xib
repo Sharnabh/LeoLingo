@@ -98,13 +98,16 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cdv-S4-aK6">
                                         <rect key="frame" x="0.0" y="0.0" width="79" height="34.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="79" id="V60-Zj-SQ2"/>
+                                        </constraints>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Apple"/>
+                                        <buttonConfiguration key="configuration" style="filled" image="apple.logo" catalog="system"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="254" verticalHuggingPriority="254" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Yl-77-Hc0">
                                         <rect key="frame" x="95" y="0.0" width="79" height="34.5"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Google"/>
+                                        <buttonConfiguration key="configuration" style="filled" image="vecteezy_google-lens-icon-logo-symbol_22484503"/>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -142,5 +145,7 @@
     <resources>
         <image name="LeoLingoMainImage" width="512" height="512"/>
         <image name="Line" width="245" height="3"/>
+        <image name="apple.logo" catalog="system" width="105" height="128"/>
+        <image name="vecteezy_google-lens-icon-logo-symbol_22484503" width="25" height="25"/>
     </resources>
 </document>

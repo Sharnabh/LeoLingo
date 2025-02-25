@@ -415,7 +415,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Level5" width="256" height="256"/>
+        <image name="Level5" width="1126" height="866"/>
         <image name="Mojo" width="1596" height="1834"/>
         <image name="bee" width="512" height="512"/>
         <image name="chevron.right" catalog="system" width="97" height="128"/>

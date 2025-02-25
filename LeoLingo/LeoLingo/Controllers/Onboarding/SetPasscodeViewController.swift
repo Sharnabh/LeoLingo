@@ -48,16 +48,34 @@ class SetPasscodeViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        var user = DataController.shared.getallUsers()[0]
-        print(user)
-        DataController.shared.updatePasscode(myPasscode)
-        
-        print(user)
-        let storyBoard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let homeVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-            homeVC.modalPresentationStyle = .fullScreen
-            present(homeVC, animated: true)
+        Task {
+            do {
+                // Update passcode in Supabase using stored phone number
+                try await SupabaseDataController.shared.updatePasscode(passcode: myPasscode)
+                
+                // Switch to main thread for UI updates
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    
+                    let storyBoard = UIStoryboard(name: "Tarun", bundle: nil)
+                    if let homeVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+                        homeVC.modalPresentationStyle = .fullScreen
+                        self.present(homeVC, animated: true)
+                    }
+                }
+            } catch {
+                // Handle error on main thread
+                DispatchQueue.main.async { [weak self] in
+                    self?.showAlert(message: "Failed to set passcode: \(error.localizedDescription)")
+                }
+            }
         }
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     func setPhoneNumber() {

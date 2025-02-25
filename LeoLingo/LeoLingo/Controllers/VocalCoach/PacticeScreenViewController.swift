@@ -1,6 +1,7 @@
 import UIKit
 import AVFoundation
 import Speech
+import Combine
 
 class PracticeScreenViewController: UIViewController {
     
@@ -11,6 +12,8 @@ class PracticeScreenViewController: UIViewController {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     private var noiseTimer: Timer?
+    private let speechProcessor = SpeechProcessor()
+    private var speechSubscription: AnyCancellable?
     
     private var isListening = false {
         didSet {
@@ -37,15 +40,15 @@ class PracticeScreenViewController: UIViewController {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
         button.backgroundColor = .white
-        button.layer.cornerRadius = 20
+        button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 4
+        button.layer.shadowRadius = 6
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -57,8 +60,6 @@ class PracticeScreenViewController: UIViewController {
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
     @IBOutlet var wordImage: UIImageView!
-    @IBOutlet var nextButton: UIButton!
-    @IBOutlet var wrongButton: UIButton!
     @IBOutlet weak var headingTitle: UILabel!
     
     var mojoImageData = ["mojo2", "mojoHearing"]
@@ -75,6 +76,9 @@ class PracticeScreenViewController: UIViewController {
         setupWarningLabel()
         requestSpeechAuthorization()
         startNoiseMonitoring()
+        
+        // Add speech processor setup
+        speechProcessor.requestSpeechRecognitionPermission()
         
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
@@ -94,6 +98,10 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
+        
+        // Save current progress
+        UserDefaults.standard.set(levelIndex, forKey: "LastPracticedLevelIndex")
+        UserDefaults.standard.set(currentIndex, forKey: "LastPracticedWordIndex")
     }
     
     private func setupMicButton() {
@@ -121,8 +129,8 @@ class PracticeScreenViewController: UIViewController {
             ]
         } else {
             gradientLayer.colors = [
-                UIColor.blue.cgColor,
-                UIColor.purple.cgColor
+                UIColor.green.cgColor,
+                UIColor.blue.cgColor
             ]
         }
         
@@ -139,7 +147,7 @@ class PracticeScreenViewController: UIViewController {
         // Configure button content
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 30)
         let image = UIImage(systemName: isListening ? "waveform.circle.fill" : "mic.circle.fill", withConfiguration: imageConfig)
-        let text = isListening ? "Listening..." : "Speak the Word!"
+        let text = isListening ? "Listening..." : "Speak"
         
         let attributedString = NSMutableAttributedString()
         
@@ -272,79 +280,40 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func startSpeechRecognition() {
-        // Move existing startListening code here
-        recognitionTask?.cancel()
-        recognitionTask = nil
+        // Cancel any existing subscription
+        speechSubscription?.cancel()
         
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            print("Failed to set up audio session: \(error)")
-            return
-        }
+        // Start recording
+        speechProcessor.startRecording()
+        isListening = true
         
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        
-        let inputNode = audioEngine.inputNode
-        guard let recognitionRequest = recognitionRequest else {
-            return
-        }
-        
-        recognitionRequest.shouldReportPartialResults = true
-        
-        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if let result = result {
-                let spokenText = result.bestTranscription.formattedString
-                if result.isFinal {
-                    let currentWord = self.getCurrentWord()
-                    let distance = self.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
-                    let similarity = 1.0 - Double(distance) / Double(max(spokenText.count, currentWord.count))
-                    
-                    // Record the accuracy
-                    self.recordAccuracy(similarity * 100)
-                    
-                    if similarity >= 0.7 {
-                        self.handleCorrectPronunciation()
-                    } else {
-                        self.handleIncorrectPronunciation()
-                    }
-                    self.stopListening()
+        // Handle speech recognition results
+        speechSubscription = speechProcessor.$userSpokenText
+            .filter { !$0.isEmpty }
+            .sink { [weak self] spokenText in
+                guard let self = self else { return }
+                
+                let currentWord = self.getCurrentWord()
+                let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
+                let maxLength = max(spokenText.count, currentWord.count)
+                let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
+                
+                // Record the accuracy and recording path
+                self.recordAccuracy(accuracy)
+                
+                if accuracy >= 70.0 {
+                    self.handleCorrectPronunciation()
+                } else {
+                    self.handleIncorrectPronunciation()
                 }
-            }
-            
-            if error != nil {
+                
                 self.stopListening()
             }
-        }
-        
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-            recognitionRequest.append(buffer)
-        }
-        
-        audioEngine.prepare()
-        do {
-            try audioEngine.start()
-            isListening = true
-        } catch {
-            print("Failed to start audio engine: \(error)")
-            return
-        }
     }
     
     private func stopListening() {
-        audioEngine.stop()
-        recognitionRequest?.endAudio()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        
-        recognitionTask?.cancel()
-        recognitionTask = nil
-        recognitionRequest = nil
-        
+        speechSubscription?.cancel()
+        speechProcessor.stopRecording()
         isListening = false
     }
     
@@ -372,40 +341,6 @@ class PracticeScreenViewController: UIViewController {
             showPopover(isCorrect: false, levelChange: false)
             moveToNextWord()
         }
-    }
-    
-    private func levenshteinDistance(_ s1: String, _ s2: String) -> Int {
-        let s1Array = Array(s1)
-        let s2Array = Array(s2)
-        let m = s1Array.count
-        let n = s2Array.count
-        
-        var dp = Array(repeating: Array(repeating: 0, count: n + 1), count: m + 1)
-        
-        // Initialize first row and column
-        for i in 0...m {
-            dp[i][0] = i
-        }
-        for j in 0...n {
-            dp[0][j] = j
-        }
-        
-        // Fill the dp table
-        for i in 1...m {
-            for j in 1...n {
-                if s1Array[i-1] == s2Array[j-1] {
-                    dp[i][j] = dp[i-1][j-1]
-                } else {
-                    dp[i][j] = min(
-                        dp[i-1][j] + 1,    // deletion
-                        dp[i][j-1] + 1,    // insertion
-                        dp[i-1][j-1] + 1   // substitution
-                    )
-                }
-            }
-        }
-        
-        return dp[m][n]
     }
     
     @objc private func wordImageTapped() {
@@ -463,7 +398,7 @@ class PracticeScreenViewController: UIViewController {
             }
         }
         
-        nextButton.layer.cornerRadius = 21
+        
     }
     
     //MARK: - Animation
@@ -505,16 +440,9 @@ class PracticeScreenViewController: UIViewController {
     func showFunLearningPopOver() {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            popoverVC.modalPresentationStyle = .popover
-            popoverVC.preferredContentSize = CGSize(width: 300, height: 200)
-            
-            // Configure the popover presentation controller
-            if let popoverController = popoverVC.popoverPresentationController {
-                popoverController.sourceView = wordImage
-                popoverController.sourceRect = wordImage.bounds
-                popoverController.permittedArrowDirections = .any
-                popoverController.delegate = self
-            }
+            // Change to full screen presentation
+            popoverVC.modalPresentationStyle = .fullScreen
+            popoverVC.modalTransitionStyle = .crossDissolve
             
             popoverVC.configurePopover(message: "Lets Play Some Games!", image: "mojo2")
             popoverVC.onProceed = { [weak self] in
@@ -527,16 +455,9 @@ class PracticeScreenViewController: UIViewController {
     func showLevelChangePopover() {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            popoverVC.modalPresentationStyle = .popover
-            popoverVC.preferredContentSize = CGSize(width: 300, height: 200)
-            
-            // Configure the popover presentation controller
-            if let popoverController = popoverVC.popoverPresentationController {
-                popoverController.sourceView = wordImage
-                popoverController.sourceRect = wordImage.bounds
-                popoverController.permittedArrowDirections = .any
-                popoverController.delegate = self
-            }
+            // Change to full screen presentation
+            popoverVC.modalPresentationStyle = .fullScreen
+            popoverVC.modalTransitionStyle = .crossDissolve
             
             let level = DataController.shared.getLevel(by: levels[levelIndex].id)
             popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level!.levelImage)
@@ -550,17 +471,9 @@ class PracticeScreenViewController: UIViewController {
     func showPopover(isCorrect: Bool, levelChange: Bool) {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            popoverVC.modalPresentationStyle = .popover
-            popoverVC.preferredContentSize = CGSize(width: 300, height: 200)
-            
-            // Configure the popover presentation controller
-            if let popoverController = popoverVC.popoverPresentationController {
-                // Use mic button as source instead of next/wrong buttons
-                popoverController.sourceView = micButton
-                popoverController.sourceRect = micButton.bounds
-                popoverController.permittedArrowDirections = .any
-                popoverController.delegate = self
-            }
+            // Change to full screen presentation
+            popoverVC.modalPresentationStyle = .fullScreen
+            popoverVC.modalTransitionStyle = .crossDissolve
             
             // Update messages to reflect pronunciation accuracy
             if isCorrect && !levelChange {
@@ -634,11 +547,9 @@ class PracticeScreenViewController: UIViewController {
         levels[levelIndex].words[currentIndex].record?.accuracy?.append(accuracy)
         levels[levelIndex].words[currentIndex].record?.attempts += 1
         
-        // Calculate average accuracy for the word
-        if let accuracies = levels[levelIndex].words[currentIndex].record?.accuracy {
-            let avgAccuracy = accuracies.reduce(0.0, +) / Double(accuracies.count)
-            // Store the average accuracy in UserDefaults or your persistence layer
-            UserDefaults.standard.set(avgAccuracy, forKey: "word_accuracy_\(currentWord.id)")
+        // Store recording path if available
+        if let recordingPath = speechProcessor.getRecordingPath() {
+            levels[levelIndex].words[currentIndex].record?.recording?.append(recordingPath)
         }
         
         // Save to persistent storage
@@ -700,9 +611,9 @@ class PracticeScreenViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            backButton.widthAnchor.constraint(equalToConstant: 40),
-            backButton.heightAnchor.constraint(equalToConstant: 40)
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.widthAnchor.constraint(equalToConstant: 60),
+            backButton.heightAnchor.constraint(equalToConstant: 60)
         ])
         
         // Ensure the button is always on top of other views
@@ -710,17 +621,12 @@ class PracticeScreenViewController: UIViewController {
     }
     
     @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
-    }
-}
-
-// MARK: - UIPopoverPresentationControllerDelegate
-extension PracticeScreenViewController: UIPopoverPresentationControllerDelegate {
-    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return .none // Forces popover style on iPad
-    }
-    
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return .none // Forces popover style on iPad even after trait changes
+        if let navigationController = self.navigationController {
+            // Pop to previous view controller
+            navigationController.popViewController(animated: true)
+        } else {
+            // If no navigation controller, handle modal dismissal
+            dismiss(animated: true, completion: nil)
+        }
     }
 }

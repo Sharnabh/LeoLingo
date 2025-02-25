@@ -12,15 +12,15 @@ class VocalCoachViewController: UIViewController {
     var word: Word!
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
         button.backgroundColor = .white
-        button.layer.cornerRadius = 20
+        button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 4
+        button.layer.shadowRadius = 6
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -60,18 +60,30 @@ class VocalCoachViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            backButton.widthAnchor.constraint(equalToConstant: 40),
-            backButton.heightAnchor.constraint(equalToConstant: 40)
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.widthAnchor.constraint(equalToConstant: 60),
+            backButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     @objc private func backButtonTapped() {
         if let navigationController = self.navigationController {
+            // First try to find HomePageViewController in the navigation stack
+            for viewController in navigationController.viewControllers {
+                if viewController is HomePageViewController {
+                    navigationController.popToViewController(viewController, animated: true)
+                    return
+                }
+            }
+            
+            // If not found in stack, create and set a new HomePageViewController
             if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
                 navigationController.setViewControllers([homeVC], animated: true)
             }
-        } else if let presentingVC = self.presentingViewController?.presentingViewController {
-            presentingVC.dismiss(animated: true, completion: nil)
+        } else {
+            // If no navigation controller, handle modal dismissal
+            if let presentingVC = self.presentingViewController {
+                presentingVC.dismiss(animated: true, completion: nil)
+            }
         }
     }
     

@@ -59,7 +59,7 @@ class GreetViewController: UIViewController {
         
         // Transition to the next view controller
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewControl") as? VocalCoachViewController {
+        if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
             nextViewController.modalPresentationStyle = .fullScreen
             self.present(nextViewController, animated: true, completion: nil)
         }

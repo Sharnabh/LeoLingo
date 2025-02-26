@@ -420,7 +420,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="ILi-hF-L0A">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ParentModeBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="ILi-hF-L0A">
                                 <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vocal Coach" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7wK-nf-QJv">
@@ -472,7 +472,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" red="0.98823529480000005" green="0.94509804249999996" blue="0.75686275960000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="backgroundColor" red="0.97876006360000001" green="0.90132015939999999" blue="0.67054730650000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstItem="Qmh-lr-hrs" firstAttribute="top" secondItem="dfz-6M-bZv" secondAttribute="bottom" constant="16" id="5iz-9e-sfK"/>
                                     <constraint firstItem="dfz-6M-bZv" firstAttribute="leading" secondItem="F2W-56-G4c" secondAttribute="leading" constant="16" id="B6q-IF-qd5"/>
@@ -662,7 +662,7 @@
                                 <rect key="frame" x="32" y="111" width="1146" height="698"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
-                                        <rect key="frame" x="419" y="0.0" width="308" height="507"/>
+                                        <rect key="frame" x="317" y="0.0" width="512" height="507"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YSN-6q-Nuz">
                                         <rect key="frame" x="536" y="515" width="74.5" height="140"/>
@@ -715,11 +715,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="1" width="308" height="294"/>
+        <image name="1" width="512" height="512"/>
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>
         <image name="Greetbox" width="1274" height="1260"/>
         <image name="Mojo" width="1596" height="1834"/>
+        <image name="ParentModeBackdrop" width="2390" height="1670"/>
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>
         <image name="ball" width="1756" height="1454"/>

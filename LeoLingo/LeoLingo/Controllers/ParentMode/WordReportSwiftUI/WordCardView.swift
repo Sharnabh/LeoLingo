@@ -1,9 +1,3 @@
-//
-//  WordCardView.swift
-//  LeoLingo
-//
-//  Created by Sharnabh on 20/02/25.
-//
 
 import SwiftUI
 
@@ -24,10 +18,11 @@ struct WordCardView: View {
                     .frame(width: 100, height: 100)
                     .shadow(
                         color: Color.black.opacity(0.50),
-                        radius: 1,
+                        radius: 3,
                         x: 1,
-                        y: 1
+                        y: 3
                     )
+                
                 
                 Circle()
                         .stroke(Color.gray.opacity(0.5), lineWidth: 5)

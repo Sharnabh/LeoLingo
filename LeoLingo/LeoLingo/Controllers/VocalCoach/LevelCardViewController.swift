@@ -243,7 +243,12 @@ class LevelCardViewController: UIViewController {
             let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
             if let wordData = DataController.shared.wordData(by: currentWord.id) {
                 isListening = true
-                speechProcessor.startRecording()
+                let attemptNumber = currentWord.record?.attempts ?? 0
+                speechProcessor.startRecording(
+                    word: wordData.wordTitle,
+                    wordId: currentWord.id,
+                    attemptNumber: attemptNumber + 1
+                )
                 
                 // Subscribe to speech recognition results
                 speechProcessor.$userSpokenText

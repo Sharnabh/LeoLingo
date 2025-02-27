@@ -58,7 +58,7 @@ class SetPasscodeViewController: UIViewController {
                     guard let self = self else { return }
                     
                     let storyBoard = UIStoryboard(name: "VocalCoach", bundle: nil)
-                    if let vocalCoachVC = storyBoard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                    if let vocalCoachVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
                         vocalCoachVC.modalPresentationStyle = .fullScreen
                         self.present(vocalCoachVC, animated: true)
                     }

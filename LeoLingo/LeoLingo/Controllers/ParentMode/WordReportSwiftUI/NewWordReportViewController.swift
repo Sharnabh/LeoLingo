@@ -1,9 +1,3 @@
-//
-//  NewWordReportViewController.swift
-//  LeoLingo
-//
-//  Created by Sharnabh on 21/02/25.
-//
 
 import UIKit
 import SwiftUI

@@ -1,9 +1,3 @@
-//
-//  FilterOptionsView.swift
-//  LeoLingo
-//
-//  Created by Sharnabh on 20/02/25.
-//
 
 import SwiftUI
 

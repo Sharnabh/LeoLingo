@@ -69,7 +69,7 @@ class VocalCoachViewController: UIViewController {
     func updatePracticeCardView() {
         practiceCardView.layer.cornerRadius = 21
         practiceCardView.layer.borderWidth = 2
-        practiceCardView.layer.borderColor = UIColor(red: 222/255, green: 168/255, blue: 62/255, alpha: 1.0).cgColor
+        practiceCardView.layer.borderColor = UIColor(red: 161/255, green: 105/255, blue: 77/255, alpha: 1.0).cgColor
         
         practiceCardView.clipsToBounds = false
         practiceCardView.layer.shadowColor = UIColor.black.cgColor

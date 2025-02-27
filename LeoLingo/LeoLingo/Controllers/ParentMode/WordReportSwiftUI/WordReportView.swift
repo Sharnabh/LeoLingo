@@ -1,9 +1,3 @@
-//
-//  WordReportView.swift
-//  LeoLingo
-//
-//  Created by Sharnabh on 20/02/25.
-//
 
 import SwiftUI
 
@@ -34,6 +28,7 @@ struct WordReportView: View {
                 Divider()
                     .frame(width: 1)
                     .background(Color(red: 143/255, green: 91/255, blue: 66/255))
+                    .shadow(color: .black.opacity(0.4), radius: 2, x: 4)
 
                 
                 // Right section with progress details
@@ -78,6 +73,7 @@ private struct ProgressDetailSection: View {
                 .frame(height: 1)
             
                 .background(Color(red: 143/255, green: 91/255, blue: 66/255))
+                .shadow(color: .black.opacity(0.4), radius: 2, y: 2)
             
             // Attempts list
             ScrollView {
@@ -105,6 +101,7 @@ private struct ProgressDetailSection: View {
                 .padding()
             }
         }
+       // .frame(height: 20)
         .frame(width: 564)
         .background(Color.white)
     }

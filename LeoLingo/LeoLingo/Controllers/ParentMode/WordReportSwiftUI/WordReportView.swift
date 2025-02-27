@@ -1,5 +1,5 @@
-
 import SwiftUI
+import AVFoundation
 
 struct WordData: Identifiable {
     let id = UUID()
@@ -7,10 +7,66 @@ struct WordData: Identifiable {
     let accuracy: Double
 }
 
+class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
+    static let shared = AudioPlayerManager()
+    private var audioPlayer: AVAudioPlayer?
+    @Published var isPlaying = false
+    private var currentlyPlayingPath: String?
+    
+    override init() {
+        super.init()
+    }
+    
+    func play(recordingPath: String) {
+        // If the same recording is playing, toggle pause/play
+        if currentlyPlayingPath == recordingPath {
+            if isPlaying {
+                audioPlayer?.pause()
+                isPlaying = false
+            } else {
+                audioPlayer?.play()
+                isPlaying = true
+            }
+            return
+        }
+        
+        // Stop current playback if different recording
+        stop()
+        
+        // Start playing new recording
+        do {
+            let url = URL(fileURLWithPath: recordingPath)
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.delegate = self
+            audioPlayer?.play()
+            isPlaying = true
+            currentlyPlayingPath = recordingPath
+        } catch {
+            print("Error playing recording: \(error.localizedDescription)")
+            isPlaying = false
+            currentlyPlayingPath = nil
+        }
+    }
+    
+    func stop() {
+        audioPlayer?.stop()
+        audioPlayer = nil
+        isPlaying = false
+        currentlyPlayingPath = nil
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        DispatchQueue.main.async {
+            self.isPlaying = false
+            self.currentlyPlayingPath = nil
+        }
+    }
+}
+
 struct WordReportView: View {
     @State private var selectedWord: Word? = nil
     @State private var shouldReloadProgress: Bool = false
-    private let dataController = DataController.shared
+    private let dataController = SupabaseDataController.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -42,6 +98,16 @@ struct WordReportView: View {
             }
         }
         .background(Color(UIColor.white))
+        .task {
+            // Load user data when view appears
+            if let phoneNumber = dataController.phoneNumber {
+                do {
+                    _ = try await dataController.getUser(byPhone: phoneNumber)
+                } catch {
+                    print("Error loading user data: \(error)")
+                }
+            }
+        }
     }
 }
 
@@ -50,7 +116,7 @@ struct WordReportView: View {
 private struct ProgressDetailSection: View {
     let selectedWord: Word?
     let shouldReloadProgress: Bool
-    private let dataController = DataController.shared
+    private let dataController = SupabaseDataController.shared
     
     private var averageAccuracy: Double {
         guard let word = selectedWord else { return 0 }
@@ -83,10 +149,12 @@ private struct ProgressDetailSection: View {
                        let accuracies = record.accuracy,
                        !accuracies.isEmpty {
                         ForEach(Array(accuracies.enumerated()), id: \.offset) { index, accuracy in
+                            let recordingPath = record.recording?[safe: index]
                             ProgressBarView(
                                 attempt: index + 1,
                                 progress: accuracy / 100,
-                                isSelected: false
+                                isSelected: false,
+                                recordingPath: recordingPath
                             )
                             .id("\(index)-\(shouldReloadProgress)")
                             .transition(.opacity.combined(with: .move(edge: .trailing)))
@@ -104,6 +172,13 @@ private struct ProgressDetailSection: View {
        // .frame(height: 20)
         .frame(width: 564)
         .background(Color.white)
+    }
+}
+
+// Extension to safely access array elements
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
 

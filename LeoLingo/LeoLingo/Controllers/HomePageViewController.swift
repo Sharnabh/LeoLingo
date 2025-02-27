@@ -35,12 +35,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         super.viewDidLoad()
         updateLevelView()
         generateCollectionViewLayout()
-        let words = DataController.shared.getAllLevels().flatMap { $0.words }
-        let newWords = words.filter { $0.record != nil }
-        sortedWords = Array(newWords.reversed().prefix(3))
+        loadRecentPractices()
         setupTimeView()
         updateLevelImage()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Refresh practices when view appears
+        loadRecentPractices()
     }
     
     func updateLevelImage() {
@@ -168,12 +172,13 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
         let cell = recentPracticesCollectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
         
-        guard let word = sortedWords else { return cell }
-        cell.updateLabel(with: word[indexPath.item])
-        cell.accuracyLabel.isHidden = true
-        cell.attemptsLabel.isHidden = true
-        cell.accuracy.isHidden = true
-        cell.attempts.isHidden = true
+        guard let words = sortedWords else { return cell }
+        let word = words[indexPath.item]
+        cell.updateLabel(with: word)
+        cell.accuracyLabel.isHidden = false
+        cell.attemptsLabel.isHidden = false
+        cell.accuracy.isHidden = false
+        cell.attempts.isHidden = false
         
         return cell
     }
@@ -271,15 +276,20 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
-        if UserDefaults.standard.bool(forKey: GreetViewController.greetingShownKey) {
-            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-                vocalCoachVC.modalPresentationStyle = .fullScreen
-                self.present(vocalCoachVC, animated: true, completion: nil)
+        
+        if SupabaseDataController.shared.isFirstTime {
+            // Show greeting for first-time users
+            if let greetVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+                greetVC.modalPresentationStyle = .fullScreen
+                present(greetVC, animated: true)
+                // Reset the first time status after showing greeting
+                SupabaseDataController.shared.isFirstTime = false
             }
         } else {
-            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+            // Directly show VocalCoach for returning users
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
                 vocalCoachVC.modalPresentationStyle = .fullScreen
-                self.present(vocalCoachVC, animated: true, completion: nil)
+                present(vocalCoachVC, animated: true, completion: nil)
             }
         }
     }
@@ -291,6 +301,28 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     
+    private func loadRecentPractices() {
+        Task {
+            do {
+                if let phoneNumber = SupabaseDataController.shared.phoneNumber {
+                    // Fetch latest user data from Supabase
+                    let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                    let words = userData.userLevels.flatMap { $0.words }
+                    // Filter words that have been practiced and have records
+                    let practicedWords = words.filter { $0.record != nil && $0.isPracticed }
+                    // Take only the last 2 practiced words
+                    sortedWords = Array(practicedWords.reversed().prefix(2))
+                    
+                    // Reload collection view on main thread
+                    DispatchQueue.main.async {
+                        self.recentPracticesCollectionView.reloadData()
+                    }
+                }
+            } catch {
+                print("Error loading recent practices: \(error)")
+            }
+        }
+    }
 }
 extension HomePageViewController: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {

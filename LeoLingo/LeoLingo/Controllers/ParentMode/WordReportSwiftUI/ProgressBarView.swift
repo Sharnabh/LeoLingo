@@ -1,12 +1,14 @@
 
 import SwiftUI
+import AVFoundation
 
 struct ProgressBarView: View {
     let attempt: Int
     let progress: Double
     let isSelected: Bool
+    let recordingPath: String?
     
-    @State private var isPlaying = false
+    @StateObject private var audioPlayer = AudioPlayerManager.shared
     @State private var animatedProgress: Double = 0
     @State private var displayedPercentage: Int = 0
     
@@ -95,14 +97,18 @@ struct ProgressBarView: View {
             .padding(.top, 50)
             .padding(.bottom, 16)
             
-            // Play button
+            // Play button with dynamic color and state
             Button(action: {
-                isPlaying.toggle()
+                if let path = recordingPath {
+                    audioPlayer.play(recordingPath: path)
+                }
             }) {
-                Image(systemName: isPlaying ? "pause.circle" : "play.circle")
-                    .foregroundColor(Color(red: 75/255, green: 142/255, blue: 79/255))
-                    .font(.system(size: 26)) // Slightly larger button
+                Image(systemName: audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    .foregroundColor(recordingPath != nil ? .green : .gray.opacity(0.5))
+                    .font(.system(size: 24))
             }
+            .disabled(recordingPath == nil)
+            .opacity(recordingPath != nil ? 1 : 0.5)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12) // Increased container padding
@@ -131,15 +137,18 @@ struct ProgressBarView: View {
                 }
             }
         }
+        .onDisappear {
+            audioPlayer.stop()
+        }
     }
 }
 
 // Preview
 #Preview {
-    VStack(spacing: 0) {
-        ProgressBarView(attempt: 1, progress: 0.22, isSelected: true)
-        ProgressBarView(attempt: 2, progress: 0.75, isSelected: false)
-        ProgressBarView(attempt: 3, progress: 0.5, isSelected: false)
+    VStack(spacing: 16) {
+        ProgressBarView(attempt: 1, progress: 0.22, isSelected: true, recordingPath: nil)
+        ProgressBarView(attempt: 2, progress: 0.75, isSelected: false, recordingPath: "/test/path.m4a")
+        ProgressBarView(attempt: 3, progress: 0.5, isSelected: false, recordingPath: nil)
     }
     .padding()
 }

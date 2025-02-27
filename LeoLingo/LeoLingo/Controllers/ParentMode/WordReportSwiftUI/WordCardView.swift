@@ -1,9 +1,8 @@
-
 import SwiftUI
 
 struct WordCardView: View {
     let word: String
-    let accuracy: Double  // This is now in decimal form (0.0 to 1.0)
+    let accuracy: Double  // This is now the average accuracy
     let attempts: String
     let isSelected: Bool
     
@@ -23,48 +22,40 @@ struct WordCardView: View {
                         y: 3
                     )
                 
-                
                 Circle()
-                        .stroke(Color.gray.opacity(0.5), lineWidth: 5)
-                        .frame(width: 100, height: 100)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 5)
+                    .frame(width: 100, height: 100)
                 Circle()
                     .trim(from: 0, to: accuracy/100)
                     .stroke(
-                        accuracy / 100 >= 0.7 ? Color.green : Color.red,
+                        accuracy >= 70 ? Color.green : Color.red,
                         lineWidth: 5
                     )
-
-                    
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(-90))
                 
                 DonutTextView(value: word, size: 80)
                     .foregroundColor(Color(red: 135/255, green: 89/255, blue: 65/255))
-
             }
-            VStack(alignment:.leading, spacing: 4){
-                HStack(spacing: 4) {
-                    Text("Accuracy")
-                        .font(.system(size: 14))
-                        .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
-                    Text("\(String(format: "%.1f%", accuracy))%")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
-                }
-                
-                
-                HStack(spacing: 4) {
-                    Text("Attempts")
-                        .font(.system(size: 14))
-                        .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
-                    
-                    
-                    Text("\(attempts)")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
-                }.frame(alignment: .leading)
+            
+            HStack(spacing: 4) {
+                Text("Accuracy")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
+                Text("\(String(format: "%.1f", accuracy))%")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
             }
-
+            
+            HStack(spacing: 4) {
+                Text("Attempts")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
+                
+                Text("\(attempts)")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
+            }.frame(alignment: .leading)
         }
         .padding(20)
         .background(
@@ -78,7 +69,7 @@ struct WordCardView: View {
                     y: 4
                 )
         )
-        .padding(.horizontal, 4) // Add padding to prevent shadow clipping
+        .padding(.horizontal, 4)
         .padding(.vertical, 4)
     }
 }

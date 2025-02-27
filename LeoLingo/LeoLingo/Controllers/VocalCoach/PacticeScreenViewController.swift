@@ -5,7 +5,7 @@ import Combine
 
 class PracticeScreenViewController: UIViewController {
     
-    var levels = DataController.shared.getAllLevels()
+    var levels: [Level] = []
     private let synthesizer = AVSpeechSynthesizer()
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -71,6 +71,37 @@ class PracticeScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Clear any persisted data
+        clearUserDefaults()
+        
+        // Load levels from Supabase
+        Task {
+            do {
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                // Keep original level order but only include unpracticed words
+                self.levels = userData.userLevels.map { level in
+                    var filteredLevel = level
+                    filteredLevel.words = level.words.filter { !$0.isPracticed }
+                    return filteredLevel
+                }
+                
+                // Remove empty levels
+                self.levels = self.levels.filter { !$0.words.isEmpty }
+                
+                if self.levels.isEmpty {
+                    // Show completion message if no unpracticed words available
+                    showCompletionMessage()
+                } else {
+                    // Always start from the first available level
+                    self.levelIndex = 0
+                    self.currentIndex = 0
+                    updateUI()
+                }
+            } catch {
+                handleError(error)
+            }
+        }
+        
         setupBackButton()
         setupMicButton()
         setupWarningLabel()
@@ -88,9 +119,6 @@ class PracticeScreenViewController: UIViewController {
         wordImage.isUserInteractionEnabled = true
         wordImage.addGestureRecognizer(tapGesture)
         
-        updateUI()
-        directionLabel.adjustsFontSizeToFitWidth = true
-        
         // Hide the default back button
         navigationItem.setHidesBackButton(true, animated: false)
     }
@@ -98,10 +126,6 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
-        
-        // Save current progress
-        UserDefaults.standard.set(levelIndex, forKey: "LastPracticedLevelIndex")
-        UserDefaults.standard.set(currentIndex, forKey: "LastPracticedWordIndex")
     }
     
     private func setupMicButton() {
@@ -283,8 +307,11 @@ class PracticeScreenViewController: UIViewController {
         // Cancel any existing subscription
         speechSubscription?.cancel()
         
-        // Start recording
-        speechProcessor.startRecording()
+        let currentWord = getCurrentWord()
+        let currentAttempt = levels[levelIndex].words[currentIndex].record?.attempts ?? 0
+        
+        // Start recording with current word and attempt number
+        speechProcessor.startRecording(word: currentWord, wordId: levels[levelIndex].words[currentIndex].id, attemptNumber: currentAttempt + 1)
         isListening = true
         
         // Handle speech recognition results
@@ -293,7 +320,6 @@ class PracticeScreenViewController: UIViewController {
             .sink { [weak self] spokenText in
                 guard let self = self else { return }
                 
-                let currentWord = self.getCurrentWord()
                 let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
                 let maxLength = max(spokenText.count, currentWord.count)
                 let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
@@ -319,17 +345,67 @@ class PracticeScreenViewController: UIViewController {
     
     private func getCurrentWord() -> String {
         let currentData = levels[levelIndex].words[currentIndex]
-        return DataController.shared.wordData(by: currentData.id)?.wordTitle ?? ""
+        let appLevels = SupabaseDataController.shared.getLevelsData()
+        for level in appLevels {
+            for word in level.words {
+                if word.id == currentData.id {
+                    return word.wordTitle
+                }
+            }
+        }
+        return ""
     }
     
     private func handleCorrectPronunciation() {
         consecutiveWrongAttempts = 0
         
-        // Show success feedback
-        showPopover(isCorrect: true, levelChange: currentIndex == levels[levelIndex].words.count - 1)
-        
-        // Move to next word
-        moveToNextWord()
+        // Mark current word as practiced in database
+        Task {
+            do {
+                let currentWord = levels[levelIndex].words[currentIndex]
+                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: nil)
+                
+                // Update local data
+                levels[levelIndex].words[currentIndex].isPracticed = true
+                
+                // Show success feedback and move to next word on main thread
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    let isLastWordInLevel = currentIndex == levels[levelIndex].words.count - 1
+                    
+                    // Show the success popup first
+                    self.showPopover(isCorrect: true, levelChange: isLastWordInLevel)
+                    
+                    // Remove the practiced word from our local array
+                    self.levels[self.levelIndex].words.remove(at: self.currentIndex)
+                    
+                    // If the level is now empty, remove it
+                    if self.levels[self.levelIndex].words.isEmpty {
+                        self.levels.remove(at: self.levelIndex)
+                    }
+                    
+                    // Progress to next word or level
+                    if self.levels.isEmpty {
+                        self.showCompletionMessage()
+                    } else {
+                        // If current level is empty, move to next level
+                        if self.currentIndex >= self.levels[self.levelIndex].words.count {
+                            self.levelIndex = min(self.levelIndex, self.levels.count - 1)
+                            self.currentIndex = 0
+                            self.showLevelChangePopover()
+                            self.showConfettiEffect()
+                        }
+                        self.updateUI()
+                    }
+                }
+            } catch {
+                print("Error updating word progress: \(error)")
+                // On error, still try to move to next word
+                DispatchQueue.main.async { [weak self] in
+                    self?.moveToNextWord()
+                }
+            }
+        }
     }
     
     private func handleIncorrectPronunciation() {
@@ -371,34 +447,65 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {
-        let level = DataController.shared.getLevel(by: levels[levelIndex].id)
-        let data = level!.words[index]
-        return "This is \(data.wordTitle). Say \(data.wordTitle)."
+        let appLevels = SupabaseDataController.shared.getLevelsData()
+        let currentWord = levels[levelIndex].words[index]
+        
+        for level in appLevels {
+            if let word = level.words.first(where: { $0.id == currentWord.id }) {
+                return "This is \(word.wordTitle). Say \(word.wordTitle)."
+            }
+        }
+        return ""
     }
     
     func updateUI() {
+        // Validate indices before updating UI
+        guard !levels.isEmpty,
+              levelIndex < levels.count,
+              currentIndex < levels[levelIndex].words.count else {
+            showCompletionMessage()
+            return
+        }
+        
         let currentData = levels[levelIndex].words[currentIndex]
         directionLabel.text = ""
-        let word = DataController.shared.wordData(by: currentData.id)!
-        wordImage.image = UIImage(named: word.wordImage)
-        mojoImage.image = UIImage(named: "mojo2")
         
-        let direction = "This is \(word.wordTitle). Say \(word.wordTitle)."
+        // Get word data from app levels
+        let appLevels = SupabaseDataController.shared.getLevelsData()
+        var wordImage: String?
+        var wordTitle: String?
         
-        // Sequence the animations
-        animateWordImage()
-        
-        // Start typing effect after word image animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
-            self?.typeEffect(text: direction, label: self?.directionLabel)
-            
-            // Pronounce direction after typing effect
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(direction.count) * 0.05 + 0.2) { [weak self] in
-                self?.pronounceDirection(direction)
+        for level in appLevels {
+            if let word = level.words.first(where: { $0.id == currentData.id }) {
+                wordImage = word.wordImage
+                wordTitle = word.wordTitle
+                break
             }
         }
         
+        if let wordImage = wordImage {
+            self.wordImage.image = UIImage(named: wordImage)
+        }
+        self.mojoImage.image = UIImage(named: "mojo2")
         
+        if let wordTitle = wordTitle {
+            let direction = "This is \(wordTitle). Say \(wordTitle)."
+            
+            // Sequence the animations
+            animateWordImage()
+            
+            // Start typing effect after word image animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+                guard let self = self else { return }
+                self.typeEffect(text: direction, label: self.directionLabel)
+                
+                // Pronounce direction after typing effect
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(direction.count) * 0.05 + 0.2) { [weak self] in
+                    guard let self = self else { return }
+                    self.pronounceDirection(direction)
+                }
+            }
+        }
     }
     
     //MARK: - Animation
@@ -422,18 +529,36 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func moveToNextWord() {
+        // If we have no levels left, show completion
+        if levels.isEmpty {
+            showCompletionMessage()
+            return
+        }
+        
+        // Move to next word
         currentIndex += 1
         
+        // If we've reached the end of current level's words
         if currentIndex >= levels[levelIndex].words.count {
+            // Try to move to next level
+            levelIndex += 1
             currentIndex = 0
-            levelIndex = (levelIndex + 1) % levels.count
             
-            DataController.shared.updateLevels(levels)
+            // If we've reached the end of all levels
+            if levelIndex >= levels.count {
+                showCompletionMessage()
+                return
+            }
+            
             showLevelChangePopover()
             showConfettiEffect()
-        } else {
-            DataController.shared.updateLevels(levels)
+        }
+        
+        // Only update UI if we have valid indices
+        if levelIndex < levels.count && currentIndex < levels[levelIndex].words.count {
             updateUI()
+        } else {
+            showCompletionMessage()
         }
     }
     
@@ -459,12 +584,14 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
             
-            let level = DataController.shared.getLevel(by: levels[levelIndex].id)
-            popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level!.levelImage)
-            popoverVC.onProceed = { [weak self] in
-                self?.updateUI()
+            let appLevels = SupabaseDataController.shared.getLevelsData()
+            if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
+                popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level.levelImage)
+                popoverVC.onProceed = { [weak self] in
+                    self?.updateUI()
+                }
+                present(popoverVC, animated: true, completion: nil)
             }
-            present(popoverVC, animated: true, completion: nil)
         }
     }
     
@@ -491,11 +618,8 @@ class PracticeScreenViewController: UIViewController {
     func navigateToFunLearning() {
         let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
         if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
-//            funLearningVC.modalPresentationStyle = .fullScreen
-//            present(funLearningVC, animated: true)
             self.navigationController?.pushViewController(funLearningVC, animated: true)
         }
-        
     }
     
     func showConfettiEffect() {
@@ -537,66 +661,53 @@ class PracticeScreenViewController: UIViewController {
     private func recordAccuracy(_ accuracy: Double) {
         let currentWord = levels[levelIndex].words[currentIndex]
         
-        // Initialize record if it doesn't exist
-        if currentWord.record == nil {
-            levels[levelIndex].words[currentIndex].record = Record(attempts: 0, accuracy: [], recording: [])
+        Task {
+            do {
+                // Get recording path from speech processor if available
+                let recordingPath = speechProcessor.getRecordingURL()?.path
+                
+                // Update word progress in Supabase
+                try await SupabaseDataController.shared.updateWordProgress(
+                    wordId: currentWord.id,
+                    accuracy: accuracy,
+                    recordingPath: recordingPath
+                )
+                
+                // Refresh local data to update the filtered word list
+                await refreshData()
+            } catch {
+                handleError(error)
+            }
         }
-        
-        // Update the record
-        levels[levelIndex].words[currentIndex].isPracticed = true
-        levels[levelIndex].words[currentIndex].record?.accuracy?.append(accuracy)
-        levels[levelIndex].words[currentIndex].record?.attempts += 1
-        
-        // Store recording path if available
-        if let recordingPath = speechProcessor.getRecordingPath() {
-            levels[levelIndex].words[currentIndex].record?.recording?.append(recordingPath)
-        }
-        
-        // Save to persistent storage
-        DataController.shared.updateLevels(levels)
-        
-        // Update level progress
-        updateLevelProgress(accuracy)
     }
     
     private func updateLevelProgress(_ accuracy: Double) {
         let currentLevel = levels[levelIndex]
         
-        // Calculate overall level progress
-        let totalWords = currentLevel.words.count
-        let practicedWords = currentLevel.words.filter { $0.isPracticed }.count
-        let progressValue = Double(practicedWords) / Double(totalWords)
-        
-        // Store progress in UserDefaults
-        UserDefaults.standard.set(progressValue, forKey: "level_progress_\(currentLevel.id)")
-        
-        // Calculate and store level accuracy
-        let wordAccuracies = currentLevel.words.compactMap { word -> Double? in
-            return UserDefaults.standard.double(forKey: "word_accuracy_\(word.id)")
-        }
-        
-        if !wordAccuracies.isEmpty {
-            let avgAccuracy = wordAccuracies.reduce(0.0, +) / Double(wordAccuracies.count)
-            UserDefaults.standard.set(avgAccuracy, forKey: "level_accuracy_\(currentLevel.id)")
-        }
-        
-        // Save changes
-        DataController.shared.updateLevels(levels)
-        
-        // Update UI
+        // Calculate overall level progress and update UI
         updateProgressUI()
     }
     
     private func updateProgressUI() {
         let currentLevel = levels[levelIndex]
         
-        // Get progress and accuracy from UserDefaults
-        let progress = UserDefaults.standard.double(forKey: "level_progress_\(currentLevel.id)")
-        let accuracy = UserDefaults.standard.double(forKey: "level_accuracy_\(currentLevel.id)")
+        // Calculate progress
+        let totalWords = currentLevel.words.count
+        let practicedWords = currentLevel.words.filter { $0.isPracticed }.count
+        let progress = Float(practicedWords) / Float(totalWords)
+        
+        // Calculate accuracy
+        let accuracies = currentLevel.words.compactMap { word -> Double? in
+            if let record = word.record, let accuracies = record.accuracy, !accuracies.isEmpty {
+                return accuracies.reduce(0.0, +) / Double(accuracies.count)
+            }
+            return nil
+        }
+        let accuracy = accuracies.isEmpty ? 0.0 : accuracies.reduce(0.0, +) / Double(accuracies.count)
         
         // Update progress bar if it exists
         if let progressBar = view.viewWithTag(100) as? UIProgressView {
-            progressBar.progress = Float(progress)
+            progressBar.progress = progress
         }
         
         // Update accuracy label if it exists
@@ -627,6 +738,73 @@ class PracticeScreenViewController: UIViewController {
         } else {
             // If no navigation controller, handle modal dismissal
             dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    // Error handling helper
+    private func handleError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Error",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func showCompletionMessage() {
+        let alert = UIAlertController(
+            title: "Congratulations! 🎉",
+            message: "You have practiced all available words. Would you like to review them again?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Review Again", style: .default) { [weak self] _ in
+            Task {
+                // Reset practice status for all words
+                if let userData = try? await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "") {
+                    self?.levels = userData.userLevels
+                    self?.updateUI()
+                }
+            }
+        })
+        
+        alert.addAction(UIAlertAction(title: "Back", style: .cancel) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    private func refreshData() {
+        Task {
+            do {
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                // Keep original level order but only include unpracticed words
+                self.levels = userData.userLevels.map { level in
+                    var filteredLevel = level
+                    filteredLevel.words = level.words.filter { !$0.isPracticed }
+                    return filteredLevel
+                }
+                
+                // Remove empty levels
+                self.levels = self.levels.filter { !$0.words.isEmpty }
+                
+                if self.levels.isEmpty {
+                    showCompletionMessage()
+                } else {
+                    updateUI()
+                }
+            } catch {
+                handleError(error)
+            }
+        }
+    }
+    
+    private func clearUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
         }
     }
 }

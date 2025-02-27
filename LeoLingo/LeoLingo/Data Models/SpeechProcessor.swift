@@ -19,6 +19,40 @@ class SpeechProcessor: ObservableObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var recordingPath: String?
+    private var currentWord: String = ""
+    private var currentWordId: UUID?
+    private var currentAttemptNumber: Int = 0
+    
+    // Audio recording properties
+    private var audioRecorder: AVAudioRecorder?
+    private let supabaseController = SupabaseDataController.shared
+    
+    init() {
+        // Create recordings directory if it doesn't exist
+        createRecordingsDirectory()
+    }
+    
+    private func createRecordingsDirectory() {
+        let fileManager = FileManager.default
+        guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        
+        let recordingsDirectory = documentDirectory.appendingPathComponent("Recordings", isDirectory: true)
+        
+        do {
+            // Create directory if it doesn't exist
+            if !fileManager.fileExists(atPath: recordingsDirectory.path) {
+                try fileManager.createDirectory(at: recordingsDirectory, withIntermediateDirectories: true)
+            }
+        } catch {
+            print("Error creating recordings directory: \(error.localizedDescription)")
+        }
+    }
+    
+    private func getRecordingsDirectory() -> URL? {
+        let fileManager = FileManager.default
+        guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        return documentDirectory.appendingPathComponent("Recordings", isDirectory: true)
+    }
     
     func requestSpeechRecognitionPermission() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
@@ -37,26 +71,47 @@ class SpeechProcessor: ObservableObject {
         }
     }
     
-    func startRecording() {
+    func startRecording(word: String, wordId: UUID, attemptNumber: Int) {
         guard let speechRecognizer = speechRecognizer, speechRecognizer.isAvailable else { return }
         
         // Stop any existing recording first
         stopRecording()
         
+        self.currentWord = word
+        self.currentWordId = wordId
+        self.currentAttemptNumber = attemptNumber
         isRecording = true
         userSpokenText = ""
         
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
             
+            // Set up recording path in temporary directory
+            let tempDir = FileManager.default.temporaryDirectory
+            let recordingName = "\(currentWordId?.uuidString ?? "")_\(Date().timeIntervalSince1970)_temp.m4a"
+            let recordingURL = tempDir.appendingPathComponent(recordingName)
+            recordingPath = recordingURL.path
+            
+            // Configure audio settings for high-quality speech recording
+            let settings: [String: Any] = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 44100.0,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
+                AVEncoderBitRateKey: 128000
+            ]
+            
+            // Initialize audio recorder
+            audioRecorder = try AVAudioRecorder(url: recordingURL, settings: settings)
+            audioRecorder?.record()
+            
+            // Set up speech recognition
             recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let recognitionRequest = recognitionRequest else { return }
             
             let inputNode = audioEngine.inputNode
-            
-            // Make sure there's no existing tap
             inputNode.removeTap(onBus: 0)
             
             let recordingFormat = inputNode.outputFormat(forBus: 0)
@@ -80,12 +135,6 @@ class SpeechProcessor: ObservableObject {
             audioEngine.prepare()
             try audioEngine.start()
             
-            // Set up recording path
-            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let recordingName = "recording_\(Date().timeIntervalSince1970).m4a"
-            let recordingURL = documentsPath.appendingPathComponent(recordingName)
-            recordingPath = recordingURL.path
-            
         } catch {
             print("Error setting up audio session: \(error.localizedDescription)")
             stopRecording()
@@ -95,10 +144,12 @@ class SpeechProcessor: ObservableObject {
     func stopRecording() {
         isRecording = false
         
+        // Stop audio recorder
+        audioRecorder?.stop()
+        audioRecorder = nil
+        
         // Stop audio engine
         audioEngine.stop()
-        
-        // Remove tap if it exists
         if audioEngine.inputNode.inputFormat(forBus: 0).sampleRate != 0 {
             audioEngine.inputNode.removeTap(onBus: 0)
         }
@@ -117,9 +168,6 @@ class SpeechProcessor: ObservableObject {
         } catch {
             print("Error deactivating audio session: \(error.localizedDescription)")
         }
-        
-        // Clear recording path
-        recordingPath = nil
     }
     
     func levenshteinDistance(_ a: String, _ b: String) -> Int {
@@ -158,5 +206,32 @@ class SpeechProcessor: ObservableObject {
     
     func getRecordingPath() -> String? {
         return recordingPath
+    }
+    
+    func getRecordingURL() -> URL? {
+        guard let path = recordingPath else { return nil }
+        return URL(fileURLWithPath: path)
+    }
+    
+    func updateWordProgress(accuracy: Double) async throws {
+        guard let wordId = currentWordId,
+              let recordingPath = self.recordingPath else {
+            return
+        }
+        
+        // Update word progress in Supabase
+        try await supabaseController.updateWordProgress(
+            wordId: wordId,
+            accuracy: accuracy,
+            recordingPath: recordingPath
+        )
+    }
+    
+    func getAllRecordings(for wordId: UUID) async throws -> [String] {
+        return try await supabaseController.getRecordings(for: wordId)
+    }
+    
+    func deleteRecording(url: String, for wordId: UUID) async throws {
+        try await supabaseController.deleteRecording(url: url, for: wordId)
     }
 }

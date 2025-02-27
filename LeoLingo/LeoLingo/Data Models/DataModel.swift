@@ -65,6 +65,20 @@ struct Record {
     var attempts: Int = 0
     var accuracy: [Double]?
     var recording: [String]?
+    
+    var avgAccuracy: Double {
+        guard let accuracies = accuracy,
+              !accuracies.isEmpty else {
+            return 0.0
+        }
+        
+        // Cap individual accuracies at 100%
+        let cappedAccuracies = accuracies.map { min(100.0, max(0.0, $0)) }
+        let total = cappedAccuracies.reduce(0.0, +)
+        let average = total / Double(accuracies.count)
+        
+        return (average * 10).rounded() / 10
+    }
 }
 
 struct Card {

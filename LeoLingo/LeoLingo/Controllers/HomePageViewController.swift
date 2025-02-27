@@ -217,7 +217,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
           
         levelView.layer.cornerRadius = 21
         levelView.layer.borderWidth = 3
-        levelView.layer.borderColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0).cgColor
+        levelView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         levelView.clipsToBounds = false
 
         // Drop shadow
@@ -239,7 +239,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // badges
         badgesView.layer.cornerRadius = 21
         badgesView.layer.borderWidth = 3
-        badgesView.layer.borderColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0).cgColor
+        badgesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         badgesView.clipsToBounds = false
 
         badgesView.layer.shadowColor = UIColor.black.cgColor
@@ -250,7 +250,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         //recent practices
         practicesView.layer.cornerRadius = 21  // Rounded corners
         practicesView.layer.borderWidth = 3    // Border thickness
-        practicesView.layer.borderColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0).cgColor
+        practicesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         practicesView.clipsToBounds = false  // Clips content to rounded corners
 
         practicesView.layer.shadowColor = UIColor.black.cgColor

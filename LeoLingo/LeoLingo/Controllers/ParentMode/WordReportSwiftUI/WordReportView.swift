@@ -1,9 +1,3 @@
-//
-//  WordReportView.swift
-//  LeoLingo
-//
-//  Created by Sharnabh on 20/02/25.
-//
 
 import SwiftUI
 import AVFoundation
@@ -86,20 +80,25 @@ struct WordReportView: View {
                     )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.systemGray6))
+                .background(Color(red: 143/255, green: 91/255, blue: 66/255))
                 
                 Divider()
                     .frame(width: 1)
-                    .background(Color.brown)
+                    .background(Color(red: 143/255, green: 91/255, blue: 66/255))
+                    .shadow(color: .black.opacity(0.4), radius: 2, x: 4)
+
                 
                 // Right section with progress details
-                ProgressDetailSection(
-                    selectedWord: selectedWord,
-                    shouldReloadProgress: shouldReloadProgress
-                )
+                
+                    ProgressDetailSection(
+                        selectedWord: selectedWord,
+                        shouldReloadProgress: shouldReloadProgress
+                        
+                    )
+                
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(Color(UIColor.white))
     }
 }
 
@@ -121,15 +120,17 @@ private struct ProgressDetailSection: View {
             VStack(spacing: 8) {
                 Text("\(String(format: "%.1f%", averageAccuracy))%")
                     .font(.system(size: 48, weight: .bold))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color(red: 83/255, green: 183/255, blue: 53/255))
                 Text("Average Accuracy")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
             }
             .padding(.vertical, 32)
             
             Divider()
                 .frame(height: 1)
-                .background(Color.brown)
+            
+                .background(Color(red: 143/255, green: 91/255, blue: 66/255))
+                .shadow(color: .black.opacity(0.4), radius: 2, y: 2)
             
             // Attempts list
             ScrollView {
@@ -159,7 +160,8 @@ private struct ProgressDetailSection: View {
                 .padding()
             }
         }
-        .frame(width: UIScreen.main.bounds.width * 0.4)
+       // .frame(height: 20)
+        .frame(width: 564)
         .background(Color.white)
     }
 }

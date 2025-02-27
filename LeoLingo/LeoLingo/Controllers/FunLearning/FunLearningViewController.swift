@@ -15,7 +15,7 @@ class FunLearningViewController: UIViewController {
     
     var currentIndex = 1
     
-    let gameImages: [String] = ["JungleAdventureLogo", "JungleRunLogo", "SingAlongLogo"]
+    let gameImages: [String] = ["FlashCardsGameLogo", "JungleRunLogo", "SingAlongLogo"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +36,7 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.delegate = self
         gamesCollectionView.dataSource = self
     }
+    
     
     @objc private func backButtonTapped() {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
@@ -135,6 +136,15 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0
+        {
+            let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+            if let vc = storyboard.instantiateViewController(withIdentifier: "flashCardsNav") as? UINavigationController {
+                vc.modalPresentationStyle = .fullScreen
+                present(vc, animated: true)
+            }
+            
+        }
         if indexPath.item == 1
         {
             let storyboard = UIStoryboard(name: "JungleRun", bundle: nil)
@@ -145,5 +155,6 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
             
         }
     }
+    
     
 }

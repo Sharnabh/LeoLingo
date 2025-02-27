@@ -83,22 +83,45 @@ extension SignUpViewController: SignUpCellDelegate {
     }
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {
-            let exists = DataController.shared.findUser(byPhone: phone) != nil
-            completion(exists)
+        Task {
+            do {
+                let users = try await SupabaseDataController.shared.getAllUsers()
+                let exists = users.contains { $0.phone_number == phone }
+                DispatchQueue.main.async {
+                    completion(exists)
+                }
+            } catch {
+                print("Error checking user: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
         }
     }
     
     func signUp(name: String, phone: String, password: String) {
-        // Create new user in Core Data
-        let user = UserData(name: name, phoneNumber: phone, password: password, userLevels: DataController.shared.getUserLevelsData(), userEarnedBadges: DataController.shared.getUserEarnedBadges(), userBadges: DataController.shared.getUserBadgesData())
-        DataController.shared.createUser(user: user)
-        
-        showAlert(message: "Sign up successful!")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            let vc = QuestionnaireViewController()
-            vc.getPhoneNumber(phone: phone)
-            self?.switchToQuestionnaireVC()
+        Task {
+            do {
+                // Use the existing signUp method from SupabaseDataController
+                let userData = try await SupabaseDataController.shared.signUp(
+                    name: name,
+                    phoneNumber: phone,
+                    password: password
+                )
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.showAlert(message: "Sign up successful!")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        let vc = QuestionnaireViewController()
+                        vc.getPhoneNumber(phone: phone)
+                        self?.switchToQuestionnaireVC()
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.showAlert(message: "Sign up failed: \(error.localizedDescription)")
+                }
+            }
         }
     }
 }

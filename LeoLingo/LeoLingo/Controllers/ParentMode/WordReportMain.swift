@@ -12,9 +12,9 @@ class WordReportMain: UIViewController {
     @IBOutlet var wordReportView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        wordReportView.layer.borderColor = UIColor(red: 178/255, green: 132/255, blue: 51/255, alpha: 1).cgColor
-        wordReportView.layer.borderWidth = 5
+        
+        wordReportView.layer.borderColor = UIColor(red: 143/255, green: 91/255, blue: 66/255, alpha: 1).cgColor
+        wordReportView.layer.borderWidth = 2
         wordReportView.layer.cornerRadius = 20
         wordReportView.clipsToBounds = true
     }

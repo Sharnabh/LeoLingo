@@ -7,7 +7,6 @@
 
 import UIKit
 import LocalAuthentication
-import AudioToolbox
 
 class LockScreenViewController: UIViewController {
 
@@ -21,19 +20,30 @@ class LockScreenViewController: UIViewController {
     @IBOutlet var circleView4: UIView!
     @IBOutlet var passcodeView: UIView!
     var myPasscode: String = ""
-    let user = DataController.shared.getallUsers()
-    var code = ""
+    var code = "1234" // Default code
     let passCodeLength = 4
     
-    // Use both impact and notification feedback
-    private let impactGenerator = UIImpactFeedbackGenerator(style: .rigid)
-    private let notificationGenerator = UINotificationFeedbackGenerator()
+    // Add property to track device type
+    private let isIpad = UIDevice.current.userInterfaceIdiom == .pad
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        code = user[0].passcode ?? "1234"
-        print(user[0])
+        // Fetch users and set passcode
+        Task {
+            do {
+                let users = try await SupabaseDataController.shared.getAllUsers()
+                if let currentPhoneNumber = SupabaseDataController.shared.phoneNumber,
+                   let matchingUser = users.first(where: { $0.phone_number == currentPhoneNumber }) {
+                    self.code = matchingUser.passcode ?? "1234"
+                    print("Found matching user with phone number:", currentPhoneNumber)
+                } else {
+                    print("No matching user found or not logged in, using default passcode")
+                }
+            } catch {
+                print("Error fetching users: \(error.localizedDescription)")
+            }
+        }
 
         configureCircleView(circleView: circleView1)
         configureCircleView(circleView: circleView2)
@@ -47,10 +57,6 @@ class LockScreenViewController: UIViewController {
         
         // Request Touch ID authentication when view loads
         authenticateWithTouchID()
-        
-        // Prepare both generators
-        impactGenerator.prepare()
-        notificationGenerator.prepare()
     }
     
     @IBAction func backButtonTapped1(_ sender: UIBarButtonItem) {
@@ -99,23 +105,13 @@ class LockScreenViewController: UIViewController {
                             sceneDelegate.window?.rootViewController = tabBarBC
                         }
                     } else {
-                        // Trigger both feedbacks for stronger effect
-                        impactGenerator.impactOccurred(intensity: 1.0)
-                        notificationGenerator.notificationOccurred(.error)
-                        
-                        // Play system sound for wrong passcode
-                        AudioServicesPlaySystemSound(1521) // "Wrong Password" vibration
-                        
-                        // Shake animation
+                        // Only keep shake animation for wrong passcode
                         shakePasscodeView()
                         
                         // Clear the passcode after wrong attempt
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             self.myPasscode = ""
                             self.updateCircleViews()
-                            // Prepare for next use
-                            self.impactGenerator.prepare()
-                            self.notificationGenerator.prepare()
                         }
                     }
                 }

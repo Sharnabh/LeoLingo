@@ -87,22 +87,35 @@ extension LogInViewController: LogInCellDelegate {
     }
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {
-            // Check if the phone number matches our sample user
-            let exists = DataController.shared.findUser(byPhone: phone) != nil
-            completion(exists)
+        Task {
+            do {
+                let users = try await SupabaseDataController.shared.getAllUsers()
+                let exists = users.contains { $0.phone_number == phone }
+                DispatchQueue.main.async {
+                    completion(exists)
+                }
+            } catch {
+                print("Error checking user: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
         }
     }
     
     func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {
-            // Validate against our sample user credentials
-            if let user = DataController.shared.validateUser(phoneNumber: phone, password: password) {
-                // User found and password matches
-                completion(true)
-            } else {
-                // Either user not found or password doesn't match
-                completion(false)
+        Task {
+            do {
+                // Use the existing signIn method which handles validation
+                let userData = try await SupabaseDataController.shared.signIn(phoneNumber: phone, password: password)
+                DispatchQueue.main.async {
+                    completion(true)
+                }
+            } catch {
+                print("Login failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(false)
+                }
             }
         }
     }

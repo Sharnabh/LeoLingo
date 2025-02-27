@@ -166,18 +166,31 @@ class DataController {
         return app.badges
     }
     
+    func getBadgesStatus(_ badge: AppBadge) -> Bool {
+        for i in user[0].userBadges {
+            if i.id == badge.id {
+                return i.isEarned
+            }
+        }
+        return false
+    }
+    
     func countBadges() -> Int {
         return app.badges.count
     }
     
     func getEarnedBadges() -> [AppBadge] {
         var earnedBadges: [AppBadge] = []
-        for badge in user[0].userEarnedBadges {
-            print(badge)
-            if let earnedBadge = SampleDataController.shared.getBadges(by: badge.id) {
-                earnedBadges.append(earnedBadge)
+        for badge in user[0].userBadges {
+            if badge.isEarned {
+                for i in app.badges {
+                    if badge.id == i.id {
+                        earnedBadges.append(i)
+                    }
+                }
             }
         }
+        print(earnedBadges)
         return earnedBadges
     }
     
@@ -186,7 +199,13 @@ class DataController {
     }
     
     func countEarnedBadges() -> Int {
-        return user[0].userEarnedBadges.count
+        var count: Int = 0
+        for badges in user[0].userBadges {
+            if badges.isEarned {
+                count += 1
+            }
+        }
+        return count
     }
     
     func addEarnedBadges() {

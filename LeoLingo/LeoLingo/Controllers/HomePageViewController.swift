@@ -270,7 +270,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if UserDefaults.standard.bool(forKey: GreetViewController.greetingShownKey) {
             if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
                 vocalCoachVC.modalPresentationStyle = .fullScreen

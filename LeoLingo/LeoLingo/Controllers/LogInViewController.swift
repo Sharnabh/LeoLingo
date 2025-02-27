@@ -29,6 +29,12 @@ class LogInViewController: UIViewController {
         
     }
 
+    @IBAction func loginButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+            // ... existing code ...
+        }
+    }
 
 }
 
@@ -66,7 +72,7 @@ extension LogInViewController: UICollectionViewDelegate, UICollectionViewDataSou
 // MARK: - LogInCellDelegate
 extension LogInViewController: LogInCellDelegate {
     func switchToLandingPage() {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let landingPage = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
             landingPage.modalPresentationStyle = .fullScreen
             present(landingPage, animated: true)

@@ -89,7 +89,7 @@ class VocalCoachViewController: UIViewController {
     }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let practiceVC = storyboard.instantiateViewController(withIdentifier: "PracticeScreenViewController") as? PracticeScreenViewController {
             practiceVC.levelIndex = UserDefaults.standard.integer(forKey: "LastPracticedLevelIndex")
             practiceVC.currentIndex = UserDefaults.standard.integer(forKey: "LastPracticedWordIndex")
@@ -169,5 +169,18 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.updatelevelCard(with: indexPath)
         
         return cell
+    }
+    
+    // Add touch handling methods
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? LevelCardCollectionViewCell {
+            cell.animateTapDown()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) as? LevelCardCollectionViewCell {
+            cell.animateTapUp()
+        }
     }
 }

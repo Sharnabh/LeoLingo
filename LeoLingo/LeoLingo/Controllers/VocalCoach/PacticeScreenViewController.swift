@@ -125,12 +125,12 @@ class PracticeScreenViewController: UIViewController {
         if isListening {
             gradientLayer.colors = [
                 UIColor.green.withAlphaComponent(0.3).cgColor,
-                UIColor.blue.withAlphaComponent(0.3).cgColor
+                UIColor.brown.withAlphaComponent(0.3).cgColor
             ]
         } else {
             gradientLayer.colors = [
                 UIColor.green.cgColor,
-                UIColor.blue.cgColor
+                UIColor.green.cgColor
             ]
         }
         
@@ -438,7 +438,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func showFunLearningPopOver() {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
             // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen
@@ -453,7 +453,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func showLevelChangePopover() {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
             // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen
@@ -469,7 +469,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func showPopover(isCorrect: Bool, levelChange: Bool) {
-        let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
             // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen

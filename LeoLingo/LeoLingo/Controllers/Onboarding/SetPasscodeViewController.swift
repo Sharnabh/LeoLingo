@@ -57,10 +57,10 @@ class SetPasscodeViewController: UIViewController {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     
-                    let storyBoard = UIStoryboard(name: "Tarun", bundle: nil)
-                    if let homeVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-                        homeVC.modalPresentationStyle = .fullScreen
-                        self.present(homeVC, animated: true)
+                    let storyBoard = UIStoryboard(name: "VocalCoach", bundle: nil)
+                    if let vocalCoachVC = storyBoard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                        vocalCoachVC.modalPresentationStyle = .fullScreen
+                        self.present(vocalCoachVC, animated: true)
                     }
                 }
             } catch {

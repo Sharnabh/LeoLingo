@@ -48,8 +48,9 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
         
         let badges = DataController.shared.getBadges()
+        let status = DataController.shared.getBadgesStatus(badges[indexPath.row])
         
-        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)")
+        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)", status: status)
         
         return cell
     }
@@ -58,7 +59,7 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         layout = UICollectionViewFlowLayout()
         if let layout = layout {
             layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: 150, height: 175)
+            layout.itemSize = CGSize(width: 120, height: 140)
             badgesEarnedCollectionView.collectionViewLayout = layout
             badgesEarnedCollectionView.delegate = self
             badgesEarnedCollectionView.dataSource = self

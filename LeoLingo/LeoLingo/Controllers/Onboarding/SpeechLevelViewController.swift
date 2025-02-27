@@ -9,6 +9,8 @@ import UIKit
 
 class SpeechLevelViewController: UIViewController {
     
+    var selectedIndexPath = Set<IndexPath>()
+    
     let speechLevels: [String] = [
         "Nonverbal",
         "Nonverbal but can tell yes / no",
@@ -67,12 +69,21 @@ extension SpeechLevelViewController: UITableViewDelegate, UITableViewDataSource 
         let levels = speechLevels[indexPath.row]
         var content = cell.defaultContentConfiguration()
         content.text = levels
+        let checkmarkImage = UIImage(systemName: "checkmark.circle.fill")
+        let emptyImage = UIImage(systemName: "circle")
+        content.image = selectedIndexPath.contains(indexPath) ? checkmarkImage : emptyImage
+        content.imageProperties.tintColor = .accent
         cell.contentConfiguration = content
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(speechLevels[indexPath.row])
+        selectedIndexPath.removeAll()
+        selectedIndexPath.insert(indexPath)
+        
+        tableView.reloadData()
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
 }

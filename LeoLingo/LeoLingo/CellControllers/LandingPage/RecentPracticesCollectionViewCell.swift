@@ -33,16 +33,12 @@ class RecentPracticesCollectionViewCell: UICollectionViewCell {
     func updateLabel(with word: Word) {
         if let appWord = DataController.shared.wordData(by: word.id) {
             let title = appWord.wordTitle
-            var maxAccuracy: Double?
             var color: UIColor
             switch word.isPracticed {
             case true:
-                guard let record = word.record,
-                      let accuracy = record.accuracy,
-                      !accuracy.isEmpty else { return }
-                maxAccuracy = accuracy.max()
-                guard let accuracy = maxAccuracy,
-                      let view = imageView as? ProgressView else { return }
+                guard let record = word.record else { return }
+                let accuracy = record.avgAccuracy
+                guard let view = imageView as? ProgressView else { return }
                 switch accuracy {
                 case 1..<70:
                     color = UIColor.systemRed

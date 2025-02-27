@@ -1,4 +1,3 @@
-
 import SwiftUI
 import AVFoundation
 
@@ -67,7 +66,7 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
 struct WordReportView: View {
     @State private var selectedWord: Word? = nil
     @State private var shouldReloadProgress: Bool = false
-    private let dataController = DataController.shared
+    private let dataController = SupabaseDataController.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -99,6 +98,16 @@ struct WordReportView: View {
             }
         }
         .background(Color(UIColor.white))
+        .task {
+            // Load user data when view appears
+            if let phoneNumber = dataController.phoneNumber {
+                do {
+                    _ = try await dataController.getUser(byPhone: phoneNumber)
+                } catch {
+                    print("Error loading user data: \(error)")
+                }
+            }
+        }
     }
 }
 
@@ -107,7 +116,7 @@ struct WordReportView: View {
 private struct ProgressDetailSection: View {
     let selectedWord: Word?
     let shouldReloadProgress: Bool
-    private let dataController = DataController.shared
+    private let dataController = SupabaseDataController.shared
     
     private var averageAccuracy: Double {
         guard let word = selectedWord else { return 0 }

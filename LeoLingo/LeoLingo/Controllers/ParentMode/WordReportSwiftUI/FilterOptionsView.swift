@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 //enum AccuracyFilter: String, CaseIterable {
@@ -13,50 +12,80 @@ struct FilterOptionsView: View {
     @State private var selectedSuccessRate: ClosedRange<Double> = 0...1
     @Binding var selectedWord: Word?
     @Binding var shouldReloadProgress: Bool
+    @State private var isLoading = false
     
-    private let dataController = DataController.shared
+    private let dataController = SupabaseDataController.shared
     
-    private var allWords: [(Level, Word, AppWord)] {
-        let userLevels = dataController.getAllLevels()
-        return userLevels.flatMap { level in
-            level.words.compactMap { word in
-                if let appWord = dataController.wordData(by: word.id) {
-                    return (level, word, appWord)
-                }
-                return nil
-            }
+    // MARK: - Data Processing
+    
+    private struct WordInfo {
+        let level: Level
+        let word: Word
+        let appWord: AppWord
+    }
+    
+    private struct ProcessedWord {
+        let title: String
+        let accuracy: Double
+        let attempts: Int
+    }
+    
+    private func mapWordToInfo(_ level: Level, _ word: Word) -> WordInfo? {
+        guard let appWord = dataController.wordData(by: word.id) else {
+            return nil
+        }
+        return WordInfo(level: level, word: word, appWord: appWord)
+    }
+    
+    private func getWordsForLevel(_ level: Level) -> [WordInfo] {
+        return level.words.compactMap { word in
+            mapWordToInfo(level, word)
         }
     }
     
-    private func getWordsForLevel(_ level: Int) -> [(String, Double, Int)] {
-        return allWords
-            .filter { $0.0.id == dataController.levelData(at: level - 1).id }
-            .map { (_, word, appWord) in
-                (appWord.wordTitle, 
-                 word.avgAccuracy,
-                 word.record?.attempts ?? 0)
-            }
+    private var allWords: [WordInfo] {
+        let userLevels = dataController.getAllLevels()
+        return userLevels.flatMap { level in
+            getWordsForLevel(level)
+        }
     }
     
-    private func filterByAccuracy(_ words: [(String, Double, Int)]) -> [(String, Double, Int)] {
+    private func processWord(_ info: WordInfo) -> ProcessedWord {
+        ProcessedWord(
+            title: info.appWord.wordTitle,
+            accuracy: info.word.record?.avgAccuracy ?? 0.0,
+            attempts: info.word.record?.attempts ?? 0
+        )
+    }
+    
+    private func filterWordsByLevel(_ words: [WordInfo], level: Int) -> [WordInfo] {
+        let targetLevelId = dataController.levelData(at: level - 1).id
+        return words.filter { $0.level.id == targetLevelId }
+    }
+    
+    private func getWordsForLevel(_ level: Int) -> [ProcessedWord] {
+        let filtered = filterWordsByLevel(allWords, level: level)
+        return filtered.map(processWord)
+    }
+    
+    private func filterByAccuracy(_ words: [ProcessedWord]) -> [ProcessedWord] {
         switch selectedFilter {
         case .accurate:
-            return words.filter { $0.1 >= 70 }
+            return words.filter { $0.accuracy >= 70 }
         case .inaccurate:
-            return words.filter { $0.1 < 70 && $0.1 > 0 }
+            return words.filter { $0.accuracy < 70 && $0.accuracy > 0 }
         default:
             return words
         }
     }
     
-    private func getWordsForCategory() -> [(String, Double, Int)] {
-        // Just return all words from levels 1-30
+    private func getWordsForCategory() -> [ProcessedWord] {
         return (1...30).flatMap { level in
             getWordsForLevel(level)
         }
     }
     
-    var filteredWords: [(String, Double, Int)] {
+    private var filteredWords: [ProcessedWord] {
         if let level = selectedLevel {
             let levelWords = getWordsForLevel(level)
             return filterByAccuracy(levelWords)
@@ -65,10 +94,19 @@ struct FilterOptionsView: View {
         }
     }
     
+    private func findSelectedWordInfo(_ wordTitle: String) -> Word? {
+        return allWords.first(where: { $0.appWord.wordTitle == wordTitle })?.word
+    }
+    
+    private func isWordSelected(_ wordTitle: String) -> Bool {
+        guard let selectedWord = selectedWord else { return false }
+        return allWords.first(where: { $0.word.id == selectedWord.id })?.appWord.wordTitle == wordTitle
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Filter Options
-            VStack(spacing: 0) {  // Add VStack with zero spacing
+            VStack(spacing: 0) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         // Level selection menu
@@ -104,14 +142,11 @@ struct FilterOptionsView: View {
                             .cornerRadius(10)
                             .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 4)
                         }
-
-                        
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                 }
                 
-                // Add brown divider
                 Rectangle()
                     .fill(Color.brown.opacity(0.5))
                     .frame(height: 0.5)
@@ -123,21 +158,19 @@ struct FilterOptionsView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: 1) {
-                    ForEach(filteredWords, id: \.0) { word, accuracy, attempts in
+                    ForEach(filteredWords, id: \.title) { word in
                         WordCardView(
-                            word: word,
-                            accuracy: accuracy,
-                            attempts: "\(attempts)",
-                            isSelected: selectedWord != nil && allWords.first(where: { $0.1.id == selectedWord?.id })?.2.wordTitle == word
+                            word: word.title,
+                            accuracy: word.accuracy,
+                            attempts: "\(word.attempts)",
+                            isSelected: isWordSelected(word.title)
                         )
                         .onTapGesture {
-                            if selectedWord?.id.uuidString == word {
+                            if selectedWord?.id.uuidString == word.title {
                                 selectedWord = nil
                             } else {
-                                // Find and set the actual Word object
-                                selectedWord = allWords.first(where: { $0.2.wordTitle == word })?.1
+                                selectedWord = findSelectedWordInfo(word.title)
                             }
-                            // Toggle the reload flag
                             shouldReloadProgress.toggle()
                         }
                     }
@@ -145,6 +178,18 @@ struct FilterOptionsView: View {
             }
         }
         .background(Color(UIColor.systemBackground))
+        .task {
+            if let phoneNumber = dataController.phoneNumber {
+                isLoading = true
+                do {
+                    _ = try await dataController.getUser(byPhone: phoneNumber)
+                    shouldReloadProgress.toggle()
+                } catch {
+                    print("Error loading user data: \(error)")
+                }
+                isLoading = false
+            }
+        }
     }
     
     private func updateWordsList() {

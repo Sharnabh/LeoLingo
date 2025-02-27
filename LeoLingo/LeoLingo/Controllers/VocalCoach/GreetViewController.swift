@@ -53,16 +53,20 @@ class GreetViewController: UIViewController {
     }
     
     func transitionToNextViewController() {
-        // Set the flag indicating the greeting has been shown
-        UserDefaults.standard.set(true, forKey: GreetViewController.greetingShownKey)
-        UserDefaults.standard.synchronize()
-        
-        // Transition to the next view controller
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if let nextViewController = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-            nextViewController.modalPresentationStyle = .fullScreen
-            self.present(nextViewController, animated: true, completion: nil)
+        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+            vocalCoachVC.modalPresentationStyle = .fullScreen
+            // Present the VocalCoachVC and dismiss self
+            if let presentingVC = self.presentingViewController {
+                self.dismiss(animated: false) {
+                    presentingVC.present(vocalCoachVC, animated: true)
+                }
+            }
         }
+    }
+    
+    @objc private func dismissGreeting() {
+        dismiss(animated: true)
     }
     
 }

@@ -112,14 +112,15 @@ class VocalCoachViewController: UIViewController {
     @IBAction func continueButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
         if let practiceVC = storyboard.instantiateViewController(withIdentifier: "PracticeScreenViewController") as? PracticeScreenViewController {
-            practiceVC.levelIndex = UserDefaults.standard.integer(forKey: "LastPracticedLevelIndex")
-            practiceVC.currentIndex = UserDefaults.standard.integer(forKey: "LastPracticedWordIndex")
+            // Always start from the beginning
+            practiceVC.levelIndex = 0
+            practiceVC.currentIndex = 0
             
             if let navigationController = self.navigationController {
                 navigationController.pushViewController(practiceVC, animated: true)
             } else {
                 practiceVC.modalPresentationStyle = .fullScreen
-                present(practiceVC, animated: true, completion: nil)
+                present(practiceVC, animated: true)
             }
         }
     }

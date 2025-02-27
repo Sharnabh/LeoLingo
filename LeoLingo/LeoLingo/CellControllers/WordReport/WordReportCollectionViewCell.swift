@@ -19,18 +19,14 @@ class WordReportCollectionViewCell: UICollectionViewCell {
     
     
     func updateLabel(with word: Word) {
-        if let appWord = DataController.shared.wordData(by: word.id) {
+        if let appWord = SupabaseDataController.shared.wordData(by: word.id) {
             let title = appWord.wordTitle
-            var maxAccuracy: Double?
             var color: UIColor
             switch word.isPracticed {
             case true:
-                guard let record = word.record,
-                      let accuracy = record.accuracy,
-                      !accuracy.isEmpty else { return }
-                maxAccuracy = accuracy.max()
-                guard let accuracy = maxAccuracy,
-                      let view = progressView as? ProgressView else { return }
+                guard let record = word.record else { return }
+                let accuracy = record.avgAccuracy
+                guard let view = progressView as? ProgressView else { return }
                 switch accuracy {
                 case 1..<70:
                     color = UIColor.systemRed
@@ -42,7 +38,7 @@ class WordReportCollectionViewCell: UICollectionViewCell {
                 
                 view.configure(title: title, progress: Double(accuracy)/100.0, color: color)
                 accuracyLabel.text = String(format: "%.1f%%", accuracy)
-                attemptsLabel.text = String(word.record!.attempts)
+                attemptsLabel.text = String(record.attempts)
             case false:
                 color = UIColor.systemGray
                 

@@ -88,13 +88,10 @@ class SpeechProcessor: ObservableObject {
             try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
             
-            // Set up recording path with new format
-            guard let recordingsDirectory = getRecordingsDirectory() else { return }
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
-            let dateString = dateFormatter.string(from: Date())
-            let recordingName = "\(currentWord)_\(currentAttemptNumber)_\(dateString).m4a"
-            let recordingURL = recordingsDirectory.appendingPathComponent(recordingName)
+            // Set up recording path in temporary directory
+            let tempDir = FileManager.default.temporaryDirectory
+            let recordingName = "\(currentWordId?.uuidString ?? "")_\(Date().timeIntervalSince1970)_temp.m4a"
+            let recordingURL = tempDir.appendingPathComponent(recordingName)
             recordingPath = recordingURL.path
             
             // Configure audio settings for high-quality speech recording

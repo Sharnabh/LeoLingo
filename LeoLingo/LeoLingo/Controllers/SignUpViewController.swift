@@ -66,10 +66,7 @@ extension SignUpViewController: SignUpCellDelegate {
     
     
     func switchToQuestionnaireVC() {
-        let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
-        if let destinationVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
-            navigationController?.pushViewController(destinationVC, animated: true)
-        }
+        // Remove this method or make it empty since we don't want to switch to questionnaire immediately
     }
     
     func showAlert(message: String) {
@@ -110,11 +107,12 @@ extension SignUpViewController: SignUpCellDelegate {
                 )
                 
                 DispatchQueue.main.async { [weak self] in
-                    self?.showAlert(message: "Sign up successful!")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        let vc = QuestionnaireViewController()
-                        vc.getPhoneNumber(phone: phone)
-                        self?.switchToQuestionnaireVC()
+                    // Switch to questionnaire after successful signup
+                    let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+                    if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+                        questionnaireVC.getPhoneNumber(phone: phone)
+                        questionnaireVC.modalPresentationStyle = .fullScreen
+                        self?.navigationController?.pushViewController(questionnaireVC, animated: true)
                     }
                 }
             } catch {

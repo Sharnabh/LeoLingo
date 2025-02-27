@@ -43,6 +43,10 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Do any additional setup after loading the view.
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     func updateLevelImage() {
         let levels = DataController.shared.getAllLevels()
         var currentLevel: Level? = nil
@@ -271,15 +275,20 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-        if UserDefaults.standard.bool(forKey: GreetViewController.greetingShownKey) {
-            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-                vocalCoachVC.modalPresentationStyle = .fullScreen
-                self.present(vocalCoachVC, animated: true, completion: nil)
+        
+        if SupabaseDataController.shared.isFirstTime {
+            // Show greeting for first-time users
+            if let greetVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+                greetVC.modalPresentationStyle = .fullScreen
+                present(greetVC, animated: true)
+                // Reset the first time status after showing greeting
+                SupabaseDataController.shared.isFirstTime = false
             }
         } else {
-            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
+            // Directly show VocalCoach for returning users
+            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
                 vocalCoachVC.modalPresentationStyle = .fullScreen
-                self.present(vocalCoachVC, animated: true, completion: nil)
+                present(vocalCoachVC, animated: true, completion: nil)
             }
         }
     }

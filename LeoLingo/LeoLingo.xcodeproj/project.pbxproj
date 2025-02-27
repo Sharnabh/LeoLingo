@@ -180,7 +180,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeoLingo/LeoLingo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65XS66CM2H;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LeoLingo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LeoLingo;
@@ -214,7 +214,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeoLingo/LeoLingo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65XS66CM2H;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LeoLingo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LeoLingo;

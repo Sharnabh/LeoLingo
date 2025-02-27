@@ -59,7 +59,7 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         layout = UICollectionViewFlowLayout()
         if let layout = layout {
             layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: 150, height: 175)
+            layout.itemSize = CGSize(width: 120, height: 140)
             badgesEarnedCollectionView.collectionViewLayout = layout
             badgesEarnedCollectionView.delegate = self
             badgesEarnedCollectionView.dataSource = self

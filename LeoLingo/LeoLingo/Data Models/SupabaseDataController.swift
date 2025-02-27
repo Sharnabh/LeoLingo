@@ -155,9 +155,9 @@ class SupabaseDataController {
         return userData
     }
     
-    // MARK: - Word Progress
+    // MARK: - Word Progress and Recordings
     
-    func updateWordProgress(wordId: UUID, accuracy: Double?) async throws {
+    func updateWordProgress(wordId: UUID, accuracy: Double?, recordingPath: String? = nil) async throws {
         guard let userId = currentUser?.id else {
             throw SupabaseError.userNotLoggedIn
         }
@@ -192,13 +192,21 @@ class SupabaseDataController {
                     newAccuracy.append(accuracy)
                 }
                 
+                var newRecordings = existingRecord.recording ?? []
+                if let recordingPath = recordingPath {
+                    // Upload the recording to Supabase Storage
+                    if let recordingUrl = try await uploadRecording(at: recordingPath, wordId: wordId) {
+                        newRecordings.append(recordingUrl)
+                    }
+                }
+                
                 let updatedRecord = WordRecord(
                     id: existingRecord.id,
                     user_id: userId,
                     word_id: wordId,
                     attempts: existingRecord.attempts + 1,
                     accuracy: newAccuracy,
-                    recording: existingRecord.recording
+                    recording: newRecordings
                 )
                 
                 try await supabase
@@ -207,13 +215,21 @@ class SupabaseDataController {
                     .eq("id", value: existingRecord.id)
                     .execute()
             } else {
+                var recordingUrls: [String]? = nil
+                if let recordingPath = recordingPath {
+                    // Upload the recording to Supabase Storage
+                    if let recordingUrl = try await uploadRecording(at: recordingPath, wordId: wordId) {
+                        recordingUrls = [recordingUrl]
+                    }
+                }
+                
                 let newRecord = WordRecord(
                     id: UUID(),
                     user_id: userId,
                     word_id: wordId,
                     attempts: 1,
                     accuracy: accuracy.map { [$0] },
-                    recording: nil
+                    recording: recordingUrls
                 )
                 
                 try await supabase
@@ -224,6 +240,112 @@ class SupabaseDataController {
         } catch {
             throw SupabaseError.databaseError(error)
         }
+    }
+    
+    private func uploadRecording(at path: String, wordId: UUID) async throws -> String? {
+        guard let userId = currentUser?.id else {
+            throw SupabaseError.userNotLoggedIn
+        }
+        
+        do {
+            let fileUrl = URL(fileURLWithPath: path)
+            let fileName = "\(userId)/\(wordId)/\(Date().timeIntervalSince1970).m4a"
+            
+            // Upload file to Supabase Storage
+            let result = try await supabase.storage
+                .from("recordings")
+                .upload(
+                    path: fileName,
+                    file: fileUrl,
+                    options: FileOptions(contentType: "audio/m4a")
+                )
+            
+            // Get public URL for the uploaded file
+            let publicUrl = try await supabase.storage
+                .from("recordings")
+                .createSignedURL(
+                    path: fileName,
+                    expiresIn: 365 * 24 * 60 * 60 // 1 year in seconds
+                )
+            
+            return publicUrl
+        } catch {
+            print("Error uploading recording: \(error)")
+            return nil
+        }
+    }
+    
+    func getRecordings(for wordId: UUID) async throws -> [String] {
+        guard let userId = currentUser?.id else {
+            throw SupabaseError.userNotLoggedIn
+        }
+        
+        let records: [WordRecord] = try await supabase
+            .from("word_records")
+            .select()
+            .eq("user_id", value: userId)
+            .eq("word_id", value: wordId)
+            .execute()
+            .value
+        
+        return records.first?.recording ?? []
+    }
+    
+    func deleteRecording(url: String, for wordId: UUID) async throws {
+        guard let userId = currentUser?.id else {
+            throw SupabaseError.userNotLoggedIn
+        }
+        
+        // Get current record
+        let records: [WordRecord] = try await supabase
+            .from("word_records")
+            .select()
+            .eq("user_id", value: userId)
+            .eq("word_id", value: wordId)
+            .execute()
+            .value
+        
+        guard let record = records.first,
+              var recordings = record.recording else {
+            throw SupabaseError.invalidData
+        }
+        
+        // Remove the URL from the recordings array
+        recordings.removeAll { $0 == url }
+        
+        // Update the record
+        let updatedRecord = WordRecord(
+            id: record.id,
+            user_id: userId,
+            word_id: wordId,
+            attempts: record.attempts,
+            accuracy: record.accuracy,
+            recording: recordings
+        )
+        
+        try await supabase
+            .from("word_records")
+            .update(updatedRecord)
+            .eq("id", value: record.id)
+            .execute()
+        
+        // Delete from storage if it's a Supabase storage URL
+        if let path = extractStoragePath(from: url) {
+            try await supabase.storage
+                .from("recordings")
+                .remove(paths: [path])
+        }
+    }
+    
+    private func extractStoragePath(from url: String) -> String? {
+        // Extract the path from the Supabase storage URL
+        // This will need to be adjusted based on your actual URL format
+        guard let components = URLComponents(string: url),
+              components.host?.contains("supabase") == true,
+              let path = components.path.components(separatedBy: "recordings/").last else {
+            return nil
+        }
+        return path
     }
     
     // MARK: - Badges

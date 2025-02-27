@@ -10,10 +10,19 @@ class LevelCardCell: UICollectionViewCell {
         view.backgroundColor = .white
         view.layer.cornerRadius = 25
         view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 0, height: 4)
-        view.layer.shadowRadius = 8
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 10
         view.layer.shadowOpacity = 0.1
         return view
+    }()
+    
+    private lazy var wordTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .black
+        return label
     }()
     
     private lazy var wordImageView: UIImageView = {
@@ -21,16 +30,21 @@ class LevelCardCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
+        imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        imageView.addGestureRecognizer(tapGesture)
         return imageView
     }()
     
-    private lazy var wordTitleLabel: UILabel = {
+    private lazy var tapInstructionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Tap card to hear pronunciation"
+        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.textColor = .systemGray
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 24, weight: .bold)
-        label.textColor = .darkGray
         return label
     }()
     
@@ -45,11 +59,9 @@ class LevelCardCell: UICollectionViewCell {
     
     private func setupViews() {
         contentView.addSubview(containerView)
-        containerView.addSubview(wordImageView)
         containerView.addSubview(wordTitleLabel)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-        wordImageView.addGestureRecognizer(tapGesture)
+        containerView.addSubview(wordImageView)
+        containerView.addSubview(tapInstructionLabel)
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -57,69 +69,93 @@ class LevelCardCell: UICollectionViewCell {
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
-            wordImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
-            wordImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
-            wordImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
-            wordImageView.heightAnchor.constraint(equalTo: wordImageView.widthAnchor),
+            wordTitleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 30),
+            wordTitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            wordTitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
             
-            wordTitleLabel.topAnchor.constraint(equalTo: wordImageView.bottomAnchor, constant: 16),
-            wordTitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            wordTitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            wordTitleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20)
+            wordImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            wordImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 40),
+            wordImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -40),
+            wordImageView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.4),
+            
+            tapInstructionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20),
+            tapInstructionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            tapInstructionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20)
         ])
     }
     
     func configure(with wordData: AppWord, tapToPronounce: @escaping () -> Void) {
-        wordImageView.image = UIImage(named: wordData.wordImage)
+        print("Loading image: \(wordData.wordImage)")
+        
+        if let image = UIImage(named: wordData.wordImage) {
+            wordImageView.image = image
+        } else {
+            print("Failed to load image: \(wordData.wordImage)")
+            wordImageView.backgroundColor = .lightGray
+        }
+        
         wordTitleLabel.text = wordData.wordTitle
         self.tapToPronounceAction = tapToPronounce
         
-        // Add tap instruction label
-        let tapLabel = UILabel()
-        tapLabel.translatesAutoresizingMaskIntoConstraints = false
-        tapLabel.text = "Tap image to hear pronunciation"
-        tapLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        tapLabel.textColor = .gray
-        tapLabel.textAlignment = .center
-        
-        containerView.addSubview(tapLabel)
-        
-        NSLayoutConstraint.activate([
-            tapLabel.topAnchor.constraint(equalTo: wordImageView.bottomAnchor, constant: 4),
-            tapLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            tapLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            wordTitleLabel.topAnchor.constraint(equalTo: tapLabel.bottomAnchor, constant: 8)
-        ])
+        setNeedsLayout()
+        layoutIfNeeded()
     }
     
     func showSuccessAnimation() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.containerView.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
-            self.containerView.layer.borderColor = UIColor.green.cgColor
-            self.containerView.layer.borderWidth = 3
+        // Add fun success animation
+        UIView.animate(withDuration: 0.2, animations: {
+            self.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            self.containerView.layer.borderColor = UIColor.systemGreen.cgColor
+            self.containerView.layer.borderWidth = 5
         }) { _ in
-            UIView.animate(withDuration: 0.3) {
-                self.containerView.transform = .identity
-                self.containerView.layer.borderWidth = 0
+            UIView.animate(withDuration: 0.1) {
+                self.transform = .identity
+            }
+            
+            // Add subtle bounce
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
+                    self.transform = CGAffineTransform(translationX: 0, y: -10)
+                } completion: { _ in
+                    UIView.animate(withDuration: 0.2) {
+                        self.transform = .identity
+                        self.containerView.layer.borderWidth = 0
+                    }
+                }
             }
         }
     }
     
     func showFailureAnimation() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.containerView.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
-            self.containerView.layer.borderColor = UIColor.red.cgColor
-            self.containerView.layer.borderWidth = 3
+        // Add gentle failure animation
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.6
+        animation.values = [-10.0, 10.0, -10.0, 10.0, -5.0, 5.0, -2.5, 2.5, 0.0]
+        self.layer.add(animation, forKey: "shake")
+        
+        UIView.animate(withDuration: 0.1, animations: {
+            self.containerView.layer.borderColor = UIColor.systemRed.cgColor
+            self.containerView.layer.borderWidth = 5
         }) { _ in
-            UIView.animate(withDuration: 0.3) {
-                self.containerView.transform = .identity
-                self.containerView.layer.borderWidth = 0
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                UIView.animate(withDuration: 0.2) {
+                    self.containerView.layer.borderWidth = 0
+                }
             }
         }
     }
     
     @objc private func imageTapped() {
-        tapToPronounceAction?()
+        // Add subtle tap animation
+        UIView.animate(withDuration: 0.1, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.transform = .identity
+            }
+            self.tapToPronounceAction?()
+        }
     }
     
     override func prepareForReuse() {
@@ -128,5 +164,6 @@ class LevelCardCell: UICollectionViewCell {
         wordTitleLabel.text = nil
         tapToPronounceAction = nil
         containerView.layer.borderWidth = 0
+        transform = .identity
     }
 } 

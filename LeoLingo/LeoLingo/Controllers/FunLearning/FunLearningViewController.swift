@@ -15,7 +15,7 @@ class FunLearningViewController: UIViewController {
     
     var currentIndex = 1
     
-    let gameImages: [String] = ["JungleAdventureLogo", "JungleRunLogo", "SingAlongLogo"]
+    let gameImages: [String] = ["FlashCardsGameLogo", "JungleRunLogo", "SingAlongLogo"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,26 +37,27 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.dataSource = self
     }
     
+    
     @objc private func backButtonTapped() {
-        if let presentingViewController = self.presentingViewController,
-           presentingViewController is HomePageViewController {
-            self.dismiss(animated: true)
-        } else {
-            guard let navigationController = self.navigationController else {
-                    print("No navigation controller found")
-                    return
-                }
-                
-                // Look for `A` in the navigation stack
-                for viewController in navigationController.viewControllers {
-                    if viewController is VocalCoachViewController {
-                        navigationController.popToViewController(viewController, animated: true)
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+            if let presentingViewController = self.presentingViewController,
+               presentingViewController is HomePageViewController {
+                self.dismiss(animated: true)
+            } else {
+                guard let navigationController = self.navigationController else {
+                        print("No navigation controller found")
                         return
                     }
-                }
-                
-            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
-            if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                    
+                    // Look for `A` in the navigation stack
+                    for viewController in navigationController.viewControllers {
+                        if viewController is VocalCoachViewController {
+                            navigationController.popToViewController(viewController, animated: true)
+                            return
+                        }
+                    }
+                    
                 navigationController.setViewControllers([vocalCoachVC], animated: true)
             }
         }
@@ -135,6 +136,15 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0
+        {
+            let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+            if let vc = storyboard.instantiateViewController(withIdentifier: "flashCardsNav") as? UINavigationController {
+                vc.modalPresentationStyle = .fullScreen
+                present(vc, animated: true)
+            }
+            
+        }
         if indexPath.item == 1
         {
             let storyboard = UIStoryboard(name: "JungleRun", bundle: nil)
@@ -145,5 +155,6 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
             
         }
     }
+    
     
 }

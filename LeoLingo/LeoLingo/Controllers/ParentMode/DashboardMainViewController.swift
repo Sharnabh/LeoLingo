@@ -21,16 +21,21 @@ class DashboardMainViewController: UIViewController {
     @IBAction func switchToKidsMode(_ sender: UIButton) {
         let alertVC = UIAlertController(title: "Do you want to exit Parent mode", message: nil, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
-            let storyboard = UIStoryboard(name: "Tarun", bundle: nil)
+            let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
             if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
                 homeVC.modalPresentationStyle = .fullScreen
                 self.present(homeVC, animated: true, completion: nil)
             }
-
         }))
         alertVC.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
         
         self.present(alertVC, animated: true)
-        
+    }
+
+    @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+            // ... existing code ...
+        }
     }
 }

@@ -29,12 +29,6 @@ class LogInViewController: UIViewController {
         
     }
 
-    @IBAction func loginButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-            // ... existing code ...
-        }
-    }
 
 }
 

@@ -123,16 +123,16 @@ class PracticeScreenViewController: UIViewController {
         gradientLayer.cornerRadius = 30
         
         if isListening {
-            gradientLayer.colors = [
-                UIColor.green.withAlphaComponent(0.3).cgColor,
-                UIColor.brown.withAlphaComponent(0.3).cgColor
-            ]
-        } else {
-            gradientLayer.colors = [
-                UIColor.green.cgColor,
-                UIColor.green.cgColor
-            ]
-        }
+                gradientLayer.colors = [
+                    UIColor(red: 0.5, green: 0.8, blue: 0.5, alpha: 1).cgColor, // Lighter green
+                    UIColor(red: 0.3, green: 0.6, blue: 0.3, alpha: 1).cgColor  // Darker green
+                ]
+            } else {
+                gradientLayer.colors = [
+                    UIColor(red: 0.1, green: 0.6, blue: 0.1, alpha: 1).cgColor, // Solid green
+                    UIColor(red: 0.1, green: 0.5, blue: 0.1, alpha: 1).cgColor
+                ]
+            }
         
         // Remove existing gradient layers
         micButton.layer.sublayers?.forEach { layer in

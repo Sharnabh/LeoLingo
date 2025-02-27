@@ -124,8 +124,8 @@ class LevelCardViewController: UIViewController {
         
         // Card size calculation
         let screenWidth = UIScreen.main.bounds.width
-        let cardWidth = screenWidth * 0.75 // 75% of screen width
-        let cardHeight = cardWidth * 1.2
+        let cardWidth = screenWidth * 0.65 // Reduced from 0.75 to 0.65
+        let cardHeight = cardWidth * 1.1 // Reduced from 1.2 to 1.1
         layout.itemSize = CGSize(width: cardWidth, height: cardHeight)
         
         // Center the current card
@@ -202,11 +202,11 @@ class LevelCardViewController: UIViewController {
             customBackButton.widthAnchor.constraint(equalToConstant: 50),
             customBackButton.heightAnchor.constraint(equalToConstant: 50),
             
-            // Collection view
-            collectionView.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 20),
+            // Collection view - Updated constraints
+            collectionView.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 30),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6),
+            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.45), // Reduced from 0.6 to 0.45
             
             // Speak button
             speakButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),

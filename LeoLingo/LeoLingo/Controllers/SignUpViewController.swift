@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import AuthenticationServices
 
 class SignUpViewController: UIViewController {
 
@@ -126,48 +125,3 @@ extension SignUpViewController: SignUpCellDelegate {
         }
     }
 }
-
-class ViewController: UIViewController {
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let appleButton = ASAuthorizationAppleIDButton()
-        appleButton.frame = CGRect(x: 50, y: 400, width: 280, height: 50)
-        appleButton.addTarget(self, action: #selector(handleAppleSignIn), for: .touchUpInside)
-        view.addSubview(appleButton)
-    }
-    
-    @objc func handleAppleSignIn() {
-        let request = ASAuthorizationAppleIDProvider().createRequest()
-        request.requestedScopes = [.fullName, .email]
-
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.delegate = self
-        controller.presentationContextProvider = self
-        controller.performRequests()
-    }
-}
-
-extension ViewController: ASAuthorizationControllerDelegate {
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            let userID = appleIDCredential.user
-            let email = appleIDCredential.email ?? "No Email"
-            let fullName = appleIDCredential.fullName?.givenName ?? "No Name"
-            
-            print("Apple Sign-In Successful: \(userID), \(email), \(fullName)")
-        }
-    }
-    
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        print("Apple Sign-In Failed: \(error.localizedDescription)")
-    }
-}
-
-extension ViewController: ASAuthorizationControllerPresentationContextProviding {
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
-    }
-}
-

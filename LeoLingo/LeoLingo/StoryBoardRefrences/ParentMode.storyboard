@@ -412,7 +412,7 @@
             </objects>
             <point key="canvasLocation" x="6115.1162790697672" y="359.88372093023258"/>
         </scene>
-        <!--Progress-->
+        <!--Word Report-->
         <scene sceneID="Abn-oo-Yqp">
             <objects>
                 <viewController storyboardIdentifier="WordReport" id="V61-xc-AZL" customClass="WordReportMain" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
@@ -463,7 +463,7 @@
                             <constraint firstItem="iJF-x2-van" firstAttribute="top" secondItem="c9J-Ie-45x" secondAttribute="top" constant="25" id="ypp-xn-dgH"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Progress" id="ehf-Dj-1od"/>
+                    <tabBarItem key="tabBarItem" title="Word Report" id="ehf-Dj-1od"/>
                     <size key="freeformSize" width="1210" height="834"/>
                     <connections>
                         <outlet property="wordReportView" destination="Jbn-L2-LZz" id="jI2-cH-l7y"/>

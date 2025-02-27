@@ -7,8 +7,10 @@ class LevelCardCell: UICollectionViewCell {
     private lazy var containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(red: 252/255, green: 247/255, blue: 228/255, alpha: 1.0) // #FCF7E4
         view.layer.cornerRadius = 25
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor(red: 75/255, green: 141/255, blue: 80/255, alpha: 1.0).cgColor // #4B8D50
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 0, height: 2)
         view.layer.shadowRadius = 10

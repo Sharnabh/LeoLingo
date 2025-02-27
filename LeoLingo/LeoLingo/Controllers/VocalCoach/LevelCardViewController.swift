@@ -11,9 +11,23 @@ import Speech
 import Combine
 
 class LevelCardViewController: UIViewController {
+    @IBOutlet var cardCollectionView: UICollectionView!
     
+    private var cancellables = Set<AnyCancellable>()
     private let synthesizer = AVSpeechSynthesizer()
     private let speechProcessor = SpeechProcessor()
+    private var speechSubscription: AnyCancellable?
+    
+    private lazy var warningLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .systemRed
+        label.alpha = 0
+        return label
+    }()
     
     private var isListening = false {
         didSet {
@@ -84,6 +98,10 @@ class LevelCardViewController: UIViewController {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         button.backgroundColor = .white
         button.layer.cornerRadius = 25
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.layer.shadowOpacity = 0.2
         
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
@@ -124,8 +142,8 @@ class LevelCardViewController: UIViewController {
         
         // Card size calculation
         let screenWidth = UIScreen.main.bounds.width
-        let cardWidth = screenWidth * 0.65 // Reduced from 0.75 to 0.65
-        let cardHeight = cardWidth * 1.1 // Reduced from 1.2 to 1.1
+        let cardWidth = screenWidth * 0.45 // Reduced from 0.55 to 0.45 for smaller cards
+        let cardHeight = cardWidth * 0.9 // Reduced from 1.0 to 0.9 for better proportion
         layout.itemSize = CGSize(width: cardWidth, height: cardHeight)
         
         // Center the current card
@@ -149,6 +167,7 @@ class LevelCardViewController: UIViewController {
         view.addSubview(levelLabel)
         view.addSubview(speakButton)
         view.addSubview(customBackButton)
+        view.addSubview(warningLabel)
         
         setupConstraints()
     }
@@ -166,9 +185,10 @@ class LevelCardViewController: UIViewController {
             gradientLayer.frame = speakButton.bounds
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupAudioSession()
         speechProcessor.requestSpeechRecognitionPermission()
         
         // Hide the default navigation bar
@@ -179,6 +199,36 @@ class LevelCardViewController: UIViewController {
             guard let self = self else { return }
             let indexPath = IndexPath(item: 0, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        }
+    }
+    
+    private func setupAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            // Configure specific audio session properties
+            try audioSession.setPreferredIOBufferDuration(0.2)
+            try audioSession.setPreferredSampleRate(44100.0)
+            
+            // Ensure input is available
+            guard audioSession.availableInputs?.count ?? 0 > 0 else {
+                print("No audio input available")
+                return
+            }
+        } catch {
+            print("Audio session setup failed: \(error.localizedDescription)")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Deactivate audio session when leaving
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            print("Could not deactivate audio session: \(error.localizedDescription)")
         }
     }
     
@@ -196,23 +246,29 @@ class LevelCardViewController: UIViewController {
             levelLabel.widthAnchor.constraint(equalToConstant: 200),
             levelLabel.heightAnchor.constraint(equalToConstant: 40),
             
-            // Back button
-            customBackButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            customBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            // Back button - Updated constraints
+            customBackButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            customBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             customBackButton.widthAnchor.constraint(equalToConstant: 50),
             customBackButton.heightAnchor.constraint(equalToConstant: 50),
             
-            // Collection view - Updated constraints
-            collectionView.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 30),
+            // Collection view - Updated constraints for smaller size
+            collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.45), // Reduced from 0.6 to 0.45
+            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25),
             
             // Speak button
+            speakButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
             speakButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            speakButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
             speakButton.widthAnchor.constraint(equalToConstant: 200),
-            speakButton.heightAnchor.constraint(equalToConstant: 50)
+            speakButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            // Warning label
+            warningLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            warningLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            warningLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            warningLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
@@ -234,15 +290,57 @@ class LevelCardViewController: UIViewController {
         }
     }
     
+    private func showConfettiEffect() {
+        let confettiLayer = CAEmitterLayer()
+        confettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
+        confettiLayer.emitterShape = .line
+        confettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
+        
+        let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
+        let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
+        
+        var cells: [CAEmitterCell] = []
+        for color in colors {
+            for shape in shapes {
+                let cell = CAEmitterCell()
+                cell.birthRate = 6
+                cell.lifetime = 5.0
+                cell.velocity = CGFloat.random(in: 150...200)
+                cell.velocityRange = 50
+                cell.emissionLongitude = .pi
+                cell.emissionRange = .pi / 4
+                cell.spin = 2
+                cell.spinRange = 3
+                cell.scale = 0.1
+                cell.scaleRange = 0.2
+                cell.contents = shape.cgImage
+                cell.color = color.cgColor
+                cells.append(cell)
+            }
+        }
+        
+        confettiLayer.emitterCells = cells
+        view.layer.addSublayer(confettiLayer)
+        
+        // Remove confetti layer after animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            confettiLayer.removeFromSuperlayer()
+        }
+    }
+    
     @objc private func speakButtonTapped() {
         if isListening {
             speechProcessor.stopRecording()
             isListening = false
+            updateSpeakButtonState(isListening: false)
         } else {
             guard let selectedCardIndex = selectedCardIndex else { return }
             let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
+            
             if let wordData = DataController.shared.wordData(by: currentWord.id) {
                 isListening = true
+                updateSpeakButtonState(isListening: true)
+                
                 let attemptNumber = currentWord.record?.attempts ?? 0
                 speechProcessor.startRecording(
                     word: wordData.wordTitle,
@@ -255,19 +353,33 @@ class LevelCardViewController: UIViewController {
                     .filter { !$0.isEmpty }
                     .sink { [weak self] spokenText in
                         guard let self = self else { return }
-                        if spokenText.lowercased().contains(wordData.wordTitle.lowercased()) {
-                            if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
+                        
+                        let normalizedSpoken = spokenText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                        let normalizedExpected = wordData.wordTitle.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                        let isCorrect = normalizedSpoken.contains(normalizedExpected)
+                        
+                        if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
+                            if isCorrect {
                                 cell.showSuccessAnimation()
-                            }
-                        } else {
-                            if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
+                                self.showConfettiEffect() // Add confetti effect on success
+                            } else {
                                 cell.showFailureAnimation()
                             }
                         }
+                        
                         self.isListening = false
+                        self.updateSpeakButtonState(isListening: false)
                     }
+                    .store(in: &cancellables)
             }
         }
+    }
+    
+    private func updateSpeakButtonState(isListening: Bool) {
+        let title = isListening ? "Listening..." : "Speak the Word!"
+        speakButton.setTitle(title, for: .normal)
+        speakButton.backgroundColor = isListening ? .systemRed : .systemGreen
     }
     
     private func pronounceWord(_ word: String) {
@@ -276,6 +388,7 @@ class LevelCardViewController: UIViewController {
         utterance.rate = 0.5
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
+        
         synthesizer.speak(utterance)
     }
     
@@ -335,6 +448,226 @@ class LevelCardViewController: UIViewController {
         attributedString.append(NSAttributedString(string: "  \(text)", attributes: textAttributes))
         speakButton.setAttributedTitle(attributedString, for: .normal)
     }
+
+    func getDirection(for index: Int, at levelIndex: Int) -> String {
+        let appLevels = SupabaseDataController.shared.getLevelsData()
+        let currentWord = levels[levelIndex].words[index]
+        
+        for level in appLevels {
+            if let word = level.words.first(where: { $0.id == currentWord.id }) {
+                return "This is \(word.wordTitle). Say \(word.wordTitle)."
+            }
+        }
+        return ""
+    }
+
+    // MARK: - UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedCardIndex = indexPath.item
+        let direction = getDirection(for: indexPath.item, at: selectedLevelIndex)
+        pronounceWord(direction)
+    }
+
+    private func startListening() {
+        // Check noise level before starting
+        if warningLabel.alpha == 1.0 {
+            // Show alert for noisy environment
+            let alert = UIAlertController(
+                title: "Noisy Environment",
+                message: "The background noise level is high. Would you like to continue anyway?",
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(UIAlertAction(title: "Continue", style: .default) { [weak self] _ in
+                self?.startSpeechRecognition()
+            })
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            
+            present(alert, animated: true)
+        } else {
+            startSpeechRecognition()
+        }
+    }
+    
+    private func startSpeechRecognition() {
+        // Cancel any existing subscription
+        speechSubscription?.cancel()
+        
+        guard let currentWord = getCurrentWord() else { return }
+        let currentAttempt = levels[selectedLevelIndex].words[selectedCardIndex ?? 0].record?.attempts ?? 0
+        
+        // Start recording with current word and attempt number
+        speechProcessor.startRecording(word: currentWord, wordId: levels[selectedLevelIndex].words[selectedCardIndex ?? 0].id, attemptNumber: currentAttempt + 1)
+        isListening = true
+        
+        // Handle speech recognition results
+        speechSubscription = speechProcessor.$userSpokenText
+            .filter { !$0.isEmpty }
+            .sink { [weak self] spokenText in
+                guard let self = self else { return }
+                
+                let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
+                let maxLength = max(spokenText.count, currentWord.count)
+                let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
+                
+                // Record the accuracy and recording path
+                self.recordAccuracy(accuracy)
+                
+                if accuracy >= 70.0 {
+                    self.handleCorrectPronunciation()
+                } else {
+                    self.handleIncorrectPronunciation()
+                }
+                
+                self.stopListening()
+            }
+    }
+    
+    private func stopListening() {
+        speechSubscription?.cancel()
+        speechProcessor.stopRecording()
+        isListening = false
+    }
+    
+    private func recordAccuracy(_ accuracy: Double) {
+        guard let selectedCardIndex = selectedCardIndex else { return }
+        let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
+        
+        Task {
+            do {
+                // Get recording path from speech processor if available
+                let recordingPath = speechProcessor.getRecordingURL()?.path
+                
+                // Update word progress in Supabase
+                try await SupabaseDataController.shared.updateWordProgress(
+                    wordId: currentWord.id,
+                    accuracy: accuracy,
+                    recordingPath: recordingPath
+                )
+                
+                // Refresh local data to update the filtered word list
+                await refreshData()
+            } catch {
+                handleError(error)
+            }
+        }
+    }
+    
+    private func handleCorrectPronunciation() {
+        guard let selectedCardIndex = selectedCardIndex else { return }
+        
+        // Mark current word as practiced in database
+        Task {
+            do {
+                let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
+                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: nil)
+                
+                // Update local data
+                levels[selectedLevelIndex].words[selectedCardIndex].isPracticed = true
+                
+                // Show success feedback
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
+                        cell.showSuccessAnimation()
+                    }
+                }
+                
+                // Refresh data
+                await refreshData()
+            } catch {
+                print("Error updating word progress: \(error)")
+            }
+        }
+    }
+    
+    private func handleIncorrectPronunciation() {
+        // Show feedback to user
+        let alert = UIAlertController(
+            title: "Let's Try Again",
+            message: "That wasn't quite right. Would you like to try again?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Try Again", style: .default))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        present(alert, animated: true)
+    }
+    
+    private func refreshData() {
+        Task {
+            do {
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                // Keep original level order but only include unpracticed words
+                self.levels = userData.userLevels.map { level in
+                    var filteredLevel = level
+                    filteredLevel.words = level.words.filter { !$0.isPracticed }
+                    return filteredLevel
+                }
+                
+                // Remove empty levels
+                self.levels = self.levels.filter { !$0.words.isEmpty }
+                
+                if self.levels.isEmpty {
+                    showCompletionMessage()
+                } else {
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                }
+            } catch {
+                handleError(error)
+            }
+        }
+    }
+    
+    private func handleError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Error",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func getCurrentWord() -> String? {
+        guard let selectedCardIndex = selectedCardIndex else { return nil }
+        let currentData = levels[selectedLevelIndex].words[selectedCardIndex]
+        if let wordData = DataController.shared.wordData(by: currentData.id) {
+            return wordData.wordTitle
+        }
+        return nil
+    }
+    
+    private func showCompletionMessage() {
+        let alert = UIAlertController(
+            title: "Congratulations! 🎉",
+            message: "You have completed all the words in this level. Would you like to go back to the level selection?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Go Back", style: .default) { [weak self] _ in
+            self?.dismiss(animated: true) {
+                // Get the root view controller
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first,
+                   let rootVC = window.rootViewController {
+                    
+                    // Find and present VocalCoachViewController
+                    let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+                    if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
+                        vocalCoachVC.modalPresentationStyle = .fullScreen
+                        rootVC.present(vocalCoachVC, animated: true)
+                    }
+                }
+            }
+        })
+        
+        present(alert, animated: true)
+    }
 }
 
 extension LevelCardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -343,14 +676,32 @@ extension LevelCardViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LevelCardCell", for: indexPath) as! LevelCardCell
-        let word = levels[selectedLevelIndex].words[indexPath.item]
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LevelCardCell", for: indexPath) as? LevelCardCell else {
+            return UICollectionViewCell()
+        }
         
-        if let wordData = DataController.shared.wordData(by: word.id) {
+        let currentWord = levels[selectedLevelIndex].words[indexPath.item]
+        if let wordData = DataController.shared.wordData(by: currentWord.id) {
             cell.configure(with: wordData) { [weak self] in
-                guard let self = self else { return }
-                self.getDirections(for: wordData.wordTitle)
+                self?.selectedCardIndex = indexPath.item
+                let direction = self?.getDirection(for: indexPath.item, at: self?.selectedLevelIndex ?? 0) ?? ""
+                self?.pronounceWord(direction)
             }
+            
+            // Updated cell appearance with enhanced shadow
+            cell.layer.cornerRadius = 25
+            cell.layer.borderWidth = 2
+            cell.layer.borderColor = UIColor(red: 75/255, green: 141/255, blue: 80/255, alpha: 1.0).cgColor
+            cell.clipsToBounds = false
+            cell.layer.shadowColor = UIColor.black.cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 4)
+            cell.layer.shadowRadius = 8
+            cell.layer.shadowOpacity = 0.3
+            cell.layer.masksToBounds = false
+            
+            // Make sure the shadow is visible
+            cell.contentView.layer.masksToBounds = true
+            cell.contentView.layer.cornerRadius = 25
         }
         
         return cell

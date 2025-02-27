@@ -587,10 +587,10 @@ class PracticeScreenViewController: UIViewController {
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
                 popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level.levelImage)
-                popoverVC.onProceed = { [weak self] in
-                    self?.updateUI()
-                }
-                present(popoverVC, animated: true, completion: nil)
+            popoverVC.onProceed = { [weak self] in
+                self?.updateUI()
+            }
+            present(popoverVC, animated: true, completion: nil)
             }
         }
     }

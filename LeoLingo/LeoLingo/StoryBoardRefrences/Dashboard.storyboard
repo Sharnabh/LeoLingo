@@ -284,87 +284,114 @@
                                                 <rect key="frame" x="0.0" y="181" width="732" height="457"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="Mojo" translatesAutoresizingMaskIntoConstraints="NO" id="vsN-yK-qm8">
-                                                        <rect key="frame" x="386" y="0.0" width="346" height="457"/>
+                                                        <rect key="frame" x="491" y="0.0" width="241" height="457"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="241" id="TpW-DQ-03V"/>
+                                                        </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mojo's Suggestion" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HVp-36-1Cb">
-                                                        <rect key="frame" x="16" y="16" width="253" height="36"/>
+                                                        <rect key="frame" x="16" y="16" width="358" height="36"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                                         <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7gU-90-HmT">
-                                                        <rect key="frame" x="16.5" y="60" width="96.5" height="20.5"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="96.5" id="PE7-Al-4j5"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vIL-Bq-QHk">
-                                                        <rect key="frame" x="16" y="257" width="92" height="20.5"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="MqY-WL-lRD">
-                                                        <rect key="frame" x="121" y="59" width="250" height="385"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="MqY-WL-lRD">
+                                                        <rect key="frame" x="16" y="68" width="459" height="373"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CS6-Gj-zWJ">
-                                                                <rect key="frame" x="0.0" y="0.0" width="250" height="20.5"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                                <color key="textColor" name="AccentColor"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0B4-BX-VBf">
-                                                                <rect key="frame" x="0.0" y="38.5" width="250" height="145"/>
-                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="1X7-YS-EUc">
+                                                                <rect key="frame" x="0.0" y="0.0" width="459" height="124"/>
+                                                                <subviews>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iey-Jn-jbW">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="96" height="20.5"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="96" id="GVQ-tn-cYe"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                                        <nil key="highlightedColor"/>
+                                                                    </label>
+                                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="erG-QG-qzs">
+                                                                        <rect key="frame" x="112" y="0.0" width="347" height="124"/>
+                                                                        <subviews>
+                                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is sample label which contains description of videos" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CS6-Gj-zWJ">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="347" height="41"/>
+                                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                                <color key="textColor" name="AccentColor"/>
+                                                                                <nil key="highlightedColor"/>
+                                                                            </label>
+                                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0B4-BX-VBf">
+                                                                                <rect key="frame" x="0.0" y="49" width="347" height="75"/>
+                                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="width" constant="347" id="JRv-6w-2jb"/>
+                                                                                </constraints>
+                                                                                <wkWebViewConfiguration key="configuration">
+                                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                                                    <wkPreferences key="preferences"/>
+                                                                                </wkWebViewConfiguration>
+                                                                            </wkWebView>
+                                                                        </subviews>
+                                                                    </stackView>
+                                                                </subviews>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="height" constant="145" id="6Nz-61-hbI"/>
+                                                                    <constraint firstAttribute="bottom" secondItem="erG-QG-qzs" secondAttribute="bottom" id="YDI-K8-kch"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="erG-QG-qzs" secondAttribute="trailing" id="sUt-Nf-DQo"/>
                                                                 </constraints>
-                                                                <wkWebViewConfiguration key="configuration">
-                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                                                    <wkPreferences key="preferences"/>
-                                                                </wkWebViewConfiguration>
-                                                            </wkWebView>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFV-Gb-7Yo">
-                                                                <rect key="frame" x="0.0" y="201.5" width="250" height="20.5"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                                <color key="textColor" name="AccentColor"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xvy-kc-R5K">
-                                                                <rect key="frame" x="0.0" y="240" width="250" height="145"/>
-                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <wkWebViewConfiguration key="configuration">
-                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                                                    <wkPreferences key="preferences"/>
-                                                                </wkWebViewConfiguration>
-                                                            </wkWebView>
+                                                            </stackView>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="khi-fV-Jly">
+                                                                <rect key="frame" x="0.0" y="140" width="459" height="233"/>
+                                                                <subviews>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vIL-Bq-QHk">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="96" height="20.5"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="96" id="dQ1-Dc-57r"/>
+                                                                        </constraints>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                        <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                                        <nil key="highlightedColor"/>
+                                                                    </label>
+                                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="eEU-ro-nca">
+                                                                        <rect key="frame" x="112" y="0.0" width="347" height="124"/>
+                                                                        <subviews>
+                                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is sample label which contains description of videos" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFV-Gb-7Yo">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="347" height="41"/>
+                                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                                <color key="textColor" name="AccentColor"/>
+                                                                                <nil key="highlightedColor"/>
+                                                                            </label>
+                                                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xvy-kc-R5K">
+                                                                                <rect key="frame" x="0.0" y="49" width="347" height="75"/>
+                                                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="height" constant="75" id="g9E-6V-fED"/>
+                                                                                </constraints>
+                                                                                <wkWebViewConfiguration key="configuration">
+                                                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                                                    <wkPreferences key="preferences"/>
+                                                                                </wkWebViewConfiguration>
+                                                                            </wkWebView>
+                                                                        </subviews>
+                                                                    </stackView>
+                                                                </subviews>
+                                                                <constraints>
+                                                                    <constraint firstItem="eEU-ro-nca" firstAttribute="top" secondItem="khi-fV-Jly" secondAttribute="top" id="Awc-hc-2uU"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="eEU-ro-nca" secondAttribute="trailing" id="myq-3f-4Oq"/>
+                                                                </constraints>
+                                                            </stackView>
                                                         </subviews>
-                                                        <constraints>
-                                                            <constraint firstItem="Xvy-kc-R5K" firstAttribute="top" secondItem="iFV-Gb-7Yo" secondAttribute="bottom" constant="18" id="BEd-OR-oW2"/>
-                                                            <constraint firstItem="iFV-Gb-7Yo" firstAttribute="top" secondItem="0B4-BX-VBf" secondAttribute="bottom" constant="18" id="Tgl-Bl-7gl"/>
-                                                            <constraint firstItem="0B4-BX-VBf" firstAttribute="top" secondItem="CS6-Gj-zWJ" secondAttribute="bottom" constant="18" id="Ubf-7O-SAe"/>
-                                                        </constraints>
                                                     </stackView>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="vIL-Bq-QHk" firstAttribute="top" secondItem="7gU-90-HmT" secondAttribute="bottom" constant="176.5" id="4Sc-8w-nas"/>
-                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="leading" secondItem="vIL-Bq-QHk" secondAttribute="trailing" constant="13" id="5jg-Xb-J0V"/>
-                                                    <constraint firstItem="vsN-yK-qm8" firstAttribute="leading" secondItem="MqY-WL-lRD" secondAttribute="trailing" constant="15" id="ANb-Oh-dP1"/>
-                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="top" constant="59" id="COL-T0-617"/>
+                                                    <constraint firstItem="vsN-yK-qm8" firstAttribute="leading" secondItem="MqY-WL-lRD" secondAttribute="trailing" constant="16" id="ANb-Oh-dP1"/>
+                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="top" secondItem="HVp-36-1Cb" secondAttribute="bottom" constant="16" id="COL-T0-617"/>
                                                     <constraint firstAttribute="trailing" secondItem="vsN-yK-qm8" secondAttribute="trailing" id="Iww-o3-bZy"/>
                                                     <constraint firstAttribute="bottom" secondItem="vsN-yK-qm8" secondAttribute="bottom" id="Jje-19-h9S"/>
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="top" constant="16" id="L0y-BY-PFs"/>
-                                                    <constraint firstItem="7gU-90-HmT" firstAttribute="top" secondItem="HVp-36-1Cb" secondAttribute="bottom" constant="8" id="Lk2-8r-XPj"/>
-                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="121" id="Qyi-UC-h8S"/>
+                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16" id="Qyi-UC-h8S"/>
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16" id="VTb-Xn-ple"/>
                                                     <constraint firstItem="vsN-yK-qm8" firstAttribute="leading" secondItem="HVp-36-1Cb" secondAttribute="trailing" constant="117" id="epA-Un-SM1"/>
-                                                    <constraint firstAttribute="bottom" secondItem="MqY-WL-lRD" secondAttribute="bottom" constant="13" id="fpS-c1-uIy"/>
-                                                    <constraint firstItem="MqY-WL-lRD" firstAttribute="leading" secondItem="7gU-90-HmT" secondAttribute="trailing" constant="8" id="nDa-HX-IQ3"/>
-                                                    <constraint firstItem="7gU-90-HmT" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16.5" id="tJa-YZ-4Nn"/>
+                                                    <constraint firstAttribute="bottom" secondItem="MqY-WL-lRD" secondAttribute="bottom" constant="16" id="nbx-eU-B9l"/>
                                                     <constraint firstItem="vsN-yK-qm8" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="topMargin" constant="-8" id="xHd-vK-fqe"/>
                                                 </constraints>
                                             </view>

@@ -145,13 +145,29 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             let elapsedTime = Date().timeIntervalSince(startTime)
             let remainingTime = max(selectedDuration - elapsedTime, 0)
             
-            let minutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
+            // Format elapsed time
+            let elapsedMinutes = Int(elapsedTime / 60)
+            let elapsedHours = elapsedMinutes / 60
+            let finalElapsedMinutes = elapsedMinutes % 60
             
-            timeLeft.text = "\(minutes) min"
-            timeLeftBar.progress = Float(1 - (elapsedTime / selectedDuration))
+            var timeSpentText = ""
+            if elapsedHours > 0 {
+                timeSpentText = "\(elapsedHours)h \(finalElapsedMinutes)m"
+            } else {
+                timeSpentText = "\(finalElapsedMinutes)m"
+            }
+            
+            // Format remaining time
+            let remainingMinutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
+            let timeLeftText = "\(remainingMinutes) min left"
+            
+            // Update UI
+            timeLeft.text = timeLeftText
+            timeLeftBar.progress = Float(elapsedTime / selectedDuration) // Progress shows time spent
             
             if remainingTime <= 0 {
                 timer?.invalidate()
+                timeLeft.text = "Time's up!"
             }
         }
 

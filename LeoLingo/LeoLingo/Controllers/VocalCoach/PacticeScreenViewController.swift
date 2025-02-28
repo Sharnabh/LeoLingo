@@ -78,18 +78,10 @@ class PracticeScreenViewController: UIViewController {
         Task {
             do {
                 let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
-                // Keep original level order but only include unpracticed words
-                self.levels = userData.userLevels.map { level in
-                    var filteredLevel = level
-                    filteredLevel.words = level.words.filter { !$0.isPracticed }
-                    return filteredLevel
-                }
-                
-                // Remove empty levels
-                self.levels = self.levels.filter { !$0.words.isEmpty }
+                self.levels = userData.userLevels
                 
                 if self.levels.isEmpty {
-                    // Show completion message if no unpracticed words available
+                    // Show completion message if no words available
                     showCompletionMessage()
                 } else {
                     // Always start from the first available level
@@ -345,13 +337,8 @@ class PracticeScreenViewController: UIViewController {
     
     private func getCurrentWord() -> String {
         let currentData = levels[levelIndex].words[currentIndex]
-        let appLevels = SupabaseDataController.shared.getLevelsData()
-        for level in appLevels {
-            for word in level.words {
-                if word.id == currentData.id {
-                    return word.wordTitle
-                }
-            }
+        if let wordData = SupabaseDataController.shared.wordData(by: currentData.id) {
+            return wordData.wordTitle
         }
         return ""
     }
@@ -365,9 +352,6 @@ class PracticeScreenViewController: UIViewController {
                 let currentWord = levels[levelIndex].words[currentIndex]
                 try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: nil)
                 
-                // Update local data
-                levels[levelIndex].words[currentIndex].isPracticed = true
-                
                 // Show success feedback and move to next word on main thread
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
@@ -376,27 +360,8 @@ class PracticeScreenViewController: UIViewController {
                     // Show the success popup first
                     self.showPopover(isCorrect: true, levelChange: isLastWordInLevel)
                     
-                    // Remove the practiced word from our local array
-                    self.levels[self.levelIndex].words.remove(at: self.currentIndex)
-                    
-                    // If the level is now empty, remove it
-                    if self.levels[self.levelIndex].words.isEmpty {
-                        self.levels.remove(at: self.levelIndex)
-                    }
-                    
                     // Progress to next word or level
-                    if self.levels.isEmpty {
-                        self.showCompletionMessage()
-                    } else {
-                        // If current level is empty, move to next level
-                        if self.currentIndex >= self.levels[self.levelIndex].words.count {
-                            self.levelIndex = min(self.levelIndex, self.levels.count - 1)
-                            self.currentIndex = 0
-                            self.showLevelChangePopover()
-                            self.showConfettiEffect()
-                        }
-                        self.updateUI()
-                    }
+                    self.moveToNextWord()
                 }
             } catch {
                 print("Error updating word progress: \(error)")
@@ -529,36 +494,40 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func moveToNextWord() {
-        // If we have no levels left, show completion
-        if levels.isEmpty {
-            showCompletionMessage()
-            return
-        }
-        
-        // Move to next word
-        currentIndex += 1
-        
-        // If we've reached the end of current level's words
-        if currentIndex >= levels[levelIndex].words.count {
-            // Try to move to next level
-            levelIndex += 1
-            currentIndex = 0
-            
-            // If we've reached the end of all levels
-            if levelIndex >= levels.count {
-                showCompletionMessage()
-                return
+        Task {
+            do {
+                // Refresh data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                self.levels = userData.userLevels
+                
+                // Move to next word
+                currentIndex += 1
+                
+                // If we've reached the end of current level's words
+                if currentIndex >= levels[levelIndex].words.count {
+                    // Try to move to next level
+                    levelIndex += 1
+                    currentIndex = 0
+                    
+                    // If we've reached the end of all levels
+                    if levelIndex >= levels.count {
+                        showCompletionMessage()
+                        return
+                    }
+                    
+                    showLevelChangePopover()
+                    showConfettiEffect()
+                }
+                
+                // Update UI if we have valid indices
+                if levelIndex < levels.count && currentIndex < levels[levelIndex].words.count {
+                    updateUI()
+                } else {
+                    showCompletionMessage()
+                }
+            } catch {
+                handleError(error)
             }
-            
-            showLevelChangePopover()
-            showConfettiEffect()
-        }
-        
-        // Only update UI if we have valid indices
-        if levelIndex < levels.count && currentIndex < levels[levelIndex].words.count {
-            updateUI()
-        } else {
-            showCompletionMessage()
         }
     }
     
@@ -673,8 +642,13 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: recordingPath
                 )
                 
-                // Refresh local data to update the filtered word list
-                await refreshData()
+                // Refresh local data
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                self.levels = userData.userLevels
+                
+                DispatchQueue.main.async {
+                    self.updateUI()
+                }
             } catch {
                 handleError(error)
             }
@@ -774,31 +748,6 @@ class PracticeScreenViewController: UIViewController {
         })
         
         present(alert, animated: true)
-    }
-    
-    private func refreshData() {
-        Task {
-            do {
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
-                // Keep original level order but only include unpracticed words
-                self.levels = userData.userLevels.map { level in
-                    var filteredLevel = level
-                    filteredLevel.words = level.words.filter { !$0.isPracticed }
-                    return filteredLevel
-                }
-                
-                // Remove empty levels
-                self.levels = self.levels.filter { !$0.words.isEmpty }
-                
-                if self.levels.isEmpty {
-                    showCompletionMessage()
-                } else {
-                    updateUI()
-                }
-            } catch {
-                handleError(error)
-            }
-        }
     }
     
     private func clearUserDefaults() {

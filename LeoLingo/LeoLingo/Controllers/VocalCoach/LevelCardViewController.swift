@@ -115,14 +115,14 @@ class LevelCardViewController: UIViewController {
     // MARK: - Initialization
     init(selectedLevelIndex: Int) {
         self.selectedLevelIndex = selectedLevelIndex
-        self.levels = DataController.shared.getAllLevels()
+        self.levels = []  // Initialize empty, will fetch in viewDidLoad
         super.init(nibName: nil, bundle: nil)
         self.modalPresentationStyle = .fullScreen
     }
     
     required init?(coder: NSCoder) {
         self.selectedLevelIndex = 0
-        self.levels = DataController.shared.getAllLevels()
+        self.levels = []  // Initialize empty, will fetch in viewDidLoad
         super.init(coder: coder)
         self.modalPresentationStyle = .fullScreen
     }
@@ -194,11 +194,21 @@ class LevelCardViewController: UIViewController {
         // Hide the default navigation bar
         navigationController?.setNavigationBarHidden(true, animated: false)
         
-        // Scroll to the first word with animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            guard let self = self else { return }
-            let indexPath = IndexPath(item: 0, section: 0)
-            self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        // Fetch data from Supabase
+        Task {
+            do {
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                self.levels = userData.userLevels
+                
+                DispatchQueue.main.async {
+                    // Scroll to the first word with animation
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    self.collectionView.reloadData()
+                }
+            } catch {
+                handleError(error)
+            }
         }
     }
     
@@ -330,18 +340,19 @@ class LevelCardViewController: UIViewController {
     
     @objc private func speakButtonTapped() {
         if isListening {
-            speechProcessor.stopRecording()
-            isListening = false
-            updateSpeakButtonState(isListening: false)
+            stopListening()
         } else {
-            guard let selectedCardIndex = selectedCardIndex else { return }
+            guard let selectedCardIndex = selectedCardIndex,
+                  selectedCardIndex < levels[selectedLevelIndex].words.count else { return }
+            
             let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
             
-            if let wordData = DataController.shared.wordData(by: currentWord.id) {
+            // Start recording with current word and attempt number
+            let attemptNumber = currentWord.record?.attempts ?? 0
+            if let wordData = SupabaseDataController.shared.wordData(by: currentWord.id) {
                 isListening = true
                 updateSpeakButtonState(isListening: true)
                 
-                let attemptNumber = currentWord.record?.attempts ?? 0
                 speechProcessor.startRecording(
                     word: wordData.wordTitle,
                     wordId: currentWord.id,
@@ -354,22 +365,20 @@ class LevelCardViewController: UIViewController {
                     .sink { [weak self] spokenText in
                         guard let self = self else { return }
                         
-                        let normalizedSpoken = spokenText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-                        let normalizedExpected = wordData.wordTitle.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                        let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), wordData.wordTitle.lowercased())
+                        let maxLength = max(spokenText.count, wordData.wordTitle.count)
+                        let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
                         
-                        let isCorrect = normalizedSpoken.contains(normalizedExpected)
+                        // Record the accuracy and recording path
+                        self.recordAccuracy(accuracy)
                         
-                        if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
-                            if isCorrect {
-                                cell.showSuccessAnimation()
-                                self.showConfettiEffect() // Add confetti effect on success
-                            } else {
-                                cell.showFailureAnimation()
-                            }
+                        if accuracy >= 70.0 {
+                            self.handleCorrectPronunciation()
+                        } else {
+                            self.handleIncorrectPronunciation()
                         }
                         
-                        self.isListening = false
-                        self.updateSpeakButtonState(isListening: false)
+                        self.stopListening()
                     }
                     .store(in: &cancellables)
             }
@@ -600,22 +609,10 @@ class LevelCardViewController: UIViewController {
         Task {
             do {
                 let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
-                // Keep original level order but only include unpracticed words
-                self.levels = userData.userLevels.map { level in
-                    var filteredLevel = level
-                    filteredLevel.words = level.words.filter { !$0.isPracticed }
-                    return filteredLevel
-                }
+                self.levels = userData.userLevels
                 
-                // Remove empty levels
-                self.levels = self.levels.filter { !$0.words.isEmpty }
-                
-                if self.levels.isEmpty {
-                    showCompletionMessage()
-                } else {
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                    }
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
                 }
             } catch {
                 handleError(error)
@@ -636,7 +633,7 @@ class LevelCardViewController: UIViewController {
     private func getCurrentWord() -> String? {
         guard let selectedCardIndex = selectedCardIndex else { return nil }
         let currentData = levels[selectedLevelIndex].words[selectedCardIndex]
-        if let wordData = DataController.shared.wordData(by: currentData.id) {
+        if let wordData = SupabaseDataController.shared.wordData(by: currentData.id) {
             return wordData.wordTitle
         }
         return nil

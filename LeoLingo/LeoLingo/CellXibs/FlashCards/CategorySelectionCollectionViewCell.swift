@@ -28,4 +28,19 @@ class CategorySelectionCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    // Add tap down effect
+    func animateTapDown() {
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseIn) {
+            self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            self.layer.shadowOpacity = 0.1
+        }
+    }
+    
+    // Add tap up effect
+    func animateTapUp() {
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut) {
+            self.transform = CGAffineTransform.identity
+            self.layer.shadowOpacity = 0.2
+        }
+    }
 }

@@ -48,39 +48,70 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func updateLevelImage() {
-        let levels = DataController.shared.getAllLevels()
-        var currentLevel: Level? = nil
-        
-        // Find the first incomplete level
-        for level in levels {
-            let totalWords = level.words.count
-            let completedWords = level.words.filter { $0.isPassed }.count
-            
-            if completedWords < totalWords {
-                currentLevel = level
-                break
+        Task {
+            do {
+                guard let phoneNumber = SupabaseDataController.shared.phoneNumber else { return }
+                
+                // Fetch user data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                let levels = userData.userLevels
+                var currentLevel: Level? = nil
+                
+                // Find the first incomplete level
+                for level in levels {
+                    let totalWords = level.words.count
+                    let completedWords = level.words.filter { word in
+                        // A word is considered completed if it has been practiced with good accuracy
+                        if let record = word.record,
+                           let accuracies = record.accuracy,
+                           !accuracies.isEmpty {
+                            let avgAccuracy = accuracies.reduce(0.0, +) / Double(accuracies.count)
+                            return avgAccuracy >= 70.0 // Consider word completed if average accuracy is 70% or higher
+                        }
+                        return false
+                    }.count
+                    
+                    if completedWords < totalWords {
+                        currentLevel = level
+                        
+                        // Calculate and update progress for this level
+                        let progress = Float(completedWords) / Float(totalWords)
+                        
+                        // Update UI on main thread
+                        DispatchQueue.main.async {
+                            self.levelProgress.progress = progress
+                            
+                            // Get AppLevel using the level ID
+                            if let appLevel = DataController.shared.getLevel(by: level.id) {
+                                self.levelImageView.image = UIImage(named: appLevel.levelImage)
+                            }
+                        }
+                        break
+                    }
+                }
+                
+                // If no current level found (all levels completed)
+                if currentLevel == nil && !levels.isEmpty {
+                    DispatchQueue.main.async {
+                        // Show the last level's image with full progress
+                        if let lastLevel = levels.last,
+                           let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
+                            self.levelImageView.image = UIImage(named: lastAppLevel.levelImage)
+                            self.levelProgress.progress = 1.0
+                        }
+                    }
+                }
+            } catch {
+                print("Error updating level image: \(error)")
             }
         }
-        
-        // Update level image and progress
-        if let level = currentLevel {
-            // Get AppLevel using the existing getLevel method
-            if let appLevel = DataController.shared.getLevel(by: level.id) {
-                levelImageView.image = UIImage(named: appLevel.levelImage)
-            }
-            
-            let totalWords = level.words.count
-            let completedWords = level.words.filter { $0.isPassed }.count
-            let progress = Float(completedWords) / Float(totalWords)
-            levelProgress.progress = progress
-        } else {
-            // All levels completed, show the final level image
-            if let lastLevel = levels.last,
-               let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
-                levelImageView.image = UIImage(named: lastAppLevel.levelImage)
-                levelProgress.progress = 1.0
-            }
-        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Update level image when view appears
+        updateLevelImage()
+        loadRecentPractices()
     }
 
     func setupTimeView() {

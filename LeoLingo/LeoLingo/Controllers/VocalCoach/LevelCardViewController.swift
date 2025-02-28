@@ -200,11 +200,18 @@ class LevelCardViewController: UIViewController {
                 let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
                 self.levels = userData.userLevels
                 
+                // Validate selectedLevelIndex
+                if selectedLevelIndex >= levels.count {
+                    selectedLevelIndex = 0
+                }
+                
                 DispatchQueue.main.async {
-                    // Scroll to the first word with animation
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     self.collectionView.reloadData()
+                    // Only scroll if we have items
+                    if !self.levels.isEmpty && self.levels[self.selectedLevelIndex].words.count > 0 {
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                 }
             } catch {
                 handleError(error)
@@ -459,6 +466,12 @@ class LevelCardViewController: UIViewController {
     }
 
     func getDirection(for index: Int, at levelIndex: Int) -> String {
+        guard !levels.isEmpty,
+              levelIndex < levels.count,
+              index < levels[levelIndex].words.count else {
+            return ""
+        }
+        
         let appLevels = SupabaseDataController.shared.getLevelsData()
         let currentWord = levels[levelIndex].words[index]
         
@@ -669,11 +682,15 @@ class LevelCardViewController: UIViewController {
 
 extension LevelCardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard !levels.isEmpty, selectedLevelIndex < levels.count else { return 0 }
         return levels[selectedLevelIndex].words.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LevelCardCell", for: indexPath) as? LevelCardCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LevelCardCell", for: indexPath) as? LevelCardCell,
+              !levels.isEmpty,
+              selectedLevelIndex < levels.count,
+              indexPath.item < levels[selectedLevelIndex].words.count else {
             return UICollectionViewCell()
         }
         

@@ -11,7 +11,6 @@ class CategorySelectionCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var imageView: UIImageView!
     
-    let categoryCardImages = ["BodyParts","Fruits","Vegitables","Animals","Colors","Shapes","Numbers","Letters","Actions"]
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -20,12 +19,7 @@ class CategorySelectionCollectionViewCell: UICollectionViewCell {
         imageView.isUserInteractionEnabled = true
     }
     
-    func updateCategoryCard(with indexPath: IndexPath) {
-        if indexPath.row < categoryCardImages.count {
-            imageView.image = UIImage(named: categoryCardImages[indexPath.row])
-        } else {
-            imageView.image = nil 
-        }
+    func updateCategoryCard(with indexPath: IndexPath) {        imageView.image = UIImage(named: SampleDataController.shared.getCategoryCards()[indexPath.row].categoryCardImage)
     }
     
     // Add tap down effect

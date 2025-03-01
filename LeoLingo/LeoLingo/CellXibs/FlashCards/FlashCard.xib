@@ -28,6 +28,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
+                <color key="backgroundColor" red="0.89945387840000002" green="0.56082636119999996" blue="0.2155640721" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
             </collectionViewCellContentView>
             <size key="customSize" width="341" height="526"/>
             <connections>

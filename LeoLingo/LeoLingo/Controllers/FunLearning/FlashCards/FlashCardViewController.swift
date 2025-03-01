@@ -16,6 +16,7 @@ class FlashCardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("welcome to flashcards")
 
         setupCollectionViewLayout()
 
@@ -31,9 +32,11 @@ class FlashCardViewController: UIViewController {
     func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 16
-        layout.itemSize = CGSize(width: 380, height: 260)
+        layout.minimumLineSpacing = 20
+        layout.minimumInteritemSpacing = 0
+//        layout.minimumLineSpacing = 16
+//        layout.minimumInteritemSpacing = 16
+//        layout.itemSize = CGSize(width: 380, height: 260)
         collectionView.collectionViewLayout = layout
     }
     

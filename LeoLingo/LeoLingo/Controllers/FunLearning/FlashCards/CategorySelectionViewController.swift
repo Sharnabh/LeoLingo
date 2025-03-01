@@ -77,14 +77,16 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Selected level card at index: \(indexPath.item)")
         
-        // Debug: Check if storyboard ID exists
-        if let flashCardVC = storyboard?.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
-            print("✅ FlashCardViewController initialized successfully")
-            
-            // Push to navigation stack
-            navigationController?.pushViewController(flashCardVC, animated: true)
-        } else {
-            print("❌ Error: Could not initialize FlashCardViewController from storyboard")
+
+        let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+        if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
+         
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(flashCardVC, animated: true)
+            } else {
+                flashCardVC.modalPresentationStyle = .fullScreen
+                present(flashCardVC, animated: true)
+            }
         }
     }
 

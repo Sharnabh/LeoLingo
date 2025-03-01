@@ -9,17 +9,16 @@ import UIKit
 
 class FlashCardViewController: UIViewController {
     
-    
     @IBOutlet var collectionView: UICollectionView!
     
-    var selectedIndex: Int?
-    
+    var selectedIndex: Int? = 0 // Track selected index for zoom effect
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("welcome to flashcards")
+        print("Welcome to Flashcards")
 
         setupCollectionViewLayout()
-
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .clear
@@ -27,22 +26,27 @@ class FlashCardViewController: UIViewController {
         
         let firstNib = UINib(nibName: "FlashCard", bundle: nil)
         collectionView.register(firstNib, forCellWithReuseIdentifier: "FlashCardCell")
+
+        collectionView.isPagingEnabled = false // Paging should be off since we're controlling snapping manually
+        collectionView.decelerationRate = .fast // Smooth snapping effect
     }
     
     func setupCollectionViewLayout() {
-        let layout = UICollectionViewFlowLayout()
+        let layout = SnappingCollectionViewLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
+        layout.minimumLineSpacing = 300
         layout.minimumInteritemSpacing = 0
-//        layout.minimumLineSpacing = 16
-//        layout.minimumInteritemSpacing = 16
-//        layout.itemSize = CGSize(width: 380, height: 260)
+        layout.itemSize = CGSize(width: 350, height: 512)
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let sideInset = (screenWidth - 350) / 2
+        layout.sectionInset = UIEdgeInsets(top: 0, left: sideInset, bottom: 0, right: sideInset)
+        
         collectionView.collectionViewLayout = layout
     }
-    
-
 }
-extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+
+extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return SampleDataController.shared.countLevelCards()
@@ -54,9 +58,9 @@ extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDat
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = true
         cell.contentView.isUserInteractionEnabled = true
+        
         return cell
     }
-
     
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? FlashCardCollectionViewCell {
@@ -69,8 +73,26 @@ extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDat
             cell.animateTapUp()
         }
     }
+
+    // MARK: - Snapping & Instant Zoom Effect
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scaleVisibleCells()
+    }
+
+    private func scaleVisibleCells() {
+        let centerPoint = view.convert(collectionView.center, to: collectionView)
+        
+        for cell in collectionView.visibleCells {
+            let indexPath = collectionView.indexPath(for: cell)!
+            let cellCenter = collectionView.layoutAttributesForItem(at: indexPath)?.frame.midX ?? 0
+            let distance = abs(centerPoint.x - cellCenter)
+        
+            let scale: CGFloat = distance < 50 ? 1 : 0.75  // Center item = 1.1x, Side items = 0.85x
+            
+            UIView.animate(withDuration: 0.2) {
+                cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+            }
+        }
+    }
 }
 
-
-    
-   

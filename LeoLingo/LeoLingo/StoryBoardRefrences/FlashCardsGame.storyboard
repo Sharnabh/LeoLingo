@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Select Category-->
+        <!--Category Selection View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
                 <viewController storyboardIdentifier="CategorySelectionViewController" id="Y6W-OH-hqX" customClass="CategorySelectionViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
@@ -51,9 +51,7 @@
                             <constraint firstAttribute="trailing" secondItem="2ah-AC-Cox" secondAttribute="trailing" id="hv5-RY-BxT"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="OpL-bH-3a3">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="chevron.backward.circle.fill" catalog="system" id="VAq-wp-2CW"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="EUg-B6-HFR"/>
                     <connections>
                         <outlet property="categoryCollectionView" destination="dYs-hS-dHe" id="U1L-3R-zDh"/>
                     </connections>
@@ -62,7 +60,7 @@
             </objects>
             <point key="canvasLocation" x="778.47457627118649" y="37.317073170731703"/>
         </scene>
-        <!--Select Category-->
+        <!--Flash Card View Controller-->
         <scene sceneID="Nvf-6h-SCQ">
             <objects>
                 <viewController storyboardIdentifier="FlashCardViewController" id="ej1-Le-aAw" customClass="FlashCardViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
@@ -73,17 +71,12 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CategoryBackground" translatesAutoresizingMaskIntoConstraints="NO" id="Xb9-aa-oHI">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Hii" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbe-PF-haf">
-                                <rect key="frame" x="501" y="71" width="57" height="60"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bQU-0D-YaI">
-                                <rect key="frame" x="0.0" y="191" width="1180" height="438"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bQU-0D-YaI">
+                                <rect key="frame" x="0.0" y="154" width="1180" height="512"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="512" id="4nb-XJ-MDX"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jD0-Rp-Fjc">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -105,15 +98,18 @@
                         <viewLayoutGuide key="safeArea" id="ug0-Ty-qTf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="bQU-0D-YaI" firstAttribute="trailing" secondItem="ug0-Ty-qTf" secondAttribute="trailing" id="1DO-uj-Rht"/>
                             <constraint firstItem="Xb9-aa-oHI" firstAttribute="leading" secondItem="j4L-u4-7hy" secondAttribute="leading" id="9tM-Rg-po2"/>
+                            <constraint firstItem="bQU-0D-YaI" firstAttribute="leading" secondItem="ug0-Ty-qTf" secondAttribute="leading" id="Cp0-6l-naN"/>
                             <constraint firstItem="Xb9-aa-oHI" firstAttribute="top" secondItem="j4L-u4-7hy" secondAttribute="top" id="NEJ-hc-5dQ"/>
+                            <constraint firstItem="bQU-0D-YaI" firstAttribute="centerY" secondItem="j4L-u4-7hy" secondAttribute="centerY" id="YIw-7T-R19"/>
                             <constraint firstAttribute="trailing" secondItem="Xb9-aa-oHI" secondAttribute="trailing" id="iQs-DX-ZxE"/>
                             <constraint firstAttribute="bottom" secondItem="Xb9-aa-oHI" secondAttribute="bottom" id="mOS-ua-u42"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="FcB-6g-fdT"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="FcB-6g-fdT"/>
                     <connections>
-                        <outlet property="collectionView" destination="bQU-0D-YaI" id="UzR-15-Zjv"/>
+                        <outlet property="collectionView" destination="bQU-0D-YaI" id="tHA-gR-I2v"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o33-WV-aU2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -123,7 +119,6 @@
     </scenes>
     <resources>
         <image name="CategoryBackground" width="1210" height="834"/>
-        <image name="chevron.backward.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -95,13 +95,14 @@ class LevelCardViewController: UIViewController {
     }()
     
     private lazy var customBackButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        let button = UIButton(frame: CGRect(x: 24, y: 0, width: 60, height: 60))
         button.backgroundColor = .white
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
         button.layer.shadowRadius = 6
         button.layer.shadowOpacity = 0.2
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
@@ -247,10 +248,10 @@ class LevelCardViewController: UIViewController {
             levelLabel.heightAnchor.constraint(equalToConstant: 40),
             
             // Back button - Updated constraints
-            customBackButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            customBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            customBackButton.widthAnchor.constraint(equalToConstant: 50),
-            customBackButton.heightAnchor.constraint(equalToConstant: 50),
+            customBackButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            customBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            customBackButton.widthAnchor.constraint(equalToConstant: 60),
+            customBackButton.heightAnchor.constraint(equalToConstant: 60),
             
             // Collection view - Updated constraints for smaller size
             collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor),

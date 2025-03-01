@@ -58,6 +58,7 @@ extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDat
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = true
         cell.contentView.isUserInteractionEnabled = true
+        cell.configureCell(at: indexPath.item, imageName: "nose", titleText: "Nose")
         
         return cell
     }

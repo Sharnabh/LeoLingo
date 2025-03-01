@@ -60,7 +60,7 @@ class CategorySelectionViewController: UIViewController {
 extension CategorySelectionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return SampleDataController.shared.countLevelCards()
+        return SampleDataController.shared.countCategoryCards()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -66,6 +66,8 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Category", for: indexPath) as! CategorySelectionCollectionViewCell
         cell.layer.cornerRadius = 21
+        cell.layer.borderWidth = 2
+        cell.layer.borderColor = UIColor(red: 161/255, green: 105/255, blue: 77/255, alpha: 1.0).cgColor
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = true
         cell.contentView.isUserInteractionEnabled = true

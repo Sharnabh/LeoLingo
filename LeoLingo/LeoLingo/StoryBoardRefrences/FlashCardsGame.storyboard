@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="fG5-DM-SDp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -12,14 +12,13 @@
         <!--Select Category-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="CategorySelectionViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CategorySelectionViewController" id="Y6W-OH-hqX" customClass="CategorySelectionViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="CategoryBackground" translatesAutoresizingMaskIntoConstraints="NO" id="2ah-AC-Cox">
-                                <rect key="frame" x="-98" y="-106" width="1376" height="1032"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CategoryBackground" translatesAutoresizingMaskIntoConstraints="NO" id="2ah-AC-Cox">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                             </imageView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dYs-hS-dHe">
                                 <rect key="frame" x="20" y="154" width="1140" height="571"/>
@@ -45,44 +44,86 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="2ah-AC-Cox" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="1St-im-h8f"/>
+                            <constraint firstAttribute="bottom" secondItem="2ah-AC-Cox" secondAttribute="bottom" id="8tn-yq-TrV"/>
+                            <constraint firstItem="2ah-AC-Cox" firstAttribute="leading" secondItem="5EZ-qb-Rvc" secondAttribute="leading" id="TMf-fB-i9j"/>
+                            <constraint firstAttribute="trailing" secondItem="2ah-AC-Cox" secondAttribute="trailing" id="hv5-RY-BxT"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="OpL-bH-3a3"/>
+                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="OpL-bH-3a3">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="chevron.backward.circle.fill" catalog="system" id="VAq-wp-2CW"/>
+                    </navigationItem>
                     <connections>
-                        <outlet property="CategoryCollectionView" destination="dYs-hS-dHe" id="U1L-3R-zDh"/>
+                        <outlet property="categoryCollectionView" destination="dYs-hS-dHe" id="U1L-3R-zDh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="778.47457627118649" y="37.317073170731703"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="meb-kE-1bk">
+        <!--Select Category-->
+        <scene sceneID="Nvf-6h-SCQ">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4KN-9Z-9GR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <navigationController storyboardIdentifier="flashCardsNav" automaticallyAdjustsScrollViewInsets="NO" id="fG5-DM-SDp" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="sKm-Mt-OAI">
-                        <rect key="frame" x="0.0" y="24" width="1180" height="102"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="29"/>
-                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </textAttributes>
-                        <textAttributes key="largeTitleTextAttributes">
-                            <color key="textColor" red="0.1607843041" green="0.37647059560000001" blue="0.1019607931" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </textAttributes>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
+                <viewController storyboardIdentifier="FlashCardViewController" id="ej1-Le-aAw" customClass="FlashCardViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="j4L-u4-7hy">
+                        <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CategoryBackground" translatesAutoresizingMaskIntoConstraints="NO" id="Xb9-aa-oHI">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Hii" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbe-PF-haf">
+                                <rect key="frame" x="501" y="71" width="57" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bQU-0D-YaI">
+                                <rect key="frame" x="0.0" y="191" width="1180" height="438"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jD0-Rp-Fjc">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="hEO-Kb-FSi">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Acd-qw-QT1">
+                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </collectionViewCellContentView>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ug0-Ty-qTf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Xb9-aa-oHI" firstAttribute="leading" secondItem="j4L-u4-7hy" secondAttribute="leading" id="9tM-Rg-po2"/>
+                            <constraint firstItem="Xb9-aa-oHI" firstAttribute="top" secondItem="j4L-u4-7hy" secondAttribute="top" id="NEJ-hc-5dQ"/>
+                            <constraint firstAttribute="trailing" secondItem="Xb9-aa-oHI" secondAttribute="trailing" id="iQs-DX-ZxE"/>
+                            <constraint firstAttribute="bottom" secondItem="Xb9-aa-oHI" secondAttribute="bottom" id="mOS-ua-u42"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="FcB-6g-fdT"/>
                     <connections>
-                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="DXm-8Y-NWk"/>
+                        <outlet property="collectionView" destination="bQU-0D-YaI" id="UzR-15-Zjv"/>
                     </connections>
-                </navigationController>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="o33-WV-aU2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="69.66101694915254" y="37.317073170731703"/>
+            <point key="canvasLocation" x="777.96610169491532" y="755.85365853658539"/>
         </scene>
     </scenes>
     <resources>
         <image name="CategoryBackground" width="1210" height="834"/>
+        <image name="chevron.backward.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

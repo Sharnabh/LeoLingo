@@ -8,6 +8,15 @@ struct WordCardView: View {
     
     private let circleColor = Color(hex: "EED362") // #ECCC4399
     
+    // Cache computed values
+    private var formattedAccuracy: String {
+        String(format: "%.1f", accuracy)
+    }
+    
+    private var progressColor: Color {
+        accuracy >= 70 ? Color.green : Color.red
+    }
+    
     var body: some View {
         VStack(spacing: 4) {
             // Circular progress indicator
@@ -28,7 +37,7 @@ struct WordCardView: View {
                 Circle()
                     .trim(from: 0, to: accuracy/100)
                     .stroke(
-                        accuracy >= 70 ? Color.green : Color.red,
+                        progressColor,
                         lineWidth: 5
                     )
                     .frame(width: 100, height: 100)
@@ -42,7 +51,7 @@ struct WordCardView: View {
                 Text("Accuracy")
                     .font(.system(size: 14))
                     .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
-                Text("\(String(format: "%.1f", accuracy))%")
+                Text("\(formattedAccuracy)%")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(Color(red: 83/255, green: 88/255, blue: 95/255))
             }

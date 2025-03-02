@@ -156,6 +156,10 @@ class SupabaseDataController {
             self.currentPhoneNumber = phoneNumber
             self.isFirstTimeUser = false
             
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = user.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            
             // Ensure user data exists
             try await initializeUserData(userId: user.id)
             return try await getUser(byId: user.id)
@@ -773,8 +777,22 @@ class SupabaseDataController {
         }
     }
     
-    // Update sign out method
+    // Add method to restore session
+    public func restoreSession(userId: UUID) {
+        self.currentUserId = userId
+        
+        // Try to get the phone number from UserDefaults if needed
+        // This is optional since we mainly use the userId now
+        if let phone = UserDefaults.standard.string(forKey: "lastPhoneNumber") {
+            self.currentPhoneNumber = phone
+        }
+        
+        self.isFirstTimeUser = false
+    }
+    
+    // Update sign out method to clear UserDefaults
     public func signOut() {
+        UserDefaults.standard.clearSession()
         currentUserId = nil
         currentPhoneNumber = nil
         currentUser = nil

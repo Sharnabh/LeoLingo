@@ -762,7 +762,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="PnE-4d-SqQ">
             <objects>
-                <tabBarController storyboardIdentifier="parentModeTabBar" automaticallyAdjustsScrollViewInsets="NO" id="HAu-s5-gJ1" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="parentModeTabBar" automaticallyAdjustsScrollViewInsets="NO" id="HAu-s5-gJ1" customClass="ParentModeTabBarController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YRU-f9-p7Z">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>

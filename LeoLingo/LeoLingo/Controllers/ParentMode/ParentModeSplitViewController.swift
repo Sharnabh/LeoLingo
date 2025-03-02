@@ -39,6 +39,13 @@ class ParentModeSplitViewController: UISplitViewController {
         // Get the main tab bar controller from storyboard
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let tabBarController = storyboard.instantiateViewController(withIdentifier: "parentModeTabBar") as? UITabBarController {
+            // Wrap each view controller in a navigation controller
+            tabBarController.viewControllers = tabBarController.viewControllers?.map { viewController in
+                let navigationController = UINavigationController(rootViewController: viewController)
+                navigationController.navigationBar.prefersLargeTitles = true
+                navigationController.tabBarItem = viewController.tabBarItem
+                return navigationController
+            }
             return tabBarController
         }
         return UIViewController() // Fallback empty controller

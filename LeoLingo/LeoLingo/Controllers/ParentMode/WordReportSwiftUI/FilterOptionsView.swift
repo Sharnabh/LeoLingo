@@ -12,22 +12,35 @@ struct FilterOptionsView: View {
     @State private var selectedSuccessRate: ClosedRange<Double> = 0...1
     @Binding var selectedWord: Word?
     @Binding var shouldReloadProgress: Bool
-    @State private var isLoading = false
+    @Binding var isLoading: Bool
+    @State private var cachedWords: [WordInfo] = []
     
     private let dataController = SupabaseDataController.shared
     
     // MARK: - Data Processing
     
-    private struct WordInfo {
+    private struct WordInfo: Hashable {
         let level: Level
         let word: Word
         let appWord: AppWord
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(word.id)
+        }
+        
+        static func == (lhs: WordInfo, rhs: WordInfo) -> Bool {
+            return lhs.word.id == rhs.word.id
+        }
     }
     
-    private struct ProcessedWord {
+    private struct ProcessedWord: Hashable {
         let title: String
         let accuracy: Double
         let attempts: Int
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+        }
     }
     
     private func mapWordToInfo(_ level: Level, _ word: Word) -> WordInfo? {
@@ -44,22 +57,15 @@ struct FilterOptionsView: View {
     }
     
     private var allWords: [WordInfo] {
+        if !cachedWords.isEmpty {
+            return cachedWords
+        }
+        
         let userLevels = dataController.getAllLevels()
         let words = userLevels.flatMap { level in
             getWordsForLevel(level)
         }
-        print("DEBUG: Found \(words.count) words")
-        for word in words {
-            if let record = word.word.record {
-                print("DEBUG: Word: \(word.appWord.wordTitle)")
-                print("  - Accuracy array: \(String(describing: record.accuracy))")
-                print("  - Attempts: \(record.attempts)")
-                print("  - Average accuracy: \(word.word.avgAccuracy)")
-                print("  - Is practiced: \(word.word.isPracticed)")
-            } else {
-                print("DEBUG: Word: \(word.appWord.wordTitle) has no record")
-            }
-        }
+        cachedWords = words
         return words
     }
     
@@ -196,6 +202,7 @@ struct FilterOptionsView: View {
                 isLoading = true
                 do {
                     _ = try await dataController.getUser(byPhone: phoneNumber)
+                    cachedWords = []  // Clear cache to force refresh
                     shouldReloadProgress.toggle()
                 } catch {
                     print("Error loading user data: \(error)")
@@ -256,5 +263,5 @@ struct LevelButton: View {
     }
 }
 #Preview {
-    FilterOptionsView(selectedWord: .constant(nil), shouldReloadProgress: .constant(false))
+    FilterOptionsView(selectedWord: .constant(nil), shouldReloadProgress: .constant(false), isLoading: .constant(false))
 }

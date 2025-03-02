@@ -20,15 +20,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         
-        // Check if user is logged in
-        if UserDefaults.standard.isUserLoggedIn {
+        // Check if user is logged in and we have their ID
+        if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
+            // Set the user ID in SupabaseDataController
+            SupabaseDataController.shared.restoreSession(userId: userId)
+            
             // User is logged in, go to HomePage
             let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
             if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-                window.rootViewController = homePageVC
+                // Create a navigation controller with the home page
+                let navigationController = UINavigationController(rootViewController: homePageVC)
+                navigationController.setNavigationBarHidden(true, animated: false)
+                window.rootViewController = navigationController
+                
+                // Load user data
+                Task {
+                    do {
+                        _ = try await SupabaseDataController.shared.getUser(byId: userId)
+                        // Data is now loaded and cached in SupabaseDataController
+                    } catch {
+                        print("Error loading user data: \(error)")
+                        // Handle error - maybe show an alert or redirect to login
+                        UserDefaults.standard.clearSession()
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
+                            window.rootViewController = loginVC
+                        }
+                    }
+                }
             }
         } else {
-            // User is not logged in, show login page
+            // User is not logged in or we don't have their ID, show login page
+            UserDefaults.standard.clearSession() // Clear any partial session data
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
                 window.rootViewController = loginVC

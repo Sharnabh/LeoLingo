@@ -10,6 +10,8 @@ import UIKit
 class LogInViewController: UIViewController {
 
     @IBOutlet var logInCollectionView: UICollectionView!
+    private var loadingView: UIView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -26,12 +28,51 @@ class LogInViewController: UIViewController {
         logInCollectionView.setCollectionViewLayout(setupLayoutCollectionViewLayout(), animated: true)
         
         self.navigationItem.hidesBackButton = true
-        
     }
-
-
+    
+    private func showLoading() {
+        // Create container view
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        containerView.center = view.center
+        
+        // Add blur effect
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = containerView.bounds
+        blurView.layer.cornerRadius = 10
+        blurView.clipsToBounds = true
+        containerView.addSubview(blurView)
+        
+        // Create activity indicator
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.color = .gray
+        activityIndicator.center = CGPoint(x: containerView.bounds.width/2, y: containerView.bounds.height/2)
+        activityIndicator.startAnimating()
+        
+        // Add activity indicator to blur view's content view
+        blurView.contentView.addSubview(activityIndicator)
+        
+        // Add dim background
+        let dimView = UIView(frame: view.bounds)
+        dimView.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        view.addSubview(dimView)
+        
+        // Add container view
+        view.addSubview(containerView)
+        
+        // Store both views for removal
+        let containerWithBackground = UIView(frame: view.bounds)
+        containerWithBackground.addSubview(dimView)
+        containerWithBackground.addSubview(containerView)
+        view.addSubview(containerWithBackground)
+        self.loadingView = containerWithBackground
+    }
+    
+    private func hideLoading() {
+        loadingView?.removeFromSuperview()
+        loadingView = nil
+    }
 }
-
 
 extension LogInViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -95,16 +136,19 @@ extension LogInViewController: LogInCellDelegate {
     }
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
+        showLoading()
         Task {
             do {
                 let users = try await SupabaseDataController.shared.getAllUsers()
                 let exists = users.contains { $0.phone_number == phone }
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
                     completion(exists)
                 }
             } catch {
                 print("Error checking user: \(error.localizedDescription)")
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
                     completion(false)
                 }
             }
@@ -112,16 +156,19 @@ extension LogInViewController: LogInCellDelegate {
     }
     
     func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void) {
+        showLoading()
         Task {
             do {
                 // Use the existing signIn method which handles validation
                 let userData = try await SupabaseDataController.shared.signIn(phoneNumber: phone, password: password)
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
                     completion(true)
                 }
             } catch {
                 print("Login failed: \(error.localizedDescription)")
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
                     completion(false)
                 }
             }

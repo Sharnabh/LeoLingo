@@ -12,7 +12,6 @@ import WebKit
 
 class DashboardViewController: UIViewController {
     
-    private let levels: [Level] = DataController.shared.getAllLevels()
     private let exercises: [String : Exercise] = SampleDataController.shared.getExercisesData()
     var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()
     
@@ -104,28 +103,99 @@ class DashboardViewController: UIViewController {
             }
         }
         
-        // Calculate average accuracy only for words with records
-        let words = levels.flatMap { $0.words }
-        let wordsWithRecord = words.filter { $0.record != nil }
-        
-        if !wordsWithRecord.isEmpty {
-            let sortedWords = wordsWithRecord.sorted { $0.avgAccuracy < $1.avgAccuracy }
-            minAccuracyWords = Array(sortedWords.prefix(2))
-            
-            let sectionAvgAccuracy = wordsWithRecord.reduce(0.0) { $0 + $1.avgAccuracy } / Double(wordsWithRecord.count)
-            averageAccuracyLabel.text = String(format: "%.1f%%", sectionAvgAccuracy)
-        } else {
-            averageAccuracyLabel.text = "0.0%"
-        }
+        loadInaccurateWords()
         
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UINib(nibName: "WordReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "WordCell")
         
         configureFlowLayout()
-        updateExerciseForWords()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Refresh data when view appears
+        loadInaccurateWords()
+    }
+    
+    private func loadInaccurateWords() {
+        Task {
+            do {
+                if let userId = SupabaseDataController.shared.userId {
+                    print("DEBUG: Loading practices for user ID: \(userId)")
+                    // Fetch latest user data from Supabase using ID
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    let words = userData.userLevels.flatMap { $0.words }
+                    print("DEBUG: Total words loaded: \(words.count)")
+                    
+                    // Filter words that have been practiced
+                    let practicedWords = words.filter { word in
+                        print("DEBUG: Checking word \(word.id):")
+                        print("  - Is practiced: \(word.isPracticed)")
+                        print("  - Has record: \(word.record != nil)")
+                        print("  - Attempts: \(word.record?.attempts ?? 0)")
+                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
+                        return word.isPracticed
+                    }
+                    
+                    print("DEBUG: Found \(practicedWords.count) practiced words")
+                    
+                    if practicedWords.isEmpty {
+                        print("DEBUG: No practiced words found")
+                    } else {
+                        print("DEBUG: Practiced words details:")
+                        for word in practicedWords {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                                print("    Attempts: \(word.record?.attempts ?? 0)")
+                                print("    Practiced: \(word.isPracticed)")
+                                print("    Record exists: \(word.record != nil)")
+                            }
+                        }
+                    }
+                    
+                    // Sort by accuracy (lowest first) and take the first 2 practiced words
+                    minAccuracyWords = practicedWords
+                        .sorted { $0.avgAccuracy < $1.avgAccuracy }
+                        .prefix(2)
+                        .map { $0 }
+                    
+                    print("DEBUG: Selected \(minAccuracyWords?.count ?? 0) words for display")
+                    if let selected = minAccuracyWords {
+                        for word in selected {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Selected word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                            }
+                        }
+                    }
+                    
+                    // Calculate average accuracy
+                    if !practicedWords.isEmpty {
+                        let avgAccuracy = practicedWords.reduce(0.0) { $0 + $1.avgAccuracy } / Double(practicedWords.count)
+                        DispatchQueue.main.async {
+                            self.averageAccuracyLabel.text = String(format: "%.1f%%", avgAccuracy)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.averageAccuracyLabel.text = "0.0%"
+                        }
+                    }
+                    
+                    // Reload collection view and update exercises on main thread
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                        self.updateExerciseForWords()
+                    }
+                } else {
+                    print("DEBUG: No user ID found")
+                }
+            } catch {
+                print("DEBUG: Error loading practices: \(error)")
+            }
+        }
+    }
     
     func updateView() {
         levelView.layer.cornerRadius = 21

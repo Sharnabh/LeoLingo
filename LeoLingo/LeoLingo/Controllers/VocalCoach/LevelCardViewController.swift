@@ -600,7 +600,11 @@ class LevelCardViewController: UIViewController {
     private func refreshData() {
         Task {
             do {
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                guard let userId = SupabaseDataController.shared.userId else {
+                    print("No user logged in")
+                    return
+                }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 // Keep original level order but only include unpracticed words
                 self.levels = userData.userLevels.map { level in
                     var filteredLevel = level

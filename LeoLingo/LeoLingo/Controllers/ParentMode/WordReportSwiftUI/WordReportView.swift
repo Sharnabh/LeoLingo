@@ -66,46 +66,64 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
 struct WordReportView: View {
     @State private var selectedWord: Word? = nil
     @State private var shouldReloadProgress: Bool = false
+    @State private var isLoading = false
+    @State private var rotation: Double = 0
     private let dataController = SupabaseDataController.shared
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 0) {
-                // Left section with filter and word cards
-                VStack {
-                    FilterOptionsView(
-                        selectedWord: $selectedWord,
-                        shouldReloadProgress: $shouldReloadProgress
-                    )
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(red: 143/255, green: 91/255, blue: 66/255))
-                
-                Divider()
-                    .frame(width: 1)
+        ZStack {
+            VStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
+                    // Left section with filter and word cards
+                    VStack {
+                        FilterOptionsView(
+                            selectedWord: $selectedWord,
+                            shouldReloadProgress: $shouldReloadProgress,
+                            isLoading: $isLoading
+                        )
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(red: 143/255, green: 91/255, blue: 66/255))
-                    .shadow(color: .black.opacity(0.4), radius: 2, x: 4)
-
-                
-                // Right section with progress details
-                
+                    
+                    Divider()
+                        .frame(width: 1)
+                        .background(Color(red: 143/255, green: 91/255, blue: 66/255))
+                        .shadow(color: .black.opacity(0.4), radius: 2, x: 4)
+                    
+                    // Right section with progress details
                     ProgressDetailSection(
                         selectedWord: selectedWord,
                         shouldReloadProgress: shouldReloadProgress
-                        
                     )
-                
+                }
+            }
+            
+            if isLoading {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                Circle()
+                    .trim(from: 0.2, to: 0.9)
+                    .stroke(Color.white, lineWidth: 2)
+                    .frame(width: 40, height: 40)
+                    .rotationEffect(Angle(degrees: rotation))
+                    .onAppear {
+                        withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
+                            rotation = 360
+                        }
+                    }
             }
         }
         .background(Color(UIColor.white))
         .task {
             // Load user data when view appears
             if let phoneNumber = dataController.phoneNumber {
+                isLoading = true
                 do {
                     _ = try await dataController.getUser(byPhone: phoneNumber)
                 } catch {
                     print("Error loading user data: \(error)")
                 }
+                isLoading = false
             }
         }
     }

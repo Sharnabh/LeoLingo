@@ -170,15 +170,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             return cell
         }
-        let cell = recentPracticesCollectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+        let cell = recentPracticesCollectionView.dequeueReusableCell(withReuseIdentifier: RecentPracticesCollectionViewCell.identifier, for: indexPath) as! RecentPracticesCollectionViewCell
         
         guard let words = sortedWords else { return cell }
         let word = words[indexPath.item]
         cell.updateLabel(with: word)
-        cell.accuracyLabel.isHidden = false
-        cell.attemptsLabel.isHidden = false
-        cell.accuracy.isHidden = false
-        cell.attempts.isHidden = false
         
         return cell
     }
@@ -200,7 +196,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         practicesLayout = UICollectionViewFlowLayout()
         if let layout = practicesLayout {
-            layout.itemSize = CGSize(width: 126, height: 126)
+            layout.itemSize = CGSize(width: 90, height: 90)
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             layout.scrollDirection = .horizontal
             layout.minimumLineSpacing = 10
@@ -211,8 +207,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             recentPracticesCollectionView.dataSource = self
             recentPracticesCollectionView.layer.cornerRadius = 21
             
-            let nib = UINib(nibName: "WordReportCollectionViewCell", bundle: nil)
-            recentPracticesCollectionView.register(nib, forCellWithReuseIdentifier: WordReportCollectionViewCell.identifier)
+            let nib = UINib(nibName: "RecentPracticesCollectionViewCell", bundle: nil)
+            recentPracticesCollectionView.register(nib, forCellWithReuseIdentifier: RecentPracticesCollectionViewCell.identifier)
         }
     }
     
@@ -304,22 +300,65 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     private func loadRecentPractices() {
         Task {
             do {
-                if let phoneNumber = SupabaseDataController.shared.phoneNumber {
-                    // Fetch latest user data from Supabase
-                    let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                if let userId = SupabaseDataController.shared.userId {
+                    print("DEBUG: Loading practices for user ID: \(userId)")
+                    // Fetch latest user data from Supabase using ID
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     let words = userData.userLevels.flatMap { $0.words }
-                    // Filter words that have been practiced and have records
-                    let practicedWords = words.filter { $0.record != nil && $0.isPracticed }
-                    // Take only the last 2 practiced words
-                    sortedWords = Array(practicedWords.reversed().prefix(2))
+                    print("DEBUG: Total words loaded: \(words.count)")
+                    
+                    // Filter words that have been practiced
+                    let practicedWords = words.filter { word in
+                        print("DEBUG: Checking word \(word.id):")
+                        print("  - Is practiced: \(word.isPracticed)")
+                        print("  - Has record: \(word.record != nil)")
+                        print("  - Attempts: \(word.record?.attempts ?? 0)")
+                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
+                        return word.isPracticed
+                    }
+                    
+                    print("DEBUG: Found \(practicedWords.count) practiced words")
+                    
+                    if practicedWords.isEmpty {
+                        print("DEBUG: No practiced words found")
+                    } else {
+                        print("DEBUG: Practiced words details:")
+                        for word in practicedWords {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                                print("    Attempts: \(word.record?.attempts ?? 0)")
+                                print("    Practiced: \(word.isPracticed)")
+                                print("    Record exists: \(word.record != nil)")
+                            }
+                        }
+                    }
+                    
+                    // Sort by accuracy (highest first) and take only the last 2 practiced words
+                    sortedWords = practicedWords
+                        .sorted { $0.avgAccuracy > $1.avgAccuracy }
+                        .prefix(2)
+                        .map { $0 }
+                    
+                    print("DEBUG: Selected \(sortedWords?.count ?? 0) words for display")
+                    if let selected = sortedWords {
+                        for word in selected {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Selected word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                            }
+                        }
+                    }
                     
                     // Reload collection view on main thread
                     DispatchQueue.main.async {
                         self.recentPracticesCollectionView.reloadData()
                     }
+                } else {
+                    print("DEBUG: No user ID found")
                 }
             } catch {
-                print("Error loading recent practices: \(error)")
+                print("DEBUG: Error loading recent practices: \(error)")
             }
         }
     }

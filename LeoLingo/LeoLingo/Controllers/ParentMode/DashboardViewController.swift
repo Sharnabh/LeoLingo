@@ -82,10 +82,14 @@ class DashboardViewController: UIViewController {
         exerciseForW1.layer.cornerRadius = 8
         exerciseForW1.clipsToBounds = true
         
+        let height = CGFloat(mojoSuggestion.frame.height)
+        exerciseForW1.heightAnchor.constraint(equalToConstant: height/6).isActive = true
+        
         exerciseForW2.layer.borderWidth = 1
         exerciseForW2.layer.borderColor = UIColor.lightGray.cgColor
         exerciseForW2.layer.cornerRadius = 8
         exerciseForW2.clipsToBounds = true
+        exerciseForW2.heightAnchor.constraint(equalToConstant: height/6).isActive = true
         
         // Add safety checks for badges
         if !earnedBadges.isEmpty {

@@ -86,6 +86,7 @@ struct Card {
     var id: UUID = UUID()
     var words: [AppWord]
 }
+
 struct LevelCard {
     var id: UUID = UUID()
     var levelTitle: String
@@ -199,6 +200,30 @@ struct AppWord {
         self.wordImage = wordImage
     }
 }
+
+// Category
+struct AppCategory {
+    var id: UUID = UUID()
+    var categoryTitle: String
+    var categoryImage: String
+    var words: [AppWord]
+}
+
+struct CategoryCard {
+    var id: UUID = UUID()
+    var categoryTitle: String
+    var categoryCardImage: String
+    var words: [AppWord]
+    
+    // Custom initializer that takes both AppLevel and a custom image
+    init(from appCategory: AppCategory, categoryCardImage: String) {
+        self.categoryTitle = appCategory.categoryTitle
+        self.categoryCardImage = categoryCardImage // Uses the provided image
+        self.words = appCategory.words
+    }
+}
+
+
 
 struct AppBadge {
     var id: UUID = UUID()

@@ -14,6 +14,8 @@ class SampleDataController {
     private var cards: [AppCard] = []
     private var levelCards : [LevelCard] = []
     private var exercises: [String: Exercise] = [:]
+    private var categories: [AppCategory] = []
+    private var categoryCards : [CategoryCard] = []
     
     static var shared = SampleDataController()
     
@@ -111,6 +113,24 @@ class SampleDataController {
                 createWord(title: "Soup", image: "soup"),
                 createWord(title: "Swan", image: "swan")
             ])
+        ]
+        categories = [
+            AppCategory(categoryTitle: "Body Parts", categoryImage: "BodyParts", words: [
+                AppWord(wordTitle: "Eye", wordImage: "eye"),
+                AppWord(wordTitle: "Hand", wordImage: "hand"),
+                AppWord(wordTitle: "Palm", wordImage: "palm"),
+                AppWord(wordTitle: "Nose", wordImage: "nose"),
+                AppWord(wordTitle: "Lips", wordImage: "lips"),
+                AppWord(wordTitle: "Ear", wordImage: "ear")
+                ]),
+            AppCategory(categoryTitle: "Fruits", categoryImage: "Fruits", words: [
+                AppWord(wordTitle: "Apple", wordImage: "apple"),
+                AppWord(wordTitle: "Banana", wordImage: "banana"),
+                AppWord(wordTitle: "Palm", wordImage: "palm"),
+                AppWord(wordTitle: "Nose", wordImage: "nose"),
+                AppWord(wordTitle: "Lips", wordImage: "lips"),
+                AppWord(wordTitle: "Ear", wordImage: "ear")
+                ]),
         ]
         badges = [
             AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee"),
@@ -244,10 +264,20 @@ class SampleDataController {
        
         levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
         
+        let categoryCardImages = ["BodyParts","Fruits","Vegitables","Animals","Colors","Shapes","Numbers","Letters","Actions"]
+        
+        categoryCards = zip(categories, categoryCardImages).map { CategoryCard(from: $0.0, categoryCardImage: $0.1) }
     }
     
     func getLevelsData() -> [AppLevel] {
         return levels
+    }
+    
+    func getCategoriesData() -> [AppCategory] {
+        return categories
+    }
+    func countCategories() -> Int {
+        return categories.count
     }
     
     func getBadgesData() -> [AppBadge] {
@@ -278,5 +308,11 @@ class SampleDataController {
     }
     func countLevelCards() -> Int {
         return levelCards.count
+    }
+    func getCategoryCards() -> [CategoryCard] {
+        return categoryCards
+    }
+    func countCategoryCards() -> Int {
+        return categoryCards.count
     }
 }

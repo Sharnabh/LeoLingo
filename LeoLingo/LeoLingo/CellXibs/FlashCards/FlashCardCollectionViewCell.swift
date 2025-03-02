@@ -45,6 +45,8 @@ class FlashCardCollectionViewCell: UICollectionViewCell {
         
         let colorIndex = wordIndex % colors.count
         flashCardCell.backgroundColor = colors[colorIndex]
+        
+        
     }
 
 

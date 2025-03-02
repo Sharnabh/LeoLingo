@@ -60,10 +60,7 @@ extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDat
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = true
         cell.contentView.isUserInteractionEnabled = true
-        cell.layer.shadowColor = UIColor.black.cgColor
-        cell.layer.shadowOpacity = 0.5
-        cell.layer.shadowOffset = CGSize(width: 2, height: 2)
-        cell.layer.shadowRadius = 4
+        
 
         if let selectedIndex = selectedIndex {
             cell.configureCell(categoryIndex: selectedIndex, wordIndex: indexPath.item)

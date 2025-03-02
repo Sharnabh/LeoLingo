@@ -31,11 +31,11 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pyh-kC-0wB">
-                        <rect key="frame" x="296" y="15" width="51" height="34"/>
+                        <rect key="frame" x="300" y="24" width="34" height="34"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <state key="normal" title="Button"/>
-                        <buttonConfiguration key="configuration" style="plain" image="cube.transparent" catalog="system">
-                            <color key="baseForegroundColor" red="0.22295051207079092" green="0.35202296093256791" blue="0.14011781910496815" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <buttonConfiguration key="configuration" style="filled" image="cube.transparent" catalog="system">
+                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </buttonConfiguration>
                     </button>
                 </subviews>

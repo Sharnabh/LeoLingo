@@ -83,6 +83,8 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
         let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
         if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
          
+            flashCardVC.selectedIndex = indexPath.item
+            
             if let navigationController = self.navigationController {
                 navigationController.pushViewController(flashCardVC, animated: true)
             } else {

@@ -24,17 +24,19 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9bV-mG-gRZ">
-                        <rect key="frame" x="132" y="420" width="87" height="42"/>
+                        <rect key="frame" x="0.0" y="420" width="347" height="42"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="35"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pyh-kC-0wB">
-                        <rect key="frame" x="293" y="15" width="57" height="34"/>
+                        <rect key="frame" x="296" y="15" width="51" height="34"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <state key="normal" title="Button"/>
-                        <buttonConfiguration key="configuration" style="plain" image="eye" catalog="system"/>
+                        <buttonConfiguration key="configuration" style="plain" image="cube.transparent" catalog="system">
+                            <color key="baseForegroundColor" red="0.22295051207079092" green="0.35202296093256791" blue="0.14011781910496815" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        </buttonConfiguration>
                     </button>
                 </subviews>
                 <constraints>
@@ -50,10 +52,10 @@
                 <outlet property="imageView" destination="xlG-ik-vFs" id="FBQ-CO-02D"/>
                 <outlet property="title" destination="9bV-mG-gRZ" id="fFL-vN-2Z0"/>
             </connections>
-            <point key="canvasLocation" x="50" y="12"/>
+            <point key="canvasLocation" x="49.756097560975611" y="11.694915254237289"/>
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="eye" catalog="system" width="128" height="79"/>
+        <image name="cube.transparent" catalog="system" width="125" height="128"/>
     </resources>
 </document>

@@ -45,9 +45,22 @@ struct FilterOptionsView: View {
     
     private var allWords: [WordInfo] {
         let userLevels = dataController.getAllLevels()
-        return userLevels.flatMap { level in
+        let words = userLevels.flatMap { level in
             getWordsForLevel(level)
         }
+        print("DEBUG: Found \(words.count) words")
+        for word in words {
+            if let record = word.word.record {
+                print("DEBUG: Word: \(word.appWord.wordTitle)")
+                print("  - Accuracy array: \(String(describing: record.accuracy))")
+                print("  - Attempts: \(record.attempts)")
+                print("  - Average accuracy: \(word.word.avgAccuracy)")
+                print("  - Is practiced: \(word.word.isPracticed)")
+            } else {
+                print("DEBUG: Word: \(word.appWord.wordTitle) has no record")
+            }
+        }
+        return words
     }
     
     private func processWord(_ info: WordInfo) -> ProcessedWord {

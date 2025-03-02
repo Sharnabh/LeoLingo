@@ -76,7 +76,7 @@ extension SignUpViewController: SignUpCellDelegate {
     }
     
     func switchToLoginVC() {
-        navigationController?.popViewController(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {

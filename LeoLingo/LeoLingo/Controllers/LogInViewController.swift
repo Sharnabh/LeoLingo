@@ -82,7 +82,15 @@ extension LogInViewController: LogInCellDelegate {
     func switchToSignUpVC() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let signUpVC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController") as? SignUpViewController {
-            navigationController?.pushViewController(signUpVC, animated: true)
+            // Ensure we have a navigation controller
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(signUpVC, animated: true)
+            } else {
+                // If no navigation controller, create one and set it as root
+                let navController = UINavigationController(rootViewController: signUpVC)
+                navController.modalPresentationStyle = .fullScreen
+                present(navController, animated: true)
+            }
         }
     }
     

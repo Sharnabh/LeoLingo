@@ -44,14 +44,15 @@ struct Word {
     var avgAccuracy: Double {
         guard let record = record,
               self.record != nil,
-              record.attempts != 0,
-              let accuracies = record.accuracy else { return 0.0 }
+              let accuracies = record.accuracy,
+              !accuracies.isEmpty else { return 0.0 }
         
         // Cap individual accuracies at 100%
         let cappedAccuracies = accuracies.map { min(100.0, max(0.0, $0)) }
-        let accuracy = cappedAccuracies.reduce(0.0, +) / Double(record.attempts)
+        let total = cappedAccuracies.reduce(0.0, +)
+        let average = total / Double(accuracies.count)
         
-        return (accuracy * 10).rounded() / 10
+        return (average * 10).rounded() / 10
     }
     
     var isPassed: Bool {
@@ -116,10 +117,87 @@ struct AppLevel {
     var words: [AppWord]
 }
 
+class WordIDManager {
+    static let shared = WordIDManager()
+    private let plistName = "WordIDs.plist"
+    private var wordIDs: [String: String] = [:] // [wordTitle: uuidString]
+    
+    private init() {
+        loadWordIDs()
+        printCurrentMappings()
+    }
+    
+    private var plistURL: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(plistName)
+    }
+    
+    private func loadWordIDs() {
+        guard let url = plistURL,
+              let data = try? Data(contentsOf: url),
+              let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String] else {
+            print("DEBUG: No existing word ID mappings found or failed to load")
+            return
+        }
+        wordIDs = dict
+        print("DEBUG: Loaded \(dict.count) word ID mappings from plist")
+    }
+    
+    private func saveWordIDs() {
+        guard let url = plistURL,
+              let data = try? PropertyListSerialization.data(fromPropertyList: wordIDs, format: .xml, options: 0) else {
+            print("DEBUG: Failed to save word ID mappings")
+            return
+        }
+        try? data.write(to: url)
+        print("DEBUG: Saved \(wordIDs.count) word ID mappings to plist")
+    }
+    
+    func getID(for wordTitle: String) -> UUID {
+        let cleanTitle = wordTitle.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        if let existingIDString = wordIDs[cleanTitle],
+           let existingID = UUID(uuidString: existingIDString) {
+            print("DEBUG: Found existing ID for word '\(cleanTitle)': \(existingID)")
+            return existingID
+        }
+        
+        let newID = UUID()
+        wordIDs[cleanTitle] = newID.uuidString
+        print("DEBUG: Generated new ID for word '\(cleanTitle)': \(newID)")
+        saveWordIDs()
+        return newID
+    }
+    
+    func printCurrentMappings() {
+        print("DEBUG: Current word ID mappings:")
+        for (word, id) in wordIDs {
+            print("  \(word): \(id)")
+        }
+    }
+    
+    func getAllMappings() -> [String: UUID] {
+        var mappings: [String: UUID] = [:]
+        for (word, idString) in wordIDs {
+            if let uuid = UUID(uuidString: idString) {
+                mappings[word] = uuid
+            }
+        }
+        return mappings
+    }
+}
+
 struct AppWord {
-    var id: UUID = UUID()
+    var id: UUID
     var wordTitle: String
     var wordImage: String
+    
+    init(wordTitle: String, wordImage: String) {
+        self.id = WordIDManager.shared.getID(for: wordTitle)
+        self.wordTitle = wordTitle
+        self.wordImage = wordImage
+    }
 }
 
 struct AppBadge {

@@ -54,6 +54,7 @@
                             <constraint firstItem="cee-6c-Sgc" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="yVT-BJ-4Si"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Jwb-0t-PVn"/>
                     <connections>
                         <outlet property="signUpCollectionView" destination="hzj-Up-NnC" id="o7O-kL-hkD"/>
                     </connections>
@@ -65,7 +66,7 @@
         <!--Log In View Controller-->
         <scene sceneID="hVp-PR-TXh">
             <objects>
-                <viewController id="tTY-aK-vk7" customClass="LogInViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="tTY-aK-vk7" customClass="LogInViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="m1U-xL-amb">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -110,6 +111,7 @@
                     <navigationItem key="navigationItem" id="ZWK-Lh-aWQ"/>
                     <connections>
                         <outlet property="logInCollectionView" destination="1Dv-zG-HmB" id="ZQc-QT-22e"/>
+                        <segue destination="BYZ-38-t0r" kind="show" id="NmE-Nm-bDF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ywb-eV-zgh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

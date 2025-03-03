@@ -672,6 +672,7 @@ class SupabaseDataController {
         public let phone_number: String
         public let password: String
         public let passcode: String?
+        public let child_name: String?
         
         public init(name: String, phone_number: String, password: String) {
             self.id = UUID()
@@ -679,6 +680,7 @@ class SupabaseDataController {
             self.phone_number = phone_number
             self.password = password
             self.passcode = nil
+            self.child_name = nil
         }
     }
     
@@ -797,6 +799,19 @@ class SupabaseDataController {
         currentPhoneNumber = nil
         currentUser = nil
         isFirstTimeUser = false
+    }
+    
+    // Add method to update child's name
+    public func updateChildName(userId: UUID, childName: String) async throws {
+        do {
+            try await supabase
+                .from("users")
+                .update(["child_name": childName])
+                .eq("id", value: userId)
+                .execute()
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
     }
 }
 

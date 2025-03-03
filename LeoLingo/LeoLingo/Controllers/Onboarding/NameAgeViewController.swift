@@ -48,6 +48,17 @@ class NameAgeViewController: UIViewController {
         let age = ageList[agePickerView.selectedRow(inComponent: 0)]
         print("\(name) - \(age)\n")
         
+        // Update the child's name in the database
+        Task {
+            do {
+                if let userId = UUID(uuidString: UserDefaults.standard.userId ?? "") {
+                    try await SupabaseDataController.shared.updateChildName(userId: userId, childName: name)
+                }
+            } catch {
+                print("Error updating child name: \(error)")
+            }
+        }
+        
         // Try getting the parent through the navigation hierarchy
         if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
             questionnaireVC.moveToNextStep()

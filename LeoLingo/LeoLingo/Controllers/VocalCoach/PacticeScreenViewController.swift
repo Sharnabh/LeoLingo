@@ -73,11 +73,17 @@ class PracticeScreenViewController: UIViewController {
         
         // Clear any persisted data
         clearUserDefaults()
+        directionLabel.adjustsFontSizeToFitWidth = true
         
         // Load levels from Supabase
         Task {
             do {
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                guard let userId = SupabaseDataController.shared.userId else {
+                    print("No user ID found")
+                    return
+                }
+                
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 // Keep all words, including practiced ones
                 self.levels = userData.userLevels
                 
@@ -808,9 +814,9 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func clearUserDefaults() {
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-            UserDefaults.standard.synchronize()
-        }
+        // Only clear app-specific data, not user session
+        UserDefaults.standard.removeObject(forKey: "LastPracticedWord")
+        UserDefaults.standard.removeObject(forKey: "LastPracticedLevel")
+        UserDefaults.standard.synchronize()
     }
 }

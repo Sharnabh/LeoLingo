@@ -77,7 +77,11 @@ class PracticeScreenViewController: UIViewController {
         // Load levels from Supabase
         Task {
             do {
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                guard let userId = SupabaseDataController.shared.userId else {
+                    print("No user ID found")
+                    return
+                }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 // Keep all words, including practiced ones
                 self.levels = userData.userLevels
                 

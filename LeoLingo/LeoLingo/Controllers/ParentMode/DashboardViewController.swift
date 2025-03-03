@@ -122,37 +122,13 @@ class DashboardViewController: UIViewController {
         Task {
             do {
                 if let userId = SupabaseDataController.shared.userId {
-                    print("DEBUG: Loading practices for user ID: \(userId)")
                     // Fetch latest user data from Supabase using ID
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     let words = userData.userLevels.flatMap { $0.words }
-                    print("DEBUG: Total words loaded: \(words.count)")
                     
-                    // Filter words that have been practiced
+                    // Filter words that have been practiced and have accuracy <= 70%
                     let practicedWords = words.filter { word in
-                        print("DEBUG: Checking word \(word.id):")
-                        print("  - Is practiced: \(word.isPracticed)")
-                        print("  - Has record: \(word.record != nil)")
-                        print("  - Attempts: \(word.record?.attempts ?? 0)")
-                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
-                        return word.isPracticed
-                    }
-                    
-                    print("DEBUG: Found \(practicedWords.count) practiced words")
-                    
-                    if practicedWords.isEmpty {
-                        print("DEBUG: No practiced words found")
-                    } else {
-                        print("DEBUG: Practiced words details:")
-                        for word in practicedWords {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                                print("    Attempts: \(word.record?.attempts ?? 0)")
-                                print("    Practiced: \(word.isPracticed)")
-                                print("    Record exists: \(word.record != nil)")
-                            }
-                        }
+                        return word.isPracticed && word.avgAccuracy <= 70.0
                     }
                     
                     // Sort by accuracy (lowest first) and take the first 2 practiced words
@@ -160,16 +136,6 @@ class DashboardViewController: UIViewController {
                         .sorted { $0.avgAccuracy < $1.avgAccuracy }
                         .prefix(2)
                         .map { $0 }
-                    
-                    print("DEBUG: Selected \(minAccuracyWords?.count ?? 0) words for display")
-                    if let selected = minAccuracyWords {
-                        for word in selected {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Selected word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                            }
-                        }
-                    }
                     
                     // Calculate average accuracy
                     if !practicedWords.isEmpty {

@@ -15,7 +15,6 @@ class FlashCardViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Welcome to Flashcards")
 
         setupCollectionViewLayout()
         

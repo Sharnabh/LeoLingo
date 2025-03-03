@@ -104,7 +104,6 @@ class SetPasscodeViewController: UIViewController {
             // Remove last digit and clear last filled circle
             if !myPasscode.isEmpty {
                 myPasscode.removeLast()
-                print(myPasscode)
                 updateCircleViews()
                 navigationItem.rightBarButtonItem?.isEnabled = false // Disable when deleting
             }
@@ -112,7 +111,6 @@ class SetPasscodeViewController: UIViewController {
             // Add new digit if we haven't reached the maximum length
             if myPasscode.count < passCodeLength {
                 myPasscode += String(sender.tag)
-                print(myPasscode)
                 updateCircleViews()
                 
                 // Enable the bar button item when passcode length is 4

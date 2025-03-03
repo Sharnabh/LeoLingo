@@ -46,7 +46,6 @@ class DiagnosticCheckViewController: UIViewController {
         yesCheckmarkButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
         noCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
         isDiagnosed = true
-        print(isDiagnosed!)
         
     }
     
@@ -54,18 +53,10 @@ class DiagnosticCheckViewController: UIViewController {
         noCheckmarkButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
         yesCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
         isDiagnosed = false
-        print(isDiagnosed!)
     }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
         if let diagnosed = isDiagnosed {
-            switch diagnosed {
-                
-            case true:
-                print("True")
-            case false:
-                print("False")
-            }
             performSegue(withIdentifier: "SwitchToSelectWord", sender: self)
             if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
                 // Update progress

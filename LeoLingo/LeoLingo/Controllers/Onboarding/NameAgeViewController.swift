@@ -13,9 +13,9 @@ class NameAgeViewController: UIViewController {
     
     @IBOutlet var childNameTextField: UITextField!
     @IBOutlet weak var agePickerView: UIPickerView!
-//    @IBOutlet var nameAgeView: UIView!
     @IBOutlet var nameView: UIView!
     @IBOutlet var ageView: UIView!
+    @IBOutlet var nameTextField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,11 +46,23 @@ class NameAgeViewController: UIViewController {
         }
         
         let age = ageList[agePickerView.selectedRow(inComponent: 0)]
-        print("\(name) - \(age)\n")
         
-        // Try getting the parent through the navigation hierarchy
-        if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
-            questionnaireVC.moveToNextStep()
+        // Save child's name to Supabase
+        Task {
+            do {
+                try await SupabaseDataController.shared.updateChildName(name)
+                // Move to next step after successful update
+                if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
+                    questionnaireVC.moveToNextStep()
+                }
+            } catch {
+                // Show error alert
+                let alert = UIAlertController(title: "Error", 
+                                            message: "Failed to save child's name. Please try again.", 
+                                            preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert, animated: true)
+            }
         }
     }
     

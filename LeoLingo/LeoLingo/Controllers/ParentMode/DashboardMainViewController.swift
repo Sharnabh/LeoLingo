@@ -16,6 +16,8 @@ class DashboardMainViewController: UIViewController {
         dashbaordView.backgroundColor = .none
         dashbaordView.layer.borderColor = .none
         dashbaordView.layer.borderWidth = 0
+        
+        
     }
     
     @IBAction func switchToKidsMode(_ sender: UIButton) {

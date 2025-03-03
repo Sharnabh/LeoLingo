@@ -228,6 +228,7 @@ experience</string>
                         <outlet property="agePickerView" destination="CbD-0G-BnM" id="EYF-he-rkL"/>
                         <outlet property="ageView" destination="Gob-DZ-Zgu" id="Z7a-HO-FL1"/>
                         <outlet property="childNameTextField" destination="4b6-76-EMZ" id="D1y-i2-vzl"/>
+                        <outlet property="nameTextField" destination="4b6-76-EMZ" id="zVZ-cv-2mw"/>
                         <outlet property="nameView" destination="R21-zL-h3s" id="EIA-e0-rpU"/>
                     </connections>
                 </viewController>

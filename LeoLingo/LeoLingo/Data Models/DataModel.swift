@@ -142,7 +142,6 @@ class WordIDManager {
             return
         }
         wordIDs = dict
-        print("DEBUG: Loaded \(dict.count) word ID mappings from plist")
     }
     
     private func saveWordIDs() {
@@ -152,7 +151,6 @@ class WordIDManager {
             return
         }
         try? data.write(to: url)
-        print("DEBUG: Saved \(wordIDs.count) word ID mappings to plist")
     }
     
     func getID(for wordTitle: String) -> UUID {
@@ -160,19 +158,16 @@ class WordIDManager {
         
         if let existingIDString = wordIDs[cleanTitle],
            let existingID = UUID(uuidString: existingIDString) {
-            print("DEBUG: Found existing ID for word '\(cleanTitle)': \(existingID)")
             return existingID
         }
         
         let newID = UUID()
         wordIDs[cleanTitle] = newID.uuidString
-        print("DEBUG: Generated new ID for word '\(cleanTitle)': \(newID)")
         saveWordIDs()
         return newID
     }
     
     func printCurrentMappings() {
-        print("DEBUG: Current word ID mappings:")
         for (word, id) in wordIDs {
             print("  \(word): \(id)")
         }

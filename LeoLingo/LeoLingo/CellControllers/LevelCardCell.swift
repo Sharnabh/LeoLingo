@@ -87,12 +87,10 @@ class LevelCardCell: UICollectionViewCell {
     }
     
     func configure(with wordData: AppWord, tapToPronounce: @escaping () -> Void) {
-        print("Loading image: \(wordData.wordImage)")
         
         if let image = UIImage(named: wordData.wordImage) {
             wordImageView.image = image
         } else {
-            print("Failed to load image: \(wordData.wordImage)")
             wordImageView.backgroundColor = .lightGray
         }
         

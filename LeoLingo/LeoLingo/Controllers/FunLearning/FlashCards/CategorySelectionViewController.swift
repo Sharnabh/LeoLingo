@@ -28,24 +28,6 @@ class CategorySelectionViewController: UIViewController {
         
     }
     
-//    func CategorycollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print("Selected level card at index: \(indexPath.item)")
-//        
-//        // Create the LevelCardViewController
-//        let flashCardVC = FlashCardViewController(selectedLevelIndex: indexPath.item)
-//        flashCardVC.title = "Level \(indexPath.item + 1)"
-//        
-//        if let navController = self.navigationController {
-//            // We have a navigation controller, just push
-//            navController.pushViewController(flashCardVC, animated: true)
-//        } else {
-//            // Create a new navigation controller and present it
-//            let navController = UINavigationController(rootViewController: flashCardVC)
-//            navController.modalPresentationStyle = .fullScreen
-//            present(navController, animated: true, completion: nil)
-//        }
-//    }
-    
     
     func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
@@ -77,7 +59,6 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected level card at index: \(indexPath.item)")
         
 
         let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)

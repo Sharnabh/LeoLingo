@@ -42,7 +42,6 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             isPlaying = true
             currentlyPlayingPath = recordingPath
         } catch {
-            print("Error playing recording: \(error.localizedDescription)")
             isPlaying = false
             currentlyPlayingPath = nil
         }

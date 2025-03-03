@@ -46,7 +46,6 @@ class FunLearningViewController: UIViewController {
                 self.dismiss(animated: true)
             } else {
                 guard let navigationController = self.navigationController else {
-                        print("No navigation controller found")
                         return
                     }
                     

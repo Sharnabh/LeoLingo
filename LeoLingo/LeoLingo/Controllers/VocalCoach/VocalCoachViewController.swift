@@ -117,7 +117,6 @@ class VocalCoachViewController: UIViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected level card at index: \(indexPath.item)")
         
         // Create the LevelCardViewController
         let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)

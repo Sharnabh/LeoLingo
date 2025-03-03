@@ -48,39 +48,70 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func updateLevelImage() {
-        let levels = DataController.shared.getAllLevels()
-        var currentLevel: Level? = nil
-        
-        // Find the first incomplete level
-        for level in levels {
-            let totalWords = level.words.count
-            let completedWords = level.words.filter { $0.isPassed }.count
-            
-            if completedWords < totalWords {
-                currentLevel = level
-                break
+        Task {
+            do {
+                guard let phoneNumber = SupabaseDataController.shared.phoneNumber else { return }
+                
+                // Fetch user data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                let levels = userData.userLevels
+                var currentLevel: Level? = nil
+                
+                // Find the first incomplete level
+                for level in levels {
+                    let totalWords = level.words.count
+                    let completedWords = level.words.filter { word in
+                        // A word is considered completed if it has been practiced with good accuracy
+                        if let record = word.record,
+                           let accuracies = record.accuracy,
+                           !accuracies.isEmpty {
+                            let avgAccuracy = accuracies.reduce(0.0, +) / Double(accuracies.count)
+                            return avgAccuracy >= 70.0 // Consider word completed if average accuracy is 70% or higher
+                        }
+                        return false
+                    }.count
+                    
+                    if completedWords < totalWords {
+                        currentLevel = level
+                        
+                        // Calculate and update progress for this level
+                        let progress = Float(completedWords) / Float(totalWords)
+                        
+                        // Update UI on main thread
+                        DispatchQueue.main.async {
+                            self.levelProgress.progress = progress
+                            
+                            // Get AppLevel using the level ID
+                            if let appLevel = DataController.shared.getLevel(by: level.id) {
+                                self.levelImageView.image = UIImage(named: appLevel.levelImage)
+                            }
+                        }
+                        break
+                    }
+                }
+                
+                // If no current level found (all levels completed)
+                if currentLevel == nil && !levels.isEmpty {
+                    DispatchQueue.main.async {
+                        // Show the last level's image with full progress
+                        if let lastLevel = levels.last,
+                           let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
+                            self.levelImageView.image = UIImage(named: lastAppLevel.levelImage)
+                            self.levelProgress.progress = 1.0
+                        }
+                    }
+                }
+            } catch {
+                print("Error updating level image: \(error)")
             }
         }
-        
-        // Update level image and progress
-        if let level = currentLevel {
-            // Get AppLevel using the existing getLevel method
-            if let appLevel = DataController.shared.getLevel(by: level.id) {
-                levelImageView.image = UIImage(named: appLevel.levelImage)
-            }
-            
-            let totalWords = level.words.count
-            let completedWords = level.words.filter { $0.isPassed }.count
-            let progress = Float(completedWords) / Float(totalWords)
-            levelProgress.progress = progress
-        } else {
-            // All levels completed, show the final level image
-            if let lastLevel = levels.last,
-               let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
-                levelImageView.image = UIImage(named: lastAppLevel.levelImage)
-                levelProgress.progress = 1.0
-            }
-        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Update level image when view appears
+        updateLevelImage()
+        loadRecentPractices()
     }
 
     func setupTimeView() {
@@ -145,13 +176,29 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             let elapsedTime = Date().timeIntervalSince(startTime)
             let remainingTime = max(selectedDuration - elapsedTime, 0)
             
-            let minutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
+            // Format elapsed time
+            let elapsedMinutes = Int(elapsedTime / 60)
+            let elapsedHours = elapsedMinutes / 60
+            let finalElapsedMinutes = elapsedMinutes % 60
             
-            timeLeft.text = "\(minutes) min"
-            timeLeftBar.progress = Float(1 - (elapsedTime / selectedDuration))
+            var timeSpentText = ""
+            if elapsedHours > 0 {
+                timeSpentText = "\(elapsedHours)h \(finalElapsedMinutes)m"
+            } else {
+                timeSpentText = "\(finalElapsedMinutes)m"
+            }
+            
+            // Format remaining time
+            let remainingMinutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
+            let timeLeftText = "\(remainingMinutes) min left"
+            
+            // Update UI
+            timeLeft.text = timeLeftText
+            timeLeftBar.progress = Float(elapsedTime / selectedDuration) // Progress shows time spent
             
             if remainingTime <= 0 {
                 timer?.invalidate()
+                timeLeft.text = "Time's up!"
             }
         }
 
@@ -170,15 +217,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             return cell
         }
-        let cell = recentPracticesCollectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+        let cell = recentPracticesCollectionView.dequeueReusableCell(withReuseIdentifier: RecentPracticesCollectionViewCell.identifier, for: indexPath) as! RecentPracticesCollectionViewCell
         
         guard let words = sortedWords else { return cell }
         let word = words[indexPath.item]
         cell.updateLabel(with: word)
-        cell.accuracyLabel.isHidden = false
-        cell.attemptsLabel.isHidden = false
-        cell.accuracy.isHidden = false
-        cell.attempts.isHidden = false
         
         return cell
     }
@@ -200,7 +243,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         practicesLayout = UICollectionViewFlowLayout()
         if let layout = practicesLayout {
-            layout.itemSize = CGSize(width: 126, height: 126)
+            layout.itemSize = CGSize(width: 90, height: 90)
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             layout.scrollDirection = .horizontal
             layout.minimumLineSpacing = 10
@@ -211,8 +254,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             recentPracticesCollectionView.dataSource = self
             recentPracticesCollectionView.layer.cornerRadius = 21
             
-            let nib = UINib(nibName: "WordReportCollectionViewCell", bundle: nil)
-            recentPracticesCollectionView.register(nib, forCellWithReuseIdentifier: WordReportCollectionViewCell.identifier)
+            let nib = UINib(nibName: "RecentPracticesCollectionViewCell", bundle: nil)
+            recentPracticesCollectionView.register(nib, forCellWithReuseIdentifier: RecentPracticesCollectionViewCell.identifier)
         }
     }
     
@@ -304,22 +347,65 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     private func loadRecentPractices() {
         Task {
             do {
-                if let phoneNumber = SupabaseDataController.shared.phoneNumber {
-                    // Fetch latest user data from Supabase
-                    let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                if let userId = SupabaseDataController.shared.userId {
+                    print("DEBUG: Loading practices for user ID: \(userId)")
+                    // Fetch latest user data from Supabase using ID
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     let words = userData.userLevels.flatMap { $0.words }
-                    // Filter words that have been practiced and have records
-                    let practicedWords = words.filter { $0.record != nil && $0.isPracticed }
-                    // Take only the last 2 practiced words
-                    sortedWords = Array(practicedWords.reversed().prefix(2))
+                    print("DEBUG: Total words loaded: \(words.count)")
+                    
+                    // Filter words that have been practiced
+                    let practicedWords = words.filter { word in
+                        print("DEBUG: Checking word \(word.id):")
+                        print("  - Is practiced: \(word.isPracticed)")
+                        print("  - Has record: \(word.record != nil)")
+                        print("  - Attempts: \(word.record?.attempts ?? 0)")
+                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
+                        return word.isPracticed
+                    }
+                    
+                    print("DEBUG: Found \(practicedWords.count) practiced words")
+                    
+                    if practicedWords.isEmpty {
+                        print("DEBUG: No practiced words found")
+                    } else {
+                        print("DEBUG: Practiced words details:")
+                        for word in practicedWords {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                                print("    Attempts: \(word.record?.attempts ?? 0)")
+                                print("    Practiced: \(word.isPracticed)")
+                                print("    Record exists: \(word.record != nil)")
+                            }
+                        }
+                    }
+                    
+                    // Sort by accuracy (highest first) and take only the last 2 practiced words
+                    sortedWords = practicedWords
+                        .sorted { $0.avgAccuracy > $1.avgAccuracy }
+                        .prefix(2)
+                        .map { $0 }
+                    
+                    print("DEBUG: Selected \(sortedWords?.count ?? 0) words for display")
+                    if let selected = sortedWords {
+                        for word in selected {
+                            if let appWord = DataController.shared.wordData(by: word.id) {
+                                print("  Selected word: \(appWord.wordTitle)")
+                                print("    Accuracy: \(word.avgAccuracy)")
+                            }
+                        }
+                    }
                     
                     // Reload collection view on main thread
                     DispatchQueue.main.async {
                         self.recentPracticesCollectionView.reloadData()
                     }
+                } else {
+                    print("DEBUG: No user ID found")
                 }
             } catch {
-                print("Error loading recent practices: \(error)")
+                print("DEBUG: Error loading recent practices: \(error)")
             }
         }
     }

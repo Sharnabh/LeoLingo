@@ -32,16 +32,15 @@ class LockScreenViewController: UIViewController {
         // Fetch users and set passcode
         Task {
             do {
-                let users = try await SupabaseDataController.shared.getAllUsers()
-                if let currentPhoneNumber = SupabaseDataController.shared.phoneNumber,
-                   let matchingUser = users.first(where: { $0.phone_number == currentPhoneNumber }) {
-                    self.code = matchingUser.passcode ?? "1234"
-                    print("Found matching user with phone number:", currentPhoneNumber)
+                if let userId = SupabaseDataController.shared.userId {
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    self.code = userData.passcode ?? "1234"
+                    print("Found user with ID:", userId)
                 } else {
-                    print("No matching user found or not logged in, using default passcode")
+                    print("No user logged in, using default passcode")
                 }
             } catch {
-                print("Error fetching users: \(error.localizedDescription)")
+                print("Error fetching user: \(error.localizedDescription)")
             }
         }
 
@@ -101,8 +100,13 @@ class LockScreenViewController: UIViewController {
                     if myPasscode == code {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let sceneDelegate = windowScene.delegate as? SceneDelegate {
-                            let tabBarBC = storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
-                            sceneDelegate.window?.rootViewController = tabBarBC
+                            // Save login state and passcode
+                            UserDefaults.standard.isUserLoggedIn = true
+                            UserDefaults.standard.parentModePasscode = code
+                            
+                            let splitVC = ParentModeSplitViewController()
+                            splitVC.modalPresentationStyle = .fullScreen
+                            sceneDelegate.window?.rootViewController = splitVC
                         }
                     } else {
                         // Only keep shake animation for wrong passcode
@@ -163,11 +167,15 @@ class LockScreenViewController: UIViewController {
                         guard let self = self else { return }
                         
                         if success {
+                            // Save login state
+                            UserDefaults.standard.isUserLoggedIn = true
+                            
                             // Navigate to parent mode on success
                             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                                let sceneDelegate = windowScene.delegate as? SceneDelegate {
-                                let tabBarBC = self.storyboard?.instantiateViewController(withIdentifier: "parentModeTabBar") as! UITabBarController
-                                sceneDelegate.window?.rootViewController = tabBarBC
+                                let splitVC = ParentModeSplitViewController()
+                                splitVC.modalPresentationStyle = .fullScreen
+                                sceneDelegate.window?.rootViewController = splitVC
                             }
                         } else {
                             // Touch ID failed or was cancelled, user can still use passcode

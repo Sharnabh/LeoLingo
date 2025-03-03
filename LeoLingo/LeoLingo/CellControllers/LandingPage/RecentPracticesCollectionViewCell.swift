@@ -12,6 +12,7 @@ class RecentPracticesCollectionViewCell: UICollectionViewCell {
     static let identifier = "RecentPracticesCollectionViewCell"
     
     @IBOutlet weak var imageView: UIView!
+    @IBOutlet weak var accuracyLabel: UILabel!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,6 +29,24 @@ class RecentPracticesCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        setupAccuracyLabel()
+    }
+    
+    private func setupAccuracyLabel() {
+        if accuracyLabel == nil {
+            accuracyLabel = UILabel()
+            accuracyLabel.translatesAutoresizingMaskIntoConstraints = false
+            accuracyLabel.textAlignment = .center
+            accuracyLabel.font = .systemFont(ofSize: 14, weight: .medium)
+            contentView.addSubview(accuracyLabel)
+            
+            NSLayoutConstraint.activate([
+                accuracyLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 4),
+                accuracyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                accuracyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                accuracyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4)
+            ])
+        }
     }
     
     func updateLabel(with word: Word) {
@@ -49,13 +68,16 @@ class RecentPracticesCollectionViewCell: UICollectionViewCell {
                 }
                 
                 view.configure(title: title, progress: Double(accuracy)/100.0, color: color)
+                accuracyLabel.text = String(format: "%.1f%%", accuracy)
+                accuracyLabel.textColor = color
             case false:
                 color = UIColor.systemGray
                 
                 guard let view = imageView as? ProgressView else { return }
-                view.configure(title: title, progress: 100.0, color: color)
+                view.configure(title: title, progress: 0.0, color: color)
+                accuracyLabel.text = "Not practiced"
+                accuracyLabel.textColor = color
             }
         }
     }
-
 }

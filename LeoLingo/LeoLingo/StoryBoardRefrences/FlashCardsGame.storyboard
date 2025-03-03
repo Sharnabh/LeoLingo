@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Category Selection View Controller-->
+        <!--Select Category-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
                 <viewController storyboardIdentifier="CategorySelectionViewController" id="Y6W-OH-hqX" customClass="CategorySelectionViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
@@ -51,7 +51,7 @@
                             <constraint firstAttribute="trailing" secondItem="2ah-AC-Cox" secondAttribute="trailing" id="hv5-RY-BxT"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="EUg-B6-HFR"/>
+                    <navigationItem key="navigationItem" title="Select Category" largeTitleDisplayMode="always" id="EUg-B6-HFR"/>
                     <connections>
                         <outlet property="categoryCollectionView" destination="dYs-hS-dHe" id="U1L-3R-zDh"/>
                     </connections>

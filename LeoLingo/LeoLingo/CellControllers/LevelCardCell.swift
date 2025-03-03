@@ -1,6 +1,6 @@
 import UIKit
 
-class LevelCardCell: UICollectionViewCell {
+class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
     
     private var tapToPronounceAction: (() -> Void)?
     
@@ -104,26 +104,44 @@ class LevelCardCell: UICollectionViewCell {
     }
     
     func showSuccessAnimation() {
-        // Add fun success animation
+        // Use layer animations for success effect without affecting transform
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.duration = 0.2
+        scaleAnimation.fromValue = 1.0
+        scaleAnimation.toValue = 1.1
+        scaleAnimation.autoreverses = true
+        
+        // Add border animation
         UIView.animate(withDuration: 0.2, animations: {
-            self.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
             self.containerView.layer.borderColor = UIColor.systemGreen.cgColor
             self.containerView.layer.borderWidth = 5
         }) { _ in
-            UIView.animate(withDuration: 0.1) {
-                self.transform = .identity
-            }
-            
-            // Add subtle bounce
+            // Add bounce animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
-                    self.transform = CGAffineTransform(translationX: 0, y: -10)
-                } completion: { _ in
-                    UIView.animate(withDuration: 0.2) {
-                        self.transform = .identity
-                        self.containerView.layer.borderWidth = 0
-                    }
-                }
+                let bounceAnimation = CABasicAnimation(keyPath: "position.y")
+                bounceAnimation.duration = 0.2
+                bounceAnimation.fromValue = self.layer.position.y
+                bounceAnimation.toValue = self.layer.position.y - 10
+                bounceAnimation.autoreverses = true
+                bounceAnimation.delegate = self
+                
+                // Set animation key for identification in delegate method
+                bounceAnimation.setValue("bounceAnimation", forKey: "animationName")
+                
+                self.layer.add(bounceAnimation, forKey: "bounceAnimation")
+            }
+        }
+        
+        self.layer.add(scaleAnimation, forKey: "scaleAnimation")
+    }
+    
+    // MARK: - CAAnimationDelegate
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        if let animationName = anim.value(forKey: "animationName") as? String,
+           animationName == "bounceAnimation" {
+            // Reset border
+            UIView.animate(withDuration: 0.2) {
+                self.containerView.layer.borderWidth = 0
             }
         }
     }

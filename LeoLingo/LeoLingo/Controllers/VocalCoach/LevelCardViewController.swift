@@ -198,7 +198,7 @@ class LevelCardViewController: UIViewController {
         // Fetch data from Supabase
         Task {
             do {
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                let userData = try await SupabaseDataController.shared.getUser(byId: SupabaseDataController.shared.userId!)
                 self.levels = userData.userLevels
                 
                 // Validate selectedLevelIndex
@@ -586,9 +586,6 @@ class LevelCardViewController: UIViewController {
                 let currentWord = levels[selectedLevelIndex].words[selectedCardIndex]
                 try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: nil)
                 
-                // Update local data
-                levels[selectedLevelIndex].words[selectedCardIndex].isPracticed = true
-                
                 // Show success feedback
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
@@ -597,7 +594,7 @@ class LevelCardViewController: UIViewController {
                     }
                 }
                 
-                // Refresh data
+                // Refresh data to update UI
                 await refreshData()
             } catch {
                 print("Error updating word progress: \(error)")
@@ -627,22 +624,11 @@ class LevelCardViewController: UIViewController {
                     return
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                // Keep original level order but only include unpracticed words
-                self.levels = userData.userLevels.map { level in
-                    var filteredLevel = level
-                    filteredLevel.words = level.words.filter { !$0.isPracticed }
-                    return filteredLevel
-                }
+                // Keep all words, including practiced ones
+                self.levels = userData.userLevels
                 
-                // Remove empty levels
-                self.levels = self.levels.filter { !$0.words.isEmpty }
-                
-                if self.levels.isEmpty {
-                    showCompletionMessage()
-                } else {
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                    }
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
                 }
             } catch {
                 handleError(error)

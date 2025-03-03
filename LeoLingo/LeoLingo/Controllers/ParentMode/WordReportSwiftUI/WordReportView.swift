@@ -15,15 +15,29 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     override init() {
         super.init()
+        setupAudioSession()
+    }
+    
+    private func setupAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
+        }
     }
     
     func play(recordingPath: String) {
+        print("AudioPlayerManager: Attempting to play recording at path: \(recordingPath)")
+        
         // If the same recording is playing, toggle pause/play
         if currentlyPlayingPath == recordingPath {
             if isPlaying {
+                print("AudioPlayerManager: Pausing current recording")
                 audioPlayer?.pause()
                 isPlaying = false
             } else {
+                print("AudioPlayerManager: Resuming current recording")
                 audioPlayer?.play()
                 isPlaying = true
             }
@@ -36,12 +50,26 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         // Start playing new recording
         do {
             let url = URL(fileURLWithPath: recordingPath)
+            
+            guard FileManager.default.fileExists(atPath: recordingPath) else {
+                print("AudioPlayerManager: Error - Audio file does not exist at path: \(recordingPath)")
+                return
+            }
+            
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.delegate = self
+            
+            guard audioPlayer?.prepareToPlay() == true else {
+                print("AudioPlayerManager: Error - Failed to prepare audio player")
+                return
+            }
+            
+            print("AudioPlayerManager: Starting playback")
             audioPlayer?.play()
             isPlaying = true
             currentlyPlayingPath = recordingPath
         } catch {
+            print("AudioPlayerManager: Error playing audio: \(error)")
             isPlaying = false
             currentlyPlayingPath = nil
         }
@@ -62,11 +90,27 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 }
 
+// Add this before the WordReportView struct
+class DebugLogger: ObservableObject {
+    static let shared = DebugLogger()
+    
+    func logWordSelection(_ word: Word?) {
+        if let word = word {
+            print("Debug: Selected word with \(word.record?.accuracy?.count ?? 0) attempts")
+            print("Debug: Recording paths: \(String(describing: word.record?.recording))")
+        } else {
+            print("Debug: No word selected")
+        }
+    }
+}
+
 struct WordReportView: View {
     @State private var selectedWord: Word? = nil
     @State private var shouldReloadProgress: Bool = false
     @State private var isLoading = false
     @State private var rotation: Double = 0
+    @StateObject private var logger = DebugLogger.shared
+    
     private let dataController = SupabaseDataController.shared
     
     var body: some View {
@@ -113,6 +157,9 @@ struct WordReportView: View {
             }
         }
         .background(Color(UIColor.white))
+        .onChange(of: selectedWord) { newValue in
+            logger.logWordSelection(newValue)
+        }
         .task {
             // Load user data when view appears
             if let phoneNumber = dataController.phoneNumber {
@@ -154,7 +201,6 @@ private struct ProgressDetailSection: View {
             
             Divider()
                 .frame(height: 1)
-            
                 .background(Color(red: 143/255, green: 91/255, blue: 66/255))
                 .shadow(color: .black.opacity(0.4), radius: 2, y: 2)
             
@@ -165,8 +211,10 @@ private struct ProgressDetailSection: View {
                        let record = word.record,
                        let accuracies = record.accuracy,
                        !accuracies.isEmpty {
+                        
                         ForEach(Array(accuracies.enumerated()), id: \.offset) { index, accuracy in
                             let recordingPath = record.recording?[safe: index]
+                            
                             ProgressBarView(
                                 attempt: index + 1,
                                 progress: accuracy / 100,
@@ -186,7 +234,6 @@ private struct ProgressDetailSection: View {
                 .padding()
             }
         }
-       // .frame(height: 20)
         .frame(width: 564)
         .background(Color.white)
     }

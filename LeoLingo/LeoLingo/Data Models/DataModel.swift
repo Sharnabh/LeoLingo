@@ -36,7 +36,7 @@ struct Level {
     }
 }
 
-struct Word {
+struct Word: Equatable {
     var id: UUID = UUID()
     var record: Record?
     var isPracticed: Bool = false
@@ -58,6 +58,12 @@ struct Word {
     var isPassed: Bool {
         guard let record = record, let accuracy = record.accuracy else { return false }
         return accuracy.contains(where: { $0 > 70 })
+    }
+    
+    static func == (lhs: Word, rhs: Word) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.record?.id == rhs.record?.id &&
+               lhs.isPracticed == rhs.isPracticed
     }
 }
 
@@ -217,8 +223,6 @@ struct CategoryCard {
         self.words = appCategory.words
     }
 }
-
-
 
 struct AppBadge {
     var id: UUID = UUID()

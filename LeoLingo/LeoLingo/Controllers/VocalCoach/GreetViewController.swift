@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import AVFoundation
 
 class GreetViewController: UIViewController {
     
     @IBOutlet var greetLabel: UILabel!
     @IBOutlet var greetEmojiLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
+    
+    private let synthesizer = AVSpeechSynthesizer()
     
     var greetings = ["Hello! Joy", "I am Mojo"]
     var emojis = ["👋","🐵"]
@@ -45,11 +48,36 @@ class GreetViewController: UIViewController {
     @objc func updateLabels() {
         // Update greeting label
         greetLabel.text = greetings[greetingIndex]
+        pronounceGreeting(greetings[greetingIndex])
         greetingIndex = (greetingIndex + 1) % greetings.count
         
         // Update secondary label
         greetEmojiLabel.text = emojis[emojiIndex]
         emojiIndex = (emojiIndex + 1) % emojis.count
+    }
+    
+    private func pronounceGreeting(_ text: String) {
+        // Stop any ongoing speech
+        synthesizer.stopSpeaking(at: .immediate)
+        
+        let utterance = AVSpeechUtterance(string: text)
+        
+        // Configure voice for kid-friendly speech
+        if let voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.siri_female_en-US_compact") {
+            utterance.voice = voice
+        } else {
+            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        }
+        
+        // Adjust speech parameters for kid-friendly voice
+        utterance.rate = 0.5  // Slower rate
+        utterance.pitchMultiplier = 1.2  // Slightly higher pitch
+        utterance.volume = 1.0
+        
+        // Add slight delay before speaking
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.synthesizer.speak(utterance)
+        }
     }
     
     func transitionToNextViewController() {
@@ -69,4 +97,9 @@ class GreetViewController: UIViewController {
         dismiss(animated: true)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Stop any ongoing speech when view disappears
+        synthesizer.stopSpeaking(at: .immediate)
+    }
 }

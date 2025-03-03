@@ -15,8 +15,9 @@ class GreetViewController: UIViewController {
     @IBOutlet weak var headingTitle: UILabel!
     
     private let synthesizer = AVSpeechSynthesizer()
+    private var childName: String = "Joy" // Default name
     
-    var greetings = ["Hello! Joy", "I am Mojo"]
+    var greetings: [String] = []
     var emojis = ["👋","🐵"]
 
     var greetingIndex = 0
@@ -33,10 +34,36 @@ class GreetViewController: UIViewController {
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
         
-        startAnimations()
+        // Fetch child name and setup greetings
+        fetchChildNameAndSetupGreetings()
+        
         // Do any additional setup after loading the view.
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             self.transitionToNextViewController()
+        }
+    }
+    
+    private func fetchChildNameAndSetupGreetings() {
+        Task {
+            do {
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                
+                // Update child name from Supabase
+                if let name = userData.childName {
+                    self.childName = name
+                }
+                
+                // Update greetings with child's name
+                DispatchQueue.main.async {
+                    self.greetings = ["Hello \(self.childName)!", "I am Mojo"]
+                    self.startAnimations()
+                }
+            } catch {
+                print("Error fetching child name: \(error)")
+                // Use default greetings if fetch fails
+                self.greetings = ["Hello \(self.childName)!", "I am Mojo"]
+                self.startAnimations()
+            }
         }
     }
     

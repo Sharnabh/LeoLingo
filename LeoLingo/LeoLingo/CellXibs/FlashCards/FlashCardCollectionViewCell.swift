@@ -28,12 +28,27 @@ class FlashCardCollectionViewCell: UICollectionViewCell {
             UIColor(red: 39/255, green: 95/255, blue: 127/255, alpha: 1)
         ]
         
-    func configureCell(at index: Int, imageName: String, titleText: String) {
-        flashCardCell.backgroundColor = colors[index % colors.count]
+    func configureCell(categoryIndex: Int, wordIndex: Int) {
         
-        imageView.image = UIImage(named: imageName)
-        title.text = titleText
+        let categories = SampleDataController.shared.getCategoriesData()
+        
+        guard categoryIndex < categories.count else { return }
+        
+        let selectedCategory = categories[categoryIndex]
+        
+        guard wordIndex < selectedCategory.words.count else { return }
+        
+        let word = selectedCategory.words[wordIndex]
+        
+        imageView.image = UIImage(named: word.wordImage)
+        title.text = word.wordTitle
+        
+        let colorIndex = wordIndex % colors.count
+        flashCardCell.backgroundColor = colors[colorIndex]
+        
+        
     }
+
 
     
     // Add tap down effect

@@ -342,13 +342,8 @@ class PracticeScreenViewController: UIViewController {
     
     private func getCurrentWord() -> String {
         let currentData = levels[levelIndex].words[currentIndex]
-        let appLevels = SupabaseDataController.shared.getLevelsData()
-        for level in appLevels {
-            for word in level.words {
-                if word.id == currentData.id {
-                    return word.wordTitle
-                }
-            }
+        if let wordData = SupabaseDataController.shared.wordData(by: currentData.id) {
+            return wordData.wordTitle
         }
         return ""
     }
@@ -372,9 +367,6 @@ class PracticeScreenViewController: UIViewController {
                     accuracy: accuracy,
                     recordingPath: speechProcessor.getRecordingURL()?.path
                 )
-                
-                // Update local data
-                levels[levelIndex].words[currentIndex].isPracticed = true
                 
                 // Show success feedback and move to next word on main thread
                 DispatchQueue.main.async { [weak self] in
@@ -541,36 +533,40 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func moveToNextWord() {
-        // If we have no levels left, show completion
-        if levels.isEmpty {
-            showCompletionMessage()
-            return
-        }
-        
-        // Move to next word
-        currentIndex += 1
-        
-        // If we've reached the end of current level's words
-        if currentIndex >= levels[levelIndex].words.count {
-            // Try to move to next level
-            levelIndex += 1
-            currentIndex = 0
-            
-            // If we've reached the end of all levels
-            if levelIndex >= levels.count {
-                showCompletionMessage()
-                return
+        Task {
+            do {
+                // Refresh data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                self.levels = userData.userLevels
+                
+                // Move to next word
+                currentIndex += 1
+                
+                // If we've reached the end of current level's words
+                if currentIndex >= levels[levelIndex].words.count {
+                    // Try to move to next level
+                    levelIndex += 1
+                    currentIndex = 0
+                    
+                    // If we've reached the end of all levels
+                    if levelIndex >= levels.count {
+                        showCompletionMessage()
+                        return
+                    }
+                    
+                    showLevelChangePopover()
+                    showConfettiEffect()
+                }
+                
+                // Update UI if we have valid indices
+                if levelIndex < levels.count && currentIndex < levels[levelIndex].words.count {
+                    updateUI()
+                } else {
+                    showCompletionMessage()
+                }
+            } catch {
+                handleError(error)
             }
-            
-            showLevelChangePopover()
-            showConfettiEffect()
-        }
-        
-        // Only update UI if we have valid indices
-        if levelIndex < levels.count && currentIndex < levels[levelIndex].words.count {
-            updateUI()
-        } else {
-            showCompletionMessage()
         }
     }
     
@@ -685,8 +681,13 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: recordingPath
                 )
                 
-                // Refresh local data to update the filtered word list
-                await refreshData()
+                // Refresh local data
+                let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                self.levels = userData.userLevels
+                
+                DispatchQueue.main.async {
+                    self.updateUI()
+                }
             } catch {
                 handleError(error)
             }

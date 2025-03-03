@@ -48,8 +48,10 @@ class FlashCardViewController: UIViewController {
 extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return SampleDataController.shared.countLevelCards()
+        guard let selectedIndex = selectedIndex else { return 0 }
+        return SampleDataController.shared.countWordsInCategory(at: selectedIndex)
     }
+
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlashCardCell", for: indexPath) as! FlashCardCollectionViewCell
@@ -57,10 +59,15 @@ extension FlashCardViewController: UICollectionViewDelegate, UICollectionViewDat
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = true
         cell.contentView.isUserInteractionEnabled = true
-        cell.configureCell(at: indexPath.item, imageName: "nose", titleText: "Nose")
         
+
+        if let selectedIndex = selectedIndex {
+            cell.configureCell(categoryIndex: selectedIndex, wordIndex: indexPath.item)
+        }
+
         return cell
     }
+
     
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? FlashCardCollectionViewCell {

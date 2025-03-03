@@ -117,7 +117,7 @@ class SampleDataController {
         categories = [
             AppCategory(categoryTitle: "Body Parts", categoryImage: "BodyParts", words: [
                 AppWord(wordTitle: "Eye", wordImage: "eye"),
-                AppWord(wordTitle: "Hand", wordImage: "hand"),
+                AppWord(wordTitle: "Thumb", wordImage: "thumb"),
                 AppWord(wordTitle: "Palm", wordImage: "palm"),
                 AppWord(wordTitle: "Nose", wordImage: "nose"),
                 AppWord(wordTitle: "Lips", wordImage: "lips"),
@@ -125,12 +125,13 @@ class SampleDataController {
                 ]),
             AppCategory(categoryTitle: "Fruits", categoryImage: "Fruits", words: [
                 AppWord(wordTitle: "Apple", wordImage: "apple"),
-                AppWord(wordTitle: "Banana", wordImage: "banana"),
-                AppWord(wordTitle: "Palm", wordImage: "palm"),
-                AppWord(wordTitle: "Nose", wordImage: "nose"),
-                AppWord(wordTitle: "Lips", wordImage: "lips"),
-                AppWord(wordTitle: "Ear", wordImage: "ear")
+                AppWord(wordTitle: "Banana", wordImage: "banana")
                 ]),
+            AppCategory(categoryTitle: "Vehicles", categoryImage: "Vehicles", words: [
+                AppWord(wordTitle: "Car", wordImage: "car"),
+                AppWord(wordTitle: "Bus", wordImage: "bus")
+                ]),
+            
         ]
         badges = [
             AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee"),
@@ -276,10 +277,17 @@ class SampleDataController {
     func getCategoriesData() -> [AppCategory] {
         return categories
     }
-    func countCategories() -> Int {
-        return categories.count
+    func countWordsInCategory(at index: Int) -> Int {
+        let categories = SampleDataController.shared.getCategoriesData()
+        
+        guard index < categories.count else {
+            return 0
+        }
+        
+        return categories[index].words.count
     }
-    
+
+
     func getBadgesData() -> [AppBadge] {
         return badges
     }

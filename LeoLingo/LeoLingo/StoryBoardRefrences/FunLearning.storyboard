@@ -109,7 +109,7 @@
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="wo7-9d-hYw" secondAttribute="trailing" constant="8" symbolic="YES" id="zTg-gS-4Jz"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Cy9-KQ-HSd">
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Cy9-KQ-HSd">
                         <barButtonItem key="backBarButtonItem" title="Back" style="plain" id="d1U-G2-RbG"/>
                     </navigationItem>
                     <connections>

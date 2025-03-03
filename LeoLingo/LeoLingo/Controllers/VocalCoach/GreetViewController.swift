@@ -55,13 +55,18 @@ class GreetViewController: UIViewController {
     }
     
     func startAnimations() {
-        // Schedule label updates
-        Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
-        // Initial update
-        updateLabels()
+        // Initial update with speech
+        updateLabels(withSpeech: true)
+        
+        // Schedule subsequent label updates without speech
+        Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(updateLabelsWithoutSpeech), userInfo: nil, repeats: true)
     }
     
-    @objc func updateLabels() {
+    @objc func updateLabelsWithoutSpeech() {
+        updateLabels(withSpeech: false)
+    }
+    
+    func updateLabels(withSpeech: Bool) {
         // Update greeting label
         let greeting = greetings[greetingIndex]
         greetLabel.text = greeting
@@ -71,12 +76,14 @@ class GreetViewController: UIViewController {
         greetEmojiLabel.text = emojis[emojiIndex]
         emojiIndex = (emojiIndex + 1) % emojis.count
         
-        // Speak the greeting
-        let utterance = AVSpeechUtterance(string: greeting)
-        utterance.rate = 0.5
-        utterance.pitchMultiplier = 1.2
-        utterance.volume = 1.0
-        synthesizer.speak(utterance)
+        // Speak the greeting only if withSpeech is true
+        if withSpeech {
+            let utterance = AVSpeechUtterance(string: greeting)
+            utterance.rate = 0.5
+            utterance.pitchMultiplier = 1.2
+            utterance.volume = 1.0
+            synthesizer.speak(utterance)
+        }
     }
     
     func transitionToNextViewController() {

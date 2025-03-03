@@ -16,7 +16,50 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let window = UIWindow(windowScene: windowScene)
+        
+        // Check if user is logged in and we have their ID
+        if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
+            // Set the user ID in SupabaseDataController
+            SupabaseDataController.shared.restoreSession(userId: userId)
+            
+            // User is logged in, go to HomePage
+            let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+            if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+                // Create a navigation controller with the home page
+                let navigationController = UINavigationController(rootViewController: homePageVC)
+                navigationController.setNavigationBarHidden(true, animated: false)
+                window.rootViewController = navigationController
+                
+                // Load user data
+                Task {
+                    do {
+                        _ = try await SupabaseDataController.shared.getUser(byId: userId)
+                        // Data is now loaded and cached in SupabaseDataController
+                    } catch {
+                        print("Error loading user data: \(error)")
+                        // Handle error - maybe show an alert or redirect to login
+                        UserDefaults.standard.clearSession()
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
+                            window.rootViewController = loginVC
+                        }
+                    }
+                }
+            }
+        } else {
+            // User is not logged in or we don't have their ID, show login page
+            UserDefaults.standard.clearSession() // Clear any partial session data
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
+                window.rootViewController = loginVC
+            }
+        }
+        
+        self.window = window
+        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

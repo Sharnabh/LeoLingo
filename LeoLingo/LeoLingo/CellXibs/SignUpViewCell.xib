@@ -20,10 +20,10 @@
                         <rect key="frame" x="10" y="10" width="652" height="722"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LeoLingoMainImage" translatesAutoresizingMaskIntoConstraints="NO" id="h6h-me-nZb">
-                                <rect key="frame" x="70" y="0.0" width="512" height="331"/>
+                                <rect key="frame" x="70" y="0.0" width="512" height="351"/>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="guo-hc-Gcu">
-                                <rect key="frame" x="190" y="355" width="272" height="134"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="guo-hc-Gcu">
+                                <rect key="frame" x="190" y="375" width="272" height="114"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Parent's Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="777-Tw-saY">
                                         <rect key="frame" x="0.0" y="0.0" width="272" height="34"/>
@@ -35,7 +35,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0Bc-sp-zEG">
-                                        <rect key="frame" x="0.0" y="50" width="272" height="34"/>
+                                        <rect key="frame" x="0.0" y="40" width="272" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="34" id="AB9-Zp-NEP"/>
                                             <constraint firstAttribute="width" constant="272" id="bE5-Xg-vkP"/>
@@ -44,7 +44,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CH4-gL-EyW">
-                                        <rect key="frame" x="0.0" y="100" width="272" height="34"/>
+                                        <rect key="frame" x="0.0" y="80" width="272" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="34" id="cX2-qN-sju"/>
                                             <constraint firstAttribute="width" constant="272" id="uMu-pd-Y92"/>
@@ -53,9 +53,6 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="134" id="T1m-vf-NNS"/>
-                                </constraints>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z0I-ID-voj">
                                 <rect key="frame" x="220" y="513" width="212" height="34.5"/>

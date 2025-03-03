@@ -78,6 +78,7 @@ class PracticeScreenViewController: UIViewController {
         Task {
             do {
                 let userData = try await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "")
+                // Keep all words, including practiced ones
                 self.levels = userData.userLevels
                 
                 if self.levels.isEmpty {
@@ -350,7 +351,18 @@ class PracticeScreenViewController: UIViewController {
         Task {
             do {
                 let currentWord = levels[levelIndex].words[currentIndex]
-                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: nil)
+                // Calculate accuracy based on the current attempt
+                let spokenText = speechProcessor.userSpokenText
+                let wordTitle = getCurrentWord()
+                let distance = speechProcessor.levenshteinDistance(spokenText.lowercased(), wordTitle.lowercased())
+                let maxLength = max(spokenText.count, wordTitle.count)
+                let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
+                
+                try await SupabaseDataController.shared.updateWordProgress(
+                    wordId: currentWord.id,
+                    accuracy: accuracy,
+                    recordingPath: speechProcessor.getRecordingURL()?.path
+                )
                 
                 // Show success feedback and move to next word on main thread
                 DispatchQueue.main.async { [weak self] in
@@ -361,7 +373,25 @@ class PracticeScreenViewController: UIViewController {
                     self.showPopover(isCorrect: true, levelChange: isLastWordInLevel)
                     
                     // Progress to next word or level
-                    self.moveToNextWord()
+                    if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
+                        // If we're at the last word of the level
+                        if self.levelIndex < self.levels.count - 1 {
+                            // Move to next level if available
+                            self.levelIndex += 1
+                            self.currentIndex = 0
+                            self.showLevelChangePopover()
+                            self.showConfettiEffect()
+                        } else {
+                            // At the last word of the last level, loop back to first level
+                            self.levelIndex = 0
+                            self.currentIndex = 0
+                        }
+                    } else {
+                        // Move to next word in current level
+                        self.currentIndex += 1
+                    }
+                    
+                    self.updateUI()
                 }
             } catch {
                 print("Error updating word progress: \(error)")
@@ -387,11 +417,15 @@ class PracticeScreenViewController: UIViewController {
     @objc private func wordImageTapped() {
         let currentData = levels[levelIndex].words[currentIndex]
         if let word = DataController.shared.wordData(by: currentData.id) {
+            // Only pronounce the word itself, not the full direction
             pronounceWord(word.wordTitle)
         }
     }
     
     private func pronounceWord(_ word: String) {
+        // Stop any ongoing speech
+        synthesizer.stopSpeaking(at: .immediate)
+        
         let utterance = AVSpeechUtterance(string: word)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.5
@@ -402,6 +436,9 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func pronounceDirection(_ direction: String) {
+        // Stop any ongoing speech
+        synthesizer.stopSpeaking(at: .immediate)
+        
         let utterance = AVSpeechUtterance(string: direction)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.4  // Slightly slower for better clarity
@@ -462,13 +499,11 @@ class PracticeScreenViewController: UIViewController {
             // Start typing effect after word image animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                 guard let self = self else { return }
-                self.typeEffect(text: direction, label: self.directionLabel)
+                // Stop any ongoing speech before starting new one
+                self.synthesizer.stopSpeaking(at: .immediate)
                 
-                // Pronounce direction after typing effect
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(direction.count) * 0.05 + 0.2) { [weak self] in
-                    guard let self = self else { return }
-                    self.pronounceDirection(direction)
-                }
+                self.directionLabel.text = direction
+                self.pronounceDirection(direction)
             }
         }
     }
@@ -748,6 +783,28 @@ class PracticeScreenViewController: UIViewController {
         })
         
         present(alert, animated: true)
+    }
+    
+    private func refreshData() {
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else {
+                    print("No user logged in")
+                    return
+                }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                // Keep all words, including practiced ones
+                self.levels = userData.userLevels
+                
+                if self.levels.isEmpty {
+                    showCompletionMessage()
+                } else {
+                    updateUI()
+                }
+            } catch {
+                handleError(error)
+            }
+        }
     }
     
     private func clearUserDefaults() {

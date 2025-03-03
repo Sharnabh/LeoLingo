@@ -138,10 +138,16 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0
         {
+            
             let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
-            if let vc = storyboard.instantiateViewController(withIdentifier: "flashCardsNav") as? UINavigationController {
-                vc.modalPresentationStyle = .fullScreen
-                present(vc, animated: true)
+            if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "CategorySelectionViewController") as? CategorySelectionViewController {
+             
+                if let navigationController = self.navigationController {
+                    navigationController.pushViewController(flashCardVC, animated: true)
+                } else {
+                    flashCardVC.modalPresentationStyle = .fullScreen
+                    present(flashCardVC, animated: true)
+                }
             }
             
         }

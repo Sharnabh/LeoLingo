@@ -21,7 +21,7 @@ struct Poem {
              imageName: "Twinkle"),
         
         Poem(title: "Baa Baa Black Sheep",
-             content: "Baa, baa, black sheep\nHave you any wool?\nYes sir, yes sir\nThree bags full",
+             content: "Baa, baa, black sheep\nHave you any wool?\nYes sir, yes sir\nThree bags full\n one for my master\n one for the dame\nOne for the little boy who lives down the lane",
              audioFileName: "baa_baa",
              difficulty: .easy,
              scoreMultiplier: 1,

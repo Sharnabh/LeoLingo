@@ -220,11 +220,11 @@
                                                                 </connections>
                                                             </button>
                                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6dM-hG-JtR">
-                                                                <rect key="frame" x="27" y="37.5" width="180" height="90"/>
+                                                                <rect key="frame" x="27" y="42.5" width="180" height="100"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="180" id="yLd-hh-aqJ"/>
-                                                                    <constraint firstAttribute="height" constant="90" id="zvZ-QG-7Tp"/>
+                                                                    <constraint firstAttribute="height" constant="100" id="zvZ-QG-7Tp"/>
                                                                 </constraints>
                                                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="I36-2E-LRF">
                                                                     <size key="itemSize" width="73" height="64"/>
@@ -247,7 +247,7 @@
                                                         </subviews>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
-                                                            <constraint firstItem="6dM-hG-JtR" firstAttribute="centerY" secondItem="opb-es-kKC" secondAttribute="centerY" id="A3H-Ao-hID"/>
+                                                            <constraint firstItem="6dM-hG-JtR" firstAttribute="centerY" secondItem="opb-es-kKC" secondAttribute="centerY" constant="10" id="A3H-Ao-hID"/>
                                                             <constraint firstAttribute="trailing" secondItem="ohd-my-PBJ" secondAttribute="trailing" constant="8" id="F3c-m8-TFc"/>
                                                             <constraint firstItem="ohd-my-PBJ" firstAttribute="top" secondItem="opb-es-kKC" secondAttribute="top" constant="8" id="P5f-cI-zl6"/>
                                                             <constraint firstItem="vzs-Z2-6as" firstAttribute="top" secondItem="opb-es-kKC" secondAttribute="top" constant="8" id="XWb-8r-u7u"/>

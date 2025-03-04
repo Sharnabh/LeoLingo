@@ -20,6 +20,7 @@ class DiagnosticCheckViewController: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .none
         
         navigationItem.leftBarButtonItem?.image = UIImage(systemName: "chevron.left.circle")
         

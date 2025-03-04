@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class CategorySelectionViewController: UIViewController {
     
@@ -27,26 +28,7 @@ class CategorySelectionViewController: UIViewController {
         categoryCollectionView.register(firstNib, forCellWithReuseIdentifier: "Category")
         
     }
-    
-//    func CategorycollectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print("Selected level card at index: \(indexPath.item)")
-//        
-//        // Create the LevelCardViewController
-//        let flashCardVC = FlashCardViewController(selectedLevelIndex: indexPath.item)
-//        flashCardVC.title = "Level \(indexPath.item + 1)"
-//        
-//        if let navController = self.navigationController {
-//            // We have a navigation controller, just push
-//            navController.pushViewController(flashCardVC, animated: true)
-//        } else {
-//            // Create a new navigation controller and present it
-//            let navController = UINavigationController(rootViewController: flashCardVC)
-//            navController.modalPresentationStyle = .fullScreen
-//            present(navController, animated: true, completion: nil)
-//        }
-//    }
-    
-    
+
     func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -78,21 +60,42 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Selected level card at index: \(indexPath.item)")
-        
-
         let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
         if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
-         
             flashCardVC.selectedIndex = indexPath.item
-            
-            if let navigationController = self.navigationController {
-                navigationController.pushViewController(flashCardVC, animated: true)
-            } else {
-                flashCardVC.modalPresentationStyle = .fullScreen
-                present(flashCardVC, animated: true)
-            }
+            self.navigationController?.pushViewController(flashCardVC, animated: true)
+        }
+
+        // Check if the selected index is 0
+        if indexPath.item == 0 {
+            let splashScreen = UIHostingController(rootView: HumanBodySplashScreen())
+            splashScreen.modalPresentationStyle = .overFullScreen
+            present(splashScreen, animated: true) {}
         }
     }
+
+
+    
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        print("Selected level card at index: \(indexPath.item)")
+//        if indexPath.item == 0 {
+//            let splashScreen = UIHostingController(rootView: HumanBodySplashScreen())
+//            navigationController?.pushViewController(splashScreen, animated: true)
+//        }
+//
+////        let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+////        if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
+////         
+////            flashCardVC.selectedIndex = indexPath.item
+////            
+////            if let navigationController = self.navigationController {
+////                navigationController.pushViewController(flashCardVC, animated: true)
+////            } else {
+////                flashCardVC.modalPresentationStyle = .fullScreen
+////                present(flashCardVC, animated: true)
+////            }
+////        }
+//    }
 
 
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {

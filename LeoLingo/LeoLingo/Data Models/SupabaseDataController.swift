@@ -64,6 +64,11 @@ class SupabaseDataController {
             self.currentUserId = response.id
             self.currentPhoneNumber = phoneNumber
             self.isFirstTimeUser = true
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = response.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            
             try await initializeUserData(userId: response.id)
             return try await getUser(byId: response.id)
         } catch {
@@ -219,6 +224,7 @@ class SupabaseDataController {
             phoneNumber: user.phone_number,
             password: user.password,
             passcode: user.passcode,
+            childName: user.child_name,
             userLevels: userLevels,
             userEarnedBadges: earnedBadges,
             userBadges: userBadges
@@ -684,6 +690,7 @@ class SupabaseDataController {
         public let phone_number: String
         public let password: String
         public let passcode: String?
+        public let child_name: String?
         
         public init(name: String, phone_number: String, password: String) {
             self.id = UUID()
@@ -691,6 +698,7 @@ class SupabaseDataController {
             self.phone_number = phone_number
             self.password = password
             self.passcode = nil
+            self.child_name = nil
         }
     }
     
@@ -784,6 +792,9 @@ class SupabaseDataController {
                 .update(["passcode": passcode])
                 .eq("id", value: userId)
                 .execute()
+            
+            // Save passcode to UserDefaults
+            UserDefaults.standard.parentModePasscode = passcode
         } catch {
             throw SupabaseError.databaseError(error)
         }
@@ -809,6 +820,43 @@ class SupabaseDataController {
         currentPhoneNumber = nil
         currentUser = nil
         isFirstTimeUser = false
+    }
+    
+    // Add method to update child's name
+    public func updateChildName(userId: UUID, childName: String) async throws {
+        print("DEBUG: Starting child name update for user \(userId)")
+        print("DEBUG: New child name: \(childName)")
+        
+        do {
+            let response = try await supabase
+                .from("users")
+                .update(["child_name": childName])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("DEBUG: Update response received")
+            print("DEBUG: Response: \(response)")
+            
+            // Verify the update was successful
+            let updatedUser: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: Verification - Updated user data:")
+            print("DEBUG: User ID: \(updatedUser.id)")
+            print("DEBUG: Child name: \(String(describing: updatedUser.child_name))")
+            
+            if updatedUser.child_name == nil {
+                print("DEBUG: WARNING - Child name is still nil after update")
+            }
+        } catch {
+            print("DEBUG: Error in updateChildName: \(error)")
+            throw SupabaseError.databaseError(error)
+        }
     }
 }
 

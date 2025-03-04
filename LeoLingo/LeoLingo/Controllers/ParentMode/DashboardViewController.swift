@@ -67,6 +67,9 @@ class DashboardViewController: UIViewController {
         exerciseForW2.configuration.allowsInlineMediaPlayback = true
         exerciseForW2.configuration.mediaTypesRequiringUserActionForPlayback = []
         
+        // Load and display average practice time
+        updatePracticeTime()
+        
         // Set fixed frame for WebViews to maintain 16:9 ratio
         exerciseForW1.frame = CGRect(x: exerciseForW1.frame.origin.x,
                                    y: exerciseForW1.frame.origin.y,
@@ -118,6 +121,7 @@ class DashboardViewController: UIViewController {
         super.viewDidAppear(animated)
         // Refresh data when view appears
         loadInaccurateWords()
+        updatePracticeTime()
     }
     
     private func loadInaccurateWords() {
@@ -197,6 +201,31 @@ class DashboardViewController: UIViewController {
                 print("DEBUG: Error loading practices: \(error)")
             }
         }
+    }
+    
+    private func updatePracticeTime() {
+        // Get total time spent and days used from UserDefaults
+        let totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
+        let daysUsed = UserDefaults.standard.integer(forKey: "daysUsed")
+        
+        // Calculate daily average (in seconds)
+        let dailyAverage = daysUsed > 0 ? totalTimeSpent / Double(daysUsed) : totalTimeSpent
+        
+        // Format the average time
+        let averageMinutes = Int(dailyAverage / 60)
+        let hours = averageMinutes / 60
+        let minutes = averageMinutes % 60
+        
+        // Create formatted string
+        var timeText = ""
+        if hours > 0 {
+            timeText = "\(hours)h \(minutes)m"
+        } else {
+            timeText = "\(minutes)m"
+        }
+        
+        // Update the label with average indicator
+        practiceTime.text = timeText
     }
     
     func updateView() {

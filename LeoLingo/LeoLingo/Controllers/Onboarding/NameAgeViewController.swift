@@ -46,7 +46,26 @@ class NameAgeViewController: UIViewController {
         }
         
         let age = ageList[agePickerView.selectedRow(inComponent: 0)]
-        print("\(name) - \(age)\n")
+        print("DEBUG: Attempting to save child name: \(name) and age: \(age)")
+        
+        // Update the child's name in the database
+        Task {
+            do {
+                if let userId = SupabaseDataController.shared.userId {
+                    print("DEBUG: Found user ID: \(userId)")
+                    try await SupabaseDataController.shared.updateChildName(userId: userId, childName: name)
+                    print("DEBUG: Successfully updated child name in database")
+                    
+                    // Verify the update
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    print("DEBUG: Verified user data - Child name: \(String(describing: userData.childName))")
+                } else {
+                    print("DEBUG: No user ID found in UserDefaults")
+                }
+            } catch {
+                print("DEBUG: Error updating child name: \(error)")
+            }
+        }
         
         // Try getting the parent through the navigation hierarchy
         if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {

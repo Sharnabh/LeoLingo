@@ -18,7 +18,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     @IBOutlet var badgesView: UIView!
     @IBOutlet var levelProgress: UIProgressView!
     @IBOutlet var levelView: UIView!
-
+    
     @IBOutlet weak var badgesEarnedCollectionView: UICollectionView!
     @IBOutlet weak var recentPracticesCollectionView: UICollectionView!
     
@@ -27,9 +27,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     var sortedWords: [Word]?
     
     var timer: Timer?
-        var selectedDuration: TimeInterval = 1800 // Default 30 minutes
-        var startTime: Date?
+    var selectedDuration: TimeInterval = 1800 // Default 30 minutes
+    var startTime: Date?
     
+    // Add properties for persisting timer state
+    private var pausedDate: Date?
+    private var elapsedTimeBeforePause: TimeInterval = 0
+    private var totalTimeSpent: TimeInterval = 0
+    private var isVocalCoachActive: Bool = false
+    private var lastResetDate: Date? // Track when we last reset the timer
+    private var dailyTimeSpent: TimeInterval = 0 // Track daily time spent
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +45,127 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         loadRecentPractices()
         setupTimeView()
         updateLevelImage()
+        
+        // Add observers for app lifecycle and vocal coach
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(appWillResignActive),
+                                            name: UIApplication.didEnterBackgroundNotification,
+                                            object: nil)
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(appDidBecomeActive),
+                                            name: UIApplication.didBecomeActiveNotification,
+                                            object: nil)
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(vocalCoachDidBecomeActive),
+                                            name: NSNotification.Name("VocalCoachDidBecomeActive"),
+                                            object: nil)
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(vocalCoachDidBecomeInactive),
+                                            name: NSNotification.Name("VocalCoachDidBecomeInactive"),
+                                            object: nil)
+        
+        // Load persisted data
+        loadPersistedData()
+        
+        // Start timer immediately
+        startTimer()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    private func loadPersistedData() {
+        // Load total time spent
+        totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
+        dailyTimeSpent = UserDefaults.standard.double(forKey: "dailyTimeSpent")
+        selectedDuration = UserDefaults.standard.double(forKey: "selectedDuration")
+        
+        // Initialize days used if not set
+        if !UserDefaults.standard.contains(key: "daysUsed") {
+            UserDefaults.standard.set(1, forKey: "daysUsed")
+        }
+        
+        // Load last reset date
+        if let lastResetTimeStamp = UserDefaults.standard.object(forKey: "lastResetDate") as? Date {
+            lastResetDate = lastResetTimeStamp
+            
+            // Check if we need to reset (if we've passed midnight since last reset)
+            if shouldResetTimer() {
+                resetTimer()
+            }
+        } else {
+            // First time running app, set initial reset date
+            lastResetDate = Date()
+            UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
+        }
+    }
+    
+    private func shouldResetTimer() -> Bool {
+        guard let lastReset = lastResetDate else { return true }
+        
+        // Get calendar and components
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Check if the current date is a different day than the last reset
+        // and we've passed midnight
+        return !calendar.isDate(lastReset, inSameDayAs: now)
+    }
+    
+    private func resetTimer() {
+        dailyTimeSpent = 0
+        lastResetDate = Date()
+        
+        // Increment days used counter when a new day starts
+        let daysUsed = UserDefaults.standard.integer(forKey: "daysUsed")
+        UserDefaults.standard.set(daysUsed + 1, forKey: "daysUsed")
+        
+        // Save the new state
+        UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
+        UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
+        UserDefaults.standard.synchronize()
+        
+        // Update UI
+        updateTimeDisplay()
+    }
+    
+    @objc private func appWillResignActive() {
+        // Save timer state
+        pausedDate = Date()
+        if let startTime = startTime {
+            elapsedTimeBeforePause = Date().timeIntervalSince(startTime)
+            // Save to UserDefaults
+            UserDefaults.standard.set(totalTimeSpent, forKey: "totalTimeSpent")
+            UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
+            UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
+            UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
+            UserDefaults.standard.synchronize()
+        }
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    @objc private func appDidBecomeActive() {
+        // Check if we need to reset the timer
+        if shouldResetTimer() {
+            resetTimer()
+        }
+        restoreTimerState()
+    }
+    
+    @objc private func vocalCoachDidBecomeActive() {
+        isVocalCoachActive = true
+    }
+    
+    @objc private func vocalCoachDidBecomeInactive() {
+        isVocalCoachActive = false
+    }
+    
+    private func restoreTimerState() {
+        // Load total time spent
+        totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
+        startTimer()
         let badges = SupabaseDataController.shared.getUserBadgesData()
         // Do any additional setup after loading the view.
     }
@@ -119,102 +247,115 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             }
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Update level image when view appears
         updateLevelImage()
         loadRecentPractices()
     }
-
+    
     func setupTimeView() {
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDurationPicker))
-            remainingTimeView.addGestureRecognizer(tapGesture)
-            remainingTimeView.isUserInteractionEnabled = true
-            startTimer()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDurationPicker))
+        remainingTimeView.addGestureRecognizer(tapGesture)
+        remainingTimeView.isUserInteractionEnabled = true
+        startTimer()
+    }
+    
+    @objc func showDurationPicker() {
+        let popoverVC = UIViewController()
+        popoverVC.preferredContentSize = CGSize(width: 250, height: 180)
+        
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DurationCell")
+        
+        popoverVC.view = tableView
+        
+        popoverVC.modalPresentationStyle = .popover
+        if let presentationController = popoverVC.popoverPresentationController {
+            presentationController.sourceView = remainingTimeView
+            presentationController.sourceRect = remainingTimeView.bounds
+            presentationController.permittedArrowDirections = .any
+            presentationController.delegate = self
         }
         
-        @objc func showDurationPicker() {
-            let popoverVC = UIViewController()
-            popoverVC.preferredContentSize = CGSize(width: 250, height: 180)
+        present(popoverVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DurationCell", for: indexPath)
+        let durations = ["30 minutes", "45 minutes", "60 minutes"]
+        cell.textLabel?.text = durations[indexPath.row]
+        cell.textLabel?.textColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0)
+        cell.backgroundColor = .white
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let durations: [TimeInterval] = [1800, 2700, 3600] // 30, 45, 60 minutes in seconds
+        selectedDuration = durations[indexPath.row]
+        // Save selected duration
+        UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
+        UserDefaults.standard.synchronize()
+        startTimer()
+        dismiss(animated: true)
+    }
+    
+    func startTimer() {
+        timer?.invalidate()
+        startTime = Date()
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
             
-            let tableView = UITableView(frame: .zero, style: .plain)
-            tableView.delegate = self
-            tableView.dataSource = self
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DurationCell")
-            
-            popoverVC.view = tableView
-            
-            popoverVC.modalPresentationStyle = .popover
-            if let presentationController = popoverVC.popoverPresentationController {
-                presentationController.sourceView = remainingTimeView
-                presentationController.sourceRect = remainingTimeView.bounds
-                presentationController.permittedArrowDirections = .any
-                presentationController.delegate = self
+            // Check for midnight reset before updating display
+            if self.shouldResetTimer() {
+                self.resetTimer()
             }
-            
-            present(popoverVC, animated: true)
+            self.updateTimeDisplay()
         }
-        
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return 3
-        }
-        
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "DurationCell", for: indexPath)
-            let durations = ["30 minutes", "45 minutes", "60 minutes"]
-            cell.textLabel?.text = durations[indexPath.row]
-            cell.textLabel?.textColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0)
-            cell.backgroundColor = .white
-            return cell
-        }
-        
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let durations: [TimeInterval] = [1800, 2700, 3600] // 30, 45, 60 minutes in seconds
-            selectedDuration = durations[indexPath.row]
-            startTimer()
-            dismiss(animated: true)
-        }
-        
-        func startTimer() {
-            timer?.invalidate()
-            startTime = Date()
-            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-                self?.updateTimeDisplay()
-            }
-        }
-        
+    }
+    
     func updateTimeDisplay() {
-            guard let startTime = startTime else { return }
-            let elapsedTime = Date().timeIntervalSince(startTime)
-            let remainingTime = max(selectedDuration - elapsedTime, 0)
+        guard let startTime = startTime else { return }
+        let currentElapsedTime = Date().timeIntervalSince(startTime)
+        
+        // Only update time if vocal coach is active
+        if isVocalCoachActive {
+            dailyTimeSpent += 1 // Add one second
+            totalTimeSpent += 1
             
-            // Format elapsed time
-            let elapsedMinutes = Int(elapsedTime / 60)
-            let elapsedHours = elapsedMinutes / 60
-            let finalElapsedMinutes = elapsedMinutes % 60
-            
-            var timeSpentText = ""
-            if elapsedHours > 0 {
-                timeSpentText = "\(elapsedHours)h \(finalElapsedMinutes)m"
-            } else {
-                timeSpentText = "\(finalElapsedMinutes)m"
-            }
-            
-            // Format remaining time
-            let remainingMinutes = Int(ceil(remainingTime / 60)) // Rounding up to nearest minute
-            let timeLeftText = "\(remainingMinutes) min left"
-            
-            // Update UI
-            timeLeft.text = timeLeftText
-            timeLeftBar.progress = Float(elapsedTime / selectedDuration) // Progress shows time spent
-            
-            if remainingTime <= 0 {
-                timer?.invalidate()
-                timeLeft.text = "Time's up!"
-            }
+            // Save total time immediately for real-time updates in dashboard
+            UserDefaults.standard.set(totalTimeSpent, forKey: "totalTimeSpent")
+            UserDefaults.standard.synchronize()
         }
-
+        
+        // Format daily time
+        let remainingSeconds = max(selectedDuration - dailyTimeSpent, 0)
+        let remainingMinutes = Int(ceil(remainingSeconds / 60))
+        
+        // Update UI with remaining time
+        if remainingSeconds > 0 {
+            timeLeft.text = "\(remainingMinutes)m left"
+        } else {
+            timeLeft.text = "Daily limit reached!"
+        }
+        
+        // Update progress bar
+        if isVocalCoachActive {
+            timeLeftBar.progress = min(Float(dailyTimeSpent) / Float(selectedDuration), 1.0)
+        }
+        
+        // Save daily state
+        UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
             guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else { return 0 }
@@ -279,56 +420,56 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     
-  
+    
     func updateLevelView() {
         // Corner radius and border
-          
+        
         levelView.layer.cornerRadius = 21
         levelView.layer.borderWidth = 3
         levelView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         levelView.clipsToBounds = false
-
+        
         // Drop shadow
         levelView.layer.shadowColor = UIColor.black.cgColor
         levelView.layer.shadowOpacity = 0.6
         levelView.layer.shadowOffset = CGSize(width: 0, height: 10)  //
         levelView.layer.shadowRadius = 20
-
-
+        
+        
         // Level progress
         levelProgress.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
-
+        
         // remaining time
         remainingTimeView.layer.cornerRadius = 25
         remainingTimeView.layer.borderWidth = 3
         remainingTimeView.layer.borderColor = UIColor(red: 222/255, green: 168/255, blue: 62/255, alpha: 1.0).cgColor
         timeLeftBar.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
-
+        
         // badges
         badgesView.layer.cornerRadius = 21
         badgesView.layer.borderWidth = 3
         badgesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         badgesView.clipsToBounds = false
-
+        
         badgesView.layer.shadowColor = UIColor.black.cgColor
         badgesView.layer.shadowOpacity = 0.4
         badgesView.layer.shadowOffset = CGSize(width: 0, height: 1)
         badgesView.layer.shadowRadius = 5
-
+        
         //recent practices
         practicesView.layer.cornerRadius = 21  // Rounded corners
         practicesView.layer.borderWidth = 3    // Border thickness
         practicesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
         practicesView.clipsToBounds = false  // Clips content to rounded corners
-
+        
         practicesView.layer.shadowColor = UIColor.black.cgColor
         practicesView.layer.shadowOpacity = 0.4  // 62% opacity
         practicesView.layer.shadowOffset = CGSize(width: 0, height: 1)  // Offset of 16pt downward
         practicesView.layer.shadowRadius = 5  // Blur radius of 43pt
-
-       
+        
+        
     }
-     
+    
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
@@ -344,6 +485,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Show greeting for first-time users
             if let greetVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachGreeting") as? GreetViewController {
                 greetVC.modalPresentationStyle = .fullScreen
+                // Post notification when vocal coach becomes active
+                NotificationCenter.default.post(name: NSNotification.Name("VocalCoachDidBecomeActive"), object: nil)
                 present(greetVC, animated: true)
                 // Reset the first time status after showing greeting
                 SupabaseDataController.shared.isFirstTime = false
@@ -352,6 +495,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             // Directly show VocalCoach for returning users
             if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
                 vocalCoachVC.modalPresentationStyle = .fullScreen
+                // Post notification when vocal coach becomes active
+                NotificationCenter.default.post(name: NSNotification.Name("VocalCoachDidBecomeActive"), object: nil)
                 present(vocalCoachVC, animated: true, completion: nil)
             }
         }

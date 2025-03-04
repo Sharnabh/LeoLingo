@@ -197,7 +197,11 @@ class PracticeScreenViewController: UIViewController {
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
     @IBOutlet var wordImage: UIImageView!
-    @IBOutlet weak var headingTitle: UILabel!
+    
+
+    @IBOutlet var levelProgress: UIProgressView!
+    
+    @IBOutlet var levelLabel: UILabel!
     
     var mojoImageData = ["mojo2", "mojoHearing"]
     
@@ -248,8 +252,8 @@ class PracticeScreenViewController: UIViewController {
         // Add speech processor setup
         speechProcessor.requestSpeechRecognitionPermission()
         
-        headingTitle.layer.cornerRadius = 21
-        headingTitle.layer.masksToBounds = true
+        levelLabel.layer.cornerRadius = 21
+        levelLabel.layer.masksToBounds = true
         
         // Add tap gesture to wordImage
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(wordImageTapped))
@@ -596,6 +600,18 @@ class PracticeScreenViewController: UIViewController {
         let appLevels = SupabaseDataController.shared.getLevelsData()
         var wordImage: String?
         var wordTitle: String?
+        var levelTitle: String?
+        
+        // Update level label with current level
+        if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
+            levelTitle = currentLevel.levelTitle
+            levelLabel.text = levelTitle
+        }
+        
+        // Update progress bar based on current word index
+        let totalWordsInLevel = levels[levelIndex].words.count
+        let currentProgress = Float(currentIndex + 1) / Float(totalWordsInLevel)
+        levelProgress.progress = currentProgress
         
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentData.id }) {
@@ -703,12 +719,21 @@ class PracticeScreenViewController: UIViewController {
             
             popoverVC.configurePopover(message: "Lets Play Some Games!", image: "mojo2")
             
-            // Present the popover and dismiss after 2 seconds
+            // Present the popover and ensure navigation happens after dismissal
             present(popoverVC, animated: true) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                     guard let self = self else { return }
-                    popoverVC.dismiss(animated: true) {
-                        self.navigateToFunLearning()
+                    // Ensure we're on the main thread for UI updates
+                    DispatchQueue.main.async {
+                        popoverVC.dismiss(animated: true) { [weak self] in
+                            guard let self = self else { return }
+                            // Load FunLearning storyboard
+                            let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
+                            if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
+                                // Push to navigation stack
+                                self.navigationController?.pushViewController(funLearningVC, animated: true)
+                            }
+                        }
                     }
                 }
             }

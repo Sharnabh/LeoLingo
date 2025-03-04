@@ -190,6 +190,77 @@ class WordIDManager {
     }
 }
 
+class BadgeIDManager {
+    static let shared = BadgeIDManager()
+    private let plistName = "BadgeIDs.plist"
+    private var badgeIDs: [String: String] = [:] // [wordTitle: uuidString]
+    
+    private init() {
+        loadBadgeIDs()
+        printCurrentMappings()
+    }
+    
+    private var plistURL: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(plistName)
+    }
+    
+    private func loadBadgeIDs() {
+        guard let url = plistURL,
+              let data = try? Data(contentsOf: url),
+              let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String] else {
+            print("DEBUG: No existing word ID mappings found or failed to load")
+            return
+        }
+        badgeIDs = dict
+        print("DEBUG: Loaded \(dict.count) word ID mappings from plist")
+    }
+    
+    private func saveBadgeIDs() {
+        guard let url = plistURL,
+              let data = try? PropertyListSerialization.data(fromPropertyList: badgeIDs, format: .xml, options: 0) else {
+            print("DEBUG: Failed to save word ID mappings")
+            return
+        }
+        try? data.write(to: url)
+        print("DEBUG: Saved \(badgeIDs.count) word ID mappings to plist")
+    }
+    
+    func getID(for wordTitle: String) -> UUID {
+        let cleanTitle = wordTitle.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        if let existingIDString = badgeIDs[cleanTitle],
+           let existingID = UUID(uuidString: existingIDString) {
+            print("DEBUG: Found existing ID for word '\(cleanTitle)': \(existingID)")
+            return existingID
+        }
+        
+        let newID = UUID()
+        badgeIDs[cleanTitle] = newID.uuidString
+        print("DEBUG: Generated new ID for word '\(cleanTitle)': \(newID)")
+        saveBadgeIDs()
+        return newID
+    }
+    
+    func printCurrentMappings() {
+        print("DEBUG: Current word ID mappings:")
+        for (word, id) in badgeIDs {
+            print("  \(word): \(id)")
+        }
+    }
+    
+    func getAllMappings() -> [String: UUID] {
+        var mappings: [String: UUID] = [:]
+        for (word, idString) in badgeIDs {
+            if let uuid = UUID(uuidString: idString) {
+                mappings[word] = uuid
+            }
+        }
+        return mappings
+    }
+}
+
 struct AppWord {
     var id: UUID
     var wordTitle: String
@@ -223,8 +294,6 @@ struct CategoryCard {
         self.words = appCategory.words
     }
 }
-
-
 
 struct AppBadge {
     var id: UUID = UUID()

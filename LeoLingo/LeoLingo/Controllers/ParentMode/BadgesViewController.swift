@@ -30,27 +30,39 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            return DataController.shared.countEarnedBadges()
+            if let badges = SupabaseDataController.shared.getEarnedBadgesData() {
+                return badges.count
+            }
         }
-        return DataController.shared.countBadges()
+        return SupabaseDataController.shared.getUserBadgesData().count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == badgesEarnedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
             
-            let earnedBadges = DataController.shared.getEarnedBadges()
+            guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData() else { return UICollectionViewCell() }
             
-            cell.configure(with: "\(earnedBadges[indexPath.row].badgeImage)", title: "\(earnedBadges[indexPath.row].badgeTitle)")
+            for badge in SampleDataController.shared.getBadgesData() {
+                if badge.id == earnedBadges[indexPath.row].id {
+                    cell.configure(with: "\(badge.badgeImage)", title: "\(badge.badgeTitle)")
+                }
+            }
+
             
             return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell
         
-        let badges = DataController.shared.getBadges()
-        let status = DataController.shared.getBadgesStatus(badges[indexPath.row])
+        let badges = SupabaseDataController.shared.getUserBadgesData()
+        var status: Bool = false
         
-        cell.configure(with: "\(badges[indexPath.row].badgeImage)", description: "\(badges[indexPath.row].badgeDescription)", status: status)
+        for badge in SampleDataController.shared.getBadgesData() {
+            if badge.id == badges[indexPath.row].id {
+                status = badges[indexPath.row].isEarned
+                cell.configure(with: "\(badge.badgeImage)", description: "\(badge.badgeDescription)", status: status)
+            }
+        }
         
         return cell
     }

@@ -364,7 +364,21 @@ class DashboardViewController: UIViewController {
                             exerciseForW2.isHidden = true
                             descriptionW2.isHidden = true
                             descriptionLabel.isHidden = true
-                            exerciseForW1.widthAnchor.constraint(equalToConstant: exerciseForW1.frame.height).isActive = true
+                            
+                            // Remove any existing height constraints for exerciseForW1
+                            exerciseForW1.constraints.forEach { constraint in
+                                if constraint.firstAttribute == .height {
+                                    exerciseForW1.removeConstraint(constraint)
+                                }
+                            }
+                            
+                            // Add new expanded height constraint
+                            let expandedHeight = mojoSuggestion.frame.height/2
+                            exerciseForW1.heightAnchor.constraint(equalToConstant: expandedHeight).isActive = true
+                            
+                            // Update layout
+                            exerciseForW1.setNeedsLayout()
+                            exerciseForW1.layoutIfNeeded()
                         }
                     }
                 }

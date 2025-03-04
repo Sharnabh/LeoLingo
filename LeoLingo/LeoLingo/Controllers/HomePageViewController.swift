@@ -69,6 +69,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         // Start timer immediately
         startTimer()
+        
+        let badges = SupabaseDataController.shared.getUserBadgesData()
+        // Update Badge Status
     }
     
     deinit {
@@ -166,7 +169,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Load total time spent
         totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
         startTimer()
-        let badges = SupabaseDataController.shared.getUserBadgesData()
         // Do any additional setup after loading the view.
     }
     

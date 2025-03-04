@@ -132,13 +132,13 @@ class GameSpeechProcessor: ObservableObject {
         let phoneticSimilarities: [Character: Set<Character>] = [
             "c": ["k", "s"],
             "k": ["c", "q"],
-            "ph": ["f"],
+            "f": ["p", "h"],
             "s": ["c", "z"],
             "z": ["s"],
             "d": ["t"],
             "t": ["d"],
             "b": ["p"],
-            "p": ["b"],
+            "p": ["b", "f"],
             "m": ["n"],
             "n": ["m"]
         ]
@@ -154,6 +154,9 @@ class GameSpeechProcessor: ObservableObject {
                     cost = 0
                 } else if let similarChars = phoneticSimilarities[char1], similarChars.contains(char2) {
                     // Lower cost for phonetically similar characters
+                    cost = 0.5
+                } else if i < aCount && String([char1, aChars[i]]) == "ph" {
+                    // Special handling for "ph" digraph
                     cost = 0.5
                 } else {
                     cost = 1

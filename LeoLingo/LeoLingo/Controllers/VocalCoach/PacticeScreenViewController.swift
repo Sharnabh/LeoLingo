@@ -95,20 +95,20 @@ class WaveformView: UIView {
     @objc private func updateBars() {
         let currentTime = CACurrentMediaTime()
         let elapsedTime = currentTime - animationStartTime
-        phase += 0.05 // Slower phase change for smoother animation
+        phase += 0.02 // Slowed down from 0.05 to 0.02 for smoother animation
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
         for (index, bar) in barLayers.enumerated() {
-            // Create more complex wave patterns
+            // Create more complex wave patterns with slower movement
             let normalizedIndex = CGFloat(index) / CGFloat(numberOfBars)
-            let primaryWave = sin(phase + normalizedIndex * 4.0) // Primary wave
-            let secondaryWave = sin(phase * 1.5 + normalizedIndex * 2.0) * 0.5 // Secondary wave
-            let fastWave = sin(phase * 3.0 + normalizedIndex) * 0.3 // Fast wave
+            let primaryWave = sin(phase * 0.7 + normalizedIndex * 4.0) // Slowed primary wave
+            let secondaryWave = sin(phase * 1.0 + normalizedIndex * 2.0) * 0.5 // Slowed secondary wave
+            let fastWave = sin(phase * 2.0 + normalizedIndex) * 0.3 // Slowed fast wave
             
             // Add some random noise for natural variation
-            let noise = CGFloat(arc4random_uniform(10)) / 100.0
+            let noise = CGFloat(arc4random_uniform(10)) / 150.0 // Reduced noise
             
             // Combine all waves
             let combinedWave = primaryWave + secondaryWave + fastWave + noise
@@ -148,6 +148,8 @@ class PracticeScreenViewController: UIViewController {
     private let speechProcessor = SpeechProcessor()
     private var speechSubscription: AnyCancellable?
     private var countdownTimer: Timer?
+    private var celebrationPlayer: AVAudioPlayer?
+    private var confettiLayer: CAEmitterLayer?
     
     private lazy var waveformView: WaveformView = {
         let view = WaveformView()
@@ -617,18 +619,16 @@ class PracticeScreenViewController: UIViewController {
         let appLevels = SupabaseDataController.shared.getLevelsData()
         var wordImage: String?
         var wordTitle: String?
-        var levelTitle: String?
         
         // Update level label with current level
         if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
-            levelTitle = currentLevel.levelTitle
-            levelLabel.text = levelTitle
+            levelLabel.text = currentLevel.levelTitle
         }
         
         // Update progress bar based on current word index
         let totalWordsInLevel = levels[levelIndex].words.count
-        let currentProgress = Float(currentIndex + 1) / Float(totalWordsInLevel)
-        levelProgress.progress = currentProgress
+        let progress = Float(currentIndex) / Float(totalWordsInLevel)
+        levelProgress.setProgress(progress, animated: true)
         
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentData.id }) {
@@ -766,7 +766,7 @@ class PracticeScreenViewController: UIViewController {
             
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
-                popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level.levelImage)
+                popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", image: level.levelImage)
                 
                 // Present the popover and dismiss after 2 seconds
                 present(popoverVC, animated: true) {
@@ -781,49 +781,100 @@ class PracticeScreenViewController: UIViewController {
         }
     }
     
+    func showConfettiEffect() {
+        // Remove existing confetti layer if any
+        confettiLayer?.removeFromSuperlayer()
+        
+        // Create new confetti layer
+        let newConfettiLayer = CAEmitterLayer()
+        confettiLayer = newConfettiLayer
+        newConfettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
+        newConfettiLayer.emitterShape = .line
+        newConfettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
+        
+        let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
+        let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
+        
+        var cells: [CAEmitterCell] = []
+        for color in colors {
+            for shape in shapes {
+                let cell = CAEmitterCell()
+                cell.birthRate = 8
+                cell.lifetime = 2.0
+                cell.velocity = CGFloat.random(in: 200...300)
+                cell.velocityRange = 100
+                cell.emissionLongitude = .pi
+                cell.emissionRange = .pi / 2
+                cell.spin = 3
+                cell.spinRange = 5
+                cell.scale = 0.15
+                cell.scaleRange = 0.25
+                cell.contents = shape.cgImage
+                cell.color = color.cgColor
+                cells.append(cell)
+            }
+        }
+        newConfettiLayer.emitterCells = cells
+        view.layer.addSublayer(newConfettiLayer)
+        
+        // Setup and play celebration sound
+        if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
+            do {
+                celebrationPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                celebrationPlayer?.prepareToPlay()
+                celebrationPlayer?.play()
+            } catch {
+                print("Error playing celebration sound: \(error.localizedDescription)")
+            }
+        } else {
+            print("Celebration sound file not found")
+        }
+    }
+    
+    func stopConfetti() {
+        confettiLayer?.removeFromSuperlayer()
+        confettiLayer = nil
+        celebrationPlayer?.stop()
+        celebrationPlayer = nil
+    }
+    
     func showPopover(isCorrect: Bool, levelChange: Bool, completion: (() -> Void)? = nil) {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
             
-            // Update messages to reflect pronunciation accuracy
             if isCorrect && !levelChange {
                 popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
                 
-                // Present the popover
+                // Show confetti effect for correct pronunciation
+                showConfettiEffect()
+                
                 present(popoverVC, animated: true) {
-                    // Automatically dismiss after 2 seconds and execute the next action
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }
+                        // Stop confetti before dismissing popover
+                        self.stopConfetti()
                         popoverVC.dismiss(animated: true) {
                             // Progress to next word or level
                             if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
-                                // If we're at the last word of the level
                                 if self.levelIndex < self.levels.count - 1 {
-                                    // Move to next level if available
                                     self.levelIndex += 1
                                     self.currentIndex = 0
                                     self.showLevelChangePopover()
                                     self.showConfettiEffect()
                                 } else {
-                                    // At the last word of the last level, loop back to first level
                                     self.levelIndex = 0
                                     self.currentIndex = 0
                                     self.updateUIAfterPopover()
                                 }
                             } else {
-                                // Move to next word in current level
                                 self.currentIndex += 1
                                 self.updateUIAfterPopover()
                             }
                         }
                     }
                 }
-            } else if isCorrect && levelChange {
-                showLevelChangePopover()
-                return
             } else {
                 popoverVC.configurePopover(message: "Let's try that pronunciation again.", image: "SadMojo")
                 // Present the popover and dismiss after 2 seconds
@@ -893,42 +944,6 @@ class PracticeScreenViewController: UIViewController {
         let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
         if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
             self.navigationController?.pushViewController(funLearningVC, animated: true)
-        }
-    }
-    
-    func showConfettiEffect() {
-        let confettiLayer = CAEmitterLayer()
-        confettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
-        confettiLayer.emitterShape = .line
-        confettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
-        
-        let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
-        let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
-        
-        var cells: [CAEmitterCell] = []
-        for color in colors {
-            for shape in shapes {
-                let cell = CAEmitterCell()
-                cell.birthRate = 6
-                cell.lifetime = 5.0
-                cell.velocity = CGFloat.random(in: 150...200)
-                cell.velocityRange = 50
-                cell.emissionLongitude = .pi
-                cell.emissionRange = .pi / 4
-                cell.spin = 2
-                cell.spinRange = 3
-                cell.scale = 0.1
-                cell.scaleRange = 0.2
-                cell.contents = shape.cgImage
-                cell.color = color.cgColor
-                cells.append(cell)
-            }
-        }
-        confettiLayer.emitterCells = cells
-        view.layer.addSublayer(confettiLayer)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            confettiLayer.removeFromSuperlayer()
         }
     }
     

@@ -65,7 +65,7 @@ class LevelCardViewController: UIViewController {
     private lazy var speakButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1.0)
+        button.backgroundColor = UIColor(red: 79/255, green: 144/255, blue: 76/255, alpha: 1.0) // #4F904C
         button.layer.cornerRadius = 25
         button.clipsToBounds = true
         button.addTarget(self, action: #selector(speakButtonTapped), for: .touchUpInside)
@@ -359,8 +359,9 @@ class LevelCardViewController: UIViewController {
             let attemptNumber = currentWord.record?.attempts ?? 0
             if let wordData = SupabaseDataController.shared.wordData(by: currentWord.id) {
                 isListening = true
-                updateSpeakButtonState(isListening: true)
+                updateSpeakButtonAppearance()
                 
+                // Start recording with current word and attempt number
                 speechProcessor.startRecording(
                     word: wordData.wordTitle,
                     wordId: currentWord.id,
@@ -368,27 +369,41 @@ class LevelCardViewController: UIViewController {
                 )
                 
                 // Subscribe to speech recognition results
-                speechProcessor.$userSpokenText
+                speechSubscription?.cancel() // Cancel any existing subscription
+                
+                // Create new subscription
+                speechSubscription = speechProcessor.$userSpokenText
+                    .receive(on: DispatchQueue.main)
                     .filter { !$0.isEmpty }
-                    .sink { [weak self] spokenText in
-                        guard let self = self else { return }
+                    .sink { [weak self] completion in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            print("Speech recognition error: \(error)")
+                            self?.stopListening()
+                        }
+                    } receiveValue: { [weak self] spokenText in
+                        guard let self = self,
+                              let currentWord = self.getCurrentWord() else { return }
                         
-                        let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), wordData.wordTitle.lowercased())
-                        let maxLength = max(spokenText.count, wordData.wordTitle.count)
+                        let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
+                        let maxLength = max(spokenText.count, currentWord.count)
                         let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
                         
                         // Record the accuracy and recording path
                         self.recordAccuracy(accuracy)
                         
+                        // Show confetti and success animation only if accuracy is good
                         if accuracy >= 70.0 {
-                            self.handleCorrectPronunciation()
-                        } else {
-                            self.handleIncorrectPronunciation()
+                            self.showConfettiEffect()
+                            if let cell = self.collectionView.cellForItem(at: IndexPath(item: selectedCardIndex, section: 0)) as? LevelCardCell {
+                                cell.showSuccessAnimation()
+                            }
                         }
                         
                         self.stopListening()
                     }
-                    .store(in: &cancellables)
             }
         }
     }
@@ -424,25 +439,6 @@ class LevelCardViewController: UIViewController {
     }
     
     private func updateSpeakButtonAppearance() {
-        if let gradientLayer = speakButton.layer.sublayers?.first as? CAGradientLayer {
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            
-            if isListening {
-                gradientLayer.colors = [
-                    UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 0.3).cgColor,
-                    UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 0.3).cgColor
-                ]
-            } else {
-                gradientLayer.colors = [
-                    UIColor(red: 44/255, green: 144/255, blue: 71/255, alpha: 1.0).cgColor,
-                    UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0).cgColor
-                ]
-            }
-            
-            CATransaction.commit()
-        }
-        
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
         let image = UIImage(systemName: isListening ? "waveform.circle.fill" : "mic.circle.fill", 
                           withConfiguration: imageConfig)
@@ -606,17 +602,8 @@ class LevelCardViewController: UIViewController {
     }
     
     private func handleIncorrectPronunciation() {
-        // Show feedback to user
-        let alert = UIAlertController(
-            title: "Let's Try Again",
-            message: "That wasn't quite right. Would you like to try again?",
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "Try Again", style: .default))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
-        present(alert, animated: true)
+        // Just stop listening and let user try again
+        stopListening()
     }
     
     private func refreshData() {
@@ -734,20 +721,22 @@ extension LevelCardViewController: UICollectionViewDelegate, UICollectionViewDat
         let index = round(offset / itemWidth)
         selectedCardIndex = Int(index)
         
-        // Enhanced scale and fade effect for cards
+        // Enhanced scale effect for cards (no fade)
         let centerX = scrollView.contentOffset.x + (scrollView.bounds.width / 2.0)
         
         for cell in collectionView.visibleCells {
             let cellCenter = cell.center.x
             let distance = abs(cellCenter - centerX)
+            let maxDistance = scrollView.bounds.width / 2.0
             
-            // More dramatic scale effect
-            let scale = max(0.7, min(1.0, 1.0 - (distance / scrollView.bounds.width) * 0.5))
-            // More dramatic fade effect
-            let alpha = max(0.3, min(1.0, 1.0 - (distance / scrollView.bounds.width) * 1.2))
+            // Scale effect only (no fade)
+            let scale = max(0.7, min(1.0, 1.0 - (distance / maxDistance) * 0.3))
             
+            // Apply scale transform only
             cell.transform = CGAffineTransform(scaleX: scale, y: scale)
-            cell.alpha = alpha
+            
+            // Keep opacity at 100%
+            cell.alpha = 1.0
             
             // Add depth effect
             let zIndex = 1000 - Int(distance)

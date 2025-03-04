@@ -60,7 +60,7 @@ class DataController {
     func getUserBadgesData() -> [Badge] {
         var badges: [Badge] = []
         for badge in app.badges {
-            badges.append(Badge(id: badge.id, isEarned: true))
+            badges.append(Badge(id: badge.id, badgeTitle: badge.badgeTitle, isEarned: false))
         }
         return badges
     }
@@ -210,7 +210,7 @@ class DataController {
     
     func addEarnedBadges() {
         for badge in app.badges {
-            var badges: Badge = Badge(id: badge.id, isEarned: false)
+            let badges = Badge(id: badge.id, badgeTitle: badge.badgeTitle, isEarned: false)
             if badges.isEarned {
                 user[0].userEarnedBadges.append(badges)
             }

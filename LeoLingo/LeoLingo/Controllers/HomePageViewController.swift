@@ -69,9 +69,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         // Start timer immediately
         startTimer()
-        
-        let badges = SupabaseDataController.shared.getUserBadgesData()
-        // Update Badge Status
     }
     
     deinit {

@@ -38,7 +38,7 @@ class GreetViewController: UIViewController {
                 if let userId = SupabaseDataController.shared.userId {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     DispatchQueue.main.async { [weak self] in
-                        self?.greetings = ["Hello \(userData.name)!", "I am Mojo"]
+                        self?.greetings = ["Hello \(userData.childName ?? "User")!", "I am Mojo"]
                         self?.startAnimations()
                     }
                 }

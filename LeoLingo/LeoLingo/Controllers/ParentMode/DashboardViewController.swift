@@ -364,6 +364,7 @@ class DashboardViewController: UIViewController {
                             exerciseForW2.isHidden = true
                             descriptionW2.isHidden = true
                             descriptionLabel.isHidden = true
+                            exerciseForW1.widthAnchor.constraint(equalToConstant: exerciseForW1.frame.height).isActive = true
                         }
                     }
                 }

@@ -39,7 +39,7 @@
                                         </items>
                                     </navigationBar>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="LEf-bX-H7a">
-                                        <rect key="frame" x="105.5" y="-48" width="507.5" height="684"/>
+                                        <rect key="frame" x="105.5" y="10" width="507.5" height="684"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter Passcode to switch in Parent's Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EmE-db-lNN">
                                                 <rect key="frame" x="0.0" y="0.0" width="507.5" height="34"/>
@@ -242,8 +242,8 @@
                                     <constraint firstItem="2gq-sh-wmi" firstAttribute="centerX" secondItem="Rt6-eM-jZN" secondAttribute="centerX" id="DAf-LC-roI"/>
                                     <constraint firstItem="LEf-bX-H7a" firstAttribute="centerX" secondItem="Rt6-eM-jZN" secondAttribute="centerX" id="HrR-zu-uTu"/>
                                     <constraint firstItem="2gq-sh-wmi" firstAttribute="top" secondItem="Rt6-eM-jZN" secondAttribute="top" id="aHH-o3-7yG"/>
-                                    <constraint firstItem="LEf-bX-H7a" firstAttribute="centerY" secondItem="Rt6-eM-jZN" secondAttribute="centerY" id="fAU-VB-rRN"/>
                                     <constraint firstItem="2gq-sh-wmi" firstAttribute="leading" secondItem="Rt6-eM-jZN" secondAttribute="leading" id="tNE-WK-SAa"/>
+                                    <constraint firstItem="LEf-bX-H7a" firstAttribute="top" secondItem="Rt6-eM-jZN" secondAttribute="top" constant="10" id="u6t-Gi-JU5"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -759,7 +759,7 @@
             </objects>
             <point key="canvasLocation" x="3587" y="-915"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Parent Mode Tab Bar Controller-->
         <scene sceneID="PnE-4d-SqQ">
             <objects>
                 <tabBarController storyboardIdentifier="parentModeTabBar" automaticallyAdjustsScrollViewInsets="NO" id="HAu-s5-gJ1" customClass="ParentModeTabBarController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
@@ -965,7 +965,7 @@
                 <navigationController id="primary-nav" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="nav-bar">
                         <rect key="frame" x="0.0" y="24" width="420" height="50"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
                         <segue destination="ENa-ge-xZO" kind="relationship" relationship="rootViewController" id="1Nd-Iz-afA"/>
@@ -987,7 +987,7 @@
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
         <image name="play.fill" catalog="system" width="120" height="128"/>
         <systemColor name="opaqueSeparatorColor">
-            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

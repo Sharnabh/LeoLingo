@@ -1,5 +1,6 @@
 import UIKit
 import Speech
+import AVFoundation
 
 // MARK: - Constants
 private enum Constants {
@@ -19,6 +20,11 @@ private enum Constants {
     static let wordLabelFont = UIFont.systemFont(ofSize: 32, weight: .bold)
     static let timerLabelFont = UIFont.systemFont(ofSize: 24, weight: .medium)
     static let overlayAlpha: CGFloat = 0.7
+    static let collectSoundFileName = "collect"
+    static let roarSoundFileName = "roar"
+    static let popSoundFileName = "pop"
+    static let themeSoundFileName = "gametheme"
+    static let themeMusicVolume: Float = 0.3  // 30% volume
 }
 
 class JungleRunViewController: UIViewController {
@@ -72,9 +78,15 @@ class JungleRunViewController: UIViewController {
         private var countdownTimer: Timer?
         private var remainingTime: TimeInterval = Constants.wordCoinDisplayDuration
 
+        private var collectSoundPlayer: AVAudioPlayer?
+        private var roarSoundPlayer: AVAudioPlayer?
+        private var popSoundPlayer: AVAudioPlayer?
+        private var themeMusicPlayer: AVAudioPlayer?
+
         deinit {
             gameTimer?.invalidate()
             wordCoinTimer?.invalidate()
+            themeMusicPlayer?.stop()
         }
 
         override func viewDidLoad() {
@@ -82,6 +94,7 @@ class JungleRunViewController: UIViewController {
             setupUI()
             setupAccessibility()
             setupSpeechRecognition()
+            setupSoundPlayers()
         }
 
         // MARK: - Pause Button Action
@@ -107,15 +120,11 @@ class JungleRunViewController: UIViewController {
         // MARK: - Quit Button Action
         @IBAction func quitButtonTapped(_ sender: UIButton) {
             let homePageVC = JungleRunHomeViewController()
-
             homePageVC.updateScore(coin: gameData.coins, diamond: gameData.diamonds)
             
-//             homePageVC.coinScore = gameData.coins
-//             homePageVC.diamondScore = gameData.diamonds
-
-//             let navigationController = UINavigationController(rootViewController: homePageVC)
-             self.dismiss(animated: true)
-          
+            // Stop theme music before dismissing
+            themeMusicPlayer?.stop()
+            self.dismiss(animated: true)
         }
 
         // MARK: - Background Setup
@@ -259,6 +268,7 @@ class JungleRunViewController: UIViewController {
             if coin.image == UIImage(named: "valueCoin") {
                 gameData.coins += 100
                 updateCoinLabel()
+                playCollectSound()
             } else if let coinImage = coin.image, coinImage == UIImage(named: "wordCoin") {
                 handleWordCoin(coin)
             }
@@ -333,6 +343,11 @@ class JungleRunViewController: UIViewController {
             // Reset background position
             stopBackgroundAnimation()
             startBackgroundAnimation()
+            
+            // Restart theme music if it's not playing
+            if themeMusicPlayer?.isPlaying == false {
+                themeMusicPlayer?.play()
+            }
         }
 
         // MARK: - Gesture Handling
@@ -415,6 +430,58 @@ class JungleRunViewController: UIViewController {
                     }
                 }
             }
+        }
+        
+        private func setupSoundPlayers() {
+            // Configure audio session for sound effects
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print("Failed to set up audio session: \(error)")
+            }
+            
+            // Setup theme music
+            if let soundURL = Bundle.main.url(forResource: Constants.themeSoundFileName, withExtension: "mp3") {
+                themeMusicPlayer = try? AVAudioPlayer(contentsOf: soundURL)
+                themeMusicPlayer?.volume = Constants.themeMusicVolume
+                themeMusicPlayer?.numberOfLoops = -1  // Infinite loop
+                themeMusicPlayer?.prepareToPlay()
+                themeMusicPlayer?.play()
+            }
+            
+            // Setup collect sound
+            if let soundURL = Bundle.main.url(forResource: Constants.collectSoundFileName, withExtension: "mp3") {
+                collectSoundPlayer = try? AVAudioPlayer(contentsOf: soundURL)
+                collectSoundPlayer?.prepareToPlay()
+            }
+            
+            // Setup roar sound
+            if let soundURL = Bundle.main.url(forResource: Constants.roarSoundFileName, withExtension: "mp3") {
+                roarSoundPlayer = try? AVAudioPlayer(contentsOf: soundURL)
+                roarSoundPlayer?.prepareToPlay()
+            }
+            
+            // Setup pop sound
+            if let soundURL = Bundle.main.url(forResource: Constants.popSoundFileName, withExtension: "mp3") {
+                popSoundPlayer = try? AVAudioPlayer(contentsOf: soundURL)
+                popSoundPlayer?.prepareToPlay()
+            }
+        }
+        
+        private func playCollectSound() {
+            collectSoundPlayer?.currentTime = 0
+            collectSoundPlayer?.play()
+        }
+        
+        private func playRoarSound() {
+            roarSoundPlayer?.currentTime = 0
+            roarSoundPlayer?.play()
+        }
+        
+        private func playPopSound() {
+            popSoundPlayer?.currentTime = 0
+            popSoundPlayer?.play()
         }
         
         private func showWordCoinChallenge(with word: String, coinView: UIImageView) {
@@ -511,8 +578,12 @@ class JungleRunViewController: UIViewController {
             }
             
             let audioSession = AVAudioSession.sharedInstance()
-            try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try? audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            do {
+                try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .allowBluetooth])
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            } catch {
+                print("Failed to set up audio session for speech recognition: \(error)")
+            }
             
             let inputNode = audioEngine?.inputNode
             let recordingFormat = inputNode?.outputFormat(forBus: 0)
@@ -529,11 +600,32 @@ class JungleRunViewController: UIViewController {
             cleanupWordCoinChallenge()
             gameData.diamonds += 1
             updateDiamondLabel()
+            
+            // Reset audio session for sound effects
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print("Failed to reset audio session: \(error)")
+            }
+            
+            playRoarSound()
             resumeGame()
         }
         
         private func handleWordCoinTimeout() {
             cleanupWordCoinChallenge()
+            
+            // Reset audio session for sound effects
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print("Failed to reset audio session: \(error)")
+            }
+            
+            // Play pop sound and handle heart loss
+            playPopSound()
             loseHeart()
             resumeGame()
         }
@@ -546,6 +638,14 @@ class JungleRunViewController: UIViewController {
             audioEngine?.inputNode.removeTap(onBus: 0)
             recognitionRequest?.endAudio()
             recognitionTask?.cancel()
+            
+            // Reset audio session before cleanup
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print("Failed to reset audio session during cleanup: \(error)")
+            }
             
             UIView.animate(withDuration: 0.3, animations: {
                 self.overlayView?.alpha = 0

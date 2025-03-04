@@ -179,9 +179,9 @@ class DataController {
         return app.badges.count
     }
     
-    func getEarnedBadges() -> [AppBadge] {
+    func getEarnedBadges() -> [AppBadge]? {
         var earnedBadges: [AppBadge] = []
-        for badge in user[0].userBadges {
+        for badge in user[0].userEarnedBadges {
             if badge.isEarned {
                 for i in app.badges {
                     if badge.id == i.id {
@@ -210,7 +210,7 @@ class DataController {
     
     func addEarnedBadges() {
         for badge in app.badges {
-            var badges: Badge = Badge(id: badge.id, isEarned: true)
+            var badges: Badge = Badge(id: badge.id, isEarned: false)
             if badges.isEarned {
                 user[0].userEarnedBadges.append(badges)
             }

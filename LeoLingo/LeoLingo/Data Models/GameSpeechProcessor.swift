@@ -104,13 +104,9 @@ class GameSpeechProcessor: ObservableObject {
         }
     }
     
-    func levenshteinDistance(_ a: String, _ b: String) -> Double {
-        // Normalize strings: lowercase and trim
-        let a = a.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let b = b.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        
+    func levenshteinDistance(_ a: String, _ b: String) -> Int {
         if a.isEmpty || b.isEmpty {
-            return Double(max(a.count, b.count))
+            return max(a.count, b.count)
         }
         
         let aChars = Array(a)
@@ -118,59 +114,27 @@ class GameSpeechProcessor: ObservableObject {
         let aCount = aChars.count
         let bCount = bChars.count
         
-        var matrix = [[Double]](repeating: [Double](repeating: 0, count: bCount + 1), count: aCount + 1)
+        var matrix = [[Int]](repeating: [Int](repeating: 0, count: bCount + 1), count: aCount + 1)
         
-        // Initialize first row and column
         for i in 0...aCount {
-            matrix[i][0] = Double(i)
-        }
-        for j in 0...bCount {
-            matrix[0][j] = Double(j)
+            matrix[i][0] = i
         }
         
-        // Define phonetically similar characters
-        let phoneticSimilarities: [Character: Set<Character>] = [
-            "c": ["k", "s"],
-            "k": ["c", "q"],
-            "ph": ["f"],
-            "s": ["c", "z"],
-            "z": ["s"],
-            "d": ["t"],
-            "t": ["d"],
-            "b": ["p"],
-            "p": ["b"],
-            "m": ["n"],
-            "n": ["m"]
-        ]
+        for j in 0...bCount {
+            matrix[0][j] = j
+        }
         
         for i in 1...aCount {
             for j in 1...bCount {
-                let char1 = aChars[i - 1]
-                let char2 = bChars[j - 1]
-                
-                // Calculate substitution cost
-                var cost: Double
-                if char1 == char2 {
-                    cost = 0
-                } else if let similarChars = phoneticSimilarities[char1], similarChars.contains(char2) {
-                    // Lower cost for phonetically similar characters
-                    cost = 0.5
-                } else {
-                    cost = 1
-                }
-                
+                let cost = aChars[i - 1] == bChars[j - 1] ? 0 : 1
                 matrix[i][j] = min(
-                    matrix[i - 1][j] + 1,      // deletion
-                    matrix[i][j - 1] + 1,      // insertion
-                    matrix[i - 1][j - 1] + cost // substitution
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + cost
                 )
             }
         }
         
-        // Normalize the distance based on the length of the longer string
-        let maxLength = Double(max(aCount, bCount))
-        let normalizedDistance = matrix[aCount][bCount] / maxLength
-        
-        return normalizedDistance
+        return matrix[aCount][bCount]
     }
-} 
+}

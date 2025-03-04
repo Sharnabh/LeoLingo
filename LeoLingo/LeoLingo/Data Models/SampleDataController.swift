@@ -196,69 +196,101 @@ class SampleDataController {
         ]
         
         exercises = [
+            "a": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for A words.",
+                videos: ["https://youtu.be/4SNO61r4Nz8?si=RLnQ3s69xJEYPyLS"]
+            ),
             "b": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for B words.",
                 videos: ["https://youtu.be/746Aq0ndZy0"]
             ),
             "c": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for C words.",
                 videos: ["https://youtu.be/0z80Zt66RcU"]
             ),
             "d": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for D words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
+            "e": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for E words.",
                 videos: ["https://youtu.be/61xe97Nf8J4"]
             ),
             "f": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for F words.",
                 videos: ["https://youtu.be/xA61MYdspgM"]
             ),
             "g": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for G words.",
                 videos: ["https://youtu.be/bSlb9yscpbw"]
             ),
             "h": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for H words.",
                 videos: ["https://youtu.be/3-qJF9ZstLQ"]
             ),
+            "i": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for I words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
             "j": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for J words.",
                 videos: ["https://youtu.be/xETjN3Y24cQ"]
             ),
             "k": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for K words.",
                 videos: ["https://youtu.be/JwKKfHIpOX8"]
             ),
             "l": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for L words.",
                 videos: ["https://youtu.be/_IAEg3igJVI"]
             ),
             "m": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for M words.",
                 videos: ["https://youtu.be/0VCeITL8P4E"]
             ),
             "n": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for N words.",
                 videos: ["https://youtu.be/oun0cGPMHZQ"]
             ),
+            "o": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for O words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
             "p": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for P words.",
                 videos: ["https://youtu.be/yJK2UZ2YkwA"]
             ),
             "r": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for R words.",
                 videos: ["https://youtu.be/dgAwcWO72z0"]
             ),
             "s": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for S words.",
                 videos: ["https://youtu.be/KRbxUiF2dkw"]
             ),
             "t": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for T words.",
                 videos: ["https://youtu.be/j1ia8QFUIyg"]
             ),
+            "u": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for U words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
+            "v": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for V words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
             "w": Exercise(
-                description: "Your child is doing good. Try the suggested exercise to help him.",
+                description: "Your child is doing good. Try the suggested exercise for W words.",
                 videos: ["https://youtu.be/WHP9rOFibd4"]
+            ),
+            "x": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for X words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
+            ),
+            "y": Exercise(
+                description: "Your child is doing good. Try the suggested exercise for Y words.",
+                videos: ["https://youtu.be/61xe97Nf8J4"]
             )
         ]
         let levelCardImages = ["Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10"]

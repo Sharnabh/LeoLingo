@@ -9,9 +9,6 @@ import UIKit
 
 class DiagnosticCheckViewController: UIViewController {
     
-    @IBOutlet var yesCheckmarkButton: UIButton!
-    @IBOutlet var noCheckmarkButton: UIButton!
-    
     @IBOutlet weak var tableView: UITableView!
     var options: [String] = ["Yes", "No"]
     var selectedIndexPath = Set<IndexPath>()
@@ -25,9 +22,6 @@ class DiagnosticCheckViewController: UIViewController {
         tableView.dataSource = self
         
         navigationItem.leftBarButtonItem?.image = UIImage(systemName: "chevron.left.circle")
-        yesCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
-        
-        noCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
         
         let backButton =  UIBarButtonItem(
             image: UIImage(systemName: "chevron.left"),
@@ -48,31 +42,9 @@ class DiagnosticCheckViewController: UIViewController {
         }
         navigationController?.popViewController(animated: true)
     }
-
-    @IBAction func yesButtonTapped(_ sender: UIButton) {
-        yesCheckmarkButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
-        noCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
-        isDiagnosed = true
-        print(isDiagnosed!)
-        
-    }
-    
-    @IBAction func noButtonTapped(_ sender: UIButton) {
-        noCheckmarkButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
-        yesCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
-        isDiagnosed = false
-        print(isDiagnosed!)
-    }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
         if let diagnosed = isDiagnosed {
-            switch diagnosed {
-                
-            case true:
-                print("True")
-            case false:
-                print("False")
-            }
             performSegue(withIdentifier: "SwitchToSelectWord", sender: self)
             if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
                 // Update progress
@@ -115,6 +87,7 @@ extension DiagnosticCheckViewController: UITableViewDelegate, UITableViewDataSou
         
         tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
+        isDiagnosed = true
     }
     
 }

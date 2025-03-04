@@ -15,7 +15,7 @@ class FunLearningViewController: UIViewController {
     
     var currentIndex = 1
     
-    let gameImages: [String] = ["FlashCardsGameLogo", "JungleRunLogo", "SingAlongLogo"]
+    let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,19 +63,7 @@ class FunLearningViewController: UIViewController {
         }
     }
 
-    @IBAction func nextButtonTapped(_ sender: UIButton) {
-        let nextIndex = min(currentIndex + 1, gamesCollectionView.numberOfItems(inSection: 0) - 1)
-        let indexPath = IndexPath(item: nextIndex, section: 0)
-        gamesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        currentIndex = nextIndex
-    }
-    @IBAction func previousButtonTapped(_ sender: UIButton) {
-        let previousIndex = max(currentIndex - 1, 0)
-        let indexPath = IndexPath(item: previousIndex, section: 0)
-        gamesCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        currentIndex = previousIndex
-    }
-    
+
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
@@ -130,13 +118,14 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: "FunLearningGamesCollectionViewCell", for: indexPath) as! FunLearningGamesCollectionViewCell
         let game = gameImages[indexPath.item]
+        cell.layer.cornerRadius = 27
         cell.updateImageView(with: game)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == 0
+        if indexPath.item == 1
         {
             
             let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
@@ -151,7 +140,7 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
             }
             
         }
-        if indexPath.item == 1
+        if indexPath.item == 0
         {
             let storyboard = UIStoryboard(name: "JungleRun", bundle: nil)
             if let vc = storyboard.instantiateViewController(withIdentifier: "jungleRunNav") as? UINavigationController {

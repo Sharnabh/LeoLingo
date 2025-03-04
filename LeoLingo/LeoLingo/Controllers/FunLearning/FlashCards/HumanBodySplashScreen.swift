@@ -25,7 +25,7 @@ struct HumanBodySplashScreen: View {
 
                 Text("Explore Human Body")
                     .font(.largeTitle)
-                    .foregroundColor(.brown)
+                    .foregroundColor(.black)
                     .opacity(opacity)
                     .animation(.easeIn(duration: 1.5), value: opacity)
             }

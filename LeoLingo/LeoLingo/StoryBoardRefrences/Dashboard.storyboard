@@ -290,7 +290,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mojo's Suggestion" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HVp-36-1Cb">
-                                                        <rect key="frame" x="16" y="16" width="358" height="36"/>
+                                                        <rect key="frame" x="16" y="16" width="253" height="36"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                                         <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <nil key="highlightedColor"/>
@@ -390,7 +390,6 @@
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="top" constant="16" id="L0y-BY-PFs"/>
                                                     <constraint firstItem="MqY-WL-lRD" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16" id="Qyi-UC-h8S"/>
                                                     <constraint firstItem="HVp-36-1Cb" firstAttribute="leading" secondItem="97W-9d-MV1" secondAttribute="leading" constant="16" id="VTb-Xn-ple"/>
-                                                    <constraint firstItem="vsN-yK-qm8" firstAttribute="leading" secondItem="HVp-36-1Cb" secondAttribute="trailing" constant="117" id="epA-Un-SM1"/>
                                                     <constraint firstAttribute="bottom" secondItem="MqY-WL-lRD" secondAttribute="bottom" constant="16" id="nbx-eU-B9l"/>
                                                     <constraint firstItem="vsN-yK-qm8" firstAttribute="top" secondItem="97W-9d-MV1" secondAttribute="topMargin" constant="-8" id="xHd-vK-fqe"/>
                                                 </constraints>
@@ -433,6 +432,7 @@
                         <outlet property="badgesEarnedView" destination="opb-es-kKC" id="Bz3-aZ-qIK"/>
                         <outlet property="beginnerProgressBar" destination="XYm-6Y-OSx" id="JlV-bU-KEx"/>
                         <outlet property="collectionView" destination="RJw-5g-1Ly" id="UP4-0M-0a5"/>
+                        <outlet property="descriptionLabel" destination="vIL-Bq-QHk" id="XMc-EP-Nf6"/>
                         <outlet property="descriptionW1" destination="CS6-Gj-zWJ" id="lD1-By-aJg"/>
                         <outlet property="descriptionW2" destination="iFV-Gb-7Yo" id="NuA-KF-drD"/>
                         <outlet property="exerciseForW1" destination="0B4-BX-VBf" id="1uO-Ux-gve"/>

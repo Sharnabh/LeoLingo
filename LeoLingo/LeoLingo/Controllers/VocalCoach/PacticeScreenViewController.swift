@@ -555,10 +555,16 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalTransitionStyle = .crossDissolve
             
             popoverVC.configurePopover(message: "Lets Play Some Games!", image: "mojo2")
-            popoverVC.onProceed = { [weak self] in
-                self?.navigateToFunLearning()
+            
+            // Present the popover and dismiss after 2 seconds
+            present(popoverVC, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    guard let self = self else { return }
+                    popoverVC.dismiss(animated: true) {
+                        self.navigateToFunLearning()
+                    }
+                }
             }
-            present(popoverVC, animated: true, completion: nil)
         }
     }
     
@@ -572,10 +578,16 @@ class PracticeScreenViewController: UIViewController {
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
                 popoverVC.configurePopover(message: "Congratulations!! You have completed this level. Would you like to proceed to the next level? ", image: level.levelImage)
-            popoverVC.onProceed = { [weak self] in
-                self?.updateUI()
-            }
-            present(popoverVC, animated: true, completion: nil)
+                
+                // Present the popover and dismiss after 2 seconds
+                present(popoverVC, animated: true) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                        guard let self = self else { return }
+                        popoverVC.dismiss(animated: true) {
+                            self.updateUI()
+                        }
+                    }
+                }
             }
         }
     }
@@ -590,27 +602,34 @@ class PracticeScreenViewController: UIViewController {
             // Update messages to reflect pronunciation accuracy
             if isCorrect && !levelChange {
                 popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
-                popoverVC.onProceed = { [weak self] in
-                    guard let self = self else { return }
-                    // Progress to next word or level
-                    if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
-                        // If we're at the last word of the level
-                        if self.levelIndex < self.levels.count - 1 {
-                            // Move to next level if available
-                            self.levelIndex += 1
-                            self.currentIndex = 0
-                            self.showLevelChangePopover()
-                            self.showConfettiEffect()
-                        } else {
-                            // At the last word of the last level, loop back to first level
-                            self.levelIndex = 0
-                            self.currentIndex = 0
-                            self.updateUI()
+                
+                // Present the popover
+                present(popoverVC, animated: true) {
+                    // Automatically dismiss after 2 seconds and execute the next action
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                        guard let self = self else { return }
+                        popoverVC.dismiss(animated: true) {
+                            // Progress to next word or level
+                            if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
+                                // If we're at the last word of the level
+                                if self.levelIndex < self.levels.count - 1 {
+                                    // Move to next level if available
+                                    self.levelIndex += 1
+                                    self.currentIndex = 0
+                                    self.showLevelChangePopover()
+                                    self.showConfettiEffect()
+                                } else {
+                                    // At the last word of the last level, loop back to first level
+                                    self.levelIndex = 0
+                                    self.currentIndex = 0
+                                    self.updateUI()
+                                }
+                            } else {
+                                // Move to next word in current level
+                                self.currentIndex += 1
+                                self.updateUI()
+                            }
                         }
-                    } else {
-                        // Move to next word in current level
-                        self.currentIndex += 1
-                        self.updateUI()
                     }
                 }
             } else if isCorrect && levelChange {
@@ -618,8 +637,13 @@ class PracticeScreenViewController: UIViewController {
                 return
             } else {
                 popoverVC.configurePopover(message: "Let's try that pronunciation again.", image: "SadMojo")
+                // Present the popover and dismiss after 2 seconds
+                present(popoverVC, animated: true) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        popoverVC.dismiss(animated: true)
+                    }
+                }
             }
-            present(popoverVC, animated: true, completion: nil)
         }
     }
     

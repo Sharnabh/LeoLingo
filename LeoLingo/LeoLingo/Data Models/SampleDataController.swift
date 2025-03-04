@@ -131,6 +131,14 @@ class SampleDataController {
                 AppWord(wordTitle: "Car", wordImage: "car"),
                 AppWord(wordTitle: "Bus", wordImage: "bus")
                 ]),
+            AppCategory(categoryTitle: "Food", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Animals", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Clothes", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Places", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Time", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Actions", categoryImage: "Vehicles", words: []),
+            AppCategory(categoryTitle: "Relations", categoryImage: "Vehicles", words: []),
+
             
         ]
         badges = [

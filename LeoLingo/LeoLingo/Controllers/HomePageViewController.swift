@@ -38,6 +38,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         loadRecentPractices()
         setupTimeView()
         updateLevelImage()
+        let badges = SupabaseDataController.shared.getUserBadgesData()
         // Do any additional setup after loading the view.
     }
     
@@ -45,6 +46,18 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         super.viewDidAppear(animated)
         // Refresh practices when view appears
         loadRecentPractices()
+    }
+    
+    func updateBadgeStatus(badgeId: UUID) {
+        Task {
+            if UserDefaults.standard.isUserLoggedIn {
+                do {
+                    try? await SupabaseDataController.shared.updateBadgeStatus(badgeId: badgeId, isEarned: true)
+                } catch {
+                    print()
+                }
+            }
+        }
     }
     
     func updateLevelImage() {
@@ -204,7 +217,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            return DataController.shared.countEarnedBadges()
+            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else { return 0 }
+            return badges.count
         }
         return sortedWords?.count ?? 0
     }
@@ -213,7 +227,13 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if collectionView == badgesEarnedCollectionView {
             let cell = badgesEarnedCollectionView.dequeueReusableCell(withReuseIdentifier: BadgesEarnedCollectionViewCell.identifier, for: indexPath) as! BadgesEarnedCollectionViewCell
             
-            cell.configure(with: DataController.shared.getEarnedBadges()[indexPath.row].badgeImage)
+            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else { return UICollectionViewCell() }
+            
+            for badge in SampleDataController.shared.getBadgesData() {
+                if badge.id == badges[indexPath.row].id {
+                    cell.configure(with: badge.badgeImage)
+                }
+            }
             
             return cell
         }

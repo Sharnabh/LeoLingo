@@ -496,6 +496,13 @@ class SupabaseDataController {
             .execute()
     }
     
+    func getEarnedBadgesData() -> [Badge]? {
+        if let earnedBadges = currentUser?.userEarnedBadges {
+            return earnedBadges
+        }
+        return nil
+    }
+    
     // MARK: - App Content
     
     func getLevelsData() -> [AppLevel] {
@@ -504,6 +511,11 @@ class SupabaseDataController {
     
     func getBadgesData() -> [AppBadge] {
         return sampleData.getBadgesData()
+    }
+    
+    func getUserBadgesData() -> [Badge] {
+        guard let userBadges = currentUser?.userBadges else { return [] }
+        return userBadges
     }
     
     func getCardsData() -> [AppCard] {

@@ -13,12 +13,14 @@ import WebKit
 class DashboardViewController: UIViewController {
     
     private let exercises: [String : Exercise] = SampleDataController.shared.getExercisesData()
-    var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()
+    var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()!
     
     var minAccuracyWords: [Word]?
+    var inaccurateWords: [String] = []
     
     @IBOutlet var descriptionW1: UILabel!
     @IBOutlet var descriptionW2: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     @IBOutlet var levelView: UIView!
     
@@ -300,34 +302,41 @@ class DashboardViewController: UIViewController {
     }
     
     func updateExerciseForWords() {
-        guard let words = minAccuracyWords, words.count >= 2 else { return }
-        
-        let appLevels = SampleDataController.shared.getLevelsData()
-        
-        if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
-           let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
+        if let words = minAccuracyWords, words.count >= 2 {
             
-            let firstLetter1 = word1Title.first?.lowercased() ?? ""
-            let firstLetter2 = word2Title.first?.lowercased() ?? ""
+            let appLevels = SampleDataController.shared.getLevelsData()
             
-            if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
+            if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
+               let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
                 
-                descriptionW1.text = exercise1.description
-                descriptionW2.text = exercise2.description
+                let firstLetter1 = word1Title.first?.lowercased() ?? ""
+                let firstLetter2 = word2Title.first?.lowercased() ?? ""
                 
-                if let videoURL1 = exercise1.videos.first,
-                   let videoURL2 = exercise2.videos.first {
-                    // Convert to embed URLs
-                    let embedURL1 = convertToEmbedURL(videoURL1)
-                    let embedURL2 = convertToEmbedURL(videoURL2)
+                if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
                     
-                    // Create HTML with proper sizing
-                    let html1 = createVideoHTML(embedURL: embedURL1)
-                    let html2 = createVideoHTML(embedURL: embedURL2)
+                    descriptionW1.text = exercise1.description
+                    descriptionW2.text = exercise2.description
                     
-                    // Load HTML content
-                    exerciseForW1.loadHTMLString(html1, baseURL: nil)
-                    exerciseForW2.loadHTMLString(html2, baseURL: nil)
+                    if let videoURL1 = exercise1.videos.first,
+                       let videoURL2 = exercise2.videos.first {
+                        // Convert to embed URLs
+                        let embedURL1 = convertToEmbedURL(videoURL1)
+                        let embedURL2 = convertToEmbedURL(videoURL2)
+                        
+                        // Create HTML with proper sizing
+                        let html1 = createVideoHTML(embedURL: embedURL1)
+                        let html2 = createVideoHTML(embedURL: embedURL2)
+                        
+                        // Load HTML content
+                        exerciseForW1.loadHTMLString(html1, baseURL: nil)
+                        exerciseForW2.loadHTMLString(html2, baseURL: nil)
+                        
+                        if word1Title.first == word2Title.first {
+                            exerciseForW2.isHidden = true
+                            descriptionW2.isHidden = true
+                            descriptionLabel.isHidden = true
+                        }
+                    }
                 }
             }
         }

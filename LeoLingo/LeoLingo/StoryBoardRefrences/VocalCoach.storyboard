@@ -542,7 +542,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6el-kL-dsL">
                                 <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vocal Coach" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QTU-pF-233">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Level 1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QTU-pF-233">
                                 <rect key="frame" x="375" y="25" width="460" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -584,6 +584,11 @@
                                 <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="K52-J1-naM">
+                                <rect key="frame" x="375" y="114" width="460" height="5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" name="AccentColor"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TPY-iH-bfp"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -608,13 +613,15 @@
                     <connections>
                         <outlet property="directionLabel" destination="U01-YN-9SK" id="uUA-G4-W3s"/>
                         <outlet property="headingTitle" destination="QTU-pF-233" id="Ag5-oM-SKT"/>
+                        <outlet property="levelLabel" destination="QTU-pF-233" id="Bv3-fY-u4c"/>
+                        <outlet property="levelProgress" destination="K52-J1-naM" id="YcB-lj-KYt"/>
                         <outlet property="mojoImage" destination="O8z-jA-JrD" id="reB-Fl-dGI"/>
                         <outlet property="wordImage" destination="2e5-px-tAE" id="oxU-hg-3Fu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Swe-v0-05a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-158" y="2096"/>
+            <point key="canvasLocation" x="-158.18181818181819" y="2094.9640287769785"/>
         </scene>
         <!--Level Card View Controller-->
         <scene sceneID="0tM-pb-qsZ">

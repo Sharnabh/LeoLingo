@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class GreetViewController: UIViewController {
     
@@ -15,6 +16,7 @@ class GreetViewController: UIViewController {
     
     var greetings = ["Hello! Joy", "I am Mojo"]
     var emojis = ["👋","🐵"]
+    let synthesizer = AVSpeechSynthesizer()
 
     var greetingIndex = 0
     var emojiIndex = 0
@@ -30,7 +32,22 @@ class GreetViewController: UIViewController {
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
         
-        startAnimations()
+        // Fetch child's name and update greetings
+        Task {
+            do {
+                if let userId = SupabaseDataController.shared.userId {
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.greetings = ["Hello \(userData.childName ?? "User")!", "I am Mojo"]
+                        self?.startAnimations()
+                    }
+                }
+            } catch {
+                print("Error fetching user data: \(error)")
+                startAnimations()
+            }
+        }
+        
         // Do any additional setup after loading the view.
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             self.transitionToNextViewController()
@@ -38,18 +55,35 @@ class GreetViewController: UIViewController {
     }
     
     func startAnimations() {
-        // Schedule label updates
-        Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
+        // Initial update with speech
+        updateLabels(withSpeech: true)
+        
+        // Schedule subsequent label updates without speech
+        Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(updateLabelsWithoutSpeech), userInfo: nil, repeats: true)
     }
     
-    @objc func updateLabels() {
+    @objc func updateLabelsWithoutSpeech() {
+        updateLabels(withSpeech: false)
+    }
+    
+    func updateLabels(withSpeech: Bool) {
         // Update greeting label
-        greetLabel.text = greetings[greetingIndex]
+        let greeting = greetings[greetingIndex]
+        greetLabel.text = greeting
         greetingIndex = (greetingIndex + 1) % greetings.count
         
         // Update secondary label
         greetEmojiLabel.text = emojis[emojiIndex]
         emojiIndex = (emojiIndex + 1) % emojis.count
+        
+        // Speak the greeting only if withSpeech is true
+        if withSpeech {
+            let utterance = AVSpeechUtterance(string: greeting)
+            utterance.rate = 0.5
+            utterance.pitchMultiplier = 1.2
+            utterance.volume = 1.0
+            synthesizer.speak(utterance)
+        }
     }
     
     func transitionToNextViewController() {

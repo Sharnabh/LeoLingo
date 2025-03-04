@@ -377,34 +377,9 @@ class PracticeScreenViewController: UIViewController {
                     
                     // Show the success popup first
                     self.showPopover(isCorrect: true, levelChange: isLastWordInLevel)
-                    
-                    // Progress to next word or level
-                    if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
-                        // If we're at the last word of the level
-                        if self.levelIndex < self.levels.count - 1 {
-                            // Move to next level if available
-                            self.levelIndex += 1
-                            self.currentIndex = 0
-                            self.showLevelChangePopover()
-                            self.showConfettiEffect()
-                        } else {
-                            // At the last word of the last level, loop back to first level
-                            self.levelIndex = 0
-                            self.currentIndex = 0
-                        }
-                    } else {
-                        // Move to next word in current level
-                        self.currentIndex += 1
-                    }
-                    
-                    self.updateUI()
                 }
             } catch {
                 print("Error updating word progress: \(error)")
-                // On error, still try to move to next word
-                DispatchQueue.main.async { [weak self] in
-                    self?.moveToNextWord()
-                }
             }
         }
     }
@@ -615,6 +590,29 @@ class PracticeScreenViewController: UIViewController {
             // Update messages to reflect pronunciation accuracy
             if isCorrect && !levelChange {
                 popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
+                popoverVC.onProceed = { [weak self] in
+                    guard let self = self else { return }
+                    // Progress to next word or level
+                    if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
+                        // If we're at the last word of the level
+                        if self.levelIndex < self.levels.count - 1 {
+                            // Move to next level if available
+                            self.levelIndex += 1
+                            self.currentIndex = 0
+                            self.showLevelChangePopover()
+                            self.showConfettiEffect()
+                        } else {
+                            // At the last word of the last level, loop back to first level
+                            self.levelIndex = 0
+                            self.currentIndex = 0
+                            self.updateUI()
+                        }
+                    } else {
+                        // Move to next word in current level
+                        self.currentIndex += 1
+                        self.updateUI()
+                    }
+                }
             } else if isCorrect && levelChange {
                 showLevelChangePopover()
                 return

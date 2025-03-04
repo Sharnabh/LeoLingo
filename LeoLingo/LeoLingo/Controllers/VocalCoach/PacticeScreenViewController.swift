@@ -6,7 +6,7 @@ import Combine
 class WaveformView: UIView {
     private var barLayers: [CALayer] = []
     private var displayLink: CADisplayLink?
-    private let numberOfBars: Int = 30 // Increased number of bars
+    private let numberOfBars: Int = 40 // Increased number of bars for smoother look
     private let waveformColor = UIColor(red: 79/255, green: 144/255, blue: 76/255, alpha: 1.0) // #4F904C
     private var phase: CGFloat = 0
     private var animationStartTime: CFTimeInterval = 0
@@ -26,8 +26,8 @@ class WaveformView: UIView {
         barLayers.forEach { $0.removeFromSuperlayer() }
         barLayers.removeAll()
         
-        let barWidth: CGFloat = 3 // Slightly thinner to accommodate more bars
-        let spacing: CGFloat = 3 // Adjusted spacing
+        let barWidth: CGFloat = 2 // Thinner bars
+        let spacing: CGFloat = 4 // More spacing between bars
         let totalWidth = CGFloat(numberOfBars) * (barWidth + spacing)
         let startX = (bounds.width - totalWidth) / 2
         
@@ -35,11 +35,12 @@ class WaveformView: UIView {
             let bar = CALayer()
             bar.backgroundColor = waveformColor.cgColor
             let x = startX + CGFloat(i) * (barWidth + spacing)
-            // Start with minimum height
-            bar.frame = CGRect(x: x, y: bounds.height/2 - 15, width: barWidth, height: 30)
+            // Set initial height
+            let initialHeight: CGFloat = 20 + CGFloat(arc4random_uniform(20))
+            bar.frame = CGRect(x: x, y: bounds.height/2 - initialHeight/2, width: barWidth, height: initialHeight)
             bar.cornerRadius = barWidth/2
             
-            // Add animation
+            // Add initial animation
             let animation = CABasicAnimation(keyPath: "bounds.size.height")
             animation.duration = 0.5
             animation.repeatCount = .infinity
@@ -61,23 +62,32 @@ class WaveformView: UIView {
         displayLink?.add(to: .main, forMode: .common)
         
         animationStartTime = CACurrentMediaTime()
+        phase = 0
         
-        // Ensure bars are visible
-        barLayers.forEach { $0.opacity = 1.0 }
+        // Ensure bars are visible with initial animation
+        barLayers.forEach { bar in
+            bar.opacity = 1.0
+            let initialHeight: CGFloat = 20 + CGFloat(arc4random_uniform(20))
+            bar.frame = CGRect(x: bar.frame.origin.x,
+                             y: bounds.height/2 - initialHeight/2,
+                             width: bar.frame.width,
+                             height: initialHeight)
+        }
     }
     
     func stopAnimation() {
         displayLink?.invalidate()
         displayLink = nil
         
-        // Animate bars back to center position
+        // Smooth fade out animation
         CATransaction.begin()
         CATransaction.setAnimationDuration(0.3)
         barLayers.forEach { bar in
+            let finalHeight: CGFloat = 20
             bar.frame = CGRect(x: bar.frame.origin.x,
-                             y: bounds.height/2 - 15,
+                             y: bounds.height/2 - finalHeight/2,
                              width: bar.frame.width,
-                             height: 30)
+                             height: finalHeight)
         }
         CATransaction.commit()
     }
@@ -85,29 +95,36 @@ class WaveformView: UIView {
     @objc private func updateBars() {
         let currentTime = CACurrentMediaTime()
         let elapsedTime = currentTime - animationStartTime
+        phase += 0.05 // Slower phase change for smoother animation
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
         for (index, bar) in barLayers.enumerated() {
-            // Create a unique phase for each bar
-            let barPhase = elapsedTime * 4 + Double(index) * 0.2
+            // Create more complex wave patterns
+            let normalizedIndex = CGFloat(index) / CGFloat(numberOfBars)
+            let primaryWave = sin(phase + normalizedIndex * 4.0) // Primary wave
+            let secondaryWave = sin(phase * 1.5 + normalizedIndex * 2.0) * 0.5 // Secondary wave
+            let fastWave = sin(phase * 3.0 + normalizedIndex) * 0.3 // Fast wave
             
-            // Generate dynamic height using multiple sine waves
-            let baseHeight = sin(barPhase) * 30 // Increased amplitude
-            let secondaryHeight = cos(barPhase * 2) * 15 // Increased secondary wave
-            let fastHeight = sin(barPhase * 3) * 8 // Increased fast wave
+            // Add some random noise for natural variation
+            let noise = CGFloat(arc4random_uniform(10)) / 100.0
             
-            // Combine waves and ensure minimum height
-            var totalHeight = abs(baseHeight + secondaryHeight + fastHeight)
-            totalHeight = max(30, min(80, totalHeight + 40)) // Increased height range
+            // Combine all waves
+            let combinedWave = primaryWave + secondaryWave + fastWave + noise
             
-            // Update bar height and position
-            let yPosition = bounds.height/2 - totalHeight/2
+            // Calculate height with more variation
+            let minHeight: CGFloat = 20
+            let maxHeight: CGFloat = 80
+            let heightRange = maxHeight - minHeight
+            let waveHeight = minHeight + (heightRange * abs(combinedWave))
+            
+            // Update bar position and height with smooth transition
+            let yPosition = bounds.height/2 - waveHeight/2
             bar.frame = CGRect(x: bar.frame.origin.x,
                              y: yPosition,
                              width: bar.frame.width,
-                             height: totalHeight)
+                             height: waveHeight)
         }
         
         CATransaction.commit()

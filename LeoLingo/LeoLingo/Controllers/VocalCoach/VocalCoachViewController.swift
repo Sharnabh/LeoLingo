@@ -107,6 +107,9 @@ class VocalCoachViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // Post notification when vocal coach becomes inactive
+        NotificationCenter.default.post(name: NSNotification.Name("VocalCoachDidBecomeInactive"), object: nil)
+        
         if self.isMovingFromParent {
             if let navigationController = self.navigationController {
                 if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {

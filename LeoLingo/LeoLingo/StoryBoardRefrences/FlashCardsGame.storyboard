@@ -71,6 +71,13 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CategoryBackground" translatesAutoresizingMaskIntoConstraints="NO" id="Xb9-aa-oHI">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Xub-Zg-tiZ">
+                                <rect key="frame" x="20" y="92" width="150" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <color key="textColor" red="0.50980395079999996" green="0.33725491169999999" blue="0.2470588088" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bQU-0D-YaI">
                                 <rect key="frame" x="0.0" y="154" width="1180" height="512"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -94,22 +101,48 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ccd-fi-Z6c">
+                                <rect key="frame" x="565" y="711" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="4CT-YG-d15"/>
+                                    <constraint firstAttribute="width" constant="50" id="ZGb-6G-9UB"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" image="microphone" catalog="system"/>
+                                <connections>
+                                    <action selector="speakButtonTapped:" destination="ej1-Le-aAw" eventType="touchUpInside" id="TaF-d0-Nmr"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ul-0X-CmB">
+                                <rect key="frame" x="0.0" y="24" width="1180" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <color key="textColor" red="0.1607843041" green="0.3803921938" blue="0.1019607931" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ug0-Ty-qTf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="bQU-0D-YaI" firstAttribute="trailing" secondItem="ug0-Ty-qTf" secondAttribute="trailing" id="1DO-uj-Rht"/>
                             <constraint firstItem="Xb9-aa-oHI" firstAttribute="leading" secondItem="j4L-u4-7hy" secondAttribute="leading" id="9tM-Rg-po2"/>
+                            <constraint firstItem="3ul-0X-CmB" firstAttribute="leading" secondItem="bQU-0D-YaI" secondAttribute="leading" id="A33-ai-HRF"/>
                             <constraint firstItem="bQU-0D-YaI" firstAttribute="leading" secondItem="ug0-Ty-qTf" secondAttribute="leading" id="Cp0-6l-naN"/>
+                            <constraint firstItem="Ccd-fi-Z6c" firstAttribute="top" secondItem="bQU-0D-YaI" secondAttribute="bottom" constant="45" id="FPs-yz-gwa"/>
                             <constraint firstItem="Xb9-aa-oHI" firstAttribute="top" secondItem="j4L-u4-7hy" secondAttribute="top" id="NEJ-hc-5dQ"/>
                             <constraint firstItem="bQU-0D-YaI" firstAttribute="centerY" secondItem="j4L-u4-7hy" secondAttribute="centerY" id="YIw-7T-R19"/>
+                            <constraint firstItem="Ccd-fi-Z6c" firstAttribute="centerX" secondItem="j4L-u4-7hy" secondAttribute="centerX" id="Zgk-1w-FwB"/>
+                            <constraint firstItem="Ccd-fi-Z6c" firstAttribute="centerX" secondItem="3ul-0X-CmB" secondAttribute="centerX" id="hkf-zz-z0q"/>
                             <constraint firstAttribute="trailing" secondItem="Xb9-aa-oHI" secondAttribute="trailing" id="iQs-DX-ZxE"/>
                             <constraint firstAttribute="bottom" secondItem="Xb9-aa-oHI" secondAttribute="bottom" id="mOS-ua-u42"/>
+                            <constraint firstItem="3ul-0X-CmB" firstAttribute="top" secondItem="ug0-Ty-qTf" secondAttribute="top" constant="26" id="wyq-hm-bi3"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="FcB-6g-fdT"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="FcB-6g-fdT"/>
                     <connections>
                         <outlet property="collectionView" destination="bQU-0D-YaI" id="YPk-s6-zql"/>
+                        <outlet property="diamondsLabel" destination="Xub-Zg-tiZ" id="gfP-Rr-bYL"/>
+                        <outlet property="heading" destination="3ul-0X-CmB" id="J6s-4r-EFC"/>
+                        <outlet property="speakButton" destination="Ccd-fi-Z6c" id="RDo-RZ-cxz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o33-WV-aU2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -119,6 +152,7 @@
     </scenes>
     <resources>
         <image name="CategoryBackground" width="1210" height="834"/>
+        <image name="microphone" catalog="system" width="110" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -12,11 +12,18 @@ class DiagnosticCheckViewController: UIViewController {
     @IBOutlet var yesCheckmarkButton: UIButton!
     @IBOutlet var noCheckmarkButton: UIButton!
     
+    @IBOutlet weak var tableView: UITableView!
+    var options: [String] = ["Yes", "No"]
+    var selectedIndexPath = Set<IndexPath>()
+    
     var isDiagnosed: Bool? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         navigationItem.leftBarButtonItem?.image = UIImage(systemName: "chevron.left.circle")
         yesCheckmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
         
@@ -77,4 +84,37 @@ class DiagnosticCheckViewController: UIViewController {
             present(alert, animated: true)
         }
     }
+}
+
+extension DiagnosticCheckViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        options.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        var content = cell.defaultContentConfiguration()
+        content.text = options[indexPath.row]
+        let checkmarkImage = UIImage(systemName: "checkmark.circle.fill")
+        let emptyImage = UIImage(systemName: "circle")
+        content.image = selectedIndexPath.contains(indexPath) ? checkmarkImage : emptyImage
+        content.imageProperties.tintColor = .accent
+        cell.contentConfiguration = content
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedIndexPath.removeAll()
+        selectedIndexPath.insert(indexPath)
+        
+        tableView.reloadData()
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
 }

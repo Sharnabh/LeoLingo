@@ -36,24 +36,47 @@ class DashboardViewController: UIViewController {
     @IBOutlet var beginnerProgressBar: UIProgressView!
     @IBOutlet var collectionView: UICollectionView!
     
+    @IBOutlet var badgesEarnedCollectionView: UICollectionView!
     
     @IBOutlet var exerciseForW1: WKWebView!
     @IBOutlet var exerciseForW2: WKWebView!
     
     @IBOutlet var averageAccuracy: UILabel!
     
-    @IBOutlet var badge1Image: UIImageView!
-    @IBOutlet var badge1Label: UILabel!
-    
-    @IBOutlet var badge2Image: UIImageView!
-    @IBOutlet var badge2Label: UILabel!
-    
     @IBOutlet var averageAccuracyLabel: UILabel!
+    
+    var layout: UICollectionViewFlowLayout?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateView()
         
+        configureMojoSuggestionVideos()
+        
+        loadInaccurateWords()
+        
+        layout = UICollectionViewFlowLayout()
+        if let layout = layout {
+            layout.scrollDirection = .horizontal
+            layout.itemSize = CGSize(width: 100, height: 120)
+            badgesEarnedCollectionView.collectionViewLayout = layout
+            badgesEarnedCollectionView.delegate = self
+            badgesEarnedCollectionView.dataSource = self
+            badgesEarnedCollectionView.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.44)
+            badgesEarnedCollectionView.layer.cornerRadius = 21
+            let badgesNib = UINib(nibName: "BadgesCollectionViewCell", bundle: nil)
+            badgesEarnedCollectionView.register(badgesNib, forCellWithReuseIdentifier: BadgesCollectionViewCell.identifier)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Refresh data when view appears
+        loadInaccurateWords()
+        updatePracticeTime()
+    }
+    
+    private func configureMojoSuggestionVideos() {
         // Configure WebViews for video playback
         exerciseForW1.backgroundColor = .clear
         exerciseForW1.isOpaque = false
@@ -72,13 +95,13 @@ class DashboardViewController: UIViewController {
         
         // Set fixed frame for WebViews to maintain 16:9 ratio
         exerciseForW1.frame = CGRect(x: exerciseForW1.frame.origin.x,
-                                   y: exerciseForW1.frame.origin.y,
-                                   width: 250,
-                                   height: 149)
+                                     y: exerciseForW1.frame.origin.y,
+                                     width: 250,
+                                     height: 149)
         exerciseForW2.frame = CGRect(x: exerciseForW2.frame.origin.x,
-                                   y: exerciseForW2.frame.origin.y,
-                                   width: 250,
-                                   height: 149)
+                                     y: exerciseForW2.frame.origin.y,
+                                     width: 250,
+                                     height: 149)
         
         // Add border and corner radius to WebViews
         exerciseForW1.layer.borderWidth = 1
@@ -94,34 +117,6 @@ class DashboardViewController: UIViewController {
         exerciseForW2.layer.cornerRadius = 8
         exerciseForW2.clipsToBounds = true
         exerciseForW2.heightAnchor.constraint(equalToConstant: height/6).isActive = true
-        
-        // Add safety checks for badges
-        if !earnedBadges.isEmpty {
-            badge1Image.image = UIImage(named: earnedBadges[0].badgeImage)
-            badge1Label.text = earnedBadges[0].badgeTitle
-            badge1Label.adjustsFontSizeToFitWidth = true
-            
-            if earnedBadges.count > 1 {
-                badge2Image.image = UIImage(named: earnedBadges[1].badgeImage)
-                badge2Label.text = earnedBadges[1].badgeTitle
-                badge2Label.adjustsFontSizeToFitWidth = true
-            }
-        }
-        
-        loadInaccurateWords()
-        
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(UINib(nibName: "WordReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "WordCell")
-        
-        configureFlowLayout()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Refresh data when view appears
-        loadInaccurateWords()
-        updatePracticeTime()
     }
     
     private func loadInaccurateWords() {
@@ -387,32 +382,44 @@ class DashboardViewController: UIViewController {
     }
 }
         
-        extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-            
-            private func configureFlowLayout() {
-                let layout = UICollectionViewFlowLayout()
-                layout.scrollDirection = .horizontal
-                layout.minimumLineSpacing = 10
-                layout.minimumInteritemSpacing = 10
-                layout.itemSize = CGSize(width: 150, height: 180)
-                layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-                
-                collectionView.collectionViewLayout = layout
+extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == badgesEarnedCollectionView {
+            if let badges = SupabaseDataController.shared.getEarnedBadgesData() {
+                print("abababab")
+                return badges.count
             }
-            
-            func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-                minAccuracyWords?.count ?? 1
-            }
-            
-            func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
-                
-                guard let word = minAccuracyWords else { return cell }
-                cell.updateLabel(with: word[indexPath.item])
-                return cell
-            }
-            
-            
-            
         }
+        if collectionView == collectionView {
+            return minAccuracyWords?.count ?? 1
+        }
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == badgesEarnedCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
+            guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData() else { return UICollectionViewCell() }
+            
+            for badge in SampleDataController.shared.getBadgesData() {
+                if badge.id == earnedBadges[indexPath.row].id {
+                    cell.configure(with: "\(badge.badgeImage)", title: "\(badge.badgeTitle)")
+                }
+            }
+            
+            return cell
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+        
+        guard let word = minAccuracyWords else { return cell }
+        cell.updateLabel(with: word[indexPath.item])
+        return cell
+    }
+    
+}
     

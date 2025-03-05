@@ -49,7 +49,6 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             }
 
-            
             return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesBottomCollectionViewCell.identifier, for: indexPath) as! BadgesBottomCollectionViewCell

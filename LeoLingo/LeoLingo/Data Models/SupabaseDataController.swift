@@ -97,10 +97,12 @@ class SupabaseDataController {
             print("DEBUG: Creating new word records for user")
             let badges = sampleData.getBadgesData()
             for badge in badges {
+                let isEarned = badge.badgeTitle == "Dog" // Dog badge is earned automatically at signup
                 let badgeData = UserBadge(
                     user_id: userId,
                     badge_id: badge.id,
-                    is_earned: false
+                    is_earned: isEarned,
+                    earned_at: isEarned ? Date() : nil
                 )
                 try await supabase
                     .from("user_badges")
@@ -491,7 +493,8 @@ class SupabaseDataController {
         let badgeUpdate = UserBadge(
             user_id: userId,
             badge_id: badgeId,
-            is_earned: isEarned
+            is_earned: isEarned,
+            earned_at: isEarned ? Date() : nil
         )
         
         try await supabase
@@ -673,6 +676,7 @@ class SupabaseDataController {
             
             let badge = Badge(
                 id: appBadge.id,
+                badgeTitle: appBadge.badgeTitle,
                 isEarned: userBadge?.is_earned ?? false
             )
             
@@ -757,12 +761,12 @@ class SupabaseDataController {
         let is_earned: Bool
         let earned_at: Date?
         
-        init(user_id: UUID, badge_id: UUID, is_earned: Bool) {
+        init(user_id: UUID, badge_id: UUID, is_earned: Bool, earned_at: Date? = nil) {
             self.id = UUID()
             self.user_id = user_id
             self.badge_id = badge_id
             self.is_earned = is_earned
-            self.earned_at = nil
+            self.earned_at = earned_at
         }
     }
     

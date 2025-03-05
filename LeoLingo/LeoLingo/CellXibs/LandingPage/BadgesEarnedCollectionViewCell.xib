@@ -30,7 +30,6 @@
                 <constraint firstItem="9RD-J0-cst" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="B31-EC-uKS"/>
                 <constraint firstItem="9RD-J0-cst" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="BQg-p8-iaf"/>
                 <constraint firstAttribute="trailing" secondItem="9RD-J0-cst" secondAttribute="trailing" id="Ock-rV-Wbw"/>
-                <constraint firstAttribute="bottom" secondItem="9RD-J0-cst" secondAttribute="bottom" id="dZ4-oJ-qj1"/>
             </constraints>
             <size key="customSize" width="180" height="130"/>
             <connections>

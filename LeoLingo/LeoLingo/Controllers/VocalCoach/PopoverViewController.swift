@@ -19,6 +19,7 @@ class PopoverViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        congratsLabel.adjustsFontSizeToFitWidth = true
         if let message = message {
             congratsLabel.text = message
         }

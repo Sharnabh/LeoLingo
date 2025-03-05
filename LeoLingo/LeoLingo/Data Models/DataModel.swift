@@ -101,9 +101,22 @@ struct LevelCard {
         self.words = appLevel.words
     }
 }
+
 struct Badge {
-    var id: UUID = UUID()
+    var id: UUID
+    var badgeTitle: String
     var isEarned: Bool = false
+    
+    init(badgeTitle: String) {
+        self.id = BadgeIDManager.shared.getID(for: badgeTitle)
+        self.badgeTitle = badgeTitle
+    }
+    
+    init(id: UUID, badgeTitle: String, isEarned: Bool) {
+        self.id = id
+        self.badgeTitle = badgeTitle
+        self.isEarned = isEarned
+    }
 }
 
 struct AppData {

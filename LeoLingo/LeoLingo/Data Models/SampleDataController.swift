@@ -142,7 +142,8 @@ class SampleDataController {
             
         ]
         badges = [
-            AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have taken the first step)", badgeImage: "bee"),
+            AppBadge(badgeTitle: "NewLeo", badgeDescription: "NewLeo (You have taken the first step)", badgeImage: "Newleo"),
+            AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have vocalised the first word)", badgeImage: "bee"),
             AppBadge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle"),
             AppBadge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant"),
             AppBadge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog"),

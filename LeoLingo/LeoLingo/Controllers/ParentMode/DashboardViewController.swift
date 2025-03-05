@@ -395,7 +395,7 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
                 return badges.count
             }
         }
-        if collectionView == collectionView {
+        if collectionView == self.collectionView {
             return minAccuracyWords?.count ?? 1
         }
         return 0
@@ -414,7 +414,7 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
             
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
+        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
         
         guard let word = minAccuracyWords else { return cell }
         cell.updateLabel(with: word[indexPath.item])

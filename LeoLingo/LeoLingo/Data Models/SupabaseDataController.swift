@@ -97,7 +97,7 @@ class SupabaseDataController {
             print("DEBUG: Creating new word records for user")
             let badges = sampleData.getBadgesData()
             for badge in badges {
-                let isEarned = badge.badgeTitle == "Dog" // Dog badge is earned automatically at signup
+                let isEarned = badge.badgeTitle == "NewLeo"
                 let badgeData = UserBadge(
                     user_id: userId,
                     badge_id: badge.id,

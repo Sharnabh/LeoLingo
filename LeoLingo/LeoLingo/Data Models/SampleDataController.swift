@@ -135,9 +135,9 @@ class SampleDataController {
             AppCategory(categoryTitle: "Animals", categoryImage: "Animals", words: []),
             AppCategory(categoryTitle: "Clothes", categoryImage: "Clothes", words: []),
             AppCategory(categoryTitle: "Monuments", categoryImage: "Monuments", words: []),
-            AppCategory(categoryTitle: "Time", categoryImage: "Time", words: []),
-            AppCategory(categoryTitle: "Actions", categoryImage: "Actions", words: []),
-            AppCategory(categoryTitle: "Relations", categoryImage: "Relations", words: []),
+            AppCategory(categoryTitle: "Time", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Actions", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Relations", categoryImage: "Fruits", words: []),
         ]
         badges = [
             AppBadge(badgeTitle: "NewLeo", badgeDescription: "NewLeo (You have taken the first step)", badgeImage: "Newleo"),
@@ -304,7 +304,7 @@ class SampleDataController {
        
         levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
         
-        let categoryCardImages = ["BodyParts", "Fruits", "Vehicles", "Animals", "Clothes", "Monuments", "Time", "Actions", "Relations"]
+        let categoryCardImages = ["BodyParts", "Fruits", "Vehicles", "Animals", "Clothes", "Monuments", "Fruits", "Fruits", "Fruits"]
         
         categoryCards = zip(categories, categoryCardImages).map { CategoryCard(from: $0.0, categoryCardImage: $0.1) }
     }

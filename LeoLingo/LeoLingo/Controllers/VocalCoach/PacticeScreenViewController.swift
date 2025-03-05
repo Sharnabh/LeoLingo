@@ -516,6 +516,16 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: speechProcessor.getRecordingURL()?.path
                 )
                 
+                // Check if this is the first word completed and award bee badge
+                let appBadges = SupabaseDataController.shared.getBadgesData()
+                if let beeBadge = appBadges.first(where: { $0.badgeTitle == "Bee" }) {
+                    // Update the badge status in Supabase
+                    try await SupabaseDataController.shared.updateBadgeStatus(
+                        badgeId: beeBadge.id,
+                        isEarned: true
+                    )
+                }
+                
                 // Refresh data using userId
                 guard let userId = SupabaseDataController.shared.userId else {
                     print("No user ID found")
@@ -747,8 +757,14 @@ class PracticeScreenViewController: UIViewController {
                             // Load FunLearning storyboard
                             let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
                             if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
-                                // Push to navigation stack
-                                self.navigationController?.pushViewController(funLearningVC, animated: true)
+                                // If we have a navigation controller, push to it
+                                if let navigationController = self.navigationController {
+                                    navigationController.pushViewController(funLearningVC, animated: true)
+                                } else {
+                                    // If no navigation controller, present modally
+                                    funLearningVC.modalPresentationStyle = .fullScreen
+                                    self.present(funLearningVC, animated: true)
+                                }
                             }
                         }
                     }

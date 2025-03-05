@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gd2-qT-yBX">
-    <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -15,14 +15,42 @@
             <objects>
                 <viewController storyboardIdentifier="FunLearningVC" id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kX9-gt-BHf">
-                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="lzE-zW-nlS">
-                                <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                             </imageView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="n0F-IR-SxY">
-                                <rect key="frame" x="231" y="356.5" width="914" height="539"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fun Learning" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kT7-al-VhL">
+                                <rect key="frame" x="360" y="25" width="460" height="60"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="460" id="9DZ-Dw-bot"/>
+                                    <constraint firstAttribute="height" constant="60" id="n63-eY-xdh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                <color key="textColor" red="0.52941176470588236" green="0.34901960784313724" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
+                                <rect key="frame" x="1004" y="25" width="151" height="46"/>
+                                <size key="titleShadowOffset" width="2" height="2"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
+                                    <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
+                                    <backgroundConfiguration key="background">
+                                        <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </backgroundConfiguration>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26"/>
+                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="kidsModeButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="wbt-cu-y34"/>
+                                </connections>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="n0F-IR-SxY">
+                                <rect key="frame" x="133" y="141" width="914" height="539"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="539" id="O0F-3k-CzK"/>
@@ -44,50 +72,6 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fun Learning" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kT7-al-VhL">
-                                <rect key="frame" x="458" y="25" width="460" height="60"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="460" id="9DZ-Dw-bot"/>
-                                    <constraint firstAttribute="height" constant="60" id="n63-eY-xdh"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                                <color key="textColor" red="0.52941176470588236" green="0.34901960784313724" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GAa-jl-gfM">
-                                <rect key="frame" x="1153" y="524" width="46" height="34"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="arrowtriangle.forward.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="nextButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="eaR-OV-JLx"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wo7-9d-hYw">
-                                <rect key="frame" x="177" y="524" width="46" height="34"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="arrowtriangle.backward.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="previousButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="gRZ-5L-0SS"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
-                                <rect key="frame" x="1200" y="25" width="151" height="46"/>
-                                <size key="titleShadowOffset" width="2" height="2"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
-                                    <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
-                                    <backgroundConfiguration key="background">
-                                        <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </backgroundConfiguration>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26"/>
-                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="kidsModeButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="wbt-cu-y34"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="R9T-Zw-OeI"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -96,17 +80,13 @@
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" id="9bK-Bh-mr3"/>
                             <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="t3N-lJ-2Oc" secondAttribute="trailing" constant="25" id="Eho-fx-8KF"/>
                             <constraint firstAttribute="bottom" secondItem="lzE-zW-nlS" secondAttribute="bottom" id="IR5-4i-zz0"/>
-                            <constraint firstItem="wo7-9d-hYw" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="450" id="JXm-mz-IcV"/>
                             <constraint firstItem="lzE-zW-nlS" firstAttribute="trailing" secondItem="R9T-Zw-OeI" secondAttribute="trailing" id="N8d-Sa-UEm"/>
-                            <constraint firstItem="GAa-jl-gfM" firstAttribute="leading" secondItem="n0F-IR-SxY" secondAttribute="trailing" constant="8" symbolic="YES" id="QSb-fv-z6q"/>
                             <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="X4X-MI-QMr"/>
+                            <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="133" id="Zns-Oe-FAt"/>
                             <constraint firstItem="kT7-al-VhL" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="aaU-9M-GSk"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="centerY" secondItem="kX9-gt-BHf" secondAttribute="centerY" constant="110" id="bdM-v9-vdh"/>
                             <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
-                            <constraint firstItem="wo7-9d-hYw" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="177" id="q0R-6Z-tKG"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="s3s-3a-nJ3"/>
-                            <constraint firstItem="GAa-jl-gfM" firstAttribute="top" secondItem="R9T-Zw-OeI" secondAttribute="top" constant="450" id="vUO-jG-r8Y"/>
-                            <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="wo7-9d-hYw" secondAttribute="trailing" constant="8" symbolic="YES" id="zTg-gS-4Jz"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Cy9-KQ-HSd">
@@ -128,7 +108,7 @@
                 <navigationController storyboardIdentifier="FunLearningNavBar" automaticallyAdjustsScrollViewInsets="NO" id="gd2-qT-yBX" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="g64-cu-BUz">
-                        <rect key="frame" x="0.0" y="24" width="1376" height="50"/>
+                        <rect key="frame" x="0.0" y="24" width="1180" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -143,8 +123,6 @@
     </scenes>
     <resources>
         <image name="BaseBackdrop" width="605" height="417"/>
-        <image name="arrowtriangle.backward.fill" catalog="system" width="128" height="113"/>
-        <image name="arrowtriangle.forward.fill" catalog="system" width="128" height="113"/>
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

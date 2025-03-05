@@ -39,19 +39,7 @@ class FlashCardViewController: UIViewController {
         return emitter
     }()
     
-    var selectedIndex: Int? = 0 // Track selected index for zoom effect
-//    
-//    private lazy var warningLabel: UILabel = {
-//        let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .center
-//        label.numberOfLines = 0
-//        label.font = .systemFont(ofSize: 14, weight: .medium)
-//        label.textColor = .systemRed
-//        label.alpha = 0
-//        return label
-//    }()
-//    
+    var selectedIndex: Int? = 0 
     private var isListening = false
 
     override func viewDidLoad() {
@@ -97,12 +85,12 @@ class FlashCardViewController: UIViewController {
     func setupCollectionViewLayout() {
         let layout = SnappingCollectionViewLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 300
+        layout.minimumLineSpacing = 400
         layout.minimumInteritemSpacing = 0
-        layout.itemSize = CGSize(width: 350, height: 512)
+        layout.itemSize = CGSize(width: 450, height: 512)
         
         let screenWidth = UIScreen.main.bounds.width
-        let sideInset = (screenWidth - 350) / 2
+        let sideInset = (screenWidth - 450) / 2
         layout.sectionInset = UIEdgeInsets(top: 0, left: sideInset, bottom: 0, right: sideInset)
         
         collectionView.collectionViewLayout = layout

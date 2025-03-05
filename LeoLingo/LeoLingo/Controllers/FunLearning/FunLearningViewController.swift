@@ -22,7 +22,7 @@ class FunLearningViewController: UIViewController {
         
         let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButtonItem
-        navigationItem.leftBarButtonItem?.tintColor = .white
+        navigationItem.leftBarButtonItem?.tintColor = .accent
         
         let gameCellNib = UINib(nibName: "FunLearningGamesCollectionViewCell", bundle: nil)
         gamesCollectionView.register(gameCellNib, forCellWithReuseIdentifier: "FunLearningGamesCollectionViewCell")
@@ -39,27 +39,17 @@ class FunLearningViewController: UIViewController {
     
     
     @objc private func backButtonTapped() {
-        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-            if let presentingViewController = self.presentingViewController,
-               presentingViewController is HomePageViewController {
-                self.dismiss(animated: true)
+        if let navigationController = self.navigationController {
+            // Check if we can pop
+            if navigationController.viewControllers.count > 1 {
+                navigationController.popViewController(animated: true)
             } else {
-                guard let navigationController = self.navigationController else {
-                        print("No navigation controller found")
-                        return
-                    }
-                    
-                    // Look for `A` in the navigation stack
-                    for viewController in navigationController.viewControllers {
-                        if viewController is VocalCoachViewController {
-                            navigationController.popToViewController(viewController, animated: true)
-                            return
-                        }
-                    }
-                    
-                navigationController.setViewControllers([vocalCoachVC], animated: true)
+                // If we can't pop (we're the root), dismiss the whole navigation controller
+                navigationController.dismiss(animated: true)
             }
+        } else {
+            // If no navigation controller, just dismiss
+            dismiss(animated: true)
         }
     }
 
@@ -68,6 +58,7 @@ class FunLearningViewController: UIViewController {
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
             parentHomeVC.modalPresentationStyle = .fullScreen
+            // Present directly from this view controller
             self.present(parentHomeVC, animated: true, completion: nil)
         }
     }

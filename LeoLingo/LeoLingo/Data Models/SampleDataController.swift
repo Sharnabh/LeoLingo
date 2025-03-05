@@ -131,15 +131,13 @@ class SampleDataController {
                 AppWord(wordTitle: "Car", wordImage: "car"),
                 AppWord(wordTitle: "Bus", wordImage: "bus")
                 ]),
-            AppCategory(categoryTitle: "Food", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Animals", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Clothes", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Places", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Time", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Actions", categoryImage: "Vehicles", words: []),
-            AppCategory(categoryTitle: "Relations", categoryImage: "Vehicles", words: []),
-
-            
+            AppCategory(categoryTitle: "Fruits", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Animals", categoryImage: "Animals", words: []),
+            AppCategory(categoryTitle: "Clothes", categoryImage: "Clothes", words: []),
+            AppCategory(categoryTitle: "Monuments", categoryImage: "Monuments", words: []),
+            AppCategory(categoryTitle: "Time", categoryImage: "Time", words: []),
+            AppCategory(categoryTitle: "Actions", categoryImage: "Actions", words: []),
+            AppCategory(categoryTitle: "Relations", categoryImage: "Relations", words: []),
         ]
         badges = [
             AppBadge(badgeTitle: "NewLeo", badgeDescription: "NewLeo (You have taken the first step)", badgeImage: "Newleo"),
@@ -306,7 +304,7 @@ class SampleDataController {
        
         levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
         
-        let categoryCardImages = ["BodyParts","Fruits","Vegitables","Animals","Colors","Shapes","Numbers","Letters","Actions"]
+        let categoryCardImages = ["BodyParts", "Fruits", "Vehicles", "Animals", "Clothes", "Monuments", "Time", "Actions", "Relations"]
         
         categoryCards = zip(categories, categoryCardImages).map { CategoryCard(from: $0.0, categoryCardImage: $0.1) }
     }

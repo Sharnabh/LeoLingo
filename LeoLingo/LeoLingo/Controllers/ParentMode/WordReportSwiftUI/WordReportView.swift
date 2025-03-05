@@ -11,7 +11,7 @@ class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = AudioPlayerManager()
     private var audioPlayer: AVAudioPlayer?
     @Published var isPlaying = false
-    private var currentlyPlayingPath: String?
+    @Published private(set) var currentlyPlayingPath: String?
     
     override init() {
         super.init()

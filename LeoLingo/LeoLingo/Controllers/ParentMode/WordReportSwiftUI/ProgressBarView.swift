@@ -1,4 +1,3 @@
-
 import SwiftUI
 import AVFoundation
 
@@ -14,6 +13,12 @@ struct ProgressBarView: View {
     
     // Animation properties
     private let animationDuration: Double = 1.5
+    
+    // Computed property to check if this recording is currently playing
+    private var isThisRecordingPlaying: Bool {
+        guard let recordingPath = recordingPath else { return false }
+        return audioPlayer.isPlaying && audioPlayer.currentlyPlayingPath == recordingPath
+    }
     
     var body: some View {
         HStack(spacing: 16) {
@@ -103,7 +108,7 @@ struct ProgressBarView: View {
                     audioPlayer.play(recordingPath: path)
                 }
             }) {
-                Image(systemName: audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                Image(systemName: isThisRecordingPlaying ? "pause.circle.fill" : "play.circle.fill")
                     .foregroundColor(recordingPath != nil ? .green : .gray.opacity(0.5))
                     .font(.system(size: 24))
             }

@@ -58,7 +58,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="778.47457627118649" y="37.317073170731703"/>
+            <point key="canvasLocation" x="1487.2881355932204" y="37.317073170731703"/>
         </scene>
         <!--Flash Card View Controller-->
         <scene sceneID="Nvf-6h-SCQ">

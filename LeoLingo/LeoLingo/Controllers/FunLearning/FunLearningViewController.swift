@@ -17,12 +17,32 @@ class FunLearningViewController: UIViewController {
     
     let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo"]
     
+    private lazy var backButton: UIButton = {
+        let size: CGFloat = 46
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: size, height: size))
+        button.backgroundColor = .white
+        button.layer.cornerRadius = size/2
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.layer.shadowOpacity = 0.2
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
+            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        button.imageView?.contentMode = .center
+        
+        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
-        navigationItem.leftBarButtonItem = backButtonItem
-        navigationItem.leftBarButtonItem?.tintColor = .accent
+        // Setup back button in navigation bar
+        let backBarButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = backBarButton
         
         // Create custom Kids Mode button
         let customButton = UIButton(frame: CGRect(x: 0, y: 0, width: 151, height: 46))
@@ -38,9 +58,12 @@ class FunLearningViewController: UIViewController {
         customButton.tintColor = .black
         
         // Set image padding and position
-        customButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
-        customButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: -15, bottom: 0, right: 0)
-        customButton.semanticContentAttribute = .forceRightToLeft // Image on right
+        customButton.configuration = .plain()
+        customButton.configuration?.imagePlacement = .trailing
+        customButton.configuration?.imagePadding = 8
+        customButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
+        customButton.configuration?.background.backgroundColor = .white.withAlphaComponent(0.77)
+        customButton.configuration?.background.cornerRadius = 23
         
         // Add shadow
         customButton.layer.shadowColor = UIColor.black.cgColor
@@ -69,7 +92,6 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.delegate = self
         gamesCollectionView.dataSource = self
     }
-    
     
     @objc private func backButtonTapped() {
         if let navigationController = self.navigationController {

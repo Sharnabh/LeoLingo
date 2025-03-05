@@ -24,6 +24,39 @@ class FunLearningViewController: UIViewController {
         navigationItem.leftBarButtonItem = backButtonItem
         navigationItem.leftBarButtonItem?.tintColor = .accent
         
+        // Create custom Kids Mode button
+        let customButton = UIButton(frame: CGRect(x: 0, y: 0, width: 151, height: 46))
+        customButton.backgroundColor = .white.withAlphaComponent(0.77)
+        customButton.setTitle("Kid Mode", for: .normal)
+        customButton.setTitleColor(.black, for: .normal)
+        customButton.layer.cornerRadius = 23 // Half of height for capsule shape
+        
+        // Configure image
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
+        let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
+        customButton.setImage(personImage, for: .normal)
+        customButton.tintColor = .black
+        
+        // Set image padding and position
+        customButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        customButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: -15, bottom: 0, right: 0)
+        customButton.semanticContentAttribute = .forceRightToLeft // Image on right
+        
+        // Add shadow
+        customButton.layer.shadowColor = UIColor.black.cgColor
+        customButton.layer.shadowOffset = CGSize(width: 2, height: 2)
+        customButton.layer.shadowRadius = 2
+        customButton.layer.shadowOpacity = 0.2
+        
+        customButton.addTarget(self, action: #selector(kidsModeButtonTapped), for: .touchUpInside)
+        
+        // Create bar button item with custom button
+        let customBarButton = UIBarButtonItem(customView: customButton)
+        navigationItem.rightBarButtonItem = customBarButton
+        
+        // Hide the original button since we're using the custom one
+        parentModeButton.isHidden = true
+        
         let gameCellNib = UINib(nibName: "FunLearningGamesCollectionViewCell", bundle: nil)
         gamesCollectionView.register(gameCellNib, forCellWithReuseIdentifier: "FunLearningGamesCollectionViewCell")
         gamesCollectionView.setCollectionViewLayout(configureLayout(), animated: true)
@@ -40,21 +73,16 @@ class FunLearningViewController: UIViewController {
     
     @objc private func backButtonTapped() {
         if let navigationController = self.navigationController {
-            // Check if we can pop
-            if navigationController.viewControllers.count > 1 {
-                navigationController.popViewController(animated: true)
-            } else {
-                // If we can't pop (we're the root), dismiss the whole navigation controller
-                navigationController.dismiss(animated: true)
-            }
+            // If we're in a navigation controller, dismiss the entire navigation controller
+            navigationController.dismiss(animated: true)
         } else {
-            // If no navigation controller, just dismiss
+            // If we're presented directly, just dismiss this view controller
             dismiss(animated: true)
         }
     }
 
 
-    @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
+    @objc private func kidsModeButtonTapped() {
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
             parentHomeVC.modalPresentationStyle = .fullScreen

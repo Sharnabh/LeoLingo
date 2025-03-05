@@ -364,6 +364,11 @@
                             <constraint firstAttribute="bottom" secondItem="Wsm-FN-Wub" secondAttribute="bottom" id="uFZ-Pb-lkQ"/>
                             <constraint firstItem="iJF-x2-van" firstAttribute="top" secondItem="c9J-Ie-45x" secondAttribute="top" constant="25" id="ypp-xn-dgH"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="iJF-x2-van"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Word Report" id="ehf-Dj-1od"/>
                     <size key="freeformSize" width="1210" height="834"/>
@@ -825,6 +830,11 @@
                             <constraint firstItem="eFr-Sd-0wc" firstAttribute="trailing" secondItem="z78-kO-VTN" secondAttribute="trailing" id="WBx-pY-7xo"/>
                             <constraint firstItem="AEQ-B5-lda" firstAttribute="top" secondItem="rRU-bv-KLq" secondAttribute="top" constant="25" id="xrz-7q-mk4"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="AEQ-B5-lda"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Badges" id="pvG-a7-neR"/>
                     <connections>
@@ -885,6 +895,11 @@
                             <constraint firstItem="0GO-8m-b9u" firstAttribute="trailing" secondItem="F6W-tr-VjD" secondAttribute="trailing" constant="123" id="r6J-GG-X7w"/>
                             <constraint firstItem="zWT-EW-0OF" firstAttribute="leading" secondItem="0GO-8m-b9u" secondAttribute="leading" id="yW7-qz-BKB"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="ICt-yu-RRA"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Dashboard" id="C34-lZ-Ulc"/>
                     <connections>

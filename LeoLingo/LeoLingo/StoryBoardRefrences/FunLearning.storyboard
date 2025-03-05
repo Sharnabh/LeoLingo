@@ -88,6 +88,11 @@
                             <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
                             <constraint firstItem="n0F-IR-SxY" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="s3s-3a-nJ3"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="t3N-lJ-2Oc"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Cy9-KQ-HSd">
                         <barButtonItem key="backBarButtonItem" title="Back" style="plain" id="d1U-G2-RbG"/>

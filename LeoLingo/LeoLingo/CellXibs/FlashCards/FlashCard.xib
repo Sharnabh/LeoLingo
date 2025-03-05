@@ -10,44 +10,52 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FlashCardCell" id="Ktm-wP-Pac" customClass="FlashCardCollectionViewCell" customModule="LeoLingo" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="350" height="512"/>
+            <rect key="frame" x="0.0" y="0.0" width="450" height="512"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="aT2-T1-9bz">
-                <rect key="frame" x="0.0" y="0.0" width="350" height="512"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aT2-T1-9bz">
+                <rect key="frame" x="0.0" y="0.0" width="450" height="512"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xlG-ik-vFs">
-                        <rect key="frame" x="53" y="99" width="245" height="245"/>
+                        <rect key="frame" x="65" y="82" width="320" height="320"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="245" id="UtT-8l-zB0"/>
-                            <constraint firstAttribute="width" constant="245" id="lrq-Sa-bq9"/>
+                            <constraint firstAttribute="height" constant="320" id="6RZ-b7-Pm9"/>
+                            <constraint firstAttribute="width" constant="320" id="aaw-vX-WcX"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9bV-mG-gRZ">
-                        <rect key="frame" x="0.0" y="420" width="347" height="42"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9bV-mG-gRZ">
+                        <rect key="frame" x="0.0" y="420" width="450" height="42"/>
                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="35"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pyh-kC-0wB">
-                        <rect key="frame" x="300" y="24" width="34" height="34"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pyh-kC-0wB">
+                        <rect key="frame" x="380" y="34" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="40" id="hIw-NN-NA2"/>
+                            <constraint firstAttribute="height" constant="40" id="wcr-0M-2js"/>
+                        </constraints>
                         <state key="normal" title="Button"/>
                         <buttonConfiguration key="configuration" style="filled" image="cube.transparent" catalog="system">
-                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </buttonConfiguration>
                     </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="xlG-ik-vFs" firstAttribute="top" secondItem="aT2-T1-9bz" secondAttribute="top" constant="99" id="0pQ-gK-y1K"/>
-                    <constraint firstItem="xlG-ik-vFs" firstAttribute="centerY" secondItem="aT2-T1-9bz" secondAttribute="centerY" id="byO-jG-A1y"/>
-                    <constraint firstAttribute="trailing" secondItem="xlG-ik-vFs" secondAttribute="trailing" constant="52" id="fWA-9m-owy"/>
-                    <constraint firstItem="xlG-ik-vFs" firstAttribute="leading" secondItem="aT2-T1-9bz" secondAttribute="leading" constant="53" id="rjA-Jf-JCN"/>
+                    <constraint firstItem="xlG-ik-vFs" firstAttribute="top" secondItem="aT2-T1-9bz" secondAttribute="top" constant="82" id="CMG-4p-np9"/>
+                    <constraint firstItem="xlG-ik-vFs" firstAttribute="centerX" secondItem="aT2-T1-9bz" secondAttribute="centerX" id="KUb-IL-THG"/>
+                    <constraint firstItem="Pyh-kC-0wB" firstAttribute="trailing" secondItem="aT2-T1-9bz" secondAttribute="trailingMargin" constant="-10" id="RE7-m7-Vxs"/>
+                    <constraint firstItem="9bV-mG-gRZ" firstAttribute="top" secondItem="xlG-ik-vFs" secondAttribute="bottom" constant="18" id="RQE-sy-j71"/>
+                    <constraint firstItem="xlG-ik-vFs" firstAttribute="leading" secondItem="aT2-T1-9bz" secondAttribute="leading" constant="65" id="dhd-uk-xoq"/>
+                    <constraint firstItem="9bV-mG-gRZ" firstAttribute="leading" secondItem="aT2-T1-9bz" secondAttribute="leading" id="ds6-gu-OpP"/>
+                    <constraint firstItem="9bV-mG-gRZ" firstAttribute="centerX" secondItem="xlG-ik-vFs" secondAttribute="centerX" id="fJG-Q4-nZz"/>
+                    <constraint firstItem="Pyh-kC-0wB" firstAttribute="top" secondItem="aT2-T1-9bz" secondAttribute="topMargin" constant="10" id="gON-Q9-gs4"/>
+                    <constraint firstAttribute="trailing" secondItem="xlG-ik-vFs" secondAttribute="trailing" constant="65" id="ryf-9q-Ad6"/>
                 </constraints>
             </collectionViewCellContentView>
             <size key="customSize" width="341" height="526"/>
             <connections>
+                <outlet property="arButton" destination="Pyh-kC-0wB" id="OtI-su-kxe"/>
                 <outlet property="flashCardCell" destination="aT2-T1-9bz" id="Dx7-PR-zmo"/>
                 <outlet property="imageView" destination="xlG-ik-vFs" id="FBQ-CO-02D"/>
                 <outlet property="title" destination="9bV-mG-gRZ" id="fFL-vN-2Z0"/>

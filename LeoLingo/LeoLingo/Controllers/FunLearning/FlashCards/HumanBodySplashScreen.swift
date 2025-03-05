@@ -8,7 +8,7 @@ struct HumanBodySplashScreen: View {
         ZStack {
             // ✅ Background Gradient
             LinearGradient(
-                gradient: Gradient(colors: [Color.white, Color.brown.opacity(0.8)]),
+                gradient: Gradient(colors: [Color(red: 177/255, green: 226/255, blue: 105/255), Color(red: 192/255, green: 130/255, blue: 50/255)]),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -18,14 +18,14 @@ struct HumanBodySplashScreen: View {
                 Image("HumanBody") // Ensure this image exists
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 300, height: 300)
                     .opacity(opacity)
                     .shadow(radius: 5)
                     .animation(.easeIn(duration: 1.0), value: opacity)
 
                 Text("Explore Human Body")
                     .font(.largeTitle)
-                    .foregroundColor(.brown)
+                    .foregroundColor(.black)
                     .opacity(opacity)
                     .animation(.easeIn(duration: 1.5), value: opacity)
             }

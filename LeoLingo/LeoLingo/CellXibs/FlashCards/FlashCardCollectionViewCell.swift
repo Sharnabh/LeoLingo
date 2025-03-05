@@ -16,6 +16,7 @@ class FlashCardCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var title: UILabel!
     
+    @IBOutlet weak var arButton: UIButton!
     
     private let synthesizer = AVSpeechSynthesizer() // Speech Synthesizer for voice output
 
@@ -31,6 +32,10 @@ class FlashCardCollectionViewCell: UICollectionViewCell {
         ]
             
         func configureCell(categoryIndex: Int, wordIndex: Int) {
+            arButton.layer.cornerRadius = 20
+            arButton.titleLabel?.font = .systemFont(ofSize: 28, weight: .medium)
+            arButton.backgroundColor = .systemBlue
+            arButton.tintColor = .white
             let categories = SampleDataController.shared.getCategoriesData()
             guard categoryIndex < categories.count else { return }
             

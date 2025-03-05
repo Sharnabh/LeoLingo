@@ -127,7 +127,6 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 1
         {
-            
             let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
             if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "CategorySelectionViewController") as? CategorySelectionViewController {
              
@@ -147,7 +146,14 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
                 vc.modalPresentationStyle = .fullScreen
                 present(vc, animated: true)
             }
-            
+        }
+        if indexPath.item == 2
+        {
+            let storyboard = UIStoryboard(name: "SingAlong", bundle: nil)
+            if let singAlongVC = storyboard.instantiateViewController(withIdentifier: "SingAlongViewController") as? SingAlongViewController {
+                singAlongVC.modalPresentationStyle = .fullScreen
+                present(singAlongVC, animated: true)
+            }
         }
     }
     

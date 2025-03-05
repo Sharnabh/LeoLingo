@@ -756,15 +756,9 @@ class PracticeScreenViewController: UIViewController {
                             guard let self = self else { return }
                             // Load FunLearning storyboard
                             let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
-                            if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
-                                // If we have a navigation controller, push to it
-                                if let navigationController = self.navigationController {
-                                    navigationController.pushViewController(funLearningVC, animated: true)
-                                } else {
-                                    // If no navigation controller, present modally
-                                    funLearningVC.modalPresentationStyle = .fullScreen
-                                    self.present(funLearningVC, animated: true)
-                                }
+                            if let funLearningNavController = storyboard.instantiateViewController(withIdentifier: "FunLearningNavBar") as? UINavigationController {
+                                funLearningNavController.modalPresentationStyle = .fullScreen
+                                self.present(funLearningNavController, animated: true)
                             }
                         }
                     }

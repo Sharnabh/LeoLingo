@@ -17,12 +17,68 @@ class FunLearningViewController: UIViewController {
     
     let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo"]
     
+    private lazy var backButton: UIButton = {
+        let size: CGFloat = 46
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: size, height: size))
+        button.backgroundColor = .white
+        button.layer.cornerRadius = size/2
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 6
+        button.layer.shadowOpacity = 0.2
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
+            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        button.imageView?.contentMode = .center
+        
+        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let backButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
-        navigationItem.leftBarButtonItem = backButtonItem
-        navigationItem.leftBarButtonItem?.tintColor = .white
+        // Setup back button in navigation bar
+        let backBarButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = backBarButton
+        
+        // Create custom Kids Mode button
+        let customButton = UIButton(frame: CGRect(x: 0, y: 0, width: 151, height: 46))
+        customButton.backgroundColor = .white.withAlphaComponent(0.77)
+        customButton.setTitle("Kid Mode", for: .normal)
+        customButton.setTitleColor(.black, for: .normal)
+        customButton.layer.cornerRadius = 23 // Half of height for capsule shape
+        
+        // Configure image
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
+        let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
+        customButton.setImage(personImage, for: .normal)
+        customButton.tintColor = .black
+        
+        // Set image padding and position
+        customButton.configuration = .plain()
+        customButton.configuration?.imagePlacement = .trailing
+        customButton.configuration?.imagePadding = 8
+        customButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
+        customButton.configuration?.background.backgroundColor = .white.withAlphaComponent(0.77)
+        customButton.configuration?.background.cornerRadius = 23
+        
+        // Add shadow
+        customButton.layer.shadowColor = UIColor.black.cgColor
+        customButton.layer.shadowOffset = CGSize(width: 2, height: 2)
+        customButton.layer.shadowRadius = 2
+        customButton.layer.shadowOpacity = 0.2
+        
+        customButton.addTarget(self, action: #selector(kidsModeButtonTapped), for: .touchUpInside)
+        
+        // Create bar button item with custom button
+        let customBarButton = UIBarButtonItem(customView: customButton)
+        navigationItem.rightBarButtonItem = customBarButton
+        
+        // Hide the original button since we're using the custom one
+        parentModeButton.isHidden = true
         
         let gameCellNib = UINib(nibName: "FunLearningGamesCollectionViewCell", bundle: nil)
         gamesCollectionView.register(gameCellNib, forCellWithReuseIdentifier: "FunLearningGamesCollectionViewCell")
@@ -37,37 +93,22 @@ class FunLearningViewController: UIViewController {
         gamesCollectionView.dataSource = self
     }
     
-    
     @objc private func backButtonTapped() {
-        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
-        if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
-            if let presentingViewController = self.presentingViewController,
-               presentingViewController is HomePageViewController {
-                self.dismiss(animated: true)
-            } else {
-                guard let navigationController = self.navigationController else {
-                        print("No navigation controller found")
-                        return
-                    }
-                    
-                    // Look for `A` in the navigation stack
-                    for viewController in navigationController.viewControllers {
-                        if viewController is VocalCoachViewController {
-                            navigationController.popToViewController(viewController, animated: true)
-                            return
-                        }
-                    }
-                    
-                navigationController.setViewControllers([vocalCoachVC], animated: true)
-            }
+        if let navigationController = self.navigationController {
+            // If we're in a navigation controller, dismiss the entire navigation controller
+            navigationController.dismiss(animated: true)
+        } else {
+            // If we're presented directly, just dismiss this view controller
+            dismiss(animated: true)
         }
     }
 
 
-    @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
+    @objc private func kidsModeButtonTapped() {
         let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
         if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
             parentHomeVC.modalPresentationStyle = .fullScreen
+            // Present directly from this view controller
             self.present(parentHomeVC, animated: true, completion: nil)
         }
     }

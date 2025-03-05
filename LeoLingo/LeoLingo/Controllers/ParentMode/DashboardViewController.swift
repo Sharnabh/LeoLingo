@@ -67,6 +67,14 @@ class DashboardViewController: UIViewController {
             let badgesNib = UINib(nibName: "BadgesCollectionViewCell", bundle: nil)
             badgesEarnedCollectionView.register(badgesNib, forCellWithReuseIdentifier: BadgesCollectionViewCell.identifier)
         }
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(WordCardHostingCell.self, forCellWithReuseIdentifier: WordCardHostingCell.identifier)
+        
+        configureFlowLayout()
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -274,10 +282,10 @@ class DashboardViewController: UIViewController {
         }
     }
     func getAppWordTitle(for word: Word, appLevels: [AppLevel]) -> String? {
-       
+        
         for appLevel in appLevels {
             if let appWord = appLevel.words.first(where: { $0.id == word.id }) {
-               
+                
                 return appWord.wordTitle
             }
         }
@@ -381,8 +389,19 @@ class DashboardViewController: UIViewController {
         }
     }
 }
-        
+
 extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    private func configureFlowLayout() {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.itemSize = CGSize(width: 160, height: 200)  // Updated size to match WordCardView
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        
+        collectionView.collectionViewLayout = layout
+    }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -395,7 +414,7 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
                 return badges.count
             }
         }
-        if collectionView == collectionView {
+        if collectionView == self.collectionView {
             return minAccuracyWords?.count ?? 1
         }
         return 0
@@ -414,12 +433,13 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
             
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordReportCollectionViewCell.identifier, for: indexPath) as! WordReportCollectionViewCell
         
-        guard let word = minAccuracyWords else { return cell }
-        cell.updateLabel(with: word[indexPath.item])
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WordCardHostingCell.identifier, for: indexPath) as! WordCardHostingCell
+        
+        guard let words = minAccuracyWords else { return cell }
+        cell.configure(with: words[indexPath.item])
         return cell
     }
     
 }
-    
+

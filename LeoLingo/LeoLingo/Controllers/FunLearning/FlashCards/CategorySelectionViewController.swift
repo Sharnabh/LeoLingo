@@ -60,17 +60,36 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Selected level card at index: \(indexPath.item)")
+        
+        // Handle Body Parts category (index 0) separately
+        if indexPath.item == 0 {
+            let splashScreen = UIHostingController(rootView: HumanBodySplashScreen())
+            // Configure the hosting controller
+            splashScreen.modalPresentationStyle = .fullScreen
+            
+            // Create and configure FlashCardVC
+            let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+            if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
+                flashCardVC.selectedIndex = indexPath.item
+                
+                // Present splash screen first, then navigate to FlashCardVC
+                present(splashScreen, animated: true) { [weak self] in
+                    // After a short delay, dismiss splash and show FlashCardVC
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        splashScreen.dismiss(animated: true) {
+                            self?.navigationController?.pushViewController(flashCardVC, animated: true)
+                        }
+                    }
+                }
+            }
+            return
+        }
+        
+        // Handle all other categories
         let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
         if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
             flashCardVC.selectedIndex = indexPath.item
-            self.navigationController?.pushViewController(flashCardVC, animated: true)
-        }
-
-        // Check if the selected index is 0
-        if indexPath.item == 0 {
-            let splashScreen = UIHostingController(rootView: HumanBodySplashScreen())
-            splashScreen.modalPresentationStyle = .overFullScreen
-            present(splashScreen, animated: true) {}
+            navigationController?.pushViewController(flashCardVC, animated: true)
         }
     }
 

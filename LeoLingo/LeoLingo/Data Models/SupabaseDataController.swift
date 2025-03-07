@@ -96,6 +96,8 @@ class SupabaseDataController {
         if existingRecords.isEmpty {
             print("DEBUG: Creating new word records for user")
             let badges = sampleData.getBadgesData()
+            
+            // Initialize badges - set NewLeo badge as earned by default
             for badge in badges {
                 let isEarned = badge.badgeTitle == "NewLeo"
                 let badgeData = UserBadge(
@@ -104,12 +106,20 @@ class SupabaseDataController {
                     is_earned: isEarned,
                     earned_at: isEarned ? Date() : nil
                 )
-                try await supabase
-                    .from("user_badges")
-                    .insert(badgeData)
-                    .execute()
+                
+                // Insert badge data and handle any errors
+                do {
+                    try await supabase
+                        .from("user_badges")
+                        .insert(badgeData)
+                        .execute()
+                    print("DEBUG: Successfully initialized badge: \(badge.badgeTitle)")
+                } catch {
+                    print("DEBUG: Error initializing badge \(badge.badgeTitle): \(error)")
+                }
             }
             
+            // Initialize word records
             let levels = sampleData.getLevelsData()
             for level in levels {
                 print("DEBUG: Creating records for level \(level.levelTitle)")

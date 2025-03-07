@@ -171,8 +171,24 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // Refresh practices when view appears
+        // Refresh practices and badges when view appears
         loadRecentPractices()
+        badgesEarnedCollectionView.reloadData()
+        
+        // Ensure we have the latest user data
+        Task {
+            if let userId = SupabaseDataController.shared.userId {
+                do {
+                    _ = try await SupabaseDataController.shared.getUser(byId: userId)
+                    // Reload badges on main thread after fetching latest data
+                    DispatchQueue.main.async {
+                        self.badgesEarnedCollectionView.reloadData()
+                    }
+                } catch {
+                    print("Error refreshing user data: \(error)")
+                }
+            }
+        }
     }
     
     func updateBadgeStatus(badgeId: UUID) {
@@ -357,7 +373,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else { return 0 }
+            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else {
+                print("DEBUG: No earned badges found")
+                return 0
+            }
+            print("DEBUG: Found \(badges.count) earned badges")
             return badges.count
         }
         return sortedWords?.count ?? 0
@@ -367,10 +387,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if collectionView == badgesEarnedCollectionView {
             let cell = badgesEarnedCollectionView.dequeueReusableCell(withReuseIdentifier: BadgesEarnedCollectionViewCell.identifier, for: indexPath) as! BadgesEarnedCollectionViewCell
             
-            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else { return UICollectionViewCell() }
+            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else {
+                print("DEBUG: Failed to get earned badges while configuring cell")
+                return UICollectionViewCell()
+            }
+            
+            print("DEBUG: Configuring badge cell at index \(indexPath.row)")
             
             for badge in SampleDataController.shared.getBadgesData() {
                 if badge.id == badges[indexPath.row].id {
+                    print("DEBUG: Found matching badge: \(badge.badgeTitle)")
                     cell.configure(with: badge.badgeImage)
                 }
             }

@@ -6,6 +6,8 @@
 //
 
 import Foundation
+// Import the containing module to disambiguate types
+import SwiftUI
 
 class SampleDataController {
     

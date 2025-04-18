@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class FunLearningViewController: UIViewController {
 
@@ -168,17 +169,43 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 1
         {
-            let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
-            if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "CategorySelectionViewController") as? CategorySelectionViewController {
-             
-                if let navigationController = self.navigationController {
-                    navigationController.pushViewController(flashCardVC, animated: true)
-                } else {
-                    flashCardVC.modalPresentationStyle = .fullScreen
-                    present(flashCardVC, animated: true)
+            // Show alert to choose between original and new flashcard game
+            let alertController = UIAlertController(
+                title: "Choose Flashcard Game",
+                message: "Select which flashcard game you'd like to play",
+                preferredStyle: .actionSheet
+            )
+            
+            alertController.addAction(UIAlertAction(title: "Original Flashcards", style: .default) { [weak self] _ in
+                // Original flashcard game code
+                let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
+                if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "CategorySelectionViewController") as? CategorySelectionViewController {
+                 
+                    if let navigationController = self?.navigationController {
+                        navigationController.pushViewController(flashCardVC, animated: true)
+                    } else {
+                        flashCardVC.modalPresentationStyle = .fullScreen
+                        self?.present(flashCardVC, animated: true)
+                    }
                 }
+            })
+            
+            alertController.addAction(UIAlertAction(title: "New SwiftUI Flashcards", style: .default) { [weak self] _ in
+                // New SwiftUI flashcard game
+                let flashcardVC = SwiftUIFlashCardConnector.createCategorySelectionViewController()
+                flashcardVC.modalPresentationStyle = .fullScreen
+                self?.present(flashcardVC, animated: true)
+            })
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = view
+                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
             }
             
+            present(alertController, animated: true)
         }
         if indexPath.item == 0
         {

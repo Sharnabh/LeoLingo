@@ -12,11 +12,64 @@ struct FlashCardView: View {
     @State private var isFlipped = false
     @State private var showConfetti = false
     @State private var showStars = false
+    @State private var showFact = false
+    @State private var isSpeakingFact = false
+    private let factSpeechSynthesizer = AVSpeechSynthesizer()
     
     // Card properties
     private var currentCard: FlashCard { category.cards[currentIndex] }
     private var hasNextCard: Bool { currentIndex < category.cards.count - 1 }
     private var hasPreviousCard: Bool { currentIndex > 0 }
+    
+    // Facts for each card - in a real app, these would come from the data model
+    private let facts = [
+        "Ear": "The ear not only helps you hear but also helps maintain balance.",
+        "Palm": "Your palm has about 17,000 touch receptors and sensors.",
+        "Lips": "Lips have the thinnest layer of skin on the human body.",
+        "Eye": "The human eye can distinguish about 10 million different colors.",
+        "Nose": "Humans can remember smells better than any other sense.",
+        "Thumb": "The thumb has its own dedicated pulse.",
+        "Elephant": "Elephants are the only mammals that can't jump.",
+        "Giraffe": "Giraffes sleep for only 30 minutes a day.",
+        "Zebra": "Every zebra has a unique pattern of stripes, like fingerprints.",
+        "Rhinoceros": "A group of rhinos is called a crash.",
+        "Cheetah": "Cheetahs can accelerate from 0 to 60 mph in just 3 seconds.",
+        "Gorilla": "Gorillas can catch human colds and other illnesses.",
+        "Broccoli": "Broccoli contains more protein than steak per calorie.",
+        "Carrot": "Carrots were originally purple, not orange.",
+        "Cucumber": "Cucumbers are actually fruits, not vegetables.",
+        "Spinach": "Spinach has a natural substance that helps build strong muscles.",
+        "Potato": "There are over 4,000 varieties of potatoes worldwide.",
+        "Cabbage": "Cabbage is 91% water.",
+        "Sunny": "Sunlight takes about 8 minutes to reach Earth from the Sun.",
+        "Rainy": "The smell after rain is called 'petrichor'.",
+        "Snowy": "No two snowflakes are exactly alike.",
+        "Windy": "Wind is caused by differences in atmospheric pressure.",
+        "Stormy": "Lightning can be up to five times hotter than the sun's surface.",
+        "Foggy": "Fog is actually a cloud that forms at ground level.",
+        "Doctor": "The white coat worn by doctors is called a 'lab coat'.",
+        "Teacher": "The world's oldest school is in Canterbury, England.",
+        "Astronaut": "Astronauts grow about 2 inches taller in space.",
+        "Firefighter": "A firefighter's gear can weigh up to 45 pounds.",
+        "Chef": "The tall white hat that chefs wear is called a 'toque'.",
+        "Pilot": "Pilots and co-pilots eat different meals to avoid food poisoning.",
+        "Soccer": "A soccer ball is made up of 32 panels.",
+        "Basketball": "Basketball was invented by a Canadian.",
+        "Tennis": "Tennis players change sides every odd game to keep play fair.",
+        "Swimming": "Humans are the only primates that can swim naturally.",
+        "Cycling": "Bicycles are the most efficient form of human transportation.",
+        "Gymnastics": "Gymnasts use chalk on their hands to improve grip.",
+        "Butterfly": "Butterflies taste with their feet.",
+        "Ladybug": "Ladybugs can eat up to 5,000 insects in their lifetime.",
+        "Dragonfly": "Dragonflies have been on Earth for 300 million years.",
+        "Grasshopper": "Grasshoppers have ears on their bellies.",
+        "Beetle": "There are more species of beetles than any other animal.",
+        "Firefly": "Firefly light is the most efficient light in the world."
+    ]
+    
+    private var currentFact: String {
+        facts[currentCard.word] ?? "Did you know? \(currentCard.word) is a very interesting subject to learn about!"
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -35,7 +88,7 @@ struct FlashCardView: View {
                 // Floating bubbles background
                 FloatingBubblesView(color: category.color)
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 15) {
                     // Header with back button and title
                     HStack {
                         BackButton {
@@ -85,10 +138,23 @@ struct FlashCardView: View {
                             handleCardTap()
                         }
                     }
-                    .frame(height: geometry.size.height * 0.6)
+                    .frame(height: geometry.size.height * 0.45)
+                    
+                    // Fact about the card
+                    FactPanel(
+                        fact: currentFact,
+                        color: category.color,
+                        speakAction: speakFact,
+                        isVisible: $showFact,
+                        isSpeaking: $isSpeakingFact
+                    )
+                    .frame(height: geometry.size.height * 0.15)
+                    .opacity(showFact ? 1 : 0)
+                    .scaleEffect(showFact ? 1 : 0.8)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: showFact)
                     
                     // Navigation buttons
-                    HStack(spacing: 60) {
+                    HStack(spacing: 35) {
                         NavigationButton(
                             icon: "arrow.left.circle.fill",
                             isEnabled: hasPreviousCard,
@@ -100,6 +166,13 @@ struct FlashCardView: View {
                             isEnabled: true,
                             action: speakWord
                         )
+                        
+                        NavigationButton(
+                            icon: showFact ? "lightbulb.fill" : "lightbulb",
+                            isEnabled: true,
+                            action: toggleFact
+                        )
+                        .foregroundColor(showFact ? .yellow : .white)
                         
                         NavigationButton(
                             icon: "arrow.right.circle.fill",
@@ -116,6 +189,23 @@ struct FlashCardView: View {
         }
         .statusBar(hidden: true)
         .ignoresSafeArea()
+        .onAppear {
+            // Show fact with a slight delay for a nice reveal
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    showFact = true
+                }
+            }
+            
+            // Set up speech synthesizer delegate
+            factSpeechSynthesizer.delegate = SpeechFinishDelegate.shared
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .speechDidFinish)) { _ in
+            // Handle speech completion
+            if isSpeakingFact {
+                isSpeakingFact = false
+            }
+        }
     }
     
     // MARK: - Actions
@@ -149,6 +239,12 @@ struct FlashCardView: View {
     }
     
     private func nextCard() {
+        // Stop any ongoing speech when changing cards
+        if isSpeakingFact {
+            factSpeechSynthesizer.stopSpeaking(at: .immediate)
+            isSpeakingFact = false
+        }
+        
         withAnimation(.spring()) {
             currentIndex += 1
             isFlipped = false
@@ -156,6 +252,12 @@ struct FlashCardView: View {
     }
     
     private func previousCard() {
+        // Stop any ongoing speech when changing cards
+        if isSpeakingFact {
+            factSpeechSynthesizer.stopSpeaking(at: .immediate)
+            isSpeakingFact = false
+        }
+        
         withAnimation(.spring()) {
             currentIndex -= 1
             isFlipped = false
@@ -164,6 +266,62 @@ struct FlashCardView: View {
     
     private func speakWord() {
         SwiftUIFlashCardDataManager.shared.speakWord(currentCard.word)
+    }
+    
+    private func speakFact() {
+        // If already speaking, stop it
+        if isSpeakingFact {
+            factSpeechSynthesizer.stopSpeaking(at: .immediate)
+            isSpeakingFact = false
+            return
+        }
+        
+        // Start speaking the fact
+        let utterance = AVSpeechUtterance(string: currentFact)
+        utterance.rate = 0.5
+        utterance.pitchMultiplier = 1.1
+        utterance.volume = 1.0
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-IN")
+        
+        // Start speaking and update state
+        isSpeakingFact = true
+        factSpeechSynthesizer.speak(utterance)
+    }
+    
+    private func toggleFact() {
+        withAnimation {
+            // If hiding facts, stop any ongoing speech
+            if showFact && isSpeakingFact {
+                factSpeechSynthesizer.stopSpeaking(at: .immediate)
+                isSpeakingFact = false
+            }
+            
+            showFact.toggle()
+        }
+    }
+}
+
+// Helper class to handle speech synthesis delegate methods
+class SpeechFinishDelegate: NSObject, AVSpeechSynthesizerDelegate {
+    static let shared = SpeechFinishDelegate()
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .speechDidFinish, object: nil)
+        }
+    }
+}
+
+// Extension to add notification name
+extension Notification.Name {
+    static let speechDidFinish = Notification.Name("speechDidFinish")
+}
+
+// Add id to FlashCardView to track instances
+extension FlashCardView: Identifiable {
+    var id: UUID {
+        // Use the category ID as a base for the view's ID
+        return category.id
     }
 }
 
@@ -248,6 +406,64 @@ struct NavigationButton: View {
         }
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1.0 : 0.5)
+    }
+}
+
+struct FactPanel: View {
+    let fact: String
+    let color: Color
+    let speakAction: () -> Void
+    @Binding var isVisible: Bool
+    @Binding var isSpeaking: Bool
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text("Fun Fact")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Button(action: speakAction) {
+                    Image(systemName: isSpeaking ? "speaker.wave.3.fill" : "speaker.wave.2.fill")
+                        .font(.system(size: 22))
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(
+                            Circle()
+                                .fill(isSpeaking ? color : color.opacity(0.8))
+                                .shadow(radius: 2)
+                        )
+                }
+                .scaleEffect(isSpeaking ? 1.1 : 1.0)
+                .animation(.spring(response: 0.3), value: isSpeaking)
+            }
+            
+            Text(fact)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.leading)
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 2)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            color.opacity(0.8),
+                            color.opacity(0.6)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+        )
+        .padding(.horizontal)
     }
 }
 

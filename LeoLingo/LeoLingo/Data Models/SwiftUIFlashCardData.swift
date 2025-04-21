@@ -85,23 +85,9 @@ class SwiftUIFlashCardDataManager {
             backgroundImage: "weather_bg"
         ),
         FlashCardCategory(
-            name: "Occupations", 
-            image: "occupations",
-            color: Color(red: 0.8, green: 0.4, blue: 0.6),
-            cards: [
-                FlashCard(word: "Doctor", image: "doctor"),
-                FlashCard(word: "Teacher", image: "teacher"),
-                FlashCard(word: "Astronaut", image: "astronaut"),
-                FlashCard(word: "Firefighter", image: "firefighter"),
-                FlashCard(word: "Chef", image: "chef"),
-                FlashCard(word: "Pilot", image: "pilot")
-            ],
-            backgroundImage: "occupations_bg"
-        ),
-        FlashCardCategory(
             name: "Sports", 
             image: "sports",
-            color: Color(red: 0.4, green: 0.6, blue: 0.8),
+            color: Color(red: 0.8, green: 0.8, blue: 0.4),
             cards: [
                 FlashCard(word: "Soccer", image: "soccer"),
                 FlashCard(word: "Basketball", image: "basketball"),
@@ -112,21 +98,81 @@ class SwiftUIFlashCardDataManager {
             ],
             backgroundImage: "sports_bg"
         ),
+        // New category: Vehicles
         FlashCardCategory(
-            name: "Insects", 
-            image: "insects",
-            color: Color(red: 0.8, green: 0.8, blue: 0.4),
+            name: "Vehicles",
+            image: "vehicles",
+            color: Color(red: 0.6, green: 0.5, blue: 0.8),
             cards: [
-                FlashCard(word: "Butterfly", image: "butterfly"),
-                FlashCard(word: "Ladybug", image: "ladybug"),
-                FlashCard(word: "Dragonfly", image: "dragonfly"),
-                FlashCard(word: "Grasshopper", image: "grasshopper"),
-                FlashCard(word: "Beetle", image: "beetle"),
-                FlashCard(word: "Firefly", image: "firefly")
+                FlashCard(word: "Car", image: "car"),
+                FlashCard(word: "Bus", image: "bus"),
+                FlashCard(word: "Train", image: "train"),
+                FlashCard(word: "Airplane", image: "airplane"),
+                FlashCard(word: "Bicycle", image: "bicycle"),
+                FlashCard(word: "Boat", image: "boat")
             ],
-            backgroundImage: "insects_bg"
+            backgroundImage: "vehicles_bg"
         ),
-        
+        // New category: Clothes
+        FlashCardCategory(
+            name: "Clothes",
+            image: "clothes",
+            color: Color(red: 0.8, green: 0.4, blue: 0.5),
+            cards: [
+                FlashCard(word: "Shirt", image: "shirt"),
+                FlashCard(word: "Pants", image: "pants"),
+                FlashCard(word: "Shoes", image: "shoes"),
+                FlashCard(word: "Hat", image: "hat"),
+                FlashCard(word: "Socks", image: "socks"),
+                FlashCard(word: "Jacket", image: "jacket")
+            ],
+            backgroundImage: "clothes_bg"
+        ),
+        // New category: Actions
+        FlashCardCategory(
+            name: "Actions",
+            image: "actions",
+            color: Color(red: 0.5, green: 0.65, blue: 0.8),
+            cards: [
+                FlashCard(word: "Jump", image: "jump"),
+                FlashCard(word: "Run", image: "run"),
+                FlashCard(word: "Sleep", image: "sleep"),
+                FlashCard(word: "Eat", image: "eat"),
+                FlashCard(word: "Write", image: "write"),
+                FlashCard(word: "Read", image: "read")
+            ],
+            backgroundImage: "actions_bg"
+        ),
+        // New category: Stationery
+        FlashCardCategory(
+            name: "Stationery",
+            image: "stationery",
+            color: Color(red: 0.6, green: 0.6, blue: 0.65),
+            cards: [
+                FlashCard(word: "Pencil", image: "pencil"),
+                FlashCard(word: "Eraser", image: "eraser"),
+                FlashCard(word: "Ruler", image: "ruler"),
+                FlashCard(word: "Notebook", image: "notebook"),
+                FlashCard(word: "Scissors", image: "scissors"),
+                FlashCard(word: "Glue", image: "glue")
+            ],
+            backgroundImage: "stationery_bg"
+        ),
+        // New category: Toys
+        FlashCardCategory(
+            name: "Toys",
+            image: "toys",
+            color: Color(red: 0.9, green: 0.7, blue: 0.3),
+            cards: [
+                FlashCard(word: "Doll", image: "doll"),
+                FlashCard(word: "Ball", image: "ball"),
+                FlashCard(word: "Robot", image: "robot"),
+                FlashCard(word: "Teddy", image: "teddy"),
+                FlashCard(word: "Blocks", image: "blocks"),
+                FlashCard(word: "Kite", image: "kite")
+            ],
+            backgroundImage: "toys_bg"
+        )
     ]
     
     // Function to get all categories
@@ -140,7 +186,7 @@ class SwiftUIFlashCardDataManager {
         utterance.rate = 0.5
         utterance.pitchMultiplier = 1.2
         utterance.volume = 1.0
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-IN")
         
         synthesizer.speak(utterance)
     }

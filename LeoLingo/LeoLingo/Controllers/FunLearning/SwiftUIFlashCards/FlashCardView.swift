@@ -1,5 +1,7 @@
 import SwiftUI
 import AVFoundation
+import Speech
+import Combine
 
 struct FlashCardView: View {
     let category: FlashCardCategory
@@ -14,7 +16,15 @@ struct FlashCardView: View {
     @State private var showStars = false
     @State private var showFact = false
     @State private var isSpeakingFact = false
+    @State private var isListening = false
+    @State private var feedbackMessage = ""
+    @State private var showFeedback = false
+    @State private var pronunciationAccuracy: Double = 0
+    
+    // Speech processing
     private let factSpeechSynthesizer = AVSpeechSynthesizer()
+    private let speechProcessor = GameSpeechProcessor()
+    @State private var speechSubscription: AnyCancellable?
     
     // Card properties
     private var currentCard: FlashCard { category.cards[currentIndex] }
@@ -137,6 +147,13 @@ struct FlashCardView: View {
                         .onTapGesture {
                             handleCardTap()
                         }
+                        
+                        // Listening indicator
+                        if isListening {
+                            ListeningIndicator()
+                                .frame(width: 80, height: 80)
+                                .position(x: 40, y: 40)
+                        }
                     }
                     .frame(height: geometry.size.height * 0.45)
                     
@@ -154,7 +171,7 @@ struct FlashCardView: View {
                     .animation(.spring(response: 0.5, dampingFraction: 0.7), value: showFact)
                     
                     // Navigation buttons
-                    HStack(spacing: 35) {
+                    HStack(spacing: 25) {
                         NavigationButton(
                             icon: "arrow.left.circle.fill",
                             isEnabled: hasPreviousCard,
@@ -166,6 +183,16 @@ struct FlashCardView: View {
                             isEnabled: true,
                             action: speakWord
                         )
+                        
+                        // Microphone button for speech recognition
+                        NavigationButton(
+                            icon: isListening ? "mic.fill" : "mic.circle.fill",
+                            isEnabled: true,
+                            action: toggleListening
+                        )
+                        .foregroundColor(isListening ? .red : .white)
+                        .scaleEffect(isListening ? 1.2 : 1.0)
+                        .animation(.spring(), value: isListening)
                         
                         NavigationButton(
                             icon: showFact ? "lightbulb.fill" : "lightbulb",
@@ -185,6 +212,32 @@ struct FlashCardView: View {
                 
                 if showConfetti { ConfettiView() }
                 if showStars { StarParticlesView() }
+                
+                // Feedback message
+                if showFeedback {
+                    VStack(spacing: 10) {
+                        Text(feedbackMessage)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                        
+                        if pronunciationAccuracy > 0 {
+                            AccuracyMeter(accuracy: pronunciationAccuracy)
+                                .frame(height: 25)
+                                .padding(.horizontal, 40)
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(feedbackColor())
+                            .opacity(0.9)
+                    )
+                    .padding(.horizontal, 30)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(10)
+                }
             }
         }
         .statusBar(hidden: true)
@@ -199,6 +252,9 @@ struct FlashCardView: View {
             
             // Set up speech synthesizer delegate
             factSpeechSynthesizer.delegate = SpeechFinishDelegate.shared
+            
+            // Request speech recognition permission
+            speechProcessor.requestSpeechRecognitionPermission()
         }
         .onReceive(NotificationCenter.default.publisher(for: .speechDidFinish)) { _ in
             // Handle speech completion
@@ -209,6 +265,16 @@ struct FlashCardView: View {
     }
     
     // MARK: - Actions
+    
+    private func feedbackColor() -> Color {
+        if pronunciationAccuracy >= 80 {
+            return .green
+        } else if pronunciationAccuracy >= 50 {
+            return .orange
+        } else {
+            return .red
+        }
+    }
     
     private func handleSwipe(_ gesture: DragGesture.Value) {
         withAnimation(.spring()) {
@@ -245,6 +311,11 @@ struct FlashCardView: View {
             isSpeakingFact = false
         }
         
+        // Stop any active listening
+        if isListening {
+            stopListening()
+        }
+        
         withAnimation(.spring()) {
             currentIndex += 1
             isFlipped = false
@@ -256,6 +327,11 @@ struct FlashCardView: View {
         if isSpeakingFact {
             factSpeechSynthesizer.stopSpeaking(at: .immediate)
             isSpeakingFact = false
+        }
+        
+        // Stop any active listening
+        if isListening {
+            stopListening()
         }
         
         withAnimation(.spring()) {
@@ -281,7 +357,7 @@ struct FlashCardView: View {
         utterance.rate = 0.5
         utterance.pitchMultiplier = 1.1
         utterance.volume = 1.0
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-IN")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         
         // Start speaking and update state
         isSpeakingFact = true
@@ -297,6 +373,103 @@ struct FlashCardView: View {
             }
             
             showFact.toggle()
+        }
+    }
+    
+    // MARK: - Speech Recognition
+    
+    private func toggleListening() {
+        if isListening {
+            stopListening()
+        } else {
+            startListening()
+        }
+    }
+    
+    private func startListening() {
+        // Flip card to word side if not already flipped
+        if !isFlipped {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                isFlipped = true
+            }
+        }
+        
+        isListening = true
+        
+        // Cancel any existing subscription
+        speechSubscription?.cancel()
+        
+        // Start recording with current word
+        speechProcessor.startRecording(word: currentCard.word)
+        
+        // Handle speech recognition results
+        speechSubscription = speechProcessor.$userSpokenText
+            .filter { !$0.isEmpty }
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .sink { spokenText in
+                self.evaluateUserSpeech(spokenText)
+            }
+        
+        // Set a timeout for speech recognition
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            if self.isListening {
+                self.stopListening()
+                self.showTimeoutFeedback()
+            }
+        }
+    }
+    
+    private func stopListening() {
+        isListening = false
+        speechProcessor.stopRecording()
+        speechSubscription?.cancel()
+    }
+    
+    private func evaluateUserSpeech(_ spokenText: String) {
+        // Calculate accuracy using Levenshtein distance
+        let distance = speechProcessor.levenshteinDistance(spokenText.lowercased(), currentCard.word.lowercased())
+        let maxLength = max(spokenText.count, currentCard.word.count)
+        let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
+        
+        pronunciationAccuracy = accuracy
+        
+        // Show feedback based on accuracy
+        withAnimation {
+            if accuracy >= 80.0 {
+                feedbackMessage = "Great job! 🌟\nThat's correct!"
+                showStars = true
+                showConfetti = true
+            } else if accuracy >= 50.0 {
+                feedbackMessage = "Good try! 💪\nKeep practicing!"
+            } else {
+                feedbackMessage = "Let's try again! 👂\nSay: \"\(currentCard.word)\""
+            }
+            showFeedback = true
+        }
+        
+        // Hide feedback after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            withAnimation {
+                showFeedback = false
+                showStars = false
+                showConfetti = false
+                pronunciationAccuracy = 0
+            }
+        }
+        
+        stopListening()
+    }
+    
+    private func showTimeoutFeedback() {
+        withAnimation {
+            feedbackMessage = "I didn't hear you. Try again!"
+            showFeedback = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                showFeedback = false
+            }
         }
     }
 }
@@ -690,6 +863,75 @@ struct BubbleItem: Identifiable {
                 x: CGFloat.random(in: 0...screenWidth),
                 y: -50
             )
+        }
+    }
+}
+
+// MARK: - New Supporting Views
+
+struct ListeningIndicator: View {
+    @State private var waveScale: CGFloat = 1.0
+    
+    var body: some View {
+        ZStack {
+            // Animated background waves
+            ForEach(0..<3) { i in
+                Circle()
+                    .stroke(Color.red.opacity(0.8), lineWidth: 2)
+                    .scaleEffect(waveScale - CGFloat(i) * 0.1)
+                    .opacity(1.0 - (waveScale - 1.0) + 0.2 * CGFloat(i))
+            }
+            
+            // Microphone icon
+            Image(systemName: "mic.fill")
+                .font(.system(size: 30))
+                .foregroundColor(.red)
+                .padding(10)
+                .background(Circle().fill(Color.white.opacity(0.9)))
+        }
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                waveScale = 1.3
+            }
+        }
+    }
+}
+
+struct AccuracyMeter: View {
+    let accuracy: Double
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                
+                // Filled portion based on accuracy
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(meterColor())
+                    .frame(width: max(geometry.size.width * CGFloat(accuracy) / 100.0, 0), height: geometry.size.height)
+                
+                // Percentage text
+                Text("\(Int(accuracy))%")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.leading, 8)
+                    .shadow(color: .black, radius: 1)
+            }
+        }
+    }
+    
+    private func meterColor() -> Color {
+        switch accuracy {
+        case 80...100:
+            return .green
+        case 50..<80:
+            return .orange
+        default:
+            return .red
         }
     }
 }

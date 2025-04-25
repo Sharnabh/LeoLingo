@@ -436,3 +436,4 @@ struct CategorySelectionView_Previews: PreviewProvider {
         CategorySelectionView()
     }
 } 
+ 

@@ -296,10 +296,6 @@ struct FlashCardView: View {
             isFlipped.toggle()
             if !isFlipped {
                 speakWord()
-                showConfetti = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showConfetti = false
-                }
             }
         }
     }

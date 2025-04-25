@@ -102,7 +102,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Vehicles",
             image: "vehicles",
-            color: Color(red: 0.6, green: 0.5, blue: 0.8),
+            color: Color(red: 0.6, green: 0.3, blue: 0.7),
             cards: [
                 FlashCard(word: "Car", image: "car"),
                 FlashCard(word: "Bus", image: "bus"),
@@ -117,7 +117,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Clothes",
             image: "clothes",
-            color: Color(red: 0.8, green: 0.4, blue: 0.5),
+            color: Color(red: 0.9, green: 0.4, blue: 0.5),
             cards: [
                 FlashCard(word: "Shirt", image: "shirt"),
                 FlashCard(word: "Pants", image: "pants"),
@@ -132,7 +132,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Actions",
             image: "actions",
-            color: Color(red: 0.5, green: 0.65, blue: 0.8),
+            color: Color(red: 0.3, green: 0.6, blue: 0.8),
             cards: [
                 FlashCard(word: "Jump", image: "jump"),
                 FlashCard(word: "Run", image: "run"),
@@ -147,7 +147,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Stationery",
             image: "stationery",
-            color: Color(red: 0.6, green: 0.6, blue: 0.65),
+            color: Color(red: 0.5, green: 0.5, blue: 0.5),
             cards: [
                 FlashCard(word: "Pencil", image: "pencil"),
                 FlashCard(word: "Eraser", image: "eraser"),
@@ -162,7 +162,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Toys",
             image: "toys",
-            color: Color(red: 0.9, green: 0.7, blue: 0.3),
+            color: Color(red: 1.0, green: 0.6, blue: 0.2),
             cards: [
                 FlashCard(word: "Doll", image: "doll"),
                 FlashCard(word: "Ball", image: "ball"),

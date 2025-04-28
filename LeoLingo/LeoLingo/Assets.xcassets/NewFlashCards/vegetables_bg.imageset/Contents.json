@@ -1,7 +1,6 @@
 {
   "images" : [
     {
-      "filename" : "Flash Cards-6.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -18,4 +17,4 @@
     "author" : "xcode",
     "version" : 1
   }
-}
+} 

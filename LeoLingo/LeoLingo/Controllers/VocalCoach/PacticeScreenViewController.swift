@@ -744,7 +744,7 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
             
-            popoverVC.configurePopover(message: "Lets Play Some Games!", image: "mojo2")
+            popoverVC.configurePopover(message: "Lets Play Some Games!", animationName: "fun_games")
             
             // Present the popover and ensure navigation happens after dismissal
             present(popoverVC, animated: true) {
@@ -776,7 +776,8 @@ class PracticeScreenViewController: UIViewController {
             
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
-                popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", image: level.levelImage)
+                // Update to use animation name instead of image
+                popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", animationName: "level_complete")
                 
                 // Present the popover and dismiss after 2 seconds
                 present(popoverVC, animated: true) {
@@ -855,7 +856,8 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalTransitionStyle = .crossDissolve
             
             if isCorrect && !levelChange {
-                popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
+                // Use success animation
+                popoverVC.configurePopover(message: "Great pronunciation!", animationName: "success")
                 
                 // Show confetti effect for correct pronunciation
                 showConfettiEffect()
@@ -886,7 +888,8 @@ class PracticeScreenViewController: UIViewController {
                     }
                 }
             } else {
-                popoverVC.configurePopover(message: "Let's try that pronunciation again.", image: "SadMojo")
+                // Use retry animation
+                popoverVC.configurePopover(message: "Let's try that pronunciation again.", animationName: "retry")
                 // Present the popover and dismiss after 2 seconds
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {

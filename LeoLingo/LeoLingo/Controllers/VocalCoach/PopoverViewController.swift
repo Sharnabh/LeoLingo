@@ -6,14 +6,15 @@
 //
 
 import UIKit
+import Lottie
 
 class PopoverViewController: UIViewController {
 
-    @IBOutlet var levelBadge: UIImageView!
     @IBOutlet var congratsLabel: UILabel!
+    private var animationView: LottieAnimationView!
     
     var message: String?
-    var imageName: String?
+    var animationName: String?
     var onProceed: (() -> Void)?
     
     override func viewDidLoad() {
@@ -24,10 +25,28 @@ class PopoverViewController: UIViewController {
             congratsLabel.text = message
         }
         
-        if let imageName = imageName, let image = UIImage(named: imageName) {
-            levelBadge.image = image
-        } else {
-            levelBadge.image = UIImage(named: "defaultBadge") 
+        setupAnimationView()
+    }
+    
+    private func setupAnimationView() {
+        animationView?.removeFromSuperview()
+        
+        animationView = LottieAnimationView()
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(animationView)
+        
+        NSLayoutConstraint.activate([
+            animationView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            animationView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            animationView.widthAnchor.constraint(equalToConstant: 200),
+            animationView.heightAnchor.constraint(equalToConstant: 200)
+        ])
+        
+        if let animationName = animationName {
+            animationView.animation = LottieAnimation.named(animationName)
+            animationView.contentMode = .scaleAspectFit
+            animationView.loopMode = .loop
+            animationView.play()
         }
     }
     
@@ -37,8 +56,8 @@ class PopoverViewController: UIViewController {
         }
     }
 
-    func configurePopover(message: String, image: String) {
+    func configurePopover(message: String, animationName: String) {
         self.message = message
-        self.imageName = image
+        self.animationName = animationName
     }
 }

@@ -547,7 +547,7 @@ class PracticeScreenViewController: UIViewController {
                                 self.levelIndex += 1
                                 self.currentIndex = 0
                                 self.showLevelChangePopover()
-                                self.showConfettiEffect()
+                                self.showConfettiEffect(in: self.view)
                             } else {
                                 // At the last word of the last level
                                 self.levelIndex = 0
@@ -722,7 +722,7 @@ class PracticeScreenViewController: UIViewController {
                     }
                     
                     showLevelChangePopover()
-                    showConfettiEffect()
+                    showConfettiEffect(in: self.view)
                 } else {
                     // Update UI with the next word
                     updateUI()
@@ -779,10 +779,14 @@ class PracticeScreenViewController: UIViewController {
                 // Update to use animation name instead of image
                 popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", animationName: "level_complete")
                 
-                // Present the popover and dismiss after 2 seconds
+                // Present the popover and show confetti immediately
                 present(popoverVC, animated: true) {
+                    // Show confetti effect in the popover view
+                    self.showConfettiEffect(in: popoverVC.view)
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }
+                        self.stopConfetti()
                         popoverVC.dismiss(animated: true) {
                             self.updateUIAfterPopover()
                         }
@@ -792,16 +796,16 @@ class PracticeScreenViewController: UIViewController {
         }
     }
     
-    func showConfettiEffect() {
+    func showConfettiEffect(in targetView: UIView) {
         // Remove existing confetti layer if any
         confettiLayer?.removeFromSuperlayer()
         
         // Create new confetti layer
         let newConfettiLayer = CAEmitterLayer()
         confettiLayer = newConfettiLayer
-        newConfettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
+        newConfettiLayer.emitterPosition = CGPoint(x: targetView.bounds.width / 2, y: -10)
         newConfettiLayer.emitterShape = .line
-        newConfettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
+        newConfettiLayer.emitterSize = CGSize(width: targetView.bounds.width, height: 1)
         
         let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
         let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
@@ -826,7 +830,7 @@ class PracticeScreenViewController: UIViewController {
             }
         }
         newConfettiLayer.emitterCells = cells
-        view.layer.addSublayer(newConfettiLayer)
+        targetView.layer.addSublayer(newConfettiLayer)
         
         // Setup and play celebration sound
         if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
@@ -859,10 +863,10 @@ class PracticeScreenViewController: UIViewController {
                 // Use success animation
                 popoverVC.configurePopover(message: "Great pronunciation!", animationName: "success")
                 
-                // Show confetti effect for correct pronunciation
-                showConfettiEffect()
-                
                 present(popoverVC, animated: true) {
+                    // Show confetti effect in the popover view
+                    self.showConfettiEffect(in: popoverVC.view)
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }
                         // Stop confetti before dismissing popover
@@ -874,7 +878,6 @@ class PracticeScreenViewController: UIViewController {
                                     self.levelIndex += 1
                                     self.currentIndex = 0
                                     self.showLevelChangePopover()
-                                    self.showConfettiEffect()
                                 } else {
                                     self.levelIndex = 0
                                     self.currentIndex = 0

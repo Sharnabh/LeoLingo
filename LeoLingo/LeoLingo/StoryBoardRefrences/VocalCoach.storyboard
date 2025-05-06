@@ -660,11 +660,8 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="6Db-Gd-8nG">
                                 <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-G6-nIp">
-                                <rect key="frame" x="32" y="773" width="1146" height="36"/>
-                            </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YSN-6q-Nuz">
-                                <rect key="frame" x="568" y="729" width="74.5" height="36"/>
+                                <rect key="frame" x="289" y="656" width="702" height="100"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                 <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
@@ -673,18 +670,14 @@
                         <viewLayoutGuide key="safeArea" id="45S-IK-clZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="45S-IK-clZ" firstAttribute="trailing" secondItem="YSN-6q-Nuz" secondAttribute="trailing" constant="567.5" id="6kU-qV-VGy"/>
+                            <constraint firstItem="YSN-6q-Nuz" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" constant="289" id="0ac-Xg-wQk"/>
                             <constraint firstAttribute="bottom" secondItem="6Db-Gd-8nG" secondAttribute="bottom" id="8jj-VV-HGJ"/>
-                            <constraint firstItem="jfY-G6-nIp" firstAttribute="centerX" secondItem="KnN-fM-fhX" secondAttribute="centerX" id="HF9-d4-VRF"/>
-                            <constraint firstItem="45S-IK-clZ" firstAttribute="trailing" secondItem="jfY-G6-nIp" secondAttribute="trailing" constant="32" id="IQb-se-V08"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" id="e7b-KR-SI1"/>
-                            <constraint firstItem="jfY-G6-nIp" firstAttribute="top" secondItem="YSN-6q-Nuz" secondAttribute="bottom" constant="8" symbolic="YES" id="j0w-W1-EV8"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="top" secondItem="KnN-fM-fhX" secondAttribute="top" id="n8s-sI-2gh"/>
-                            <constraint firstItem="YSN-6q-Nuz" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" constant="568" id="n9X-UA-LKT"/>
-                            <constraint firstAttribute="bottom" secondItem="jfY-G6-nIp" secondAttribute="bottom" constant="25" id="teN-GY-mDG"/>
+                            <constraint firstItem="45S-IK-clZ" firstAttribute="bottom" secondItem="YSN-6q-Nuz" secondAttribute="bottom" constant="33" id="nE3-aY-deo"/>
+                            <constraint firstItem="YSN-6q-Nuz" firstAttribute="top" secondItem="45S-IK-clZ" secondAttribute="top" constant="632" id="plo-xl-2yr"/>
+                            <constraint firstItem="45S-IK-clZ" firstAttribute="trailing" secondItem="YSN-6q-Nuz" secondAttribute="trailing" constant="219" id="v24-ZL-Kbz"/>
                             <constraint firstItem="6Db-Gd-8nG" firstAttribute="trailing" secondItem="45S-IK-clZ" secondAttribute="trailing" id="vnL-ii-kqI"/>
-                            <constraint firstItem="YSN-6q-Nuz" firstAttribute="top" secondItem="45S-IK-clZ" secondAttribute="top" constant="705" id="wEl-Zu-z7m"/>
-                            <constraint firstItem="jfY-G6-nIp" firstAttribute="leading" secondItem="45S-IK-clZ" secondAttribute="leading" constant="32" id="xf0-pA-eKU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7c3-aY-bnT"/>
@@ -694,7 +687,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="myn-nB-1y2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="511" y="2096"/>
+            <point key="canvasLocation" x="510.74380165289256" y="2094.9640287769785"/>
         </scene>
     </scenes>
     <resources>

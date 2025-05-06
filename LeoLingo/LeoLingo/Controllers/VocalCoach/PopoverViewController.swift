@@ -38,8 +38,8 @@ class PopoverViewController: UIViewController {
         NSLayoutConstraint.activate([
             animationView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             animationView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            animationView.widthAnchor.constraint(equalToConstant: 200),
-            animationView.heightAnchor.constraint(equalToConstant: 200)
+            animationView.widthAnchor.constraint(equalToConstant: 700),
+            animationView.heightAnchor.constraint(equalToConstant: 700)
         ])
         
         if let animationName = animationName {

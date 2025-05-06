@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8D46ADCD2DC92B52003B6CF5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8D46ADCC2DC92B52003B6CF5 /* Lottie */; };
-		8D46ADCF2DC92B52003B6CF5 /* Lottie-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 8D46ADCE2DC92B52003B6CF5 /* Lottie-Dynamic */; };
 		CEA8A0012D6CEBD500E0CC77 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0002D6CEBD500E0CC77 /* Auth */; };
 		CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0022D6CEBD500E0CC77 /* Functions */; };
 		CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0042D6CEBD500E0CC77 /* PostgREST */; };
@@ -62,7 +61,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */,
-				8D46ADCF2DC92B52003B6CF5 /* Lottie-Dynamic in Frameworks */,
 				8D46ADCD2DC92B52003B6CF5 /* Lottie in Frameworks */,
 				CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */,
 				CEA8A00B2D6CEBD500E0CC77 /* Supabase in Frameworks */,
@@ -128,7 +126,6 @@
 				CEA8A0082D6CEBD500E0CC77 /* Storage */,
 				CEA8A00A2D6CEBD500E0CC77 /* Supabase */,
 				8D46ADCC2DC92B52003B6CF5 /* Lottie */,
-				8D46ADCE2DC92B52003B6CF5 /* Lottie-Dynamic */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -201,7 +198,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeoLingo/LeoLingo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65XS66CM2H;
+				DEVELOPMENT_TEAM = N44NJ3W834;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LeoLingo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LeoLingo;
@@ -220,7 +217,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sharnabh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sharnabhksxz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -239,7 +236,7 @@
 				CODE_SIGN_ENTITLEMENTS = LeoLingo/LeoLingo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65XS66CM2H;
+				DEVELOPMENT_TEAM = N44NJ3W834;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LeoLingo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LeoLingo;
@@ -258,7 +255,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sharnabh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sharnabhksxz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -435,11 +432,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8D46ADCB2DC92B52003B6CF5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
-		};
-		8D46ADCE2DC92B52003B6CF5 /* Lottie-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8D46ADCB2DC92B52003B6CF5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = "Lottie-Dynamic";
 		};
 		CEA8A0002D6CEBD500E0CC77 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;

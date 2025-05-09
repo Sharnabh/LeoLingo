@@ -28,15 +28,12 @@ class PoemCard: UIView {
         return label
     }()
     
-    private let playButton: UIButton = {
-        let button = UIButton(type: .system)
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
-        let image = UIImage(systemName: "play.circle.fill", withConfiguration: symbolConfig)?
-            .withTintColor(UIColor(hex: "4F904C"), renderingMode: .alwaysOriginal)
-        button.setImage(image, for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    private let musicIcon: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "music.note.list"))
+        imageView.tintColor = UIColor(hex: "FFD700")
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     var onPlayTapped: (() -> Void)?
@@ -44,25 +41,37 @@ class PoemCard: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupTapGesture()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
+        setupTapGesture()
     }
     
     private func setupUI() {
-        backgroundColor = UIColor(red: 0.1, green: 0.3, blue: 0.2, alpha: 0.9)
-        layer.cornerRadius = 20
+        backgroundColor = UIColor(red: 0.2, green: 0.5, blue: 0.3, alpha: 0.95)
+        layer.cornerRadius = 24
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 4)
-        layer.shadowRadius = 8
-        layer.shadowOpacity = 0.3
+        layer.shadowOffset = CGSize(width: 0, height: 6)
+        layer.shadowRadius = 12
+        layer.shadowOpacity = 0.35
+        layer.borderColor = UIColor(hex: "FFD700").cgColor
+        layer.borderWidth = 3
+        
+        let gradient = CAGradientLayer()
+        gradient.colors = [UIColor(hex: "A1D490").cgColor, UIColor(hex: "4F904C").cgColor]
+        gradient.startPoint = CGPoint(x: 0, y: 0)
+        gradient.endPoint = CGPoint(x: 1, y: 1)
+        gradient.frame = bounds
+        gradient.cornerRadius = 24
+        layer.insertSublayer(gradient, at: 0)
         
         addSubview(titleLabel)
         addSubview(imageView)
         addSubview(difficultyLabel)
-        addSubview(playButton)
+        addSubview(musicIcon)
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
@@ -78,18 +87,33 @@ class PoemCard: UIView {
             difficultyLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             difficultyLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            playButton.topAnchor.constraint(equalTo: difficultyLabel.bottomAnchor, constant: 10),
-            playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            playButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
-            playButton.widthAnchor.constraint(equalToConstant: 80),
-            playButton.heightAnchor.constraint(equalToConstant: 80)
+            musicIcon.topAnchor.constraint(equalTo: difficultyLabel.bottomAnchor, constant: 10),
+            musicIcon.centerXAnchor.constraint(equalTo: centerXAnchor),
+            musicIcon.widthAnchor.constraint(equalToConstant: 40),
+            musicIcon.heightAnchor.constraint(equalToConstant: 40),
+            musicIcon.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
         ])
-        
-        playButton.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
     }
     
-    @objc private func playButtonTapped() {
-        onPlayTapped?()
+    private func setupTapGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(cardTapped))
+        self.addGestureRecognizer(tap)
+        self.isUserInteractionEnabled = true
+    }
+    
+    @objc private func cardTapped() {
+        // Bouncy tap animation
+        UIView.animate(withDuration: 0.1, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.96, y: 0.96)
+            self.layer.shadowOpacity = 0.5
+        }) { _ in
+            UIView.animate(withDuration: 0.15, animations: {
+                self.transform = .identity
+                self.layer.shadowOpacity = 0.35
+            }) { _ in
+                self.onPlayTapped?()
+            }
+        }
     }
     
     func configure(with poem: Poem) {

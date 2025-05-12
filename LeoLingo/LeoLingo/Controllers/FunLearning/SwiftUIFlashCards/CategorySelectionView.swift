@@ -119,45 +119,45 @@ struct CategorySelectionView: View {
                             titleRotation = 0
                         }
                         
-                        // Continuous floating animation
-                        withAnimation(
-                            .easeInOut(duration: 2.0)
-                            .repeatForever(autoreverses: true)
-                        ) {
-                            titleOffset = 10
-                        }
-                        
-                        // Continuous rotation animation
-                        withAnimation(
-                            .easeInOut(duration: 3.0)
-                            .repeatForever(autoreverses: true)
-                        ) {
-                            titleRotation = 5
-                        }
-                        
-                        // Continuous bounce animation
-                        withAnimation(
-                            .easeInOut(duration: 1.5)
-                            .repeatForever(autoreverses: true)
-                        ) {
-                            titleBounce = 1.1
-                        }
-                        
-                        // Continuous shimmer animation
-                        withAnimation(
-                            .linear(duration: 2.5)
-                            .repeatForever(autoreverses: false)
-                        ) {
-                            shimmerOffset = 1.7
-                        }
-                        
-                        // Rainbow animation
-                        withAnimation(
-                            .linear(duration: 3)
-                            .repeatForever(autoreverses: false)
-                        ) {
-                            rainbowHue = 1
-                        }
+//                        // Continuous floating animation
+//                        withAnimation(
+//                            .easeInOut(duration: 2.0)
+//                            .repeatForever(autoreverses: true)
+//                        ) {
+//                            titleOffset = 10
+//                        }
+//                        
+//                        // Continuous rotation animation
+//                        withAnimation(
+//                            .easeInOut(duration: 3.0)
+//                            .repeatForever(autoreverses: true)
+//                        ) {
+//                            titleRotation = 5
+//                        }
+//                        
+//                        // Continuous bounce animation
+//                        withAnimation(
+//                            .easeInOut(duration: 1.5)
+//                            .repeatForever(autoreverses: true)
+//                        ) {
+//                            titleBounce = 1.1
+//                        }
+//                        
+//                        // Continuous shimmer animation
+//                        withAnimation(
+//                            .linear(duration: 2.5)
+//                            .repeatForever(autoreverses: false)
+//                        ) {
+//                            shimmerOffset = 1.7
+//                        }
+//                        
+//                        // Rainbow animation
+//                        withAnimation(
+//                            .linear(duration: 3)
+//                            .repeatForever(autoreverses: false)
+//                        ) {
+//                            rainbowHue = 1
+//                        }
                     }
                     
                     // Add invisible back button space to balance the layout
@@ -191,23 +191,43 @@ struct CategorySelectionView: View {
             }
         }
         .navigationBarHidden(true)
-        .fullScreenCover(isPresented: $isShowingFlashcards, content: {
+        .fullScreenCover(isPresented: $isShowingFlashcards, onDismiss: {
+            print("FlashCard view dismissed")
+            // Return to portrait when dismissed
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
+        }) {
             if let category = selectedCategory {
-                FlashCardView(category: category)
-                    .preferredColorScheme(.light)
-                    .onAppear {
-                        // Lock to landscape right
-                        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-                        UIViewController.attemptRotationToDeviceOrientation()
-                    }
-                    .onDisappear {
-                        // Return to portrait
-                        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                        UIViewController.attemptRotationToDeviceOrientation()
-                    }
+                ZStack {
+                    // This forces layout refresh
+                    Color.black.edgesIgnoringSafeArea(.all)
+                    
+                    FlashCardView(category: category)
+                        .preferredColorScheme(.light)
+                        .edgesIgnoringSafeArea(.all)
+                        .onAppear {
+                            print("FlashCardView appeared in fullScreenCover")
+                            
+                            // Force orientation change with a slight delay
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                print("Setting orientation to landscape")
+                                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+                                UIViewController.attemptRotationToDeviceOrientation()
+                                
+                                // Force layout update
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    print("Forcing additional layout update")
+                                    NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+                                }
+                            }
+                        }
+                }
+                .ignoresSafeArea()
+                .statusBar(hidden: true)
             }
-        })
+        }
         .onAppear {
+            print("CategorySelectionView appeared")
             // Ensure portrait orientation for category selection
             UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
             UIViewController.attemptRotationToDeviceOrientation()
@@ -435,5 +455,5 @@ struct CategorySelectionView_Previews: PreviewProvider {
     static var previews: some View {
         CategorySelectionView()
     }
-} 
+}
  

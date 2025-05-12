@@ -24,218 +24,196 @@ struct CategorySelectionView: View {
     ]
     
     private let columns = [
-        GridItem(.adaptive(minimum: 160, maximum: 180), spacing: 20)
+        GridItem(.adaptive(minimum: 220, maximum: 250), spacing: 25)
     ]
     
     var body: some View {
-        ZStack {
-            // Background
-            Image("flashcard_background")
-                .resizable()
-                .edgesIgnoringSafeArea(.all)
-                .onAppear {
-                    print("Loading background image: jungle_background")
-                }
-            
-            // Floating leaves animation
-            FloatingLeavesView()
-            
-            // Main content
-            VStack {
-                // Top section with back button and title
-                HStack(alignment: .center) {
-                    // Back button
-                    Button(action: {
-                        self.presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 20, weight: .bold))
-                        }
-                        .foregroundColor(.white)
-                        .frame(width: 50, height: 50)
-                        .background(Color.green)
-                        .cornerRadius(25)
-                        .shadow(radius: 5)
-                        .scaleEffect(titleBounce)
+        NavigationView {
+            ZStack {
+                // Background
+                Image("flashcard_background")
+                    .resizable()
+                    .edgesIgnoringSafeArea(.all)
+                    .onAppear {
+                        print("Loading background image: jungle_background")
                     }
-                    .padding(.leading, 20)
-                    
-                    // Enhanced Animated Title
-                    ZStack {
-                        // Glowing background
-                        Text("Flash Cards")
-                            .font(.system(size: 55, weight: .heavy, design: .rounded))
-                            .foregroundStyle(
-                                .linearGradient(
-                                    colors: gradientColors,
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .blur(radius: 20)
-                            .opacity(0.7)
-                            .scaleEffect(1.2)
+                
+                // Floating leaves animation
+                FloatingLeavesView()
+                
+                // Main content
+                VStack {
+                    // Top section with back button and title
+                    HStack(alignment: .center) {
+                        // Back button
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 20, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.green)
+                            .cornerRadius(25)
+                            .shadow(radius: 5)
+                            .scaleEffect(titleBounce)
+                        }
+                        .padding(.leading, 20)
                         
-                        // Main title with rainbow gradient
-                        Text("Flash Cards")
-                            .font(.system(size: 50, weight: .heavy, design: .rounded))
-                            .foregroundStyle(
-                                .linearGradient(
-                                    colors: gradientColors,
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .shadow(color: .white, radius: 2, x: 0, y: 0)
-                            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 0)
-                            .overlay(
-                                GeometryReader { geometry in
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            .clear,
-                                            .white.opacity(0.8),
-                                            .clear
-                                        ]),
+                        // Enhanced Animated Title
+                        ZStack {
+                            // Glowing background
+                            Text("Flash Cards")
+                                .font(.system(size: 55, weight: .heavy, design: .rounded))
+                                .foregroundStyle(
+                                    .linearGradient(
+                                        colors: gradientColors,
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     )
-                                    .frame(width: 50)
-                                    .offset(x: -50 + (geometry.size.width + 50) * shimmerOffset)
-                                    .blendMode(.overlay)
-                                }
-                            )
-                    }
-                    .scaleEffect(titleScale * titleBounce)
-                    .opacity(titleOpacity)
-                    .offset(y: titleOffset)
-                    .rotationEffect(.degrees(titleRotation))
-                    .frame(maxWidth: .infinity)
-                    .onAppear {
-                        // Initial animations
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                            titleScale = 1.0
-                            titleOpacity = 1
-                            titleRotation = 0
+                                )
+                                .blur(radius: 20)
+                                .opacity(0.7)
+                                .scaleEffect(1.2)
+                            
+                            // Main title with rainbow gradient
+                            Text("Flash Cards")
+                                .font(.system(size: 50, weight: .heavy, design: .rounded))
+                                .foregroundStyle(
+                                    .linearGradient(
+                                        colors: gradientColors,
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .shadow(color: .white, radius: 2, x: 0, y: 0)
+                                .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 0)
+                                .overlay(
+                                    GeometryReader { geometry in
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                .clear,
+                                                .white.opacity(0.8),
+                                                .clear
+                                            ]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                        .frame(width: 50)
+                                        .offset(x: -50 + (geometry.size.width + 50) * shimmerOffset)
+                                        .blendMode(.overlay)
+                                    }
+                                )
+                        }
+                        .scaleEffect(titleScale * titleBounce)
+                        .opacity(titleOpacity)
+                        .offset(y: titleOffset)
+                        .rotationEffect(.degrees(titleRotation))
+                        .frame(maxWidth: .infinity)
+                        .onAppear {
+                            // Initial animations
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                                titleScale = 1.0
+                                titleOpacity = 1
+                                titleRotation = 0
+                            }
+                            
+//                            // Continuous floating animation
+//                            withAnimation(
+//                                .easeInOut(duration: 2.0)
+//                                .repeatForever(autoreverses: true)
+//                            ) {
+//                                titleOffset = 10
+//                            }
+//                            
+//                            // Continuous rotation animation
+//                            withAnimation(
+//                                .easeInOut(duration: 3.0)
+//                                .repeatForever(autoreverses: true)
+//                            ) {
+//                                titleRotation = 5
+//                            }
+//                            
+//                            // Continuous bounce animation
+//                            withAnimation(
+//                                .easeInOut(duration: 1.5)
+//                                .repeatForever(autoreverses: true)
+//                            ) {
+//                                titleBounce = 1.1
+//                            }
+//                            
+//                            // Continuous shimmer animation
+//                            withAnimation(
+//                                .linear(duration: 2.5)
+//                                .repeatForever(autoreverses: false)
+//                            ) {
+//                                shimmerOffset = 1.7
+//                            }
+//                            
+//                            // Rainbow animation
+//                            withAnimation(
+//                                .linear(duration: 3)
+//                                .repeatForever(autoreverses: false)
+//                            ) {
+//                                rainbowHue = 1
+//                            }
                         }
                         
-//                        // Continuous floating animation
-//                        withAnimation(
-//                            .easeInOut(duration: 2.0)
-//                            .repeatForever(autoreverses: true)
-//                        ) {
-//                            titleOffset = 10
-//                        }
-//                        
-//                        // Continuous rotation animation
-//                        withAnimation(
-//                            .easeInOut(duration: 3.0)
-//                            .repeatForever(autoreverses: true)
-//                        ) {
-//                            titleRotation = 5
-//                        }
-//                        
-//                        // Continuous bounce animation
-//                        withAnimation(
-//                            .easeInOut(duration: 1.5)
-//                            .repeatForever(autoreverses: true)
-//                        ) {
-//                            titleBounce = 1.1
-//                        }
-//                        
-//                        // Continuous shimmer animation
-//                        withAnimation(
-//                            .linear(duration: 2.5)
-//                            .repeatForever(autoreverses: false)
-//                        ) {
-//                            shimmerOffset = 1.7
-//                        }
-//                        
-//                        // Rainbow animation
-//                        withAnimation(
-//                            .linear(duration: 3)
-//                            .repeatForever(autoreverses: false)
-//                        ) {
-//                            rainbowHue = 1
-//                        }
+                        // Add invisible back button space to balance the layout
+                        Color.clear
+                            .frame(width: 50, height: 50)
+                            .padding(.trailing, 20)
                     }
+                    .padding(.top, 20)
                     
-                    // Add invisible back button space to balance the layout
-                    Color.clear
-                        .frame(width: 50, height: 50)
-                        .padding(.trailing, 20)
-                }
-                .padding(.top, 20)
-                
-                // Categories grid with staggered animation
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 25) {
-                        ForEach(Array(SwiftUIFlashCardDataManager.shared.getAllCategories().enumerated()), id: \.element.id) { index, category in
-                            CategoryItemView(
-                                category: category,
-                                onSelect: {
-                                    self.selectedCategory = category
-                                    self.isShowingFlashcards = true
-                                }
-                            )
-                            .offset(y: animateBackground ? 0 : 500)
-                            .animation(
-                                .spring(response: 0.6, dampingFraction: 0.7)
-                                .delay(Double(index) * 0.1),
-                                value: animateBackground
-                            )
-                        }
-                    }
-                    .padding()
-                }
-            }
-        }
-        .navigationBarHidden(true)
-        .fullScreenCover(isPresented: $isShowingFlashcards, onDismiss: {
-            print("FlashCard view dismissed")
-            // Return to portrait when dismissed
-            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            UIViewController.attemptRotationToDeviceOrientation()
-        }) {
-            if let category = selectedCategory {
-                ZStack {
-                    // This forces layout refresh
-                    Color.black.edgesIgnoringSafeArea(.all)
-                    
-                    FlashCardView(category: category)
-                        .preferredColorScheme(.light)
-                        .edgesIgnoringSafeArea(.all)
-                        .onAppear {
-                            print("FlashCardView appeared in fullScreenCover")
-                            
-                            // Force orientation change with a slight delay
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                print("Setting orientation to landscape")
-                                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-                                UIViewController.attemptRotationToDeviceOrientation()
-                                
-                                // Force layout update
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    print("Forcing additional layout update")
-                                    NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
-                                }
+                    // Categories grid with staggered animation
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: 25) {
+                            ForEach(Array(SwiftUIFlashCardDataManager.shared.getAllCategories().enumerated()), id: \.element.id) { index, category in
+                                CategoryItemView(
+                                    category: category,
+                                    onSelect: {
+                                        self.selectedCategory = category
+                                        self.isShowingFlashcards = true
+                                    }
+                                )
+                                .offset(y: animateBackground ? 0 : 500)
+                                .animation(
+                                    .spring(response: 0.6, dampingFraction: 0.7)
+                                    .delay(Double(index) * 0.1),
+                                    value: animateBackground
+                                )
                             }
                         }
+                        .padding()
+                    }
                 }
-                .ignoresSafeArea()
-                .statusBar(hidden: true)
+                
+                // Navigation links
+                NavigationLink(
+                    destination: Group {
+                        if let category = selectedCategory {
+                            FlashCardView(category: category)
+                        }
+                    },
+                    isActive: $isShowingFlashcards
+                ) {
+                    EmptyView()
+                }
             }
-        }
-        .onAppear {
-            print("CategorySelectionView appeared")
-            // Ensure portrait orientation for category selection
-            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            UIViewController.attemptRotationToDeviceOrientation()
-            
-            withAnimation {
-                animateBackground = true
+            .onAppear {
+                // Animate categories in when view appears
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation {
+                        animateBackground = true
+                    }
+                }
             }
+            .navigationBarHidden(true)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -339,7 +317,7 @@ struct FloatingLeavesView: View {
         }
         .onAppear {
             // Create fewer leaves for a less crowded effect
-            for _ in 0..<12 {
+            for _ in 0..<8 {
                 addLeaf()
             }
             

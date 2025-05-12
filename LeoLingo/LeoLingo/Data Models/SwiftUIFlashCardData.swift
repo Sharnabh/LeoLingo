@@ -31,7 +31,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Body Parts",
             image: "body_parts",
-            color: Color(red: 0.7, green: 0.5, blue: 0.8),
+            color: Color(red: 0.85, green: 0.45, blue: 0.85), // Brighter purple
             cards: [
                 FlashCard(word: "Ear", image: "ear"),
                 FlashCard(word: "Palm", image: "palm"),
@@ -45,7 +45,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Animals",
             image: "wild_animals",
-            color: Color(red: 0.9, green: 0.7, blue: 0.3),
+            color: Color(red: 1.0, green: 0.75, blue: 0.2), // Vibrant yellow
             cards: [
                 FlashCard(word: "Elephant", image: "elephant"),
                 FlashCard(word: "Giraffe", image: "giraffe"),
@@ -59,7 +59,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Vegetables",
             image: "vegetables",
-            color: Color(red: 0.4, green: 0.8, blue: 0.4),
+            color: Color(red: 0.35, green: 0.85, blue: 0.35), // Bright green
             cards: [
                 FlashCard(word: "Broccoli", image: "broccoli"),
                 FlashCard(word: "Carrot", image: "carrot"),
@@ -73,7 +73,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Weather", 
             image: "weather",
-            color: Color(red: 0.5, green: 0.7, blue: 0.9),
+            color: Color(red: 0.4, green: 0.7, blue: 1.0), // Sky blue
             cards: [
                 FlashCard(word: "Sunny", image: "sunny"),
                 FlashCard(word: "Rainy", image: "rainy"),
@@ -87,7 +87,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Sports", 
             image: "sports",
-            color: Color(red: 0.8, green: 0.8, blue: 0.4),
+            color: Color(red: 0.95, green: 0.85, blue: 0.2), // Bright yellow
             cards: [
                 FlashCard(word: "Soccer", image: "soccer"),
                 FlashCard(word: "Basketball", image: "basketball"),
@@ -102,7 +102,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Vehicles",
             image: "vehicles",
-            color: Color(red: 0.6, green: 0.3, blue: 0.7),
+            color: Color(red: 0.85, green: 0.3, blue: 0.95), // Vibrant violet
             cards: [
                 FlashCard(word: "Car", image: "car"),
                 FlashCard(word: "Bus", image: "bus"),
@@ -117,7 +117,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Clothes",
             image: "clothes",
-            color: Color(red: 0.9, green: 0.4, blue: 0.5),
+            color: Color(red: 0.95, green: 0.5, blue: 0.5), // Coral pink
             cards: [
                 FlashCard(word: "Shirt", image: "shirt"),
                 FlashCard(word: "Pants", image: "pants"),
@@ -132,7 +132,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Actions",
             image: "actions",
-            color: Color(red: 0.3, green: 0.6, blue: 0.8),
+            color: Color(red: 0.2, green: 0.6, blue: 0.95), // Bright blue
             cards: [
                 FlashCard(word: "Jump", image: "jump"),
                 FlashCard(word: "Run", image: "run"),
@@ -147,7 +147,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Stationery",
             image: "stationery",
-            color: Color(red: 0.5, green: 0.5, blue: 0.5),
+            color: Color(red: 0.6, green: 0.6, blue: 0.75), // Lavender gray
             cards: [
                 FlashCard(word: "Pencil", image: "pencil"),
                 FlashCard(word: "Eraser", image: "eraser"),
@@ -162,7 +162,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Toys",
             image: "toys",
-            color: Color(red: 1.0, green: 0.6, blue: 0.2),
+            color: Color(red: 1.0, green: 0.6, blue: 0.3), // Bright orange
             cards: [
                 FlashCard(word: "Doll", image: "doll"),
                 FlashCard(word: "Ball", image: "ball"),
@@ -190,4 +190,4 @@ class SwiftUIFlashCardDataManager {
         
         synthesizer.speak(utterance)
     }
-} 
+}

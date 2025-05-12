@@ -38,6 +38,30 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     private var lastResetDate: Date? // Track when we last reset the timer
     private var dailyTimeSpent: TimeInterval = 0 // Track daily time spent
     
+    private let emptyBadgesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Start practicing\nto earn badges! 🏆"
+        label.textColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let emptyPracticesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Complete exercises\nto see your progress! 🎯"
+        label.textColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLevelView()
@@ -69,6 +93,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         // Start timer immediately
         startTimer()
+        
+        setupEmptyStateViews()
+        setupRemainingTimeView()
     }
     
     deinit {
@@ -305,7 +332,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DurationCell", for: indexPath)
-        let durations = ["30 minutes", "45 minutes", "60 minutes"]
+        let durations = ["8 minutes", "15 minutes", "30 minutes"]
         cell.textLabel?.text = durations[indexPath.row]
         cell.textLabel?.textColor = UIColor(red: 78/255, green: 157/255, blue: 50/255, alpha: 1.0)
         cell.backgroundColor = .white
@@ -313,9 +340,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let durations: [TimeInterval] = [1800, 2700, 3600] // 30, 45, 60 minutes in seconds
+        let durations: [TimeInterval] = [480, 900, 1800] // 8, 15, 30 minutes in seconds
         selectedDuration = durations[indexPath.row]
-        // Save selected duration
         UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
         UserDefaults.standard.synchronize()
         startTimer()
@@ -337,7 +363,40 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         }
     }
     
-    func updateTimeDisplay() {
+    private func setupEmptyStateViews() {
+        // Add empty state labels
+        badgesView.addSubview(emptyBadgesLabel)
+        practicesView.addSubview(emptyPracticesLabel)
+        
+        NSLayoutConstraint.activate([
+            emptyBadgesLabel.centerXAnchor.constraint(equalTo: badgesView.centerXAnchor),
+            emptyBadgesLabel.centerYAnchor.constraint(equalTo: badgesView.centerYAnchor),
+            emptyBadgesLabel.leadingAnchor.constraint(equalTo: badgesView.leadingAnchor, constant: 16),
+            emptyBadgesLabel.trailingAnchor.constraint(equalTo: badgesView.trailingAnchor, constant: -16),
+            
+            emptyPracticesLabel.centerXAnchor.constraint(equalTo: practicesView.centerXAnchor),
+            emptyPracticesLabel.centerYAnchor.constraint(equalTo: practicesView.centerYAnchor),
+            emptyPracticesLabel.leadingAnchor.constraint(equalTo: practicesView.leadingAnchor, constant: 16),
+            emptyPracticesLabel.trailingAnchor.constraint(equalTo: practicesView.trailingAnchor, constant: -16)
+        ])
+    }
+    
+    private func setupRemainingTimeView() {
+        // Set background color
+        remainingTimeView.backgroundColor = UIColor(red: 222/255, green: 168/255, blue: 62/255, alpha: 0.8)
+        
+        // Customize progress bar appearance
+        timeLeftBar.progressTintColor = .white
+        timeLeftBar.trackTintColor = UIColor.white.withAlphaComponent(0.3)
+        timeLeftBar.layer.cornerRadius = 4
+        timeLeftBar.clipsToBounds = true
+        
+        // Update time label appearance
+        timeLeft.font = .systemFont(ofSize: 18, weight: .bold)
+        timeLeft.textColor = .white
+    }
+    
+    private func updateTimeDisplay() {
         guard let startTime = startTime else { return }
         let currentElapsedTime = Date().timeIntervalSince(startTime)
         
@@ -353,18 +412,28 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         // Format daily time
         let remainingSeconds = max(selectedDuration - dailyTimeSpent, 0)
-        let remainingMinutes = Int(ceil(remainingSeconds / 60))
+        let hours = Int(remainingSeconds) / 3600
+        let minutes = Int(remainingSeconds) / 60 % 60
+        let seconds = Int(remainingSeconds) % 60
         
         // Update UI with remaining time
         if remainingSeconds > 0 {
-            timeLeft.text = "\(remainingMinutes)m left"
+            if hours > 0 {
+                timeLeft.text = String(format: "%dh %dm left", hours, minutes)
+            } else if minutes > 0 {
+                timeLeft.text = String(format: "%dm %ds left", minutes, seconds)
+            } else {
+                timeLeft.text = String(format: "%ds left", seconds)
+            }
+            timeLeft.textColor = .white
         } else {
             timeLeft.text = "Daily limit reached!"
+            timeLeft.textColor = .white
         }
         
-        // Update progress bar
-        if isVocalCoachActive {
-            timeLeftBar.progress = min(Float(dailyTimeSpent) / Float(selectedDuration), 1.0)
+        // Update progress bar with smooth animation
+        UIView.animate(withDuration: 0.3) {
+            self.timeLeftBar.progress = min(Float(self.dailyTimeSpent) / Float(self.selectedDuration), 1.0)
         }
         
         // Save daily state
@@ -374,13 +443,19 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
             guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else {
-                print("DEBUG: No earned badges found")
+                emptyBadgesLabel.isHidden = false
+                badgesEarnedCollectionView.isHidden = true
                 return 0
             }
-            print("DEBUG: Found \(badges.count) earned badges")
+            emptyBadgesLabel.isHidden = badges.count > 0
+            badgesEarnedCollectionView.isHidden = badges.count == 0
             return badges.count
         }
-        return sortedWords?.count ?? 0
+        
+        let practiceCount = sortedWords?.count ?? 0
+        emptyPracticesLabel.isHidden = practiceCount > 0
+        recentPracticesCollectionView.isHidden = practiceCount == 0
+        return practiceCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -448,51 +523,69 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     func updateLevelView() {
         // Corner radius and border
-        
         levelView.layer.cornerRadius = 21
         levelView.layer.borderWidth = 3
         levelView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
-        levelView.clipsToBounds = false
+        levelView.clipsToBounds = true // Changed to true to ensure proper corner radius
         
-        // Drop shadow
+        // Drop shadow for the entire view
         levelView.layer.shadowColor = UIColor.black.cgColor
-        levelView.layer.shadowOpacity = 0.6
-        levelView.layer.shadowOffset = CGSize(width: 0, height: 10)  //
-        levelView.layer.shadowRadius = 20
+        levelView.layer.shadowOpacity = 0.2
+        levelView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        levelView.layer.shadowRadius = 8
+        levelView.layer.masksToBounds = false
         
-        
-        // Level progress
+        // Level progress customization
         levelProgress.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        levelProgress.progressTintColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0)
+        levelProgress.trackTintColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 0.2)
+        levelProgress.layer.cornerRadius = 4
+        levelProgress.clipsToBounds = true
         
-        // remaining time
+        // Add subtle animation for progress updates
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+            self.levelProgress.layoutIfNeeded()
+        }
+        
+        // Ensure proper shadow rendering
+        levelView.layer.shouldRasterize = true
+        levelView.layer.rasterizationScale = UIScreen.main.scale
+        
+        // remaining time view styling
         remainingTimeView.layer.cornerRadius = 25
         remainingTimeView.layer.borderWidth = 3
         remainingTimeView.layer.borderColor = UIColor(red: 222/255, green: 168/255, blue: 62/255, alpha: 1.0).cgColor
         timeLeftBar.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         
-        // badges
+        // badges view styling
         badgesView.layer.cornerRadius = 21
         badgesView.layer.borderWidth = 3
         badgesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
-        badgesView.clipsToBounds = false
+        badgesView.clipsToBounds = true
         
         badgesView.layer.shadowColor = UIColor.black.cgColor
-        badgesView.layer.shadowOpacity = 0.4
-        badgesView.layer.shadowOffset = CGSize(width: 0, height: 1)
-        badgesView.layer.shadowRadius = 5
+        badgesView.layer.shadowOpacity = 0.2
+        badgesView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        badgesView.layer.shadowRadius = 8
+        badgesView.layer.masksToBounds = false
         
-        //recent practices
-        practicesView.layer.cornerRadius = 21  // Rounded corners
-        practicesView.layer.borderWidth = 3    // Border thickness
+        // recent practices view styling
+        practicesView.layer.cornerRadius = 21
+        practicesView.layer.borderWidth = 3
         practicesView.layer.borderColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0).cgColor
-        practicesView.clipsToBounds = false  // Clips content to rounded corners
+        practicesView.clipsToBounds = true
         
         practicesView.layer.shadowColor = UIColor.black.cgColor
-        practicesView.layer.shadowOpacity = 0.4  // 62% opacity
-        practicesView.layer.shadowOffset = CGSize(width: 0, height: 1)  // Offset of 16pt downward
-        practicesView.layer.shadowRadius = 5  // Blur radius of 43pt
+        practicesView.layer.shadowOpacity = 0.2
+        practicesView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        practicesView.layer.shadowRadius = 8
+        practicesView.layer.masksToBounds = false
         
-        
+        // Ensure proper shadow rendering for all views
+        badgesView.layer.shouldRasterize = true
+        badgesView.layer.rasterizationScale = UIScreen.main.scale
+        practicesView.layer.shouldRasterize = true
+        practicesView.layer.rasterizationScale = UIScreen.main.scale
     }
     
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {

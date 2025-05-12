@@ -22,6 +22,9 @@ class SingViewController: UIViewController {
     private var starViews: [UIImageView] = []
     private var leftLottieView: LottieAnimationView?
     private var rightLottieView: LottieAnimationView?
+    private var currentLineIndex: Int = 0
+    private var lineTimings: [(startTime: TimeInterval, endTime: TimeInterval)] = []
+    private var displayLink: CADisplayLink?
     
     private let scoreContainerView: UIView = {
         let view = UIView()
@@ -345,14 +348,59 @@ class SingViewController: UIViewController {
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.prepareToPlay()
+            audioPlayer?.delegate = self
+            calculateLineTimings()
         } catch {
             print("Error setting up audio player: \(error)")
         }
     }
     
-    @objc private func playButtonTapped() {
-        audioPlayer?.currentTime = 0
+    private func calculateLineTimings() {
+        let lines = poem.content.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let totalDuration = audioPlayer?.duration ?? 0
+        let averageLineDuration = totalDuration / Double(lines.count)
+        
+        lineTimings = lines.enumerated().map { index, _ in
+            let startTime = Double(index) * averageLineDuration
+            let endTime = startTime + averageLineDuration
+            return (startTime, endTime)
+        }
+    }
+    
+    private func startAudioPlayback() {
+        currentLineIndex = 0
+        highlightCurrentLine(currentLineIndex)
+        
+        displayLink = CADisplayLink(target: self, selector: #selector(updateLineHighlight))
+        displayLink?.add(to: .main, forMode: .common)
+        
         audioPlayer?.play()
+    }
+    
+    @objc private func updateLineHighlight() {
+        guard let player = audioPlayer, player.isPlaying else { return }
+        
+        let currentTime = player.currentTime
+        if currentLineIndex < lineTimings.count {
+            let (startTime, endTime) = lineTimings[currentLineIndex]
+            
+            if currentTime >= endTime {
+                currentLineIndex += 1
+                if currentLineIndex < lineTimings.count {
+                    highlightCurrentLine(currentLineIndex)
+                }
+            }
+        }
+    }
+    
+    @objc private func playButtonTapped() {
+        if audioPlayer?.isPlaying == true {
+            audioPlayer?.pause()
+            displayLink?.invalidate()
+            displayLink = nil
+        } else {
+            startAudioPlayback()
+        }
     }
     
     @objc private func recordButtonTapped() {
@@ -562,5 +610,14 @@ class SingViewController: UIViewController {
                 label.layer.shadowOpacity = 0
             }
         }
+    }
+}
+
+extension SingViewController: AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        displayLink?.invalidate()
+        displayLink = nil
+        currentLineIndex = 0
+        highlightCurrentLine(currentLineIndex)
     }
 }

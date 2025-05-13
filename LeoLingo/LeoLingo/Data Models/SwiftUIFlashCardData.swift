@@ -29,20 +29,6 @@ class SwiftUIFlashCardDataManager {
     // Categories with unique words to avoid redeclarations
     let categories: [FlashCardCategory] = [
         FlashCardCategory(
-            name: "Body Parts",
-            image: "body_parts",
-            color: Color(red: 0.85, green: 0.45, blue: 0.85), // Brighter purple
-            cards: [
-                FlashCard(word: "Ear", image: "ear"),
-                FlashCard(word: "Palm", image: "palm"),
-                FlashCard(word: "Lips", image: "lips"),
-                FlashCard(word: "Eye", image: "eye"),
-                FlashCard(word: "Nose", image: "nose"),
-                FlashCard(word: "Thumb", image: "thumb")
-            ],
-            backgroundImage: "body_bg"
-        ),
-        FlashCardCategory(
             name: "Animals",
             image: "wild_animals",
             color: Color(red: 1.0, green: 0.75, blue: 0.2), // Vibrant yellow
@@ -85,6 +71,21 @@ class SwiftUIFlashCardDataManager {
             backgroundImage: "weather_bg"
         ),
         FlashCardCategory(
+            name: "Body Parts",
+            image: "body_parts",
+            color: Color(red: 0.85, green: 0.45, blue: 0.85), // Brighter purple
+            cards: [
+                FlashCard(word: "Ear", image: "ear"),
+                FlashCard(word: "Palm", image: "palm"),
+                FlashCard(word: "Lips", image: "lips"),
+                FlashCard(word: "Eye", image: "eye"),
+                FlashCard(word: "Nose", image: "nose"),
+                FlashCard(word: "Thumb", image: "thumb")
+            ],
+            backgroundImage: "body_bg"
+        ),
+
+        FlashCardCategory(
             name: "Sports", 
             image: "sports",
             color: Color(red: 0.95, green: 0.85, blue: 0.2), // Bright yellow
@@ -108,7 +109,7 @@ class SwiftUIFlashCardDataManager {
                 FlashCard(word: "Bus", image: "bus"),
                 FlashCard(word: "Train", image: "train"),
                 FlashCard(word: "Airplane", image: "airplane"),
-                FlashCard(word: "Bicycle", image: "bicycle"),
+                FlashCard(word: "Bicycle", image: "cycling"),
                 FlashCard(word: "Boat", image: "boat")
             ],
             backgroundImage: "vehicles_bg"
@@ -120,7 +121,7 @@ class SwiftUIFlashCardDataManager {
             color: Color(red: 0.95, green: 0.5, blue: 0.5), // Coral pink
             cards: [
                 FlashCard(word: "Shirt", image: "shirt"),
-                FlashCard(word: "Pants", image: "pants"),
+                FlashCard(word: "Pants", image: "pant"),
                 FlashCard(word: "Shoes", image: "shoes"),
                 FlashCard(word: "Hat", image: "hat"),
                 FlashCard(word: "Socks", image: "socks"),

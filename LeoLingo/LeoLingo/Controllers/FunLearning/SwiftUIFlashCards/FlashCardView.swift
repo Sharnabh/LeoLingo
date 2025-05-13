@@ -88,7 +88,18 @@ struct FlashCardView: View {
                 LinearGradient(
                     gradient: Gradient(colors: [
                         .white,
-                        category.color.opacity(0.6)
+                       .black
+                        
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        .white,
+                        category.color.opacity(0.8)
+                        
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -178,11 +189,11 @@ struct FlashCardView: View {
                             action: previousCard
                         )
                         
-                        NavigationButton(
-                            icon: "speaker.wave.2.fill",
-                            isEnabled: true,
-                            action: speakWord
-                        )
+//                        NavigationButton(
+//                            icon: "speaker.wave.2.fill",
+//                            isEnabled: true,
+//                            action: speakWord
+//                        )
                         
                         // Microphone button for speech recognition
                         NavigationButton(
@@ -194,12 +205,12 @@ struct FlashCardView: View {
                         .scaleEffect(isListening ? 1.2 : 1.0)
                         .animation(.spring(), value: isListening)
                         
-                        NavigationButton(
-                            icon: showFact ? "lightbulb.fill" : "lightbulb",
-                            isEnabled: true,
-                            action: toggleFact
-                        )
-                        .foregroundColor(showFact ? .yellow : .white)
+//                        NavigationButton(
+//                            icon: showFact ? "lightbulb.fill" : "lightbulb",
+//                            isEnabled: true,
+//                            action: toggleFact
+//                        )
+//                        .foregroundColor(showFact ? .yellow : .white)
                         
                         NavigationButton(
                             icon: "arrow.right.circle.fill",
@@ -242,6 +253,8 @@ struct FlashCardView: View {
         }
         .statusBar(hidden: true)
         .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
         .onAppear {
             // Show fact with a slight delay for a nice reveal
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

@@ -95,7 +95,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         startTimer()
         
         setupEmptyStateViews()
-        setupRemainingTimeView()
     }
     
     deinit {
@@ -381,20 +380,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         ])
     }
     
-    private func setupRemainingTimeView() {
-        // Set background color
-        remainingTimeView.backgroundColor = UIColor(red: 222/255, green: 168/255, blue: 62/255, alpha: 0.8)
-        
-        // Customize progress bar appearance
-        timeLeftBar.progressTintColor = .white
-        timeLeftBar.trackTintColor = UIColor.white.withAlphaComponent(0.3)
-        timeLeftBar.layer.cornerRadius = 4
-        timeLeftBar.clipsToBounds = true
-        
-        // Update time label appearance
-        timeLeft.font = .systemFont(ofSize: 18, weight: .bold)
-        timeLeft.textColor = .white
-    }
+
     
     private func updateTimeDisplay() {
         guard let startTime = startTime else { return }
@@ -425,10 +411,10 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             } else {
                 timeLeft.text = String(format: "%ds left", seconds)
             }
-            timeLeft.textColor = .white
+            timeLeft.textColor = .black
         } else {
             timeLeft.text = "Daily limit reached!"
-            timeLeft.textColor = .white
+            timeLeft.textColor = .black
         }
         
         // Update progress bar with smooth animation

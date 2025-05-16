@@ -50,6 +50,17 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
         return label
     }()
     
+    private lazy var checkmarkImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemGreen
+        imageView.alpha = 0
+        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .bold)
+        imageView.image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)
+        return imageView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -64,6 +75,7 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
         containerView.addSubview(wordTitleLabel)
         containerView.addSubview(wordImageView)
         containerView.addSubview(tapInstructionLabel)
+        containerView.addSubview(checkmarkImageView)
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -82,7 +94,12 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
             
             tapInstructionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20),
             tapInstructionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
-            tapInstructionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20)
+            tapInstructionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+            
+            checkmarkImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            checkmarkImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            checkmarkImageView.widthAnchor.constraint(equalToConstant: 30),
+            checkmarkImageView.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
     
@@ -98,6 +115,42 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
         
         wordTitleLabel.text = wordData.wordTitle
         self.tapToPronounceAction = tapToPronounce
+        
+        // Check if the word has been completed in user data
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else { return }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                
+                // Find the word in user's data
+                let userWord = userData.userLevels.flatMap { $0.words }.first { $0.id == wordData.id }
+                
+                if let userWord = userWord,
+                   let record = userWord.record,
+                   let accuracies = record.accuracy,
+                   !accuracies.isEmpty {
+                    let avgAccuracy = accuracies.reduce(0.0, +) / Double(accuracies.count)
+                    
+                    // Show checkmark if average accuracy is >= 80%
+                    DispatchQueue.main.async {
+                        if avgAccuracy >= 80.0 {
+                            self.showCheckmark()
+                        } else {
+                            self.hideCheckmark()
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.hideCheckmark()
+                    }
+                }
+            } catch {
+                print("Error checking word completion status: \(error)")
+                DispatchQueue.main.async {
+                    self.hideCheckmark()
+                }
+            }
+        }
         
         setNeedsLayout()
         layoutIfNeeded()
@@ -178,6 +231,23 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
         }
     }
     
+    func markAsCompleted() {
+        // Add checkmark with animation
+        checkmarkImageView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: []) {
+            self.showCheckmark()
+            self.checkmarkImageView.transform = .identity
+        }
+    }
+    
+    private func showCheckmark() {
+        checkmarkImageView.alpha = 1
+    }
+    
+    private func hideCheckmark() {
+        checkmarkImageView.alpha = 0
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         wordImageView.image = nil
@@ -185,5 +255,9 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
         tapToPronounceAction = nil
         containerView.layer.borderWidth = 0
         transform = .identity
+        hideCheckmark()
+        wordImageView.alpha = 1
+        wordTitleLabel.alpha = 1
+        tapInstructionLabel.alpha = 1
     }
 } 

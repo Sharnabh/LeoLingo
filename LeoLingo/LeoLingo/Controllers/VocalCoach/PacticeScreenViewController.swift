@@ -236,6 +236,9 @@ class PracticeScreenViewController: UIViewController {
         clearUserDefaults()
         directionLabel.adjustsFontSizeToFitWidth = true
         
+        // Set vocal coach as active
+        UserDefaults.standard.set(true, forKey: "isVocalCoachActive")
+        
         // Load levels from Supabase
         Task {
             do {
@@ -286,6 +289,11 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
+        
+        // Only set vocal coach as inactive if we're going back to home
+        if isMovingFromParent {
+            UserDefaults.standard.set(false, forKey: "isVocalCoachActive")
+        }
     }
     
     private func setupCountdownLabel() {

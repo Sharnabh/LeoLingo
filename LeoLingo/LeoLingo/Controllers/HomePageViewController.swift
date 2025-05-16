@@ -182,10 +182,12 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     @objc private func vocalCoachDidBecomeActive() {
         isVocalCoachActive = true
+        UserDefaults.standard.set(true, forKey: "isVocalCoachActive")
     }
     
     @objc private func vocalCoachDidBecomeInactive() {
         isVocalCoachActive = false
+        UserDefaults.standard.set(false, forKey: "isVocalCoachActive")
     }
     
     private func restoreTimerState() {
@@ -380,11 +382,12 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         ])
     }
     
-
-    
     private func updateTimeDisplay() {
         guard let startTime = startTime else { return }
         let currentElapsedTime = Date().timeIntervalSince(startTime)
+        
+        // Check if vocal coach is active from UserDefaults
+        let isVocalCoachActive = UserDefaults.standard.bool(forKey: "isVocalCoachActive")
         
         // Only update time if vocal coach is active
         if isVocalCoachActive {

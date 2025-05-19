@@ -16,7 +16,7 @@ class FunLearningViewController: UIViewController {
     
     var currentIndex = 1
     
-    let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo"]
+    let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo",]
     
     private lazy var backButton: UIButton = {
         let size: CGFloat = 46
@@ -120,38 +120,88 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
 
     
     func configureLayout() -> UICollectionViewLayout {
-        // Create item size
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),     // Reduced from 0.7 to 0.5
-            heightDimension: .fractionalHeight(1)
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        // Create group same size as item
+
+        // Group will show one full item, allowing partial peeking of others
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.5),     // Reduced from 0.7 to 0.5
+            widthDimension: .fractionalWidth(0.5),
             heightDimension: .fractionalHeight(0.7)
         )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitem: item,
+            count: 1
+        )
+
         group.contentInsets = NSDirectionalEdgeInsets(top: 40, leading: 0, bottom: 0, trailing: 0)
-        
-        // Configure section
+
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        
-        section.visibleItemsInvalidationHandler = { (visibleItems, offset, environment) in
+        section.interGroupSpacing = -250  // Negative spacing allows overlap
+
+        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, offset, environment in
             let centerX = offset.x + environment.container.contentSize.width / 2
             
-            visibleItems.forEach { item in
+            // First, sort visible items by their distance from center (closest first)
+            let sortedItems = visibleItems.sorted { item1, item2 -> Bool in
+                let distance1 = abs(item1.frame.midX - centerX)
+                let distance2 = abs(item2.frame.midX - centerX)
+                return distance1 < distance2
+            }
+            
+            // Track which item is in the center to set as top
+            var centerItemIndex: Int?
+            var minDistance = CGFloat.greatestFiniteMagnitude
+            
+            // Apply transformations to all items first
+            for (index, item) in sortedItems.enumerated() {
                 let distanceFromCenter = abs(item.frame.midX - centerX)
-                let scale = max(1.2 - (distanceFromCenter / environment.container.contentSize.width), 0.85)
+                
+                // Find the center-most item
+                if distanceFromCenter < minDistance {
+                    minDistance = distanceFromCenter
+                    centerItemIndex = index
+                }
+                
+                // Apply scale transformation based on distance
+                let scale = max(1.1 - (distanceFromCenter / environment.container.contentSize.width), 0.85)
                 item.transform = CGAffineTransform(scaleX: scale, y: scale)
-                item.zIndex = Int(scale * 10)
+                
+                // Set initial z-index, but we'll modify it later
+                item.zIndex = 0
+            }
+            
+            // Now set z-indexes to ensure proper ordering
+            // Items closer to center get higher z-index
+            for (index, item) in sortedItems.enumerated() {
+                let distanceFromCenter = abs(item.frame.midX - centerX)
+                
+                if index == centerItemIndex {
+                    item.zIndex = 100 // Center item always on top
+                } else {
+                    // Cards closer to center should be above cards further away
+                    // But all non-center cards should be behind the center card
+                    // Using inverse of distance to make closer cards have higher z-index
+                    let baseZIndex: CGFloat = 50 // Base z-index for non-center cards
+                    let distanceScale = 1.0 - (distanceFromCenter / environment.container.contentSize.width)
+                    item.zIndex = Int(baseZIndex * distanceScale)
+                }
+            }
+            
+            // Update current index if needed
+            if let centerIndex = centerItemIndex {
+                let indexPath = sortedItems[centerIndex].indexPath
+                self?.currentIndex = indexPath.item
             }
         }
-        
+
         return UICollectionViewCompositionalLayout(section: section)
     }
+
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         gameImages.count

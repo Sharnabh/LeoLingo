@@ -14,7 +14,6 @@ class LevelCardViewController: UIViewController {
     @IBOutlet var cardCollectionView: UICollectionView!
     
     private var cancellables = Set<AnyCancellable>()
-    private let synthesizer = AVSpeechSynthesizer()
     private let speechProcessor = SpeechProcessor()
     private var speechSubscription: AnyCancellable?
     
@@ -514,13 +513,7 @@ class LevelCardViewController: UIViewController {
     }
     
     private func pronounceWord(_ word: String) {
-        let utterance = AVSpeechUtterance(string: word)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = 0.5
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        
-        synthesizer.speak(utterance)
+        VoiceManager.shared.speak(word)
     }
     
     private func getDirections(for word: String) {

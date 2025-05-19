@@ -14,82 +14,144 @@ class GreetViewController: UIViewController {
     @IBOutlet var greetEmojiLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
     
-    var greetings = ["Hello! Joy", "I am Mojo"]
-    var emojis = ["👋","🐵"]
-    let synthesizer = AVSpeechSynthesizer()
-
-    var greetingIndex = 0
-    var emojiIndex = 0
-    
-    static let greetingShownKey = "hasShownVocalCoachGreeting"
+    private var greetings: [String] = []
+    private var tips = [
+        "Remember to speak clearly and confidently! 🎯",
+        "Take your time with each word. 🌟",
+        "Practice makes perfect! ⭐️",
+        "Listen carefully before speaking. 👂",
+        "Don't worry about mistakes, they help you learn! 🌈"
+    ]
+    private var emojis = ["👋", "🐵", "🎯", "🌟", "⭐️"]
+    private var greetingIndex = 0
+    private var emojiIndex = 0
+    private var userName: String = "User"
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+        fetchUserDataAndStartGreeting()
+    }
         
+    private func setupUI() {
         greetLabel.adjustsFontSizeToFitWidth = true
         greetEmojiLabel.adjustsFontSizeToFitWidth = true
-        
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
         
-        // Fetch child's name and update greetings
+        // Add fade in animation
+        greetLabel.alpha = 0
+        greetEmojiLabel.alpha = 0
+        UIView.animate(withDuration: 0.5) {
+            self.greetLabel.alpha = 1
+            self.greetEmojiLabel.alpha = 1
+        }
+    }
+    
+    private func fetchUserDataAndStartGreeting() {
         Task {
             do {
                 if let userId = SupabaseDataController.shared.userId {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    userName = userData.childName ?? "User"
+                    
+                    // Check if this is the first time or returning user
+                    let isFirstTime = !UserDefaults.standard.bool(forKey: "hasSeenGreeting")
+                    UserDefaults.standard.set(true, forKey: "hasSeenGreeting")
+                    
                     DispatchQueue.main.async { [weak self] in
-                        self?.greetings = ["Hello \(userData.childName ?? "User")!", "I am Mojo"]
+                        self?.setupGreetings(isFirstTime: isFirstTime)
                         self?.startAnimations()
+                        
+                        // Schedule transition after 5 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            self?.transitionToNextViewController()
+                        }
                     }
                 }
             } catch {
                 print("Error fetching user data: \(error)")
+                setupGreetings(isFirstTime: true)
                 startAnimations()
             }
         }
-        
-        // Do any additional setup after loading the view.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-            self.transitionToNextViewController()
+    }
+    
+    private func setupGreetings(isFirstTime: Bool) {
+        if isFirstTime {
+            greetings = [
+                "Hello \(userName)!",
+                "I am Mojo",
+                "Let's learn together!"
+            ]
+        } else {
+            let hour = Calendar.current.component(.hour, from: Date())
+            let timeBasedGreeting: String
+            
+            switch hour {
+            case 5..<12:
+                timeBasedGreeting = "Good morning \(userName)!"
+            case 12..<17:
+                timeBasedGreeting = "Good afternoon \(userName)!"
+            case 17..<21:
+                timeBasedGreeting = "Good evening \(userName)!"
+            default:
+                timeBasedGreeting = "Hi \(userName)!"
+            }
+            
+            greetings = [
+                timeBasedGreeting,
+                "Ready to practice?",
+                tips.randomElement() ?? "Let's get started!"
+            ]
         }
     }
     
-    func startAnimations() {
-        // Initial update with speech
+    private func startAnimations() {
         updateLabels(withSpeech: true)
         
-        // Schedule subsequent label updates without speech
-        Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(updateLabelsWithoutSpeech), userInfo: nil, repeats: true)
+        // Schedule subsequent label updates
+        Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(updateLabelsWithoutSpeech), userInfo: nil, repeats: true)
     }
     
-    @objc func updateLabelsWithoutSpeech() {
+    @objc private func updateLabelsWithoutSpeech() {
         updateLabels(withSpeech: false)
     }
     
-    func updateLabels(withSpeech: Bool) {
-        // Update greeting label
+    private func updateLabels(withSpeech: Bool) {
+        guard greetingIndex < greetings.count else { return }
+        
         let greeting = greetings[greetingIndex]
-        greetLabel.text = greeting
-        greetingIndex = (greetingIndex + 1) % greetings.count
         
-        // Update secondary label
-        greetEmojiLabel.text = emojis[emojiIndex]
-        emojiIndex = (emojiIndex + 1) % emojis.count
-        
-        // Speak the greeting only if withSpeech is true
-        if withSpeech {
-            let utterance = AVSpeechUtterance(string: greeting)
-            utterance.rate = 0.5
-            utterance.pitchMultiplier = 1.2
-            utterance.volume = 1.0
-            synthesizer.speak(utterance)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.greetLabel.alpha = 0
+            self.greetEmojiLabel.alpha = 0
+        }) { _ in
+            self.greetLabel.text = greeting
+            self.greetEmojiLabel.text = self.emojis[self.emojiIndex]
+            
+            UIView.animate(withDuration: 0.3) {
+                self.greetLabel.alpha = 1
+                self.greetEmojiLabel.alpha = 1
+            }
         }
+        
+        if withSpeech {
+            VoiceManager.shared.speak(greeting)
+        }
+        
+        greetingIndex = (greetingIndex + 1) % greetings.count
+        emojiIndex = (emojiIndex + 1) % emojis.count
     }
     
-    func transitionToNextViewController() {
+    private func transitionToNextViewController() {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let vocalCoachVC = storyboard.instantiateViewController(withIdentifier: "VocalCoachViewController") as? VocalCoachViewController {
             vocalCoachVC.modalPresentationStyle = .fullScreen
+            
+            // Ensure we stop any ongoing speech before transitioning
+            VoiceManager.shared.stopSpeaking()
+            
             // Present the VocalCoachVC and dismiss self
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: false) {
@@ -98,9 +160,4 @@ class GreetViewController: UIViewController {
             }
         }
     }
-    
-    @objc private func dismissGreeting() {
-        dismiss(animated: true)
-    }
-    
 }

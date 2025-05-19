@@ -139,7 +139,6 @@ class WaveformView: UIView {
 class PracticeScreenViewController: UIViewController {
     
     var levels: [Level] = []
-    private let synthesizer = AVSpeechSynthesizer()
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -584,29 +583,11 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func pronounceWord(_ word: String) {
-        // Stop any ongoing speech
-        synthesizer.stopSpeaking(at: .immediate)
-        
-        let utterance = AVSpeechUtterance(string: word)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = 0.5
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        
-        synthesizer.speak(utterance)
+        VoiceManager.shared.speak(word)
     }
     
     private func pronounceDirection(_ direction: String) {
-        // Stop any ongoing speech
-        synthesizer.stopSpeaking(at: .immediate)
-        
-        let utterance = AVSpeechUtterance(string: direction)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = 0.4  // Slightly slower for better clarity
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        
-        synthesizer.speak(utterance)
+        VoiceManager.shared.speak(direction)
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {

@@ -84,17 +84,17 @@ struct FlashCardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        .white,
-                       .black
-                        
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+//                // Background gradient
+//                LinearGradient(
+//                    gradient: Gradient(colors: [
+//                        .white,
+//                       .black
+//                        
+//                    ]),
+//                    startPoint: .top,
+//                    endPoint: .bottom
+//                )
+//                .ignoresSafeArea()
                 LinearGradient(
                     gradient: Gradient(colors: [
                         .white,
@@ -159,12 +159,12 @@ struct FlashCardView: View {
                             handleCardTap()
                         }
                         
-                        // Listening indicator
-                        if isListening {
-                            ListeningIndicator()
-                                .frame(width: 80, height: 80)
-                                .position(x: 40, y: 40)
-                        }
+                        // Remove the listening indicator that appears in the top-left
+                        // if isListening {
+                        //     ListeningIndicator()
+                        //         .frame(width: 80, height: 80)
+                        //         .position(x: 40, y: 40)
+                        // }
                     }
                     .frame(height: geometry.size.height * 0.45)
                     
@@ -195,9 +195,9 @@ struct FlashCardView: View {
 //                            action: speakWord
 //                        )
                         
-                        // Microphone button for speech recognition
+                        // Microphone button for speech recognition - updated to show waveform when active
                         NavigationButton(
-                            icon: isListening ? "mic.fill" : "mic.circle.fill",
+                            icon: isListening ? "waveform.circle.fill" : "mic.circle.fill",
                             isEnabled: true,
                             action: toggleListening
                         )
@@ -532,12 +532,9 @@ struct CardCounter: View {
     var body: some View {
         Text("\(current) of \(total)")
             .font(.system(size: 20, weight: .semibold))
-            .foregroundColor(.white)
+            .foregroundColor(.black)
             .padding(8)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.5))
-            )
+            
     }
 }
 
@@ -921,14 +918,14 @@ struct AccuracyMeter: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(meterColor())
                     .frame(width: max(geometry.size.width * CGFloat(accuracy) / 100.0, 0), height: geometry.size.height)
-                
-                // Percentage text
-                Text("\(Int(accuracy))%")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding(.leading, 8)
-                    .shadow(color: .black, radius: 1)
+//                
+//                // Percentage text
+//                Text("\(Int(accuracy))%")
+//                    .font(.caption)
+//                    .fontWeight(.bold)
+//                    .foregroundColor(.white)
+//                    .padding(.leading, 8)
+//                    .shadow(color: .black, radius: 1)
             }
         }
     }

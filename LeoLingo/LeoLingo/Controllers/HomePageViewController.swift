@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HomePageViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var levelImageView: UIImageView!
@@ -199,21 +200,91 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        print("DEBUG: HomeVC - View did appear")
+        
+        // Check if we should show the badge achievement popup after onboarding
+        if UserDefaults.standard.shouldShowOnboardingBadgeAchievement {
+            print("DEBUG: HomeVC - Should show onboarding badge achievement")
+            // Reset the flag so it doesn't show again
+            UserDefaults.standard.shouldShowOnboardingBadgeAchievement = false
+            
+            // Delay showing the popup for a better UX
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showOnboardingBadgeAchievement()
+            }
+        } else {
+            print("DEBUG: HomeVC - Checking for unshown badges")
+            // Check for any earned badges that haven't been shown yet
+            // This handles the case where the app was closed and reopened
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                BadgeAchievementManager.shared.checkAndShowUnshownBadges(in: self)
+            }
+        }
+        
         // Refresh practices and badges when view appears
         loadRecentPractices()
-        badgesEarnedCollectionView.reloadData()
+        refreshBadgeData()
+    }
+    
+    private func refreshBadgeData() {
+        print("DEBUG: HomePageVC - Starting badge data refresh")
         
-        // Ensure we have the latest user data
+        // Check what's in UserDefaults first
+        let savedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
+        print("DEBUG: HomePageVC - Found \(savedBadgeIDs.count) earned badges in UserDefaults")
+        
+        // Debug badge IDs
+        for idString in savedBadgeIDs {
+            if let id = UUID(uuidString: idString) {
+                // Try to find the matching app badge
+                let appBadges = SampleDataController.shared.getBadgesData()
+                if let match = appBadges.first(where: { $0.id == id }) {
+                    print("DEBUG: HomePageVC - Found matching badge: \(match.badgeTitle) (\(match.id))")
+                } else {
+                    print("DEBUG: HomePageVC - No matching badge found for ID: \(id)")
+                }
+            }
+        }
+        
+        // Ensure we have the latest user data and sync badges with UserDefaults
         Task {
             if let userId = SupabaseDataController.shared.userId {
+                print("DEBUG: HomePageVC - Fetching user data for ID: \(userId)")
                 do {
-                    _ = try await SupabaseDataController.shared.getUser(byId: userId)
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    
+                    // Count earned badges
+                    let earnedBadges = userData.userBadges.filter { $0.isEarned }
+                    print("DEBUG: HomePageVC - Found \(earnedBadges.count) earned badges in user data")
+                    
+                    // Sync earned badges with UserDefaults to ensure persistence
+                    for badge in userData.userBadges where badge.isEarned {
+                        print("DEBUG: HomePageVC - Adding earned badge to UserDefaults: \(badge.badgeTitle) (ID: \(badge.id))")
+                        UserDefaults.standard.addEarnedBadge(badge.id)
+                    }
+                    
+                    // Pre-load badge cache to ensure images can be found
+                    let allBadges = SampleDataController.shared.getBadgesData()
+                    print("DEBUG: HomePageVC - Pre-loaded \(allBadges.count) badge definitions")
+                    
                     // Reload badges on main thread after fetching latest data
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
+                        print("DEBUG: HomePageVC - Badge collection view reloaded")
                     }
                 } catch {
-                    print("Error refreshing user data: \(error)")
+                    print("ERROR: HomePageVC - Error refreshing badge data: \(error)")
+                }
+            } else {
+                print("ERROR: HomePageVC - No user ID found, cannot fetch badge data")
+                
+                // Even without a user ID, try to display any badges from UserDefaults
+                if !savedBadgeIDs.isEmpty {
+                    DispatchQueue.main.async {
+                        self.badgesEarnedCollectionView.reloadData()
+                        print("DEBUG: HomePageVC - Badge collection view reloaded from UserDefaults only")
+                    }
                 }
             }
         }
@@ -451,17 +522,32 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if collectionView == badgesEarnedCollectionView {
             let cell = badgesEarnedCollectionView.dequeueReusableCell(withReuseIdentifier: BadgesEarnedCollectionViewCell.identifier, for: indexPath) as! BadgesEarnedCollectionViewCell
             
-            guard let badges = SupabaseDataController.shared.getEarnedBadgesData() else {
-                print("DEBUG: Failed to get earned badges while configuring cell")
+            guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData(),
+                  indexPath.row < earnedBadges.count else {
+                print("DEBUG: Failed to get earned badge at index \(indexPath.row)")
                 return UICollectionViewCell()
             }
             
-            print("DEBUG: Configuring badge cell at index \(indexPath.row)")
+            // Get the badge at this specific index
+            let badge = earnedBadges[indexPath.row]
+            print("DEBUG: HomePageVC - Processing badge with ID: \(badge.id), title: \(badge.badgeTitle)")
             
-            for badge in SampleDataController.shared.getBadgesData() {
-                if badge.id == badges[indexPath.row].id {
-                    print("DEBUG: Found matching badge: \(badge.badgeTitle)")
-                    cell.configure(with: badge.badgeImage)
+            // Find the corresponding app badge to get the image
+            let appBadges = SampleDataController.shared.getBadgesData()
+            if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
+                print("DEBUG: HomePageVC - Found matching badge: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
+                cell.configure(with: appBadge.badgeImage)
+            } else {
+                // Try fuzzy matching by title if ID doesn't match
+                if let appBadge = appBadges.first(where: { $0.badgeTitle.lowercased() == badge.badgeTitle.lowercased() }) {
+                    print("DEBUG: HomePageVC - Found badge by title match: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
+                    // Update UserDefaults with the correct ID for future reference
+                    UserDefaults.standard.addEarnedBadge(appBadge.id)
+                    cell.configure(with: appBadge.badgeImage)
+                } else {
+                    print("DEBUG: HomePageVC - Could not find app badge matching ID: \(badge.id) or title: \(badge.badgeTitle)")
+                    // Fallback configuration
+                    cell.configure(with: "star")
                 }
             }
             
@@ -578,12 +664,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
-        if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
-            parentHomeVC.modalPresentationStyle = .fullScreen
-            self.present(parentHomeVC, animated: true, completion: nil)
-            
-        }
+        let lockScreenView = UIHostingController(rootView: ParentModeLockScreenView())
+        lockScreenView.modalPresentationStyle = .fullScreen
+        self.present(lockScreenView, animated: true)
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
@@ -678,6 +761,58 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                 }
             } catch {
                 print("DEBUG: Error loading recent practices: \(error)")
+            }
+        }
+    }
+    
+    private func showOnboardingBadgeAchievement() {
+        print("DEBUG: HomeVC - Showing onboarding badge achievement")
+        
+        guard let userId = UserDefaults.standard.userId, 
+              let id = UUID(uuidString: userId) else {
+            print("ERROR: HomeVC - Cannot show badge, no user ID found")
+            return
+        }
+        
+        Task {
+            do {
+                // Get all badges data
+                let badges = SupabaseDataController.shared.getBadgesData()
+                print("DEBUG: HomeVC - Got \(badges.count) total badges")
+                
+                // Find the NewLeo badge
+                if let newLeoBadge = badges.first(where: { $0.badgeTitle == "NewLeo" }) {
+                    print("DEBUG: HomeVC - Found NewLeo badge with ID: \(newLeoBadge.id)")
+                    
+                    // Track this badge as earned in UserDefaults
+                    UserDefaults.standard.addEarnedBadge(newLeoBadge.id)
+                    
+                    // Get the current user data to ensure badges are loaded
+                    let userData = try await SupabaseDataController.shared.getUser(byId: id)
+                    
+                    // First try to find the badge in user's data
+                    if let badge = userData.userBadges.first(where: { $0.id == newLeoBadge.id }) {
+                        print("DEBUG: HomeVC - Found badge in user data, showing achievement popup")
+                        // Show the achievement popup
+                        DispatchQueue.main.async {
+                            BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
+                        }
+                    } else {
+                        // If not found in user data, create a badge object from the app badge
+                        print("DEBUG: HomePageVC - Creating badge from app badge data")
+                        let badge = Badge(
+                            id: newLeoBadge.id,
+                            badgeTitle: newLeoBadge.badgeTitle,
+                            isEarned: true
+                        )
+                        
+                        DispatchQueue.main.async {
+                            BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
+                        }
+                    }
+                }
+            } catch {
+                print("Error showing onboarding badge: \(error)")
             }
         }
     }

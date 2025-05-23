@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 extension Color {
     /// Initializes a Color from a hex string (e.g. "#FF6347" or "FF6347").
@@ -34,5 +35,33 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+// Extension to get the top view controller
+extension UIApplication {
+    func getTopViewController() -> UIViewController? {
+        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        
+        if var topController = keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            // Handle navigation controllers
+            if let navigationController = topController as? UINavigationController {
+                return navigationController.visibleViewController
+            }
+            
+            // Handle tab bar controllers
+            if let tabController = topController as? UITabBarController {
+                if let selected = tabController.selectedViewController {
+                    return selected
+                }
+            }
+            
+            return topController
+        }
+        return nil
     }
 }

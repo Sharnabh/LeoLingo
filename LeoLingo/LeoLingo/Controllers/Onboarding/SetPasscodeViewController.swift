@@ -60,6 +60,10 @@ class SetPasscodeViewController: UIViewController {
                     let storyBoard = UIStoryboard(name: "VocalCoach", bundle: nil)
                     if let vocalCoachVC = storyBoard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
                         vocalCoachVC.modalPresentationStyle = .fullScreen
+                        
+                        // Set a flag to show the achievement popup after onboarding
+                        UserDefaults.standard.shouldShowOnboardingBadgeAchievement = true
+                        
                         self.present(vocalCoachVC, animated: true)
                     }
                 }

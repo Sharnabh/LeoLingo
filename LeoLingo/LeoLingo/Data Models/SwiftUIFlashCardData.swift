@@ -31,7 +31,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Animals",
             image: "wild_animals",
-            color: Color(red: 1.0, green: 0.75, blue: 0.2), // Vibrant yellow
+            color: Color(hex: "#FFC300"), // Vibrant yellow
             cards: [
                 FlashCard(word: "Elephant", image: "elephant"),
                 FlashCard(word: "Giraffe", image: "giraffe"),
@@ -45,7 +45,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Vegetables",
             image: "vegetables",
-            color: Color(red: 0.35, green: 0.85, blue: 0.35), // Bright green
+            color: Color(hex: "#4CAF50"), // Bright green
             cards: [
                 FlashCard(word: "Broccoli", image: "broccoli"),
                 FlashCard(word: "Carrot", image: "carrot"),
@@ -59,7 +59,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Weather", 
             image: "weather",
-            color: Color(red: 0.4, green: 0.7, blue: 1.0), // Sky blue
+            color: Color(hex: "#4FC3F7"), // Sky blue
             cards: [
                 FlashCard(word: "Sunny", image: "sunny"),
                 FlashCard(word: "Rainy", image: "rainy"),
@@ -73,7 +73,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Body Parts",
             image: "body_parts",
-            color: Color(red: 0.85, green: 0.45, blue: 0.85), // Brighter purple
+            color: Color(hex: "#BA68C8"), // Brighter purple
             cards: [
                 FlashCard(word: "Ear", image: "ear"),
                 FlashCard(word: "Palm", image: "palm"),
@@ -88,7 +88,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Sports", 
             image: "sports",
-            color: Color(red: 0.95, green: 0.85, blue: 0.2), // Bright yellow
+            color: Color(hex: "#FFEC1B"), // Bright yellow
             cards: [
                 FlashCard(word: "Soccer", image: "soccer"),
                 FlashCard(word: "Basketball", image: "basketball"),
@@ -103,7 +103,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Vehicles",
             image: "vehicles",
-            color: Color(red: 0.85, green: 0.3, blue: 0.95), // Vibrant violet
+            color: Color(hex: "#D500F9"), // Vibrant violet
             cards: [
                 FlashCard(word: "Car", image: "car"),
                 FlashCard(word: "Bus", image: "bus"),
@@ -118,7 +118,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Clothes",
             image: "clothes",
-            color: Color(red: 0.95, green: 0.5, blue: 0.5), // Coral pink
+            color: Color(hex: "#FF6F61"), // Coral pink
             cards: [
                 FlashCard(word: "Shirt", image: "shirt"),
                 FlashCard(word: "Pants", image: "pant"),
@@ -133,7 +133,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Actions",
             image: "actions",
-            color: Color(red: 0.2, green: 0.6, blue: 0.95), // Bright blue
+            color: Color(hex: "#2196F3"), // Bright blue
             cards: [
                 FlashCard(word: "Jump", image: "jump"),
                 FlashCard(word: "Run", image: "run"),
@@ -148,7 +148,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Stationery",
             image: "stationery",
-            color: Color(red: 0.6, green: 0.6, blue: 0.75), // Lavender gray
+            color: Color(hex: "#9FA2FA"), // Lavender gray
             cards: [
                 FlashCard(word: "Pencil", image: "pencil"),
                 FlashCard(word: "Eraser", image: "eraser"),
@@ -163,7 +163,7 @@ class SwiftUIFlashCardDataManager {
         FlashCardCategory(
             name: "Toys",
             image: "toys",
-            color: Color(red: 1.0, green: 0.6, blue: 0.3), // Bright orange
+            color: Color(hex: "#FF9800"), // Bright orange
             cards: [
                 FlashCard(word: "Doll", image: "doll"),
                 FlashCard(word: "Ball", image: "ball"),

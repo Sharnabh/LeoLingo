@@ -257,9 +257,18 @@ class BadgeIDManager {
     }
     
     func printCurrentMappings() {
-        print("DEBUG: Current word ID mappings:")
-        for (word, id) in badgeIDs {
-            print("  \(word): \(id)")
+        print("DEBUG: Current badge ID mappings:")
+        for (badgeTitle, id) in badgeIDs {
+            print("  \(badgeTitle): \(id)")
+        }
+    }
+    
+    func logAllBadgeIDs() {
+        print("DEBUG: BADGE ID VALIDATION - All badge IDs at app startup:")
+        for (badgeTitle, idString) in badgeIDs {
+            if let uuid = UUID(uuidString: idString) {
+                print("  \(badgeTitle): \(uuid)")
+            }
         }
     }
     
@@ -309,10 +318,17 @@ struct CategoryCard {
 }
 
 struct AppBadge {
-    var id: UUID = UUID()
+    var id: UUID
     var badgeTitle: String
     var badgeDescription: String
     var badgeImage: String
+    
+    init(badgeTitle: String, badgeDescription: String, badgeImage: String) {
+        self.id = BadgeIDManager.shared.getID(for: badgeTitle)
+        self.badgeTitle = badgeTitle
+        self.badgeDescription = badgeDescription
+        self.badgeImage = badgeImage
+    }
 }
 
 struct AppCard {

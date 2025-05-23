@@ -104,19 +104,14 @@ class FunLearningViewController: UIViewController {
         }
     }
 
-
     @objc private func kidsModeButtonTapped() {
-        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
-        if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
-            parentHomeVC.modalPresentationStyle = .fullScreen
-            // Present directly from this view controller
-            self.present(parentHomeVC, animated: true, completion: nil)
-        }
+        let lockScreenView = UIHostingController(rootView: ParentModeLockScreenView())
+        lockScreenView.modalPresentationStyle = .fullScreen
+        present(lockScreenView, animated: true)
     }
 }
 
 extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-
 
     
     func configureLayout() -> UICollectionViewLayout {

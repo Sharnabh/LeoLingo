@@ -25,6 +25,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Set the user ID in SupabaseDataController
             SupabaseDataController.shared.restoreSession(userId: userId)
             
+            // Validate badge IDs at startup to ensure consistency
+            BadgeIDManager.shared.logAllBadgeIDs()
+            
+            // Log any stored badges from UserDefaults
+            let storedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
+            print("DEBUG: SceneDelegate - Found \(storedBadgeIDs.count) earned badges in UserDefaults")
+            for idString in storedBadgeIDs {
+                print("DEBUG: SceneDelegate - Stored badge ID: \(idString)")
+            }
+            
             // User is logged in, go to HomePage
             let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
             if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {

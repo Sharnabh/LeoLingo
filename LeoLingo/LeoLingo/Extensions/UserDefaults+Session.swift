@@ -11,6 +11,9 @@ extension UserDefaults {
         static let lastResetDate = "lastResetDate"
         static let daysUsed = "daysUsed"
         static let lastPhoneNumber = "lastPhoneNumber"
+        static let shouldShowOnboardingBadgeAchievement = "shouldShowOnboardingBadgeAchievement"
+        static let earnedBadgeIDs = "earnedBadgeIDs"
+        static let shownBadgeIDs = "shownBadgeIDs"
     }
     
     var isUserLoggedIn: Bool {
@@ -40,6 +43,61 @@ extension UserDefaults {
         }
     }
     
+    var shouldShowOnboardingBadgeAchievement: Bool {
+        get {
+            return bool(forKey: Keys.shouldShowOnboardingBadgeAchievement)
+        }
+        set {
+            set(newValue, forKey: Keys.shouldShowOnboardingBadgeAchievement)
+        }
+    }
+    
+    // Track earned badges by storing their UUIDs
+    var earnedBadgeIDs: [String] {
+        get {
+            return array(forKey: Keys.earnedBadgeIDs) as? [String] ?? []
+        }
+        set {
+            set(newValue, forKey: Keys.earnedBadgeIDs)
+        }
+    }
+    
+    // Track badges that have been shown to the user
+    var shownBadgeIDs: [String] {
+        get {
+            return array(forKey: Keys.shownBadgeIDs) as? [String] ?? []
+        }
+        set {
+            set(newValue, forKey: Keys.shownBadgeIDs)
+        }
+    }
+    
+    // Helper to add a newly earned badge
+    func addEarnedBadge(_ badgeId: UUID) {
+        var badges = earnedBadgeIDs
+        let idString = badgeId.uuidString
+        if !badges.contains(idString) {
+            badges.append(idString)
+            earnedBadgeIDs = badges
+        }
+    }
+    
+    // Helper to track which badges have been shown to the user
+    func markBadgeAsShown(_ badgeId: UUID) {
+        var badges = shownBadgeIDs
+        let idString = badgeId.uuidString
+        if !badges.contains(idString) {
+            badges.append(idString)
+            shownBadgeIDs = badges
+        }
+    }
+    
+    // Helper to check if a badge has been earned but not yet shown
+    func hasUnshownBadge(_ badgeId: UUID) -> Bool {
+        let idString = badgeId.uuidString
+        return earnedBadgeIDs.contains(idString) && !shownBadgeIDs.contains(idString)
+    }
+    
     func contains(key: String) -> Bool {
         return object(forKey: key) != nil
     }
@@ -60,7 +118,10 @@ extension UserDefaults {
         // Clear other user data
         removeObject(forKey: Keys.lastPhoneNumber)
         
+        // Don't clear badge tracking data as we want to preserve achievements
+        // across sessions even if user logs out and logs back in
+        
         // Synchronize to ensure all changes are saved
         synchronize()
     }
-} 
+}

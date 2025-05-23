@@ -82,6 +82,70 @@ class DashboardViewController: UIViewController {
         // Refresh data when view appears
         loadInaccurateWords()
         updatePracticeTime()
+        refreshBadgeData()
+    }
+    
+    private func refreshBadgeData() {
+        print("DEBUG: DashboardVC - Starting badge data refresh")
+        
+        // Check what's in UserDefaults first
+        let savedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
+        print("DEBUG: DashboardVC - Found \(savedBadgeIDs.count) earned badges in UserDefaults")
+        
+        // Debug badge IDs
+        for idString in savedBadgeIDs {
+            if let id = UUID(uuidString: idString) {
+                // Try to find the matching app badge
+                let appBadges = SampleDataController.shared.getBadgesData()
+                if let match = appBadges.first(where: { $0.id == id }) {
+                    print("DEBUG: DashboardVC - Found matching badge: \(match.badgeTitle) (\(match.id))")
+                } else {
+                    print("DEBUG: DashboardVC - No matching badge found for ID: \(id)")
+                }
+            }
+        }
+        
+        // Ensure we have the latest user data and sync badges with UserDefaults
+        Task {
+            if let userId = SupabaseDataController.shared.userId {
+                print("DEBUG: DashboardVC - Fetching user data for ID: \(userId)")
+                do {
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    
+                    // Count earned badges
+                    let earnedBadges = userData.userBadges.filter { $0.isEarned }
+                    print("DEBUG: DashboardVC - Found \(earnedBadges.count) earned badges in user data")
+                    
+                    // Sync earned badges with UserDefaults to ensure persistence
+                    for badge in userData.userBadges where badge.isEarned {
+                        print("DEBUG: DashboardVC - Adding earned badge to UserDefaults: \(badge.badgeTitle) (ID: \(badge.id))")
+                        UserDefaults.standard.addEarnedBadge(badge.id)
+                    }
+                    
+                    // Pre-load badge cache to ensure images can be found
+                    let allBadges = SampleDataController.shared.getBadgesData()
+                    print("DEBUG: DashboardVC - Pre-loaded \(allBadges.count) badge definitions")
+                    
+                    // Reload badges on main thread after fetching latest data
+                    DispatchQueue.main.async {
+                        self.badgesEarnedCollectionView.reloadData()
+                        print("DEBUG: DashboardVC - Badge collection view reloaded")
+                    }
+                } catch {
+                    print("ERROR: DashboardVC - Error refreshing badge data: \(error)")
+                }
+            } else {
+                print("ERROR: DashboardVC - No user ID found, cannot fetch badge data")
+                
+                // Even without a user ID, try to display any badges from UserDefaults
+                if !savedBadgeIDs.isEmpty {
+                    DispatchQueue.main.async {
+                        self.badgesEarnedCollectionView.reloadData()
+                        print("DEBUG: DashboardVC - Badge collection view reloaded from UserDefaults only")
+                    }
+                }
+            }
+        }
     }
     
     private func configureMojoSuggestionVideos() {
@@ -409,9 +473,12 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
-            if let badges = SupabaseDataController.shared.getEarnedBadgesData() {
-                print("abababab")
+            if let badges = SupabaseDataController.shared.getEarnedBadgesData(), !badges.isEmpty {
+                print("DEBUG: Found \(badges.count) earned badges for display")
                 return badges.count
+            } else {
+                print("DEBUG: No earned badges found or empty array returned")
+                return 0
             }
         }
         if collectionView == self.collectionView {
@@ -423,11 +490,37 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == badgesEarnedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BadgesCollectionViewCell.identifier, for: indexPath) as! BadgesCollectionViewCell
-            guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData() else { return UICollectionViewCell() }
             
-            for badge in SampleDataController.shared.getBadgesData() {
-                if badge.id == earnedBadges[indexPath.row].id {
-                    cell.configure(with: "\(badge.badgeImage)", title: "\(badge.badgeTitle)")
+            // Get earned badges safely
+            guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData(),
+                  indexPath.row < earnedBadges.count else {
+                print("DEBUG: Failed to get earned badge at index \(indexPath.row)")
+                return UICollectionViewCell()
+            }
+            
+            // Get the badge at this specific index
+            let badge = earnedBadges[indexPath.row]
+            
+            // Log badge details for debugging
+            print("DEBUG: Processing badge with ID: \(badge.id), title: \(badge.badgeTitle)")
+            
+            // Find the corresponding app badge to get the image
+            let appBadges = SampleDataController.shared.getBadgesData()
+            if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
+                print("DEBUG: Configuring badge cell: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
+                cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
+            } else {
+                // Try fuzzy matching by title if ID doesn't match
+                print("DEBUG: Could not find badge by ID, trying title match for: \(badge.badgeTitle)")
+                if let appBadge = appBadges.first(where: { $0.badgeTitle.lowercased() == badge.badgeTitle.lowercased() }) {
+                    print("DEBUG: Found badge by title match: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
+                    // Update UserDefaults with the correct ID for future reference
+                    UserDefaults.standard.addEarnedBadge(appBadge.id)
+                    cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
+                } else {
+                    print("DEBUG: Could not find app badge matching ID: \(badge.id) or title: \(badge.badgeTitle)")
+                    // Fallback configuration
+                    cell.configure(with: "star", title: badge.badgeTitle)
                 }
             }
             

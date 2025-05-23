@@ -1,5 +1,6 @@
 import Foundation
 import Supabase
+import UIKit
 
 class SupabaseDataController {
     static let shared = SupabaseDataController()
@@ -69,7 +70,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             
-            try await initializeUserData(userId: response.id)
+            await initializeUserDataWithBadgeAchievement(userId: response.id)
             return try await getUser(byId: response.id)
         } catch {
             throw SupabaseError.databaseError(error)
@@ -495,7 +496,7 @@ class SupabaseDataController {
     
     // MARK: - Badges
     
-    func updateBadgeStatus(badgeId: UUID, isEarned: Bool) async throws {
+    func updateBadgeStatus(badgeId: UUID, isEarned: Bool, showPopup: Bool = true) async throws {
         guard let userId = currentUser?.id else {
             throw SupabaseError.userNotLoggedIn
         }
@@ -513,12 +514,61 @@ class SupabaseDataController {
             .eq("user_id", value: userId)
             .eq("badge_id", value: badgeId)
             .execute()
+            
+        // Track badge achievement in UserDefaults if earned
+        if isEarned {
+            UserDefaults.standard.addEarnedBadge(badgeId)
+        }
+        
+        // Show badge achievement popup if a badge is newly earned
+        if isEarned && showPopup {
+            // Get updated user data to refresh badge status
+            _ = try await getUser(byId: userId)
+            
+            // Get the earned badge
+            if let badge = getUserBadgesData().first(where: { $0.id == badgeId }) {
+                // Show achievement popup on the main thread
+                DispatchQueue.main.async {
+                    // Find the top-most view controller
+                    if let topVC = UIApplication.shared.getTopViewController() {
+                        BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: topVC)
+                    }
+                }
+            }
+        }
     }
     
     func getEarnedBadgesData() -> [Badge]? {
-        if let earnedBadges = currentUser?.userEarnedBadges {
+        // First check if we have earned badges in the current user data
+        if let earnedBadges = currentUser?.userEarnedBadges, !earnedBadges.isEmpty {
             return earnedBadges
         }
+        
+        // If there are no earned badges in currentUser or if currentUser is nil,
+        // construct badges from UserDefaults persistence
+        let earnedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
+        if !earnedBadgeIDs.isEmpty {
+            var persistedBadges: [Badge] = []
+            
+            // Get all available badges
+            let allBadges = getBadgesData()
+            
+            // Create Badge objects for each ID stored in UserDefaults
+            for idString in earnedBadgeIDs {
+                if let id = UUID(uuidString: idString),
+                   let appBadge = allBadges.first(where: { $0.id == id }) {
+                    let badge = Badge(
+                        id: appBadge.id,
+                        badgeTitle: appBadge.badgeTitle,
+                        isEarned: true
+                    )
+                    persistedBadges.append(badge)
+                }
+            }
+            
+            return persistedBadges
+        }
+        
         return nil
     }
     
@@ -533,8 +583,29 @@ class SupabaseDataController {
     }
     
     func getUserBadgesData() -> [Badge] {
-        guard let userBadges = currentUser?.userBadges else { return [] }
-        return userBadges
+        // First try to get badges from current user data
+        if let userBadges = currentUser?.userBadges, !userBadges.isEmpty {
+            return userBadges
+        }
+        
+        // If no badges in currentUser or if currentUser is nil,
+        // construct badges from UserDefaults persistence and all available badges
+        let earnedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
+        let allBadges = getBadgesData()
+        var persistedBadges: [Badge] = []
+        
+        // Create Badge objects for all available badges, marking earned ones
+        for appBadge in allBadges {
+            let isEarned = earnedBadgeIDs.contains(appBadge.id.uuidString)
+            let badge = Badge(
+                id: appBadge.id,
+                badgeTitle: appBadge.badgeTitle,
+                isEarned: isEarned
+            )
+            persistedBadges.append(badge)
+        }
+        
+        return persistedBadges
     }
     
     func getCardsData() -> [AppCard] {
@@ -872,6 +943,28 @@ class SupabaseDataController {
             throw SupabaseError.databaseError(error)
         }
     }
+    
+    private func initializeUserDataWithBadgeAchievement(userId: UUID) async {
+        do {
+            // Initialize user data
+            try await initializeUserData(userId: userId)
+            
+            // Get all badges to find the NewLeo badge
+            let badges = sampleData.getBadgesData()
+            if let newLeoBadge = badges.first(where: { $0.badgeTitle == "NewLeo" }) {
+                // Get the current user data to get the Badge object
+                let userData = try await getUser(byId: userId)
+                
+                // Track the badge as earned in UserDefaults
+                UserDefaults.standard.addEarnedBadge(newLeoBadge.id)
+                
+                // Note: Badge achievement popup is now handled in HomePageViewController
+                // via the shouldShowOnboardingBadgeAchievement UserDefaults flag
+            }
+        } catch {
+            print("DEBUG: Error initializing user data with badge achievement: \(error)")
+        }
+    }
 }
 
 // MARK: - Error Types
@@ -903,4 +996,4 @@ public enum SupabaseError: LocalizedError {
             return "No user is currently logged in"
         }
     }
-} 
+}

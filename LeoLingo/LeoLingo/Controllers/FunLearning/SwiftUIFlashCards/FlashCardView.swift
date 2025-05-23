@@ -84,17 +84,17 @@ struct FlashCardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        .white,
-                       .black
-                        
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+//                // Background gradient
+//                LinearGradient(
+//                    gradient: Gradient(colors: [
+//                        .white,
+//                       .black
+//                        
+//                    ]),
+//                    startPoint: .top,
+//                    endPoint: .bottom
+//                )
+//                .ignoresSafeArea()
                 LinearGradient(
                     gradient: Gradient(colors: [
                         .white,

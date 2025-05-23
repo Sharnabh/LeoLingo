@@ -14,14 +14,14 @@ struct CategorySelectionView: View {
     @Environment(\.presentationMode) var presentationMode
     
     // Rainbow gradient colors
-    let gradientColors: [Color] = [
-        Color(red: 1, green: 0.2, blue: 0.3),  // Red
-        Color(red: 1, green: 0.6, blue: 0),    // Orange
-        Color(red: 1, green: 0.8, blue: 0),    // Yellow
-        Color(red: 0.4, green: 0.8, blue: 0.4),// Green
-        Color(red: 0.4, green: 0.6, blue: 1),  // Blue
-        Color(red: 0.6, green: 0.4, blue: 0.8) // Purple
-    ]
+//    let gradientColors: [Color] = [
+//        Color(red: 1, green: 0.2, blue: 0.3),  // Red
+//        Color(red: 1, green: 0.6, blue: 0),    // Orange
+//        Color(red: 1, green: 0.8, blue: 0),    // Yellow
+//        Color(red: 0.4, green: 0.8, blue: 0.4),// Green
+//        Color(red: 0.4, green: 0.6, blue: 1),  // Blue
+//        Color(red: 0.6, green: 0.4, blue: 0.8) // Purple
+//    ]
     
     private let columns = [
         GridItem(.adaptive(minimum: 220, maximum: 250), spacing: 25)
@@ -67,27 +67,15 @@ struct CategorySelectionView: View {
                             // Glowing background
                             Text("Flash Cards")
                                 .font(.system(size: 55, weight: .heavy, design: .rounded))
-                                .foregroundStyle(
-                                    .linearGradient(
-                                        colors: gradientColors,
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+                                .foregroundStyle(Color(hex: "#00801f").opacity(0.4)) // dark green glow
                                 .blur(radius: 20)
                                 .opacity(0.7)
                                 .scaleEffect(1.2)
-                            
-                            // Main title with rainbow gradient
+
+                            // Main title with dark green color
                             Text("Flash Cards")
                                 .font(.system(size: 50, weight: .heavy, design: .rounded))
-                                .foregroundStyle(
-                                    .linearGradient(
-                                        colors: gradientColors,
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+                                .foregroundStyle(Color(hex: "#00801f")) // single dark green color
                                 .shadow(color: .white, radius: 2, x: 0, y: 0)
                                 .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 0)
                                 .overlay(
@@ -119,46 +107,6 @@ struct CategorySelectionView: View {
                                 titleOpacity = 1
                                 titleRotation = 0
                             }
-                            
-//                            // Continuous floating animation
-//                            withAnimation(
-//                                .easeInOut(duration: 2.0)
-//                                .repeatForever(autoreverses: true)
-//                            ) {
-//                                titleOffset = 10
-//                            }
-//                            
-//                            // Continuous rotation animation
-//                            withAnimation(
-//                                .easeInOut(duration: 3.0)
-//                                .repeatForever(autoreverses: true)
-//                            ) {
-//                                titleRotation = 5
-//                            }
-//                            
-//                            // Continuous bounce animation
-//                            withAnimation(
-//                                .easeInOut(duration: 1.5)
-//                                .repeatForever(autoreverses: true)
-//                            ) {
-//                                titleBounce = 1.1
-//                            }
-//                            
-//                            // Continuous shimmer animation
-//                            withAnimation(
-//                                .linear(duration: 2.5)
-//                                .repeatForever(autoreverses: false)
-//                            ) {
-//                                shimmerOffset = 1.7
-//                            }
-//                            
-//                            // Rainbow animation
-//                            withAnimation(
-//                                .linear(duration: 3)
-//                                .repeatForever(autoreverses: false)
-//                            ) {
-//                                rainbowHue = 1
-//                            }
                         }
                         
                         // Add invisible back button space to balance the layout

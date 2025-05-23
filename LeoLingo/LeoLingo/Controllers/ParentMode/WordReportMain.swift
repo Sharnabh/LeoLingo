@@ -44,7 +44,7 @@ class WordReportMain: UIViewController {
         navigationItem.rightBarButtonItem = customBarButton
         
         wordReportView.layer.borderColor = UIColor(red: 143/255, green: 91/255, blue: 66/255, alpha: 1).cgColor
-        wordReportView.layer.borderWidth = 2
+        wordReportView.layer.borderWidth = 3
         wordReportView.layer.cornerRadius = 20
         wordReportView.clipsToBounds = true
     }

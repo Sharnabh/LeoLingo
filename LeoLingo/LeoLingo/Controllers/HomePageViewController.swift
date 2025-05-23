@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HomePageViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var levelImageView: UIImageView!
@@ -581,12 +582,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     @IBAction func kidsModeButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "ParentMode", bundle: nil)
-        if let parentHomeVC = storyboard.instantiateViewController(withIdentifier: "ParentModeLockScreen") as? LockScreenViewController {
-            parentHomeVC.modalPresentationStyle = .fullScreen
-            self.present(parentHomeVC, animated: true, completion: nil)
-            
-        }
+        let lockScreenView = UIHostingController(rootView: ParentModeLockScreenView())
+        lockScreenView.modalPresentationStyle = .fullScreen
+        self.present(lockScreenView, animated: true)
     }
     @IBAction func vocalCoachButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)

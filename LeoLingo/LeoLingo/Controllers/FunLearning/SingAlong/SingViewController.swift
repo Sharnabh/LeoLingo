@@ -232,18 +232,18 @@ class SingViewController: UIViewController {
             
             leftLottie.centerYAnchor.constraint(equalTo: lyricsBackgroundView.centerYAnchor),
             leftLottie.trailingAnchor.constraint(equalTo: lyricsBackgroundView.leadingAnchor, constant: -8),
-            leftLottie.widthAnchor.constraint(equalToConstant: 200),
-            leftLottie.heightAnchor.constraint(equalToConstant: 200),
+            leftLottie.widthAnchor.constraint(equalToConstant: 300),
+            leftLottie.heightAnchor.constraint(equalToConstant: 300),
             
             rightLottie.centerYAnchor.constraint(equalTo: lyricsBackgroundView.centerYAnchor),
             rightLottie.leadingAnchor.constraint(equalTo: lyricsBackgroundView.trailingAnchor, constant: 8),
-            rightLottie.widthAnchor.constraint(equalToConstant: 200),
-            rightLottie.heightAnchor.constraint(equalToConstant: 200),
+            rightLottie.widthAnchor.constraint(equalToConstant: 300),
+            rightLottie.heightAnchor.constraint(equalToConstant: 300),
             
             lyricsBackgroundView.topAnchor.constraint(equalTo: poemTitleLabel.bottomAnchor, constant: 20),
             lyricsBackgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            lyricsBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
-            lyricsBackgroundView.heightAnchor.constraint(equalToConstant: 300),
+            lyricsBackgroundView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
+            lyricsBackgroundView.heightAnchor.constraint(equalToConstant: 250),
             
             poemContentScrollView.topAnchor.constraint(equalTo: lyricsBackgroundView.topAnchor),
             poemContentScrollView.leadingAnchor.constraint(equalTo: lyricsBackgroundView.leadingAnchor),

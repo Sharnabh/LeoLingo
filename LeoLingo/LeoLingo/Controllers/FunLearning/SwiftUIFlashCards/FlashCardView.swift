@@ -330,28 +330,52 @@ struct FlashCardView: View {
                 // Scrolling left to right
                 if !isMojoOnLeft {
                     // If Mojo is on right, just move to next card without changing positions
+                    if isFlipped {
+                        // If showing word, flip back to image
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            isFlipped = false
+                        }
+                    }
                     currentIndex += 1
                 } else {
                     // If Mojo is on left, swap positions and move to next card
+                    if isFlipped {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            isFlipped = false
+                        }
+                    }
                     isMojoOnLeft.toggle()
                     currentIndex += 1
                 }
-//                monkeyState = .speaking(text: "Let's see the next card!")
             } else if gesture.translation.width > threshold && hasPreviousCard {
                 // Scrolling right to left
                 if isMojoOnLeft {
                     // If Mojo is on left, just move to previous card without changing positions
+                    if isFlipped {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            isFlipped = false
+                        }
+                    }
                     currentIndex -= 1
                 } else {
                     // If Mojo is on right, swap positions and move to previous card
+                    if isFlipped {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            isFlipped = false
+                        }
+                    }
                     isMojoOnLeft.toggle()
                     currentIndex -= 1
                 }
-//                monkeyState = .speaking(text: "Going back to the previous card!")
             }
             
             offset = .zero
             cardRotation = 0
+            
+            // Update Mojo's state based on card flip
+            if !isFlipped {
+                monkeyState = .thinking
+            }
         }
     }
     
@@ -361,8 +385,7 @@ struct FlashCardView: View {
             if isFlipped {
                 monkeyState = .speaking(text: "Here's how we write \"\(currentCard.word)\"!")
             } else {
-                monkeyState = .speaking(text: "Let's practice saying \"\(currentCard.word)\"!")
-                speakWord()
+                monkeyState = .thinking
             }
         }
     }
@@ -403,6 +426,7 @@ struct FlashCardView: View {
         withAnimation(.spring()) {
             currentIndex -= 1
             isFlipped = false
+            
             monkeyState = .speaking(text: "Let's go back to \"\(currentCard.word)\"")
         }
         
@@ -437,7 +461,7 @@ struct FlashCardView: View {
         utterance.rate = 0.5
         utterance.pitchMultiplier = 1.1
         utterance.volume = 1.0
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-IN")
         
         // Start speaking and update state
         isSpeakingFact = true

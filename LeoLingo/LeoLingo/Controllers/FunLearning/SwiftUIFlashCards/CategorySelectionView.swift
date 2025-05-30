@@ -291,7 +291,7 @@ struct FloatingLeavesView: View {
                         let dx = CGFloat(windEffect) * 2.0
                         
                         // Vertical movement with slight variation
-                        let baseSpeed = CGFloat.random(in: 0.2...0.8)
+                        let baseSpeed = CGFloat.random(in: 0.1...0.2)
                         let verticalVariation = sin(time * 0.3 + Double(i)) * 0.5
                         let dy = baseSpeed + CGFloat(verticalVariation)
                         

@@ -3,6 +3,12 @@ import AVFoundation
 import Speech
 import Combine
 
+// Add MojoPosition enum at file level scope
+enum MojoPosition {
+    case left
+    case right
+}
+
 struct FlashCardView: View {
     let category: FlashCardCategory
     @Environment(\.dismiss) private var dismiss
@@ -20,11 +26,17 @@ struct FlashCardView: View {
     @State private var feedbackMessage = ""
     @State private var showFeedback = false
     @State private var pronunciationAccuracy: Double = 0
+    @State private var monkeyState: MonkeyInstructorView.MonkeyState = .greeting
+    @State private var rainbowHue: Double = 0
+    @State private var titleBounce: CGFloat = 1.0
     
     // Speech processing
     private let factSpeechSynthesizer = AVSpeechSynthesizer()
     private let speechProcessor = GameSpeechProcessor()
     @State private var speechSubscription: AnyCancellable?
+    
+    // Audio player for celebration sound
+    @State private var celebrationPlayer: AVAudioPlayer?
     
     // Card properties
     private var currentCard: FlashCard { category.cards[currentIndex] }
@@ -81,35 +93,42 @@ struct FlashCardView: View {
         facts[currentCard.word] ?? "Did you know? \(currentCard.word) is a very interesting subject to learn about!"
     }
     
+    // Add state variables for Mojo interaction
+    @State private var isDragging = false
+    @State private var mojoScale: CGFloat = 1.0
+    @State private var mojoOpacity: Double = 1.0
+    @State private var mojoOffset = CGSize.zero
+    @State private var mojoPosition: MojoPosition = .left
+    @State private var isDraggingMojo = false
+    @State private var cardPosition: CGPoint = .zero
+    @State private var mojoInitialPosition: CGPoint = .zero
+    @State private var cardScale: CGFloat = 1.0
+    @State private var isMojoOnLeft = true  // This will determine Mojo's fixed position
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-//                // Background gradient
-//                LinearGradient(
-//                    gradient: Gradient(colors: [
-//                        .white,
-//                       .black
-//                        
-//                    ]),
-//                    startPoint: .top,
-//                    endPoint: .bottom
-//                )
-//                .ignoresSafeArea()
+                // Background with animated gradient
                 LinearGradient(
                     gradient: Gradient(colors: [
+                        category.color.opacity(0.4),
                         .white,
-                        category.color.opacity(0.8)
-                        
+                        category.color.opacity(0.7)
                     ]),
-                    startPoint: .top,
-                    endPoint: .bottom
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
+                .hueRotation(.degrees(rainbowHue))
+                .animation(.easeInOut(duration: 5).repeatForever(autoreverses: true), value: rainbowHue)
+                .onAppear {
+                    rainbowHue = 10
+                }
                 
-                // Floating bubbles background
+                // Floating bubbles
                 FloatingBubblesView(color: category.color)
                 
-                VStack(spacing: 15) {
+                VStack(spacing: 20) {
                     // Header with back button and title
                     HStack {
                         BackButton {
@@ -118,136 +137,148 @@ struct FlashCardView: View {
                         
                         Spacer()
                         
+                        // Animated category title
                         Text(category.name)
                             .font(.system(size: 44, weight: .heavy, design: .rounded))
-                            .foregroundColor(category.color)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [
+                                        category.color,
+                                        category.color.opacity(0.7)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .shadow(color: .white, radius: 2)
                             .shadow(color: .black.opacity(0.3), radius: 4)
+                            .onAppear {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.5).repeatForever()) {
+                                    titleBounce = 1.05
+                                }
+                            }
                         
                         Spacer()
                         
-                        // Invisible view for balance
                         Color.clear.frame(width: 50, height: 50)
                     }
                     .padding(.horizontal)
                     
-                    // Card counter
-                    CardCounter(current: currentIndex + 1, total: category.cards.count)
-                    
-                    // Main flashcard
-                    ZStack {
-                        FlashCardDisplay(
-                            word: currentCard.word,
-                            image: currentCard.image,
-                            color: category.color,
-                            isFlipped: isFlipped
-                        )
-                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
-                        .rotation3DEffect(.degrees(cardRotation), axis: (x: 1, y: 0, z: 0))
-                        .offset(offset)
-                        .gesture(
-                            DragGesture()
-                                .onChanged { gesture in
-                                    offset = gesture.translation
-                                    cardRotation = Double(gesture.translation.height * 0.1)
-                                }
-                                .onEnded { gesture in
-                                    handleSwipe(gesture)
-                                }
-                        )
-                        .onTapGesture {
-                            handleCardTap()
+                    // Progress indicator
+                    HStack(spacing: 5) {
+                        ForEach(0..<category.cards.count, id: \.self) { index in
+                            Circle()
+                                .fill(index == currentIndex ? category.color : category.color.opacity(0.3))
+                                .frame(width: 10, height: 10)
+                                .scaleEffect(index == currentIndex ? 1.2 : 1.0)
+                                .animation(.spring(), value: currentIndex)
                         }
-                        
-                        // Remove the listening indicator that appears in the top-left
-                        // if isListening {
-                        //     ListeningIndicator()
-                        //         .frame(width: 80, height: 80)
-                        //         .position(x: 40, y: 40)
-                        // }
                     }
-                    .frame(height: geometry.size.height * 0.45)
+                    .padding(.vertical, 5)
                     
-                    // Fact about the card
-                    FactPanel(
-                        fact: currentFact,
-                        color: category.color,
-                        speakAction: speakFact,
-                        isVisible: $showFact,
-                        isSpeaking: $isSpeakingFact
-                    )
-                    .frame(height: geometry.size.height * 0.15)
-                    .opacity(showFact ? 1 : 0)
-                    .scaleEffect(showFact ? 1 : 0.8)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: showFact)
+                    // Main content area with Mojo and Card
+                    ZStack {
+                        // Card and Mojo Container
+                        HStack {
+                            if isMojoOnLeft {
+                                mojoView(geometry: geometry, position: .left)
+                                    .frame(width: geometry.size.width * 0.3)
+                                
+                                Spacer()
+                                
+                                cardView(size: geometry.size)
+                                    .frame(width: geometry.size.width * 0.5)
+                            } else {
+                                cardView(size: geometry.size)
+                                    .frame(width: geometry.size.width * 0.5)
+                                
+                                Spacer()
+                                
+                                mojoView(geometry: geometry, position: .right)
+                                    .frame(width: geometry.size.width * 0.3)
+                            }
+                        }
+                        .padding(.horizontal, 40)
+                    }
+                    .frame(height: geometry.size.height * 0.5)
                     
-                    // Navigation buttons
-                    HStack(spacing: 25) {
+                    // Fun fact panel with improved design
+                    if showFact {
+                        FactPanel(
+                            fact: currentFact,
+                            color: category.color,
+                            speakAction: speakFact,
+                            isVisible: $showFact,
+                            isSpeaking: $isSpeakingFact
+                        )
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                    
+                    // Navigation controls with improved design
+                    HStack(spacing: 30) {
                         NavigationButton(
                             icon: "arrow.left.circle.fill",
                             isEnabled: hasPreviousCard,
                             action: previousCard
                         )
+                        .scaleEffect(hasPreviousCard ? 1.0 : 0.8)
                         
-//                        NavigationButton(
-//                            icon: "speaker.wave.2.fill",
-//                            isEnabled: true,
-//                            action: speakWord
-//                        )
-                        
-                        // Microphone button for speech recognition - updated to show waveform when active
-                        NavigationButton(
-                            icon: isListening ? "waveform.circle.fill" : "mic.circle.fill",
-                            isEnabled: true,
-                            action: toggleListening
-                        )
-                        .foregroundColor(isListening ? .red : .white)
-                        .scaleEffect(isListening ? 1.2 : 1.0)
-                        .animation(.spring(), value: isListening)
-                        
-//                        NavigationButton(
-//                            icon: showFact ? "lightbulb.fill" : "lightbulb",
-//                            isEnabled: true,
-//                            action: toggleFact
-//                        )
-//                        .foregroundColor(showFact ? .yellow : .white)
+                        // Microphone button with pulse animation
+                        ZStack {
+                            Circle()
+                                .fill(category.color)
+                                .frame(width: 70, height: 70)
+                                .scaleEffect(isListening ? 1.0 : 0.8)
+                                .animation(.spring(), value: isListening)
+                            
+                            if isListening {
+                                ForEach(0..<3) { i in
+                                    Circle()
+                                        .stroke(category.color.opacity(0.3), lineWidth: 2)
+                                        .frame(width: 70 , height: 70 )
+                                        .scaleEffect(isListening ? 1.0 : 0.8)
+                                        .opacity(isListening ? 0 : 1)
+                                        .animation(
+                                            Animation.easeInOut(duration: 1)
+                                                .repeatForever()
+                                                .delay(Double(i) * 0.2),
+                                            value: isListening
+                                        )
+                                }
+                            }
+                            
+                            Image(systemName: isListening ? "waveform.circle.fill" : "mic.circle.fill")
+                                .font(.system(size: 30))
+                                .foregroundColor(.white)
+                        }
+                        .onTapGesture {
+                            toggleListening()
+                        }
                         
                         NavigationButton(
                             icon: "arrow.right.circle.fill",
                             isEnabled: hasNextCard,
                             action: nextCard
                         )
+                        .scaleEffect(hasNextCard ? 1.0 : 0.8)
                     }
+                    .padding(.top, 20)
                 }
                 .padding(.vertical)
                 
+              
+                
+                // Visual effects
                 if showConfetti { ConfettiView() }
                 if showStars { StarParticlesView() }
                 
-                // Feedback message
+                // Feedback overlay
                 if showFeedback {
-                    VStack(spacing: 10) {
-                        Text(feedbackMessage)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                        
-                        if pronunciationAccuracy > 0 {
-                            AccuracyMeter(accuracy: pronunciationAccuracy)
-                                .frame(height: 25)
-                                .padding(.horizontal, 40)
-                        }
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(feedbackColor())
-                            .opacity(0.9)
+                    FeedbackOverlay(
+                        message: feedbackMessage,
+                        accuracy: pronunciationAccuracy,
+                        color: feedbackColor()
                     )
-                    .padding(.horizontal, 30)
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(10)
                 }
             }
         }
@@ -256,18 +287,7 @@ struct FlashCardView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         .onAppear {
-            // Show fact with a slight delay for a nice reveal
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                withAnimation {
-                    showFact = true
-                }
-            }
-            
-            // Set up speech synthesizer delegate
-            factSpeechSynthesizer.delegate = SpeechFinishDelegate.shared
-            
-            // Request speech recognition permission
-            speechProcessor.requestSpeechRecognitionPermission()
+            setupInitialState()
         }
         .onReceive(NotificationCenter.default.publisher(for: .speechDidFinish)) { _ in
             // Handle speech completion
@@ -277,15 +297,28 @@ struct FlashCardView: View {
         }
     }
     
+    private func setupInitialState() {
+        // Initial animations and setup
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation {
+                showFact = true
+            }
+        }
+        
+        factSpeechSynthesizer.delegate = SpeechFinishDelegate.shared
+        speechProcessor.requestSpeechRecognitionPermission()
+        setupCelebrationSound()
+    }
+    
     // MARK: - Actions
     
     private func feedbackColor() -> Color {
-        if pronunciationAccuracy >= 80 {
-            return .green
-        } else if pronunciationAccuracy >= 50 {
-            return .orange
+        if pronunciationAccuracy >= 75 {
+            return .green.opacity(0.5)
+        } else if pronunciationAccuracy >= 40 {
+            return .orange.opacity(0.5)
         } else {
-            return .red
+            return .red.opacity(0.5)
         }
     }
     
@@ -294,9 +327,27 @@ struct FlashCardView: View {
             let threshold: CGFloat = 150
             
             if gesture.translation.width < -threshold && hasNextCard {
-                nextCard()
+                // Scrolling left to right
+                if !isMojoOnLeft {
+                    // If Mojo is on right, just move to next card without changing positions
+                    currentIndex += 1
+                } else {
+                    // If Mojo is on left, swap positions and move to next card
+                    isMojoOnLeft.toggle()
+                    currentIndex += 1
+                }
+//                monkeyState = .speaking(text: "Let's see the next card!")
             } else if gesture.translation.width > threshold && hasPreviousCard {
-                previousCard()
+                // Scrolling right to left
+                if isMojoOnLeft {
+                    // If Mojo is on left, just move to previous card without changing positions
+                    currentIndex -= 1
+                } else {
+                    // If Mojo is on right, swap positions and move to previous card
+                    isMojoOnLeft.toggle()
+                    currentIndex -= 1
+                }
+//                monkeyState = .speaking(text: "Going back to the previous card!")
             }
             
             offset = .zero
@@ -307,20 +358,21 @@ struct FlashCardView: View {
     private func handleCardTap() {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
             isFlipped.toggle()
-            if !isFlipped {
+            if isFlipped {
+                monkeyState = .speaking(text: "Here's how we write \"\(currentCard.word)\"!")
+            } else {
+                monkeyState = .speaking(text: "Let's practice saying \"\(currentCard.word)\"!")
                 speakWord()
             }
         }
     }
     
     private func nextCard() {
-        // Stop any ongoing speech when changing cards
         if isSpeakingFact {
             factSpeechSynthesizer.stopSpeaking(at: .immediate)
             isSpeakingFact = false
         }
         
-        // Stop any active listening
         if isListening {
             stopListening()
         }
@@ -328,17 +380,22 @@ struct FlashCardView: View {
         withAnimation(.spring()) {
             currentIndex += 1
             isFlipped = false
+            monkeyState = .speaking(text: "Let's learn \"\(currentCard.word)\"")
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                monkeyState = .thinking
+            }
         }
     }
     
     private func previousCard() {
-        // Stop any ongoing speech when changing cards
         if isSpeakingFact {
             factSpeechSynthesizer.stopSpeaking(at: .immediate)
             isSpeakingFact = false
         }
         
-        // Stop any active listening
         if isListening {
             stopListening()
         }
@@ -346,11 +403,25 @@ struct FlashCardView: View {
         withAnimation(.spring()) {
             currentIndex -= 1
             isFlipped = false
+            monkeyState = .speaking(text: "Let's go back to \"\(currentCard.word)\"")
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                monkeyState = .thinking
+            }
         }
     }
     
     private func speakWord() {
         SwiftUIFlashCardDataManager.shared.speakWord(currentCard.word)
+        monkeyState = .speaking(text: "Let's say: \"\(currentCard.word)\"")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                monkeyState = .thinking
+            }
+        }
     }
     
     private func speakFact() {
@@ -375,13 +446,14 @@ struct FlashCardView: View {
     
     private func toggleFact() {
         withAnimation {
-            // If hiding facts, stop any ongoing speech
             if showFact && isSpeakingFact {
                 factSpeechSynthesizer.stopSpeaking(at: .immediate)
                 isSpeakingFact = false
+                monkeyState = .thinking
+            } else {
+                showFact = true
+                monkeyState = .speakingFact(text: currentFact)
             }
-            
-            showFact.toggle()
         }
     }
     
@@ -390,8 +462,10 @@ struct FlashCardView: View {
     private func toggleListening() {
         if isListening {
             stopListening()
+            monkeyState = .thinking
         } else {
             startListening()
+            monkeyState = .listening
         }
     }
     
@@ -434,35 +508,53 @@ struct FlashCardView: View {
         speechSubscription?.cancel()
     }
     
+    private func setupCelebrationSound() {
+        if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
+            do {
+                celebrationPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                celebrationPlayer?.prepareToPlay()
+            } catch {
+                print("Error loading celebration sound: \(error)")
+            }
+        }
+    }
+    
+    private func playCelebrationSound() {
+        celebrationPlayer?.currentTime = 0
+        celebrationPlayer?.play()
+    }
+    
     private func evaluateUserSpeech(_ spokenText: String) {
-        // Calculate accuracy using Levenshtein distance
         let distance = speechProcessor.levenshteinDistance(spokenText.lowercased(), currentCard.word.lowercased())
         let maxLength = max(spokenText.count, currentCard.word.count)
         let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
         
         pronunciationAccuracy = accuracy
         
-        // Show feedback based on accuracy
         withAnimation {
             if accuracy >= 80.0 {
                 feedbackMessage = "Great job! 🌟\nThat's correct!"
                 showStars = true
                 showConfetti = true
+                monkeyState = .speakingFeedback(text: "Great job! 🌟\nThat's correct!", isGood: true)
+                playCelebrationSound()
             } else if accuracy >= 50.0 {
                 feedbackMessage = "Good try! 💪\nKeep practicing!"
+                monkeyState = .speakingFeedback(text: "Good try! 💪\nKeep practicing!", isGood: true)
             } else {
                 feedbackMessage = "Let's try again! 👂\nSay: \"\(currentCard.word)\""
+                monkeyState = .speakingFeedback(text: "Let's try again! 👂\nSay: \"\(currentCard.word)\"", isGood: false)
             }
             showFeedback = true
         }
         
-        // Hide feedback after delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             withAnimation {
                 showFeedback = false
                 showStars = false
                 showConfetti = false
                 pronunciationAccuracy = 0
+                monkeyState = .thinking
             }
         }
         
@@ -479,6 +571,146 @@ struct FlashCardView: View {
             withAnimation {
                 showFeedback = false
             }
+        }
+    }
+    
+    // Helper function to create card view
+    private func cardView(size: CGSize) -> some View {
+        ZStack {
+            FlashCardDisplay(
+                word: currentCard.word,
+                image: currentCard.image,
+                color: category.color,
+                isFlipped: isFlipped
+            )
+            .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
+            .rotation3DEffect(.degrees(cardRotation), axis: (x: 1, y: 0, z: 0))
+            .offset(offset)
+            .scaleEffect(cardScale)
+            .gesture(
+                DragGesture()
+                    .onChanged { gesture in
+                        offset = gesture.translation
+                        cardRotation = Double(gesture.translation.height * 0.1)
+                        updateMojoInteraction(with: gesture.translation)
+                    }
+                    .onEnded { gesture in
+                        handleSwipe(gesture)
+                        resetMojoInteraction()
+                    }
+            )
+            .onTapGesture {
+                handleCardTap()
+            }
+            .zIndex(isDragging ? 2 : 1)
+        }
+    }
+    
+    private func mojoView(geometry: GeometryProxy, position: MojoPosition) -> some View {
+        MojoWithDialog(
+            state: monkeyState,
+            size: geometry.size,
+            position: position,
+            scale: mojoScale,
+            opacity: mojoOpacity
+        )
+        .offset(mojoOffset)
+        .gesture(
+            DragGesture()
+                .onChanged { gesture in
+                    isDraggingMojo = true
+                    mojoOffset = gesture.translation
+                    
+                    // Check if Mojo is near the card
+                    let cardCenter = isMojoOnLeft ? 
+                        CGPoint(x: geometry.size.width * 0.7, y: geometry.size.height * 0.25) :
+                        CGPoint(x: geometry.size.width * 0.3, y: geometry.size.height * 0.25)
+                    
+                    let mojoCenter = CGPoint(
+                        x: (isMojoOnLeft ? geometry.size.width * 0.3 : geometry.size.width * 0.7) + gesture.translation.width,
+                        y: geometry.size.height * 0.25 + gesture.translation.height
+                    )
+                    
+                    let distance = hypot(cardCenter.x - mojoCenter.x, cardCenter.y - mojoCenter.y)
+                    
+                    if distance < 100 {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            cardScale = 0.9
+                            mojoScale = 1.1
+                        }
+                    } else {
+                        withAnimation(.spring()) {
+                            cardScale = 1.0
+                            mojoScale = 1.0
+                        }
+                    }
+                }
+                .onEnded { gesture in
+                    isDraggingMojo = false
+                    
+                    // Check if Mojo should swap with card
+                    let cardCenter = isMojoOnLeft ? 
+                        CGPoint(x: geometry.size.width * 0.7, y: geometry.size.height * 0.25) :
+                        CGPoint(x: geometry.size.width * 0.3, y: geometry.size.height * 0.25)
+                    
+                    let mojoCenter = CGPoint(
+                        x: (isMojoOnLeft ? geometry.size.width * 0.3 : geometry.size.width * 0.7) + gesture.translation.width,
+                        y: geometry.size.height * 0.25 + gesture.translation.height
+                    )
+                    
+                    let distance = hypot(cardCenter.x - mojoCenter.x, cardCenter.y - mojoCenter.y)
+                    
+                    if distance < 100 {
+                        // Swap positions
+                        withAnimation(.spring()) {
+                            isMojoOnLeft.toggle()
+                            mojoOffset = .zero
+                            cardScale = 1.0
+                            mojoScale = 1.0
+                        }
+                    } else {
+                        // Reset position
+                        withAnimation(.spring()) {
+                            mojoOffset = .zero
+                            cardScale = 1.0
+                            mojoScale = 1.0
+                        }
+                    }
+                }
+        )
+        .zIndex(isDraggingMojo ? 2 : 0)
+    }
+    
+    private func updateMojoInteraction(with translation: CGSize) {
+        isDragging = true
+        
+        let isNearMojo: Bool
+        if isMojoOnLeft {
+            isNearMojo = translation.width < -100
+        } else {
+            isNearMojo = translation.width > 100
+        }
+        
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+            if isNearMojo {
+                mojoScale = 0.8
+                mojoOpacity = 0.0
+                cardScale = 1.1
+                monkeyState = .thinking
+            } else {
+                mojoScale = 1.0
+                mojoOpacity = 1.0
+                cardScale = 1.0
+            }
+        }
+    }
+    
+    private func resetMojoInteraction() {
+        isDragging = false
+        withAnimation(.spring()) {
+            mojoScale = 1.0
+            mojoOpacity = 1.0
+            cardScale = 1.0
         }
     }
 }
@@ -911,14 +1143,15 @@ struct AccuracyMeter: View {
             ZStack(alignment: .leading) {
                 // Background track
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white.opacity(0.3))
+                    .fill(Color.white.opacity(1))
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 
                 // Filled portion based on accuracy
                 RoundedRectangle(cornerRadius: 10)
                     .fill(meterColor())
                     .frame(width: max(geometry.size.width * CGFloat(accuracy) / 100.0, 0), height: geometry.size.height)
-//                
+                
+//
 //                // Percentage text
 //                Text("\(Int(accuracy))%")
 //                    .font(.caption)
@@ -932,12 +1165,180 @@ struct AccuracyMeter: View {
     
     private func meterColor() -> Color {
         switch accuracy {
-        case 80...100:
+        case 75...100:
             return .green
-        case 50..<80:
+        case 40..<75:
             return .orange
         default:
             return .red
         }
+    }
+}
+
+// New Feedback Overlay View
+struct FeedbackOverlay: View {
+    let message: String
+    let accuracy: Double
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            Text(message)
+                .font(.title2.bold())
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+            
+            if accuracy > 0 {
+                AccuracyMeter(accuracy: accuracy)
+                    .frame(height: 20)
+                    .padding(.horizontal, 40)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(color)
+                .opacity(0.95)
+                .shadow(radius: 10)
+        )
+        .padding(.horizontal, 400)
+        .transition(.scale.combined(with: .opacity))
+    }
+}
+
+// New MojoWithDialog component
+struct MojoWithDialog: View {
+    let state: MonkeyInstructorView.MonkeyState
+    let size: CGSize
+    let position: MojoPosition
+    @State private var isAnimating = false
+    let scale: CGFloat
+    let opacity: Double
+    
+    init(state: MonkeyInstructorView.MonkeyState, 
+         size: CGSize, 
+         position: MojoPosition, 
+         scale: CGFloat = 1.0,
+         opacity: Double = 1.0) {
+        self.state = state
+        self.size = size
+        self.position = position
+        self.scale = scale
+        self.opacity = opacity
+    }
+    
+    var body: some View {
+        VStack(alignment: .center) {
+            // Dialog bubble
+            if let message = getMessageForState() {
+                Text(message)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 24)
+                    .background(
+                        BubbleShape(position: position)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.1), radius: 3)
+                    )
+                    .padding(.bottom, 10)
+                    .transition(.scale.combined(with: .opacity))
+                    .opacity(opacity)
+            }
+            
+            // Mojo image
+            Image("Mojo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: size.height * 0.4)
+                .scaleEffect(isAnimating ? 1.05 * scale : 1.0 * scale)
+                .offset(y: isAnimating ? -5 : 0)
+                .opacity(opacity)
+                .animation(
+                    Animation.easeInOut(duration: 1.5)
+                        .repeatForever(autoreverses: true),
+                    value: isAnimating
+                )
+                .onAppear {
+                    isAnimating = true
+                }
+        }
+        .frame(maxWidth: .infinity)
+        .zIndex(0)
+    }
+    
+    private func getMessageForState() -> String? {
+        switch state {
+        case .greeting:
+            return "Hi! Let's learn together! 👋"
+        case .listening:
+            return "I'm listening... 👂"
+        case .happy:
+            return "Great job! 🌟\nYou're doing amazing!"
+        case .encouraging:
+            return "You can do it!\nTry again! 💪"
+        case .thinking:
+            return "Tap on Card to Flip it! "
+        case .speaking(let text):
+            return text
+        case .speakingFact(let text):
+            return "Fun Fact:\n\(text)"
+        case .speakingFeedback(let text, _):
+            return text
+        }
+    }
+}
+
+// Custom bubble shape for dialog
+struct BubbleShape: Shape {
+    let position: MojoPosition
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        // Main bubble rectangle with more rounded corners
+        let cornerRadius: CGFloat = 20
+        let bubbleRect = CGRect(
+            x: rect.minX,
+            y: rect.minY,
+            width: rect.width,
+            height: rect.height - 15
+        )
+        
+        // Create rounded rectangle
+        path.addRoundedRect(
+            in: bubbleRect,
+            cornerSize: CGSize(width: cornerRadius, height: cornerRadius)
+        )
+        
+        // Tail of the bubble
+        let tailWidth: CGFloat = 20
+        let tailHeight: CGFloat = 15
+        
+        let tailPoints: [CGPoint]
+        if position == .left {
+            tailPoints = [
+                CGPoint(x: bubbleRect.minX + 30, y: bubbleRect.maxY),
+                CGPoint(x: bubbleRect.minX + 40, y: rect.maxY),
+                CGPoint(x: bubbleRect.minX + 50, y: bubbleRect.maxY)
+            ]
+        } else {
+            tailPoints = [
+                CGPoint(x: bubbleRect.maxX - 50, y: bubbleRect.maxY),
+                CGPoint(x: bubbleRect.maxX - 40, y: rect.maxY),
+                CGPoint(x: bubbleRect.maxX - 30, y: bubbleRect.maxY)
+            ]
+        }
+        
+        // Add tail with smooth curve
+        path.move(to: tailPoints[0])
+        path.addQuadCurve(
+            to: tailPoints[2],
+            control: tailPoints[1]
+        )
+        
+        return path
     }
 }

@@ -1,11 +1,14 @@
 import UIKit
 import Speech
 import AVFoundation
+import Lottie
 
 // MARK: - Constants
 private enum Constants {
-    static let lionSize = CGSize(width: 150, height: 150)
+    static let lionSize = CGSize(width: 300, height: 300)
     static let lionStartingX: CGFloat = 100
+    static let lionPathHeight: CGFloat = 120
+    static let lionPathYInset: CGFloat = 0
     static let heartSize = CGSize(width: 25, height: 25)
     static let heartSpacing: CGFloat = 30
     static let coinSize = CGSize(width: 100, height: 100)
@@ -25,13 +28,13 @@ private enum Constants {
     static let popSoundFileName = "pop"
     static let themeSoundFileName = "gametheme"
     static let themeMusicVolume: Float = 0.3  // 30% volume
+    static let backgroundScrollSpeed: CGFloat = 2.0 // px per frame for smooth infinite scroll
 }
 
 class JungleRunViewController: UIViewController {
     
     @IBOutlet var backgroundImage1: UIImageView!
     @IBOutlet var backgroundImage2: UIImageView!
-    @IBOutlet var lionImageView: UIImageView!
     @IBOutlet var coinLabel: UILabel!
     @IBOutlet var diamondLabel: UILabel!
     
@@ -57,10 +60,12 @@ class JungleRunViewController: UIViewController {
                     gameTimer?.isPaused = true
                     wordCoinTimer?.invalidate()
                     stopBackgroundAnimation()
+                    pauseLionAnimation()
                 } else {
                     gameTimer?.isPaused = false
                     startGameLoop()
                     startBackgroundAnimation()
+                    resumeLionAnimation()
                 }
             }
         }
@@ -83,6 +88,12 @@ class JungleRunViewController: UIViewController {
         private var popSoundPlayer: AVAudioPlayer?
         private var themeMusicPlayer: AVAudioPlayer?
 
+        private var lionAnimationView: LottieAnimationView?
+        private var backgroundScrollDisplayLink: CADisplayLink?
+        private var lionPathView: UIView?
+        private var isJumping: Bool = false
+        private var isWordCoinActive: Bool = false
+
         deinit {
             gameTimer?.invalidate()
             wordCoinTimer?.invalidate()
@@ -101,12 +112,15 @@ class JungleRunViewController: UIViewController {
         @IBAction func pauseButtonTapped(_ sender: UIButton) {
             isPaused = true
             pauseMenu.isHidden = false
+            pauseLionAnimation()
+            wordCoinTimer?.invalidate()
         }
 
         // MARK: - Resume Button Action
         @IBAction func resumeButtonTapped(_ sender: UIButton) {
             isPaused = false
             pauseMenu.isHidden = true
+            resumeLionAnimation()
         }
 
         // MARK: - Restart Button Action
@@ -139,42 +153,66 @@ class JungleRunViewController: UIViewController {
             backgroundImage2.contentMode = .scaleAspectFill
             view.addSubview(backgroundImage2)
             
+            // Add the lion path (perfect rectangle, even darker, full width, flush with bottom)
+            let pathHeight = Constants.lionPathHeight
+            let pathY = view.bounds.height - pathHeight - Constants.lionPathYInset
+            let pathView = UIView(frame: CGRect(x: 0, y: pathY, width: view.bounds.width, height: pathHeight))
+            pathView.backgroundColor = UIColor(red: 0.05, green: 0.10, blue: 0.04, alpha: 1.0)
+            pathView.layer.cornerRadius = 0
+            view.addSubview(pathView)
+            view.bringSubviewToFront(pathView)
+            lionPathView = pathView
+
             // Ensure backgrounds are behind other elements
             view.sendSubviewToBack(backgroundImage2)
             view.sendSubviewToBack(backgroundImage1)
         }
 
         func startBackgroundAnimation() {
-            // Remove any existing animations first
-            backgroundImage1.layer.removeAllAnimations()
-            backgroundImage2.layer.removeAllAnimations()
-            
-            // Reset positions before starting new animation
+            stopBackgroundAnimation()
             backgroundImage1.frame.origin.x = 0
             backgroundImage2.frame.origin.x = view.bounds.width
-            
-            UIView.animate(withDuration: Constants.backgroundAnimationDuration, delay: 0, options: [.repeat, .curveLinear], animations: {
-                self.backgroundImage1.frame.origin.x -= self.view.bounds.width
-                self.backgroundImage2.frame.origin.x -= self.view.bounds.width
-            }, completion: nil)
+            backgroundScrollDisplayLink = CADisplayLink(target: self, selector: #selector(updateBackgroundScroll))
+            backgroundScrollDisplayLink?.add(to: .main, forMode: .default)
         }
 
         func stopBackgroundAnimation() {
-            // Stop the background animation by removing animations and resetting positions
+            backgroundScrollDisplayLink?.invalidate()
+            backgroundScrollDisplayLink = nil
             backgroundImage1.layer.removeAllAnimations()
             backgroundImage2.layer.removeAllAnimations()
             backgroundImage1.frame.origin.x = 0
             backgroundImage2.frame.origin.x = self.view.bounds.width
         }
 
+        @objc private func updateBackgroundScroll() {
+            guard !isPaused else { return }
+            let speed = Constants.backgroundScrollSpeed
+            backgroundImage1.frame.origin.x -= speed
+            backgroundImage2.frame.origin.x -= speed
+            // If a background is fully off screen, move it to the right of the other
+            if backgroundImage1.frame.maxX <= 0 {
+                backgroundImage1.frame.origin.x = backgroundImage2.frame.maxX
+            }
+            if backgroundImage2.frame.maxX <= 0 {
+                backgroundImage2.frame.origin.x = backgroundImage1.frame.maxX
+            }
+        }
+
         // MARK: - Lion Setup
         func setupLion() {
             let lionSize = Constants.lionSize
-            let lionY = view.bounds.height - 250  // Position lion 250 points from bottom
-            lionImageView = UIImageView(frame: CGRect(x: Constants.lionStartingX, y: lionY, width: lionSize.width, height: lionSize.height))
-            lionImageView.image = UIImage(named: "JungleLion")
-            lionImageView.contentMode = .scaleAspectFit
-            view.addSubview(lionImageView)
+            let pathHeight = Constants.lionPathHeight
+            let pathY = view.bounds.height - pathHeight - Constants.lionPathYInset
+            let lionY = pathY - lionSize.height + 40 // Tweak +35 so lion's feet are exactly on the path
+            lionAnimationView = LottieAnimationView(name: "jungleleo")
+            if let animationView = lionAnimationView {
+                animationView.frame = CGRect(x: Constants.lionStartingX, y: lionY, width: lionSize.width, height: lionSize.height)
+                animationView.contentMode = .scaleAspectFit
+                animationView.loopMode = .loop
+                animationView.play()
+                view.addSubview(animationView)
+            }
         }
 
         // MARK: - UI Setup
@@ -234,7 +272,10 @@ class JungleRunViewController: UIViewController {
                     self.gameData.word = self.generateRandomWord()
                 }
 
-                let randomY = self.view.bounds.height - CGFloat.random(in: 300...400)
+                // Increase the minimum Y so coins are always high enough to require a jump
+                let minY = self.view.bounds.height * 0.25 // 25% from top
+                let maxY = self.view.bounds.height * 0.45 // 45% from top
+                let randomY = CGFloat.random(in: minY...maxY)
                 coin.frame = CGRect(x: self.view.bounds.width, y: randomY, width: Constants.coinSize.width, height: Constants.coinSize.height)
                 self.view.addSubview(coin)
                 self.coins.append(coin)
@@ -251,7 +292,7 @@ class JungleRunViewController: UIViewController {
         }
 
         func detectCollisions() {
-            guard let lionFrame = lionImageView.layer.presentation()?.frame else { return }
+            guard let lionFrame = lionAnimationView?.layer.presentation()?.frame else { return }
             
             // Use Set for O(1) lookups
             let coinsToRemove = Set(coins.filter { coin in
@@ -357,11 +398,18 @@ class JungleRunViewController: UIViewController {
         }
 
         @objc func handleTap() {
+            // Prevent double tap and jumping during word coin
+            if isJumping || isWordCoinActive { return }
+            isJumping = true
+            pauseLionAnimation()
             UIView.animate(withDuration: Constants.jumpDuration / 2, animations: {
-                self.lionImageView.frame.origin.y -= Constants.jumpHeight
+                self.lionAnimationView?.frame.origin.y -= Constants.jumpHeight
             }, completion: { _ in
                 UIView.animate(withDuration: Constants.jumpDuration / 2, animations: {
-                    self.lionImageView.frame.origin.y += Constants.jumpHeight
+                    self.lionAnimationView?.frame.origin.y += Constants.jumpHeight
+                }, completion: { _ in
+                    self.resumeLionAnimation()
+                    self.isJumping = false
                 })
             })
         }
@@ -391,9 +439,9 @@ class JungleRunViewController: UIViewController {
 
         // MARK: - Accessibility
         func setupAccessibility() {
-            lionImageView.isAccessibilityElement = true
-            lionImageView.accessibilityLabel = "Lion character"
-            lionImageView.accessibilityHint = "Tap to make the lion jump"
+            lionAnimationView?.isAccessibilityElement = true
+            lionAnimationView?.accessibilityLabel = "Lion character"
+            lionAnimationView?.accessibilityHint = "Tap to make the lion jump"
             
             coinLabel.isAccessibilityElement = true
             coinLabel.accessibilityLabel = "Coins collected"
@@ -472,23 +520,54 @@ class JungleRunViewController: UIViewController {
         private func playCollectSound() {
             collectSoundPlayer?.currentTime = 0
             collectSoundPlayer?.play()
+            // Subtle bounce effect on coin collection
+            if let lion = lionAnimationView {
+                UIView.animate(withDuration: 0.1, animations: {
+                    lion.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                }) { _ in
+                    UIView.animate(withDuration: 0.1) {
+                        lion.transform = .identity
+                    }
+                }
+            }
         }
         
         private func playRoarSound() {
             roarSoundPlayer?.currentTime = 0
             roarSoundPlayer?.play()
+            // Simple particle effect on diamond collection
+            showDiamondParticles()
         }
         
-        private func playPopSound() {
-            popSoundPlayer?.currentTime = 0
-            popSoundPlayer?.play()
+        private func showDiamondParticles() {
+            let emitter = CAEmitterLayer()
+            emitter.emitterPosition = CGPoint(x: (lionAnimationView?.center.x ?? view.center.x), y: (lionAnimationView?.frame.minY ?? 100))
+            emitter.emitterShape = .line
+            emitter.emitterSize = CGSize(width: 80, height: 1)
+            let cell = CAEmitterCell()
+            cell.birthRate = 8
+            cell.lifetime = 1.0
+            cell.velocity = 120
+            cell.velocityRange = 40
+            cell.emissionLongitude = .pi / 2
+            cell.spin = 2
+            cell.scale = 0.05
+            cell.scaleRange = 0.1
+            cell.contents = UIImage(systemName: "diamond.fill")?.withTintColor(.systemTeal, renderingMode: .alwaysOriginal).cgImage
+            cell.color = UIColor.systemTeal.cgColor
+            emitter.emitterCells = [cell]
+            view.layer.addSublayer(emitter)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                emitter.removeFromSuperlayer()
+            }
         }
         
         private func showWordCoinChallenge(with word: String, coinView: UIImageView) {
-            // Stop all animations first
+            isWordCoinActive = true // Block jump
             isPaused = true
             stopBackgroundAnimation()
             coins.forEach { $0.layer.removeAllAnimations() }
+            pauseLionAnimation()
             
             // Create overlay
             let overlay = UIView(frame: view.bounds)
@@ -656,11 +735,27 @@ class JungleRunViewController: UIViewController {
                 self.overlayView = nil
                 self.expandedCoinView = nil
             }
+            
+            isWordCoinActive = false // Allow jump again
+            resumeLionAnimation()
         }
         
         private func resumeGame() {
             isPaused = false
             startBackgroundAnimation()
             spawnCoins() // Restart coin spawning
+        }
+
+        private func playPopSound() {
+            popSoundPlayer?.currentTime = 0
+            popSoundPlayer?.play()
+        }
+
+        private func pauseLionAnimation() {
+            lionAnimationView?.pause()
+        }
+
+        private func resumeLionAnimation() {
+            lionAnimationView?.play()
         }
     }

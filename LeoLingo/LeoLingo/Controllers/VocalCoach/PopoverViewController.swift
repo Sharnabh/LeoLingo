@@ -30,12 +30,6 @@ class PopoverViewController: UIViewController {
             levelBadge.image = UIImage(named: "defaultBadge") 
         }
     }
-    
-    @IBAction func proceedButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true) {
-            self.onProceed?()
-        }
-    }
 
     func configurePopover(message: String, image: String) {
         self.message = message

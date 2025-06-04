@@ -14,6 +14,16 @@ class SingAlongViewController: UIViewController {
     private let poems = Poem.poems
     private var poemCards: [PoemCard] = []
     
+    private let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Choose a poem to sing along!"
+        label.font = .systemFont(ofSize: 18, weight: .medium)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private lazy var backButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
         button.backgroundColor = .white
@@ -36,8 +46,8 @@ class SingAlongViewController: UIViewController {
         super.viewDidLoad()
         setupBackButton()
         setupPoemCards()
-        titleLabel.layer.cornerRadius = 21
-        titleLabel.layer.masksToBounds = true
+        setupTitleUI()
+        animateCards()
     }
     
     private func setupBackButton() {
@@ -52,26 +62,52 @@ class SingAlongViewController: UIViewController {
         ])
     }
     
+    private func setupTitleUI() {
+        view.addSubview(subtitleLabel)
+        
+        titleLabel.layer.cornerRadius = 21
+        titleLabel.layer.masksToBounds = true
+        titleLabel.backgroundColor = UIColor(hex: "4F904C")
+        titleLabel.textColor = .white
+        titleLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        titleLabel.text = "Sing Along"
+        
+        NSLayoutConstraint.activate([
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            subtitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            subtitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
     private func setupPoemCards() {
         let cardWidth: CGFloat = 300
         let cardHeight: CGFloat = 400
         let spacing: CGFloat = 30
         var xOffset: CGFloat = 20
         
-        for poem in poems {
+        for (index, poem) in poems.enumerated() {
             let card = PoemCard(frame: CGRect(x: xOffset, y: 20, width: cardWidth, height: cardHeight))
             card.configure(with: poem)
+            card.alpha = 0
+            card.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             card.onPlayTapped = { [weak self] in
                 self?.navigateToSingView(with: poem)
             }
-            
             poemScrollView.addSubview(card)
             poemCards.append(card)
-            
             xOffset += cardWidth + spacing
         }
-        
         poemScrollView.contentSize = CGSize(width: xOffset, height: cardHeight + 40)
+    }
+    
+    private func animateCards() {
+        for (index, card) in poemCards.enumerated() {
+            UIView.animate(withDuration: 0.5, delay: Double(index) * 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [], animations: {
+                card.alpha = 1
+                card.transform = .identity
+            })
+        }
     }
     
     private func navigateToSingView(with poem: Poem) {

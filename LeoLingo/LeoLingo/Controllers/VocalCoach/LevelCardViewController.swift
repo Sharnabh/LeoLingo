@@ -249,6 +249,9 @@ class LevelCardViewController: UIViewController {
         // Set vocal coach as active
         UserDefaults.standard.set(true, forKey: "isVocalCoachActive")
         
+        // Start practice session tracking
+        BadgeEarningManager.shared.startPracticeSession()
+        
         // Fetch data from Supabase
         Task {
             do {
@@ -315,6 +318,9 @@ class LevelCardViewController: UIViewController {
         } catch {
             print("Could not deactivate audio session: \(error.localizedDescription)")
         }
+        
+        // End practice session tracking
+        BadgeEarningManager.shared.endPracticeSession()
         
         // Only set vocal coach as inactive if we're going back to home
         if isMovingFromParent {
@@ -653,6 +659,12 @@ class LevelCardViewController: UIViewController {
                 // Refresh local data to update the filtered word list
                 await refreshData()
                 
+                // Check for badge achievements after word completion
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: accuracy, in: self)
+                }
+                
                 print("DEBUG: Successfully recorded accuracy and refreshed data")
             } catch {
                 print("DEBUG: Error recording accuracy: \(error)")
@@ -672,6 +684,12 @@ class LevelCardViewController: UIViewController {
                 
                 // Update local data
                 levels[selectedLevelIndex].words[selectedCardIndex].isPracticed = true
+                
+                // Check for badge achievements after word practice
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: 0, in: self)
+                }
                 
                 // Show success feedback
                 DispatchQueue.main.async { [weak self] in

@@ -225,6 +225,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Refresh practices and badges when view appears
         loadRecentPractices()
         refreshBadgeData()
+        
+        // Check for progress-based badges periodically
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            BadgeEarningManager.shared.checkProgressBadges(in: self)
+        }
     }
     
     private func refreshBadgeData() {

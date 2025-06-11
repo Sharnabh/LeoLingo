@@ -238,6 +238,9 @@ class PracticeScreenViewController: UIViewController {
         // Set vocal coach as active
         UserDefaults.standard.set(true, forKey: "isVocalCoachActive")
         
+        // Start practice session tracking
+        BadgeEarningManager.shared.startPracticeSession()
+        
         // Load levels from Supabase
         Task {
             do {
@@ -288,6 +291,9 @@ class PracticeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
+        
+        // End practice session tracking
+        BadgeEarningManager.shared.endPracticeSession()
         
         // Only set vocal coach as inactive if we're going back to home
         if isMovingFromParent {
@@ -523,16 +529,6 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: speechProcessor.getRecordingURL()?.path
                 )
                 
-                // Check if this is the first word completed and award bee badge
-                let appBadges = SupabaseDataController.shared.getBadgesData()
-                if let beeBadge = appBadges.first(where: { $0.badgeTitle == "Bee" }) {
-                    // Update the badge status in Supabase
-                    try await SupabaseDataController.shared.updateBadgeStatus(
-                        badgeId: beeBadge.id,
-                        isEarned: true
-                    )
-                }
-                
                 // Refresh data using userId
                 guard let userId = SupabaseDataController.shared.userId else {
                     print("No user ID found")
@@ -540,6 +536,12 @@ class PracticeScreenViewController: UIViewController {
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
+                
+                // Check for badge achievements after word completion
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: accuracy, in: self)
+                }
                 
                 // Show success feedback and move to next word on main thread
                 DispatchQueue.main.async { [weak self] in
@@ -550,6 +552,10 @@ class PracticeScreenViewController: UIViewController {
                     self.showPopover(isCorrect: true, levelChange: isLastWordInLevel) {
                         if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
                             if self.levelIndex < self.levels.count - 1 {
+                                // Check for level completion badges before moving to next level
+                                let completedLevelIndex = self.levelIndex
+                                BadgeEarningManager.shared.checkBadgesAfterLevelCompletion(levelIndex: completedLevelIndex, in: self)
+                                
                                 // Move to next level if available
                                 self.levelIndex += 1
                                 self.currentIndex = 0
@@ -557,6 +563,9 @@ class PracticeScreenViewController: UIViewController {
                                 self.showConfettiEffect()
                             } else {
                                 // At the last word of the last level
+                                let completedLevelIndex = self.levelIndex
+                                BadgeEarningManager.shared.checkBadgesAfterLevelCompletion(levelIndex: completedLevelIndex, in: self)
+                                
                                 self.levelIndex = 0
                                 self.currentIndex = 0
                                 self.updateUIAfterPopover()

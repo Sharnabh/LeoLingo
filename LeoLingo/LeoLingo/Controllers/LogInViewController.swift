@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class LogInViewController: UIViewController {
 
@@ -135,12 +136,12 @@ extension LogInViewController: LogInCellDelegate {
         }
     }
     
-    func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
+    func checkUserExists(email: String, completion: @escaping (Bool) -> Void) {
         showLoading()
         Task {
             do {
                 let users = try await SupabaseDataController.shared.getAllUsers()
-                let exists = users.contains { $0.phone_number == phone }
+                let exists = users.contains { $0.email == email }
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     completion(exists)
@@ -155,12 +156,12 @@ extension LogInViewController: LogInCellDelegate {
         }
     }
     
-    func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void) {
+    func validateLogin(email: String, password: String, completion: @escaping (Bool) -> Void) {
         showLoading()
         Task {
             do {
                 // Use the existing signIn method which handles validation
-                let userData = try await SupabaseDataController.shared.signIn(phoneNumber: phone, password: password)
+                let userData = try await SupabaseDataController.shared.signIn(email: email, password: password)
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     completion(true)
@@ -170,6 +171,69 @@ extension LogInViewController: LogInCellDelegate {
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     completion(false)
+                }
+            }
+        }
+    }
+    
+    func initiateOTPLogin(email: String, password: String) {
+        showLoading()
+        Task {
+            do {
+                // Start OTP verification process
+                try await SupabaseDataController.shared.initiateLogin(email: email, password: password)
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
+                    self?.showOTPVerification(email: email, type: .login)
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
+                    if let supabaseError = error as? SupabaseError {
+                        self?.showAlert(message: supabaseError.localizedDescription ?? "Login failed")
+                    } else {
+                        self?.showAlert(message: "Login failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func showOTPVerification(email: String, type: OTPType) {
+        let otpView = OTPVerificationView(
+            email: email,
+            otpType: type,
+            onVerificationSuccess: { [weak self] in
+                self?.handleOTPSuccess(type: type)
+            }
+        )
+        
+        let hostingController = UIHostingController(rootView: otpView)
+        hostingController.modalPresentationStyle = .fullScreen
+        present(hostingController, animated: true)
+    }
+    
+    private func handleOTPSuccess(type: OTPType) {
+        Task {
+            do {
+                switch type {
+                case .login:
+                    _ = try await SupabaseDataController.shared.completeLogin()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.dismiss(animated: true) {
+                            self?.switchToLandingPage()
+                        }
+                    }
+                case .signup:
+                    // Handle signup completion if needed
+                    break
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.dismiss(animated: true) {
+                        self?.showAlert(message: "Verification failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }

@@ -14,9 +14,9 @@ class CoreDataManager {
     }
     
     // MARK: - User Operations
-    func findUser(byPhone phoneNumber: String) -> User? {
+    func findUser(byEmail email: String) -> User? {
         let fetchRequest = NSFetchRequest<User>(entityName: "User")
-        fetchRequest.predicate = NSPredicate(format: "phoneNumber == %@", phoneNumber)
+        fetchRequest.predicate = NSPredicate(format: "email == %@", email)
         
         do {
             let users = try context.fetch(fetchRequest)
@@ -27,9 +27,9 @@ class CoreDataManager {
         }
     }
     
-    func validateUser(phoneNumber: String, password: String) -> User? {
+    func validateUser(email: String, password: String) -> User? {
         let fetchRequest = NSFetchRequest<User>(entityName: "User")
-        fetchRequest.predicate = NSPredicate(format: "phoneNumber == %@ AND password == %@", phoneNumber, password)
+        fetchRequest.predicate = NSPredicate(format: "email == %@ AND password == %@", email, password)
         
         do {
             let users = try context.fetch(fetchRequest)

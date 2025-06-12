@@ -11,12 +11,13 @@ protocol LogInCellDelegate: AnyObject {
     func showAlert(message: String)
     func switchToSignUpVC()
     func switchToLandingPage()
-    func checkUserExists(phone: String, completion: @escaping (Bool) -> Void)
-    func validateLogin(phone: String, password: String, completion: @escaping (Bool) -> Void)
+    func checkUserExists(email: String, completion: @escaping (Bool) -> Void)
+    func validateLogin(email: String, password: String, completion: @escaping (Bool) -> Void)
+    func initiateOTPLogin(email: String, password: String)
 }
 
 class LogInCollectionViewCell: UICollectionViewCell {
-    @IBOutlet var phoneNumberTextField: UITextField!
+    @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var loginButton: UIButton!
     @IBOutlet var switchToSignupVCButton: UIButton!
@@ -48,8 +49,8 @@ class LogInCollectionViewCell: UICollectionViewCell {
         passwordTextField.isSecureTextEntry = true
         
         // Setup text fields
-        phoneNumberTextField.keyboardType = .phonePad
-        phoneNumberTextField.delegate = self
+        emailTextField.keyboardType = .emailAddress
+        emailTextField.delegate = self
     }
     
     private func setupActions() {
@@ -65,20 +66,20 @@ class LogInCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func loginButtonTapped() {
-        guard let phone = phoneNumberTextField.text, !phone.isEmpty else {
-            delegate?.showAlert(message: "Please enter phone number")
+        guard let email = emailTextField.text, !email.isEmpty else {
+            delegate?.showAlert(message: "Please enter email address")
             return
         }
         
         // Check if user exists
         if passwordTextField.isHidden {
-            checkUserExists(phone: phone)
+            checkUserExists(email: email)
         } else {
             guard let password = passwordTextField.text, !password.isEmpty else {
                 delegate?.showAlert(message: "Please enter password")
                 return
             }
-            validateLogin(phone: phone, password: password)
+            validateLogin(email: email, password: password)
         }
     }
     
@@ -86,9 +87,9 @@ class LogInCollectionViewCell: UICollectionViewCell {
         delegate?.switchToSignUpVC()
     }
     
-    private func checkUserExists(phone: String) {
+    private func checkUserExists(email: String) {
         // Replace with your actual database check
-        delegate?.checkUserExists(phone: phone) { [weak self] exists in
+        delegate?.checkUserExists(email: email) { [weak self] exists in
             if exists {
                 self?.passwordTextField.isHidden = false
             } else {
@@ -97,32 +98,26 @@ class LogInCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private func validateLogin(phone: String, password: String) {
-        // Replace with your actual login validation
-        delegate?.validateLogin(phone: phone, password: password) { [weak self] success in
-            if !success {
-                self?.delegate?.showAlert(message: "Incorrect password")
-            } else {
-                self?.delegate?.switchToLandingPage()
-            }
-        }
+    private func validateLogin(email: String, password: String) {
+        // Use OTP-based authentication instead of direct login
+        delegate?.initiateOTPLogin(email: email, password: password)
     }
 }
 
 // MARK: - UITextFieldDelegate
 extension LogInCollectionViewCell: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField == phoneNumberTextField {
-            // Hide password field when user starts editing phone number
+        if textField == emailTextField {
+            // Hide password field when user starts editing email
             passwordTextField.isHidden = true
             passwordTextField.text = "" // Clear password for security
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == phoneNumberTextField {
-            if let phone = textField.text, !phone.isEmpty {
-                checkUserExists(phone: phone)
+        if textField == emailTextField {
+            if let email = textField.text, !email.isEmpty {
+                checkUserExists(email: email)
             }
         }
     }

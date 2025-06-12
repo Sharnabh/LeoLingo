@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8D46ADCD2DC92B52003B6CF5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8D46ADCC2DC92B52003B6CF5 /* Lottie */; };
+		CE581E1F2DFB47ED000461BB /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = CE581E1E2DFB47ED000461BB /* SwiftSMTP */; };
 		CEA8A0012D6CEBD500E0CC77 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0002D6CEBD500E0CC77 /* Auth */; };
 		CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0022D6CEBD500E0CC77 /* Functions */; };
 		CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = CEA8A0042D6CEBD500E0CC77 /* PostgREST */; };
@@ -62,6 +63,7 @@
 			files = (
 				CEA8A0052D6CEBD500E0CC77 /* PostgREST in Frameworks */,
 				8D46ADCD2DC92B52003B6CF5 /* Lottie in Frameworks */,
+				CE581E1F2DFB47ED000461BB /* SwiftSMTP in Frameworks */,
 				CEA8A0032D6CEBD500E0CC77 /* Functions in Frameworks */,
 				CEA8A00B2D6CEBD500E0CC77 /* Supabase in Frameworks */,
 				CEA8A0012D6CEBD500E0CC77 /* Auth in Frameworks */,
@@ -126,6 +128,7 @@
 				CEA8A0082D6CEBD500E0CC77 /* Storage */,
 				CEA8A00A2D6CEBD500E0CC77 /* Supabase */,
 				8D46ADCC2DC92B52003B6CF5 /* Lottie */,
+				CE581E1E2DFB47ED000461BB /* SwiftSMTP */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -158,6 +161,7 @@
 			packageReferences = (
 				CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				8D46ADCB2DC92B52003B6CF5 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				CE581E1D2DFB47ED000461BB /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
@@ -417,6 +421,14 @@
 				minimumVersion = 4.5.1;
 			};
 		};
+		CE581E1D2DFB47ED000461BB /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-SMTP";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		CEA89FFF2D6CEB7900E0CC77 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -432,6 +444,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8D46ADCB2DC92B52003B6CF5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		CE581E1E2DFB47ED000461BB /* SwiftSMTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE581E1D2DFB47ED000461BB /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
+			productName = SwiftSMTP;
 		};
 		CEA8A0002D6CEBD500E0CC77 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;

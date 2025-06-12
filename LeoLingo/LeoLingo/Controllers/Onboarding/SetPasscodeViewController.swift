@@ -19,7 +19,7 @@ class SetPasscodeViewController: UIViewController {
     
     var myPasscode: String = ""
     let passCodeLength: Int = 4
-    var phoneNumber = ""
+    var email = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,10 +82,10 @@ class SetPasscodeViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    func setPhoneNumber() {
+    func setEmail() {
         if let questionnaireVC = navigationController?.parent as? QuestionnaireViewController {
             // Update progress before popping
-            phoneNumber = questionnaireVC.returnPhoneNumber()
+            email = questionnaireVC.returnEmail()
         }
     }
     

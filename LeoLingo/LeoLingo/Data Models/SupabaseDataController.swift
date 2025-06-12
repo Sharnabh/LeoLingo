@@ -11,10 +11,25 @@ class SupabaseDataController {
     
     // Add property to store current user ID
     private var currentUserId: UUID?
-    private var currentPhoneNumber: String?
+    private var currentEmail: String?
     
     // Add property to track if user is new
     private var isFirstTimeUser: Bool = false
+    
+    // Add OTP verification properties
+    private var pendingSignupData: PendingSignupData?
+    private var pendingLoginData: PendingLoginData?
+    
+    struct PendingSignupData {
+        let name: String
+        let email: String
+        let password: String
+    }
+    
+    struct PendingLoginData {
+        let email: String
+        let password: String
+    }
     
     // Add public getter and setter for first time user status
     public var isFirstTime: Bool {
@@ -27,9 +42,9 @@ class SupabaseDataController {
         get { currentUserId }
     }
     
-    // Keep phone number getter for backward compatibility
-    public var phoneNumber: String? {
-        get { currentPhoneNumber }
+    // Keep email getter for backward compatibility
+    public var email: String? {
+        get { currentEmail }
     }
     
     private init() {
@@ -41,11 +56,71 @@ class SupabaseDataController {
     
     // MARK: - User Management
     
-    func signUp(name: String, phoneNumber: String, password: String) async throws -> UserData {
+    // New OTP-based signup method
+    func initiateSignup(name: String, email: String, password: String) async throws {
+        // Check if user already exists
+        let existingUsers = try await getAllUsers()
+        if existingUsers.contains(where: { $0.email == email }) {
+            throw SupabaseError.userAlreadyExists
+        }
+        
+        // Store pending signup data
+        pendingSignupData = PendingSignupData(name: name, email: email, password: password)
+        
+        // Send OTP
+        try await OTPService.shared.sendOTP(to: email, type: .signup)
+    }
+    
+    // Complete signup after OTP verification
+    func completeSignup() async throws -> UserData {
+        guard let signupData = pendingSignupData else {
+            throw SupabaseError.invalidData
+        }
+        
+        do {
+            let userData = User(
+                name: signupData.name,
+                email: signupData.email,
+                password: signupData.password
+            )
+            
+            let response: User = try await supabase
+                .from("users")
+                .insert(userData)
+                .select()
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: ====== SIGNUP ======")
+            print("DEBUG: Created new user with ID: \(response.id)")
+            print("DEBUG: ===================")
+            
+            // Store both user ID and email on successful sign up
+            self.currentUserId = response.id
+            self.currentEmail = signupData.email
+            self.isFirstTimeUser = true
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = response.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            
+            // Clear pending data
+            pendingSignupData = nil
+            
+            await initializeUserDataWithBadgeAchievement(userId: response.id)
+            return try await getUser(byId: response.id)
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Legacy signup method (maintained for backward compatibility)
+    func signUp(name: String, email: String, password: String) async throws -> UserData {
         do {
             let userData = User(
                 name: name,
-                phone_number: phoneNumber,
+                email: email,
                 password: password
             )
             
@@ -61,9 +136,9 @@ class SupabaseDataController {
             print("DEBUG: Created new user with ID: \(response.id)")
             print("DEBUG: ===================")
             
-            // Store both user ID and phone number on successful sign up
+            // Store both user ID and email on successful sign up
             self.currentUserId = response.id
-            self.currentPhoneNumber = phoneNumber
+            self.currentEmail = email
             self.isFirstTimeUser = true
             
             // Save user ID to UserDefaults
@@ -80,11 +155,15 @@ class SupabaseDataController {
     private func initializeUserData(userId: UUID) async throws {
         print("DEBUG: Initializing user data for ID: \(userId)")
         
+        // Convert UUID to lowercase string format (standard UUID format)
+        let userIdString = userId.uuidString.lowercased()
+        print("DEBUG: Using formatted user ID: \(userIdString)")
+        
         // Check for existing word records
         let existingRecords: [UserWordRecord] = try await supabase
             .from("user_word_records")
             .select()
-            .eq("user_id", value: userId)
+            .eq("user_id", value: userIdString)
             .execute()
             .value
         
@@ -150,13 +229,81 @@ class SupabaseDataController {
         }
     }
     
-    func signIn(phoneNumber: String, password: String) async throws -> UserData {
+    // New OTP-based login method
+    func initiateLogin(email: String, password: String) async throws {
+        // First verify credentials without logging in
+        let response: [User] = try await supabase
+            .from("users")
+            .select()
+            .eq("email", value: email)
+            .eq("password", value: password)
+            .execute()
+            .value
+        
+        guard response.first != nil else {
+            throw SupabaseError.invalidCredentials
+        }
+        
+        // Store pending login data
+        pendingLoginData = PendingLoginData(email: email, password: password)
+        
+        // Send OTP
+        try await OTPService.shared.sendOTP(to: email, type: .login)
+    }
+    
+    // Complete login after OTP verification
+    func completeLogin() async throws -> UserData {
+        guard let loginData = pendingLoginData else {
+            throw SupabaseError.invalidData
+        }
+        
         do {
-            print("DEBUG: Attempting sign in for phone: \(phoneNumber)")
+            print("DEBUG: Attempting sign in for email: \(loginData.email)")
             let response: [User] = try await supabase
                 .from("users")
                 .select()
-                .eq("phone_number", value: phoneNumber)
+                .eq("email", value: loginData.email)
+                .eq("password", value: loginData.password)
+                .execute()
+                .value
+            
+            guard let user = response.first else {
+                throw SupabaseError.invalidCredentials
+            }
+            
+            print("DEBUG: ====== LOGIN ======")
+            print("DEBUG: Found user with ID: \(user.id)")
+            print("DEBUG: ==================")
+            
+            // Store both user ID and email on successful sign in
+            self.currentUserId = user.id
+            self.currentEmail = loginData.email
+            self.isFirstTimeUser = false
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = user.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            
+            // Clear pending data
+            pendingLoginData = nil
+            
+            // Ensure user data exists
+            try await initializeUserData(userId: user.id)
+            return try await getUser(byId: user.id)
+        } catch {
+            print("DEBUG: Sign in error: \(error)")
+            throw SupabaseError.networkError(error)
+        }
+    }
+    
+    // Legacy login method (maintained for backward compatibility)
+    func signIn(email: String, password: String) async throws -> UserData {
+        do {
+            print("DEBUG: Attempting sign in for email: \(email)")
+            let response: [User] = try await supabase
+                .from("users")
+                .select()
+                .eq("email", value: email)
                 .eq("password", value: password)
                 .execute()
                 .value
@@ -169,9 +316,9 @@ class SupabaseDataController {
             print("DEBUG: Found user with ID: \(user.id)")
             print("DEBUG: ==================")
             
-            // Store both user ID and phone number on successful sign in
+            // Store both user ID and email on successful sign in
             self.currentUserId = user.id
-            self.currentPhoneNumber = phoneNumber
+            self.currentEmail = email
             self.isFirstTimeUser = false
             
             // Save user ID to UserDefaults
@@ -190,10 +337,14 @@ class SupabaseDataController {
     // Add new method to get user by ID
     func getUser(byId userId: UUID) async throws -> UserData {
         print("DEBUG: Getting user data for ID: \(userId)")
+        // Convert UUID to lowercase string format (standard UUID format)
+        let userIdString = userId.uuidString.lowercased()
+        print("DEBUG: Using formatted user ID: \(userIdString)")
+        
         let user: User = try await supabase
             .from("users")
             .select()
-            .eq("id", value: userId)
+            .eq("id", value: userIdString)
             .single()
             .execute()
             .value
@@ -202,7 +353,7 @@ class SupabaseDataController {
         let wordsResponse: [UserWordRecord] = try await supabase
             .from("user_word_records")
             .select()
-            .eq("user_id", value: userId)
+            .eq("user_id", value: userIdString)
             .execute()
             .value
             
@@ -216,10 +367,13 @@ class SupabaseDataController {
         }
         
         // Get all badge records in a single query
+        // Convert UUID to lowercase string format (standard UUID format)
+//        let userIdString = userId.uuidString.lowercased()
+        
         let badgesResponse: [UserBadge] = try await supabase
             .from("user_badges")
             .select()
-            .eq("user_id", value: userId)
+            .eq("user_id", value: userIdString)
             .execute()
             .value
         
@@ -234,7 +388,7 @@ class SupabaseDataController {
         let userData = UserData(
             id: user.id,
             name: user.name,
-            phoneNumber: user.phone_number,
+            email: user.email,
             password: user.password,
             passcode: user.passcode,
             childName: user.child_name,
@@ -245,19 +399,6 @@ class SupabaseDataController {
         
         currentUser = userData
         return userData
-    }
-    
-    // Keep the phone number method for backward compatibility
-    func getUser(byPhone phoneNumber: String) async throws -> UserData {
-        let user: User = try await supabase
-            .from("users")
-            .select()
-            .eq("phone_number", value: phoneNumber)
-            .single()
-            .execute()
-            .value
-        
-        return try await getUser(byId: user.id)
     }
     
     // MARK: - Word Progress and Recordings
@@ -288,12 +429,16 @@ class SupabaseDataController {
         }
         
         do {
+            // Convert UUIDs to lowercase string format (standard UUID format)
+            let userIdString = userId.uuidString.lowercased()
+            let wordIdString = wordId.uuidString.lowercased()
+            
             // Get existing record if any
             let existingRecords: [UserWordRecord] = try await supabase
                 .from("user_word_records")
                 .select()
-                .eq("user_id", value: userId)
-                .eq("word_id", value: wordId)
+                .eq("user_id", value: userIdString)
+                .eq("word_id", value: wordIdString)
                 .execute()
                 .value
             
@@ -772,15 +917,15 @@ class SupabaseDataController {
     public struct User: Codable {
         public let id: UUID
         public let name: String
-        public let phone_number: String
+        public let email: String
         public let password: String
         public let passcode: String?
         public let child_name: String?
         
-        public init(name: String, phone_number: String, password: String) {
+        public init(name: String, email: String, password: String) {
             self.id = UUID()
             self.name = name
-            self.phone_number = phone_number
+            self.email = email
             self.password = password
             self.passcode = nil
             self.child_name = nil
@@ -872,10 +1017,13 @@ class SupabaseDataController {
         }
         
         do {
+            // Convert UUID to lowercase string format (standard UUID format)
+            let userIdString = userId.uuidString.lowercased()
+            
             try await supabase
                 .from("users")
                 .update(["passcode": passcode])
-                .eq("id", value: userId)
+                .eq("id", value: userIdString)
                 .execute()
             
             // Save passcode to UserDefaults
@@ -889,10 +1037,10 @@ class SupabaseDataController {
     public func restoreSession(userId: UUID) {
         self.currentUserId = userId
         
-        // Try to get the phone number from UserDefaults if needed
+        // Try to get the email from UserDefaults if needed
         // This is optional since we mainly use the userId now
-        if let phone = UserDefaults.standard.string(forKey: "lastPhoneNumber") {
-            self.currentPhoneNumber = phone
+        if let email = UserDefaults.standard.string(forKey: "lastEmail") {
+            self.currentEmail = email
         }
         
         self.isFirstTimeUser = false
@@ -902,7 +1050,7 @@ class SupabaseDataController {
     public func signOut() {
         UserDefaults.standard.clearSession()
         currentUserId = nil
-        currentPhoneNumber = nil
+        currentEmail = nil
         currentUser = nil
         isFirstTimeUser = false
     }
@@ -913,10 +1061,14 @@ class SupabaseDataController {
         print("DEBUG: New child name: \(childName)")
         
         do {
+            // Convert UUID to lowercase string format (standard UUID format)
+            let userIdString = userId.uuidString.lowercased()
+            print("DEBUG: Using formatted user ID: \(userIdString)")
+            
             let response = try await supabase
                 .from("users")
                 .update(["child_name": childName])
-                .eq("id", value: userId)
+                .eq("id", value: userIdString)
                 .execute()
             
             print("DEBUG: Update response received")
@@ -926,7 +1078,7 @@ class SupabaseDataController {
             let updatedUser: User = try await supabase
                 .from("users")
                 .select()
-                .eq("id", value: userId)
+                .eq("id", value: userIdString)
                 .single()
                 .execute()
                 .value
@@ -972,6 +1124,7 @@ class SupabaseDataController {
 public enum SupabaseError: LocalizedError {
     case userNotFound
     case invalidCredentials
+    case userAlreadyExists
     case networkError(Error)
     case databaseError(Error)
     case unauthorized
@@ -983,7 +1136,9 @@ public enum SupabaseError: LocalizedError {
         case .userNotFound:
             return "User not found"
         case .invalidCredentials:
-            return "Invalid phone number or password"
+            return "Invalid email or password"
+        case .userAlreadyExists:
+            return "User with this email already exists"
         case .networkError(let error):
             return "Network error: \(error.localizedDescription)"
         case .databaseError(let error):

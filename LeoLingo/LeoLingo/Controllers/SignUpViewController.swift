@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SignUpViewController: UIViewController {
 
@@ -122,11 +123,11 @@ extension SignUpViewController: SignUpCellDelegate {
         self.navigationController?.popViewController(animated: true)
     }
     
-    func checkUserExists(phone: String, completion: @escaping (Bool) -> Void) {
+    func checkUserExists(email: String, completion: @escaping (Bool) -> Void) {
         Task {
             do {
                 let users = try await SupabaseDataController.shared.getAllUsers()
-                let exists = users.contains { $0.phone_number == phone }
+                let exists = users.contains { $0.email == email }
                 DispatchQueue.main.async {
                     completion(exists)
                 }
@@ -139,14 +140,14 @@ extension SignUpViewController: SignUpCellDelegate {
         }
     }
     
-    func signUp(name: String, phone: String, password: String) {
+    func signUp(name: String, email: String, password: String) {
         showLoading()
         Task {
             do {
                 // Use the existing signUp method from SupabaseDataController
                 let userData = try await SupabaseDataController.shared.signUp(
                     name: name,
-                    phoneNumber: phone,
+                    email: email,
                     password: password
                 )
                 
@@ -155,7 +156,7 @@ extension SignUpViewController: SignUpCellDelegate {
                     // Switch to questionnaire after successful signup
                     let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
                     if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
-                        questionnaireVC.getPhoneNumber(phone: phone)
+                        questionnaireVC.getEmail(email: email)
                         questionnaireVC.modalPresentationStyle = .fullScreen
                         self?.navigationController?.pushViewController(questionnaireVC, animated: true)
                     }
@@ -164,6 +165,75 @@ extension SignUpViewController: SignUpCellDelegate {
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     self?.showAlert(message: "Sign up failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func initiateOTPSignup(name: String, email: String, password: String) {
+        showLoading()
+        Task {
+            do {
+                // Start OTP verification process
+                try await SupabaseDataController.shared.initiateSignup(name: name, email: email, password: password)
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
+                    self?.showOTPVerification(email: email, type: .signup)
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideLoading()
+                    if let supabaseError = error as? SupabaseError {
+                        self?.showAlert(message: supabaseError.localizedDescription ?? "Signup failed")
+                    } else {
+                        self?.showAlert(message: "Signup failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func showOTPVerification(email: String, type: OTPType) {
+        let otpView = OTPVerificationView(
+            email: email,
+            otpType: type,
+            onVerificationSuccess: { [weak self] in
+                self?.handleOTPSuccess(type: type, email: email)
+            }
+        )
+        
+        let hostingController = UIHostingController(rootView: otpView)
+        hostingController.modalPresentationStyle = .fullScreen
+        present(hostingController, animated: true)
+    }
+    
+    private func handleOTPSuccess(type: OTPType, email: String) {
+        Task {
+            do {
+                switch type {
+                case .signup:
+                    _ = try await SupabaseDataController.shared.completeSignup()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.dismiss(animated: true) {
+                            // Switch to questionnaire after successful signup
+                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+                                questionnaireVC.getEmail(email: email)
+                                questionnaireVC.modalPresentationStyle = .fullScreen
+                                self?.navigationController?.pushViewController(questionnaireVC, animated: true)
+                            }
+                        }
+                    }
+                case .login:
+                    // Handle login completion if needed
+                    break
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.dismiss(animated: true) {
+                        self?.showAlert(message: "Verification failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }

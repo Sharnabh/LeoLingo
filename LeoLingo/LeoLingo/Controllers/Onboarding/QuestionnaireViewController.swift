@@ -16,7 +16,7 @@ class QuestionnaireViewController: UIViewController {
     private let totalSteps: Float = 5.0 // Adjust this based on your total child view controllers
     private var currentStep: Float = 0.0
     
-    var phoneNumber: String = ""
+    var email: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,12 +56,12 @@ class QuestionnaireViewController: UIViewController {
         updateProgress(step: Int(previousStep))
     }
     
-    func getPhoneNumber(phone: String) {
-        phoneNumber = phone
+    func getEmail(email: String) {
+        self.email = email
     }
     
-    func returnPhoneNumber() -> String {
-        return phoneNumber
+    func returnEmail() -> String {
+        return email
     }
 }
 

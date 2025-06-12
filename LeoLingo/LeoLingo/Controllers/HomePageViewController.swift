@@ -310,10 +310,10 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     func updateLevelImage() {
         Task {
             do {
-                guard let phoneNumber = SupabaseDataController.shared.phoneNumber else { return }
+                guard let userId = SupabaseDataController.shared.userId else { return }
                 
                 // Fetch user data from Supabase
-                let userData = try await SupabaseDataController.shared.getUser(byPhone: phoneNumber)
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 let levels = userData.userLevels
                 var currentLevel: Level? = nil
                 

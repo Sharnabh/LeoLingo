@@ -1065,7 +1065,8 @@ class PracticeScreenViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Review Again", style: .default) { [weak self] _ in
             Task {
                 // Reset practice status for all words
-                if let userData = try? await SupabaseDataController.shared.getUser(byPhone: SupabaseDataController.shared.phoneNumber ?? "") {
+                if let userId = SupabaseDataController.shared.userId,
+                   let userData = try? await SupabaseDataController.shared.getUser(byId: userId) {
                     self?.levels = userData.userLevels
                     self?.updateUI()
                 }

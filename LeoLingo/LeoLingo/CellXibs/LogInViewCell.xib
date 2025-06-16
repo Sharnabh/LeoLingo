@@ -149,6 +149,7 @@
                 <outlet property="loginButton" destination="8oS-xD-NVk" id="4os-a0-H6p"/>
                 <outlet property="passwordTextField" destination="cpE-vf-yKL" id="ZbQ-af-GhF"/>
                 <outlet property="switchToSignupVCButton" destination="Sgn-xO-eHG" id="byk-ak-wk3"/>
+                <outlet property="appleSignInButton" destination="Cdv-S4-aK6" id="apple-sign-in-button"/>
             </connections>
             <point key="canvasLocation" x="690.73170731707319" y="-9.1525423728813564"/>
         </collectionViewCell>

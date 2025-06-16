@@ -11,7 +11,7 @@ class OTPService {
     
     private var currentOTP: String?
     private var otpExpiration: Date?
-    private let otpValidityDuration: TimeInterval = 300 // 5 minutes
+    private let otpValidityDuration: TimeInterval = 60 // 1 minute
     
     // Configuration - Update these with your email settings
     private struct EmailConfig {
@@ -53,7 +53,7 @@ class OTPService {
             
             Your verification code is: \(otp)
             
-            This code will expire in 5 minutes.
+            This code will expire in 1 minute.
             
             If you didn't request this verification, please ignore this email.
             
@@ -67,7 +67,7 @@ class OTPService {
             
             Your verification code is: \(otp)
             
-            This code will expire in 5 minutes.
+            This code will expire in 1 minute.
             
             If you didn't request this login, please secure your account immediately.
             

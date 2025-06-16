@@ -152,18 +152,43 @@ class SupabaseDataController {
         }
     }
     
+    func signUpWithApple(name: String, email: String, appleId: String) async throws -> UserData {
+        do {
+            let userData = User(name: name, email: email, password: appleId, appleId: appleId)
+            let response: User = try await supabase
+                .from("users")
+                .insert(userData)
+                .select()
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: User signed up with Apple successfully")
+            print("DEBUG: User ID: \(response.id)")
+            
+            self.currentUserId = response.id
+            self.currentEmail = email
+            self.isFirstTimeUser = true
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = response.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            
+            await initializeUserDataWithBadgeAchievement(userId: response.id)
+            return try await getUser(byId: response.id)
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
     private func initializeUserData(userId: UUID) async throws {
         print("DEBUG: Initializing user data for ID: \(userId)")
-        
-        // Convert UUID to lowercase string format (standard UUID format)
-        let userIdString = userId.uuidString.lowercased()
-        print("DEBUG: Using formatted user ID: \(userIdString)")
         
         // Check for existing word records
         let existingRecords: [UserWordRecord] = try await supabase
             .from("user_word_records")
             .select()
-            .eq("user_id", value: userIdString)
+            .eq("user_id", value: userId)
             .execute()
             .value
         
@@ -337,14 +362,10 @@ class SupabaseDataController {
     // Add new method to get user by ID
     func getUser(byId userId: UUID) async throws -> UserData {
         print("DEBUG: Getting user data for ID: \(userId)")
-        // Convert UUID to lowercase string format (standard UUID format)
-        let userIdString = userId.uuidString.lowercased()
-        print("DEBUG: Using formatted user ID: \(userIdString)")
-        
         let user: User = try await supabase
             .from("users")
             .select()
-            .eq("id", value: userIdString)
+            .eq("id", value: userId)
             .single()
             .execute()
             .value
@@ -353,7 +374,7 @@ class SupabaseDataController {
         let wordsResponse: [UserWordRecord] = try await supabase
             .from("user_word_records")
             .select()
-            .eq("user_id", value: userIdString)
+            .eq("user_id", value: userId)
             .execute()
             .value
             
@@ -367,13 +388,10 @@ class SupabaseDataController {
         }
         
         // Get all badge records in a single query
-        // Convert UUID to lowercase string format (standard UUID format)
-//        let userIdString = userId.uuidString.lowercased()
-        
         let badgesResponse: [UserBadge] = try await supabase
             .from("user_badges")
             .select()
-            .eq("user_id", value: userIdString)
+            .eq("user_id", value: userId)
             .execute()
             .value
         
@@ -429,16 +447,12 @@ class SupabaseDataController {
         }
         
         do {
-            // Convert UUIDs to lowercase string format (standard UUID format)
-            let userIdString = userId.uuidString.lowercased()
-            let wordIdString = wordId.uuidString.lowercased()
-            
             // Get existing record if any
             let existingRecords: [UserWordRecord] = try await supabase
                 .from("user_word_records")
                 .select()
-                .eq("user_id", value: userIdString)
-                .eq("word_id", value: wordIdString)
+                .eq("user_id", value: userId)
+                .eq("word_id", value: wordId)
                 .execute()
                 .value
             
@@ -921,6 +935,7 @@ class SupabaseDataController {
         public let password: String
         public let passcode: String?
         public let child_name: String?
+        public let apple_id: String?
         
         public init(name: String, email: String, password: String) {
             self.id = UUID()
@@ -929,6 +944,17 @@ class SupabaseDataController {
             self.password = password
             self.passcode = nil
             self.child_name = nil
+            self.apple_id = nil
+        }
+        
+        public init(name: String, email: String, password: String, appleId: String) {
+            self.id = UUID()
+            self.name = name
+            self.email = email
+            self.password = password
+            self.passcode = nil
+            self.child_name = nil
+            self.apple_id = appleId
         }
     }
     
@@ -1017,13 +1043,10 @@ class SupabaseDataController {
         }
         
         do {
-            // Convert UUID to lowercase string format (standard UUID format)
-            let userIdString = userId.uuidString.lowercased()
-            
             try await supabase
                 .from("users")
                 .update(["passcode": passcode])
-                .eq("id", value: userIdString)
+                .eq("id", value: userId)
                 .execute()
             
             // Save passcode to UserDefaults
@@ -1061,14 +1084,10 @@ class SupabaseDataController {
         print("DEBUG: New child name: \(childName)")
         
         do {
-            // Convert UUID to lowercase string format (standard UUID format)
-            let userIdString = userId.uuidString.lowercased()
-            print("DEBUG: Using formatted user ID: \(userIdString)")
-            
             let response = try await supabase
                 .from("users")
                 .update(["child_name": childName])
-                .eq("id", value: userIdString)
+                .eq("id", value: userId)
                 .execute()
             
             print("DEBUG: Update response received")
@@ -1078,7 +1097,7 @@ class SupabaseDataController {
             let updatedUser: User = try await supabase
                 .from("users")
                 .select()
-                .eq("id", value: userIdString)
+                .eq("id", value: userId)
                 .single()
                 .execute()
                 .value
@@ -1092,6 +1111,43 @@ class SupabaseDataController {
             }
         } catch {
             print("DEBUG: Error in updateChildName: \(error)")
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Add method to update user's Apple ID
+    public func updateUserAppleId(userId: UUID, appleId: String) async throws {
+        print("DEBUG: Starting Apple ID update for user \(userId)")
+        print("DEBUG: New Apple ID: \(appleId)")
+        
+        do {
+            let response = try await supabase
+                .from("users")
+                .update(["apple_id": appleId])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("DEBUG: Apple ID update response received")
+            print("DEBUG: Response: \(response)")
+            
+            // Verify the update was successful
+            let updatedUser: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: Verification - Updated user data:")
+            print("DEBUG: User ID: \(updatedUser.id)")
+            print("DEBUG: Apple ID: \(String(describing: updatedUser.apple_id))")
+            
+            if updatedUser.apple_id == nil {
+                print("DEBUG: WARNING - Apple ID is still nil after update")
+            }
+        } catch {
+            print("DEBUG: Error in updateUserAppleId: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }

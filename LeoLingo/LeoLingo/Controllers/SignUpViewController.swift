@@ -7,8 +7,9 @@
 
 import UIKit
 import SwiftUI
+import AuthenticationServices
 
-class SignUpViewController: UIViewController {
+class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
     @IBOutlet var signUpCollectionView: UICollectionView!
     private var loadingView: UIView?
@@ -72,6 +73,73 @@ class SignUpViewController: UIViewController {
     private func hideLoading() {
         loadingView?.removeFromSuperview()
         loadingView = nil
+    }
+
+    // MARK: - Apple Sign In
+    func handleAppleSignIn() {
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = self
+        controller.presentationContextProvider = self
+        controller.performRequests()
+    }
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        guard let window = self.view.window else {
+            // If window is nil, return the key window as fallback
+            return UIApplication.shared.windows.first ?? UIWindow()
+        }
+        return window
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            let email = appleIDCredential.email ?? ""
+            let fullName = appleIDCredential.fullName?.givenName ?? "Apple User"
+            let userIdentifier = appleIDCredential.user
+            // Check if user exists in Supabase
+            self.showLoading()
+            Task {
+                do {
+                    let users = try await SupabaseDataController.shared.getAllUsers()
+                    if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
+                        // User exists, log them in
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+                                questionnaireVC.getEmail(email: existingUser.email)
+                                questionnaireVC.modalPresentationStyle = .fullScreen
+                                self?.navigationController?.pushViewController(questionnaireVC, animated: true)
+                            }
+                        }
+                    } else {
+                        // User does not exist, create new user
+                        let newUser = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+                                questionnaireVC.getEmail(email: newUser.email)
+                                questionnaireVC.modalPresentationStyle = .fullScreen
+                                self?.navigationController?.pushViewController(questionnaireVC, animated: true)
+                            }
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.hideLoading()
+                        self?.showAlert(message: "Apple Sign In failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        self.hideLoading()
+        self.showAlert(message: "Apple Sign In failed: \(error.localizedDescription)")
     }
 }
 
@@ -140,7 +208,30 @@ extension SignUpViewController: SignUpCellDelegate {
         }
     }
     
+    // Add new password validation function
+    private func validatePassword(_ password: String) -> Bool {
+        let capitalLetterRegex = ".*[A-Z]+.*"
+        let smallLetterRegex = ".*[a-z]+.*"
+        let numberRegex = ".*[0-9]+.*"
+        let specialCharRegex = ".*[!@#$%^&*(),.?\":{}|<>]+.*"
+        
+        let capitalLetterTest = NSPredicate(format: "SELF MATCHES %@", capitalLetterRegex)
+        let smallLetterTest = NSPredicate(format: "SELF MATCHES %@", smallLetterRegex)
+        let numberTest = NSPredicate(format: "SELF MATCHES %@", numberRegex)
+        let specialCharTest = NSPredicate(format: "SELF MATCHES %@", specialCharRegex)
+        
+        return password.count >= 8 &&
+               capitalLetterTest.evaluate(with: password) &&
+               smallLetterTest.evaluate(with: password) &&
+               numberTest.evaluate(with: password) &&
+               specialCharTest.evaluate(with: password)
+    }
+
     func signUp(name: String, email: String, password: String) {
+        if !validatePassword(password) {
+            showAlert(message: "Password must be at least 8 characters long and include at least one capital letter, one small letter, one number, and one special character.")
+            return
+        }
         showLoading()
         Task {
             do {
@@ -171,6 +262,10 @@ extension SignUpViewController: SignUpCellDelegate {
     }
     
     func initiateOTPSignup(name: String, email: String, password: String) {
+        if !validatePassword(password) {
+            showAlert(message: "Password must be at least 8 characters long and include at least one capital letter, one small letter, one number, and one special character.")
+            return
+        }
         showLoading()
         Task {
             do {

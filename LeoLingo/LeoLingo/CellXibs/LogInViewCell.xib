@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -25,7 +25,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="Fi5-HB-9o0">
                                 <rect key="frame" x="190" y="395.5" width="272" height="93.5"/>
                                 <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lUM-qG-4Io">
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lUM-qG-4Io">
                                         <rect key="frame" x="0.0" y="0.0" width="272" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="34" id="DZC-vL-NN5"/>
@@ -145,9 +145,9 @@
                 </constraints>
             </collectionViewCellContentView>
             <connections>
+                <outlet property="emailTextField" destination="lUM-qG-4Io" id="21W-Dy-9w2"/>
                 <outlet property="loginButton" destination="8oS-xD-NVk" id="4os-a0-H6p"/>
                 <outlet property="passwordTextField" destination="cpE-vf-yKL" id="ZbQ-af-GhF"/>
-                <outlet property="phoneNumberTextField" destination="lUM-qG-4Io" id="UMy-K1-m1J"/>
                 <outlet property="switchToSignupVCButton" destination="Sgn-xO-eHG" id="byk-ak-wk3"/>
             </connections>
             <point key="canvasLocation" x="690.73170731707319" y="-9.1525423728813564"/>

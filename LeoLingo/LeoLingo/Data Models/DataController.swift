@@ -33,7 +33,7 @@ class DataController {
         
         let sampleUser = UserData(
             name: "Sample User",
-            phoneNumber: "123",
+            email: "sample@example.com",
             password: "123",
             passcode: "0000",
             userLevels: sampleLevels,
@@ -89,17 +89,17 @@ class DataController {
         self.user[0].passcode = passcode
     }
     
-    func findUser(byPhone phoneNumber: String) -> UserData? {
+    func findUser(byEmail email: String) -> UserData? {
         
-        if user.contains(where: { $0.phoneNumber == phoneNumber }) {
-            return user.first(where: { $0.phoneNumber == phoneNumber })
+        if user.contains(where: { $0.email == email }) {
+            return user.first(where: { $0.email == email })
         } else {
             return nil
         }
     }
     
-    func validateUser(phoneNumber: String, password: String) -> UserData? {
-        return user.first(where: { $0.phoneNumber == phoneNumber && $0.password == password })
+    func validateUser(email: String, password: String) -> UserData? {
+        return user.first(where: { $0.email == email && $0.password == password })
     }
     
     // Levels

@@ -116,10 +116,10 @@ struct WordReportView: View {
         .background(Color(UIColor.white))
         .task {
             // Load user data when view appears
-            if let phoneNumber = dataController.phoneNumber {
+            if let userId = dataController.userId {
                 isLoading = true
                 do {
-                    _ = try await dataController.getUser(byPhone: phoneNumber)
+                    _ = try await dataController.getUser(byId: userId)
                 } catch {
                     print("Error loading user data: \(error)")
                 }

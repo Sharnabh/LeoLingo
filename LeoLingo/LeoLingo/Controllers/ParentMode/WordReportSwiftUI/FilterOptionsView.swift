@@ -198,10 +198,10 @@ struct FilterOptionsView: View {
         }
         .background(Color(UIColor.systemBackground))
         .task {
-            if let phoneNumber = dataController.phoneNumber {
+            if let userId = dataController.userId {
                 isLoading = true
                 do {
-                    _ = try await dataController.getUser(byPhone: phoneNumber)
+                    _ = try await dataController.getUser(byId: userId)
                     cachedWords = []  // Clear cache to force refresh
                     shouldReloadProgress.toggle()
                 } catch {

@@ -11,14 +11,15 @@ protocol SignUpCellDelegate: AnyObject {
     func showAlert(message: String)
     func switchToLoginVC()
     func switchToQuestionnaireVC()
-    func checkUserExists(phone: String, completion: @escaping (Bool) -> Void)
-    func signUp(name: String, phone: String, password: String)
+    func checkUserExists(email: String, completion: @escaping (Bool) -> Void)
+    func signUp(name: String, email: String, password: String)
+    func initiateOTPSignup(name: String, email: String, password: String)
 }
 
 class SignUpCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var parentsNameTextField: UITextField!
-    @IBOutlet var phoneNumberTextField: UITextField!
+    @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var signUpButton: UIButton!
     @IBOutlet var switchToLoginVCButton: UIButton!
@@ -46,7 +47,7 @@ class SignUpCollectionViewCell: UICollectionViewCell {
         passwordTextField.isSecureTextEntry = true
         
         // Setup text fields
-        phoneNumberTextField.keyboardType = .phonePad
+        emailTextField.keyboardType = .emailAddress
         parentsNameTextField.autocapitalizationType = .words
     }
     
@@ -68,8 +69,8 @@ class SignUpCollectionViewCell: UICollectionViewCell {
             return
         }
         
-        guard let phone = phoneNumberTextField.text, !phone.isEmpty else {
-            delegate?.showAlert(message: "Please enter phone number")
+        guard let email = emailTextField.text, !email.isEmpty else {
+            delegate?.showAlert(message: "Please enter email address")
             return
         }
         
@@ -79,14 +80,13 @@ class SignUpCollectionViewCell: UICollectionViewCell {
         }
         
         // Check if user already exists
-        delegate?.checkUserExists(phone: phone) { [weak self] exists in
+        delegate?.checkUserExists(email: email) { [weak self] exists in
             if exists {
                 self?.delegate?.showAlert(message: "User already exists. Please login.")
                 self?.delegate?.switchToLoginVC()
             } else {
-                // Proceed with signup
-                self?.delegate?.signUp(name: name, phone: phone, password: password)
-                self?.delegate?.switchToQuestionnaireVC()
+                // Proceed with OTP-based signup
+                self?.delegate?.initiateOTPSignup(name: name, email: email, password: password)
             }
         }
     }

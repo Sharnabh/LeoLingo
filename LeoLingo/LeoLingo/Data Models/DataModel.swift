@@ -10,7 +10,7 @@ import Foundation
 struct UserData {
     var id: UUID = UUID()
     var name: String
-    var phoneNumber: String
+    var email: String
     var password: String
     var passcode: String?
     var childName: String?

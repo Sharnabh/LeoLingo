@@ -10,7 +10,7 @@ extension UserDefaults {
         static let selectedDuration = "selectedDuration"
         static let lastResetDate = "lastResetDate"
         static let daysUsed = "daysUsed"
-        static let lastPhoneNumber = "lastPhoneNumber"
+        static let lastEmail = "lastEmail"
         static let shouldShowOnboardingBadgeAchievement = "shouldShowOnboardingBadgeAchievement"
         static let earnedBadgeIDs = "earnedBadgeIDs"
         static let shownBadgeIDs = "shownBadgeIDs"
@@ -116,7 +116,7 @@ extension UserDefaults {
         set(0, forKey: Keys.daysUsed)
         
         // Clear other user data
-        removeObject(forKey: Keys.lastPhoneNumber)
+        removeObject(forKey: Keys.lastEmail)
         
         // Don't clear badge tracking data as we want to preserve achievements
         // across sessions even if user logs out and logs back in

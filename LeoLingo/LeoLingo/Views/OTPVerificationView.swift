@@ -3,10 +3,10 @@ import SwiftUI
 struct OTPVerificationView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var otpCode = ""
-    @State private var isVerifying = false
+    @State private var isShaking = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var remainingTime = 300 // 5 minutes in seconds
+    @State private var remainingTime = 60
     @State private var timer: Timer?
     
     let email: String
@@ -15,186 +15,12 @@ struct OTPVerificationView: View {
     
     private let otpLength = 4
     
-    private var buttonSize: CGFloat {
-        return UIDevice.current.userInterfaceIdiom == .pad ? 70 : 60
-    }
-    
-    private var creamBackgroundColor: Color {
-        Color(red: 255/255, green: 248/255, blue: 240/255)
-    }
-    
-    private var otpSection: some View {
-        VStack(spacing: 20) {
-            // Title
-            Text("Verify Your Email")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.black)
-            
-            // Subtitle
-            Text("Enter the 4-digit code sent to\n\(email)")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-            
-            // OTP Dots
-            otpDots
-            
-            // Timer
-            Text(timeString(from: remainingTime))
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(remainingTime <= 60 ? .red : .gray)
-            
-            // Error message
-            if showError {
-                Text(errorMessage)
-                    .font(.system(size: 14))
-                    .foregroundColor(.red)
-                    .padding(.horizontal)
-            }
-        }
-    }
-    
-    private var otpDots: some View {
-        HStack(spacing: 15) {
-            ForEach(0..<4) { index in
-                Circle()
-                    .stroke(Color.black.opacity(0.3), lineWidth: 1)
-                    .background(
-                        Circle()
-                            .fill(index < otpCode.count ? Color.black : Color.white)
-                    )
-                    .frame(width: 15, height: 15)
-            }
-        }
-        .modifier(OTPShakeEffect(shakes: showError ? 2 : 0))
-    }
-    
-    private var numberPad: some View {
-        VStack(spacing: 25) {
-            ForEach(0..<3) { row in
-                numberRow(for: row)
-            }
-            
-            lastNumberRow
-        }
-    }
-    
-    private func numberRow(for row: Int) -> some View {
-        HStack(spacing: 40) {
-            ForEach(1...3, id: \.self) { col in
-                let number = row * 3 + col
-                OTPNumberButton(number: number, size: buttonSize) {
-                    numberTapped(number)
-                }
-            }
-        }
-    }
-    
-    private var lastNumberRow: some View {
-        HStack(spacing: 40) {
-            // Resend button
-            resendButton
-            
-            // 0 button
-            OTPNumberButton(number: 0, size: buttonSize) {
-                numberTapped(0)
-            }
-            
-            // Delete button
-            deleteButton
-        }
-    }
-    
-    private var resendButton: some View {
-        Button(action: resendOTP) {
-            Text("Resend")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-                .frame(width: buttonSize, height: buttonSize)
-                .background(
-                    Circle()
-                        .fill(Color(red: 76/255, green: 141/255, blue: 95/255).opacity(0.7))
-                )
-        }
-        .disabled(remainingTime > 0)
-    }
-    
-    private var deleteButton: some View {
-        Button(action: deleteNumber) {
-            Image(systemName: "delete.left.fill")
-                .font(.system(size: 24))
-                .foregroundColor(.white)
-                .frame(width: buttonSize, height: buttonSize)
-                .background(
-                    Circle()
-                        .fill(Color(red: 76/255, green: 141/255, blue: 95/255))
-                )
-        }
-    }
-    
-    private var verifyButton: some View {
-        Button(action: verifyOTP) {
-            HStack {
-                if isVerifying {
-                    Circle()
-                        .stroke(Color.white, lineWidth: 2)
-                        .frame(width: 20, height: 20)
-                        .rotationEffect(Angle(degrees: isVerifying ? 360 : 0))
-                        .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false), value: isVerifying)
-                } else {
-                    Text("Verify")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            .frame(width: buttonSize, height: buttonSize)
-            .background(
-                Circle()
-                    .fill(Color(red: 76/255, green: 141/255, blue: 95/255))
-            )
-        }
-        .disabled(isVerifying)
-    }
-    
-    private var mainContent: some View {
-        VStack {
-            // Back Button
-            HStack {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .font(.title2)
-                        .foregroundColor(.black)
-                        .padding(12)
-                        .background(Circle().fill(.white))
-                        .shadow(radius: 3)
-                }
-                .padding(.leading, 20)
-                .padding(.top, 20)
-                Spacer()
-            }
-            
-            Spacer()
-            
-            // Main Container
-            VStack(spacing: 40) {
-                otpSection
-                numberPad
-                
-                // Verify Button
-                if otpCode.count == otpLength {
-                    verifyButton
-                }
-            }
-            .padding(.horizontal, 40)
-            
-            Spacer()
-        }
-    }
+    private let buttonSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 70 : 60
     
     var body: some View {
         ZStack {
             // Background
-            creamBackgroundColor
+            Color(red: 255/255, green: 248/255, blue: 240/255)
                 .ignoresSafeArea()
             
             // Decorative Leaves
@@ -204,7 +30,132 @@ struct OTPVerificationView: View {
                 .ignoresSafeArea()
             
             // Main Content
-            mainContent
+            VStack {
+                // Back Button
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title2)
+                            .foregroundColor(.black)
+                            .padding(12)
+                            .background(Circle().fill(.white))
+                            .shadow(radius: 3)
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 20)
+                    Spacer()
+                }
+                
+                Spacer()
+                
+                // Main Container
+                VStack(spacing: 40) {
+                    // OTP Section
+                    VStack(spacing: 20) {
+                        Text("Verify Your Email")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("Enter the 4-digit code sent to\n\(email)")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                        
+                        // OTP Dots
+                        HStack(spacing: 15) {
+                            ForEach(0..<4) { index in
+                                Circle()
+                                    .stroke(Color.black.opacity(0.3), lineWidth: 1)
+                                    .background(
+                                        Circle()
+                                            .fill(index < otpCode.count ? Color.black : Color.white)
+                                    )
+                                    .frame(width: 15, height: 15)
+                            }
+                        }
+                        .modifier(ShakeEffect(shakes: isShaking ? 2 : 0))
+                        
+                       
+                        
+                        // Error message
+                        if showError {
+                            Text(errorMessage)
+                                .font(.system(size: 14))
+                                .foregroundColor(.red)
+                                .padding(.horizontal)
+                        }
+                    }
+                    
+                    // Number Pad
+                    VStack(spacing: 25) {
+                        ForEach(0..<3) { row in
+                            HStack(spacing: 40) {
+                                ForEach(1...3, id: \.self) { col in
+                                    let number = row * 3 + col
+                                    OTPNumberButton(number: number, size: buttonSize) {
+                                        numberTapped(number)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Last row with 0 and delete
+                        HStack(spacing: 40) {
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                            
+                            OTPNumberButton(number: 0, size: buttonSize) {
+                                numberTapped(0)
+                            }
+                            
+                            Button(action: deleteNumber) {
+                                Image(systemName: "delete.left.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(
+                                        Circle()
+                                            .fill(Color(red: 76/255, green: 141/255, blue: 95/255))
+                                    )
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 40)
+                .padding(.horizontal, 30)
+                .background(
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(Color.clear)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color(red: 143/255, green: 91/255, blue: 66/255), lineWidth: 3)
+                        )
+                )
+                .padding(.horizontal, 20)
+                
+                // Resend (plain text with timer)
+                HStack(spacing: 4) {
+                    if remainingTime > 0 {
+                        Text("Resend in")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.gray)
+                        Text(timeString(from: remainingTime))
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.gray)
+                    } else {
+                        Button(action: resendOTP) {
+                            Text("Resend")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Color(red: 76/255, green: 141/255, blue: 95/255))
+                                .underline()
+                        }
+                    }
+                }
+                .padding(.top, 20)
+                
+                Spacer()
+            }
         }
         .onAppear {
             startTimer()
@@ -223,7 +174,7 @@ struct OTPVerificationView: View {
         
         // Auto-verify when 4 digits are entered
         if otpCode.count == otpLength {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 verifyOTP()
             }
         }
@@ -236,19 +187,24 @@ struct OTPVerificationView: View {
     }
     
     private func verifyOTP() {
-        isVerifying = true
+        // isVerifying = true
         showError = false
+        isShaking = false
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             let isValid = OTPService.shared.verifyOTP(otpCode)
             
             if isValid {
                 onVerificationSuccess()
             } else {
-                showError(message: "Invalid or expired code. Please try again.")
+                withAnimation(.default) {
+                    isShaking = true
+                    otpCode = ""
+                }
+                
+                
             }
-            
-            isVerifying = false
+            // isVerifying = false
         }
     }
     
@@ -257,7 +213,7 @@ struct OTPVerificationView: View {
             do {
                 try await OTPService.shared.sendOTP(to: email, type: otpType)
                 DispatchQueue.main.async {
-                    remainingTime = 300
+                    remainingTime = 60
                     startTimer()
                     showError(message: "Code resent to your email")
                 }
@@ -273,12 +229,13 @@ struct OTPVerificationView: View {
         errorMessage = message
         showError = true
         otpCode = ""
-        
         withAnimation(.default) {
-            // Trigger shake animation
+            isShaking = true
         }
-        
         // Hide error after 3 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            isShaking = false
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             showError = false
         }
@@ -313,6 +270,23 @@ struct OTPVerificationView: View {
         }
     }
 }
+
+//// ShakeEffect (reuse from ParentModeLockScreenView)
+//struct ShakeEffect: GeometryEffect {
+//    var amount: CGFloat = 10
+//    var shakesPerUnit = 3
+//    var animatableData: CGFloat
+//    
+//    init(shakes: Int) {
+//        animatableData = CGFloat(shakes)
+//    }
+//    
+//    func effectValue(size: CGSize) -> ProjectionTransform {
+//        ProjectionTransform(CGAffineTransform(translationX:
+//            amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)),
+//            y: 0))
+//    }
+//}
 
 #Preview {
     OTPVerificationView(

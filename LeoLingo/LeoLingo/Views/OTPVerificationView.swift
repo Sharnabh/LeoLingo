@@ -6,7 +6,7 @@ struct OTPVerificationView: View {
     @State private var isVerifying = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var remainingTime = 300 // 5 minutes in seconds
+    @State private var remainingTime = 60 // 1 minute in seconds
     @State private var timer: Timer?
     
     let email: String
@@ -257,7 +257,7 @@ struct OTPVerificationView: View {
             do {
                 try await OTPService.shared.sendOTP(to: email, type: otpType)
                 DispatchQueue.main.async {
-                    remainingTime = 300
+                    remainingTime = 60
                     startTimer()
                     showError(message: "Code resent to your email")
                 }

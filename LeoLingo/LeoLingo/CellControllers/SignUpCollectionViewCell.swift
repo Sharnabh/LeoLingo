@@ -14,6 +14,7 @@ protocol SignUpCellDelegate: AnyObject {
     func checkUserExists(email: String, completion: @escaping (Bool) -> Void)
     func signUp(name: String, email: String, password: String)
     func initiateOTPSignup(name: String, email: String, password: String)
+    func handleAppleSignIn()
 }
 
 class SignUpCollectionViewCell: UICollectionViewCell {
@@ -23,6 +24,7 @@ class SignUpCollectionViewCell: UICollectionViewCell {
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var signUpButton: UIButton!
     @IBOutlet var switchToLoginVCButton: UIButton!
+    @IBOutlet var appleSignInButton: UIButton!
     
     // Add password visibility button
     private let passwordToggleButton: UIButton = {
@@ -55,6 +57,7 @@ class SignUpCollectionViewCell: UICollectionViewCell {
         passwordToggleButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         switchToLoginVCButton.addTarget(self, action: #selector(switchToLogin), for: .touchUpInside)
+        appleSignInButton.addTarget(self, action: #selector(appleSignInTapped), for: .touchUpInside)
     }
     
     @objc private func togglePasswordVisibility() {
@@ -97,5 +100,9 @@ class SignUpCollectionViewCell: UICollectionViewCell {
     
     @objc private func switchToQuestionnaire() {
         delegate?.switchToQuestionnaireVC()
+    }
+    
+    @objc private func appleSignInTapped() {
+        delegate?.handleAppleSignIn()
     }
 }

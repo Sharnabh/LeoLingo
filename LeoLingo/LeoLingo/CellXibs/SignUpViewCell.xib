@@ -129,6 +129,7 @@
                 </constraints>
             </collectionViewCellContentView>
             <connections>
+                <outlet property="appleSignInButton" destination="1Rm-8t-9Gk" id="bj1-xg-Tez"/>
                 <outlet property="emailTextField" destination="0Bc-sp-zEG" id="WMJ-6v-P04"/>
                 <outlet property="parentsNameTextField" destination="777-Tw-saY" id="FJU-Lf-jDt"/>
                 <outlet property="passwordTextField" destination="CH4-gL-EyW" id="aZA-7y-cBS"/>

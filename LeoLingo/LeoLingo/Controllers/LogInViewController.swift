@@ -7,8 +7,9 @@
 
 import UIKit
 import SwiftUI
+import AuthenticationServices
 
-class LogInViewController: UIViewController {
+class LogInViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
     @IBOutlet var logInCollectionView: UICollectionView!
     private var loadingView: UIView?
@@ -72,6 +73,72 @@ class LogInViewController: UIViewController {
     private func hideLoading() {
         loadingView?.removeFromSuperview()
         loadingView = nil
+    }
+    
+    // MARK: - Apple Sign In
+    func handleAppleSignIn() {
+        let provider = ASAuthorizationAppleIDProvider()
+        let request = provider.createRequest()
+        request.requestedScopes = [ASAuthorization.Scope.fullName, ASAuthorization.Scope.email]
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = self
+        controller.presentationContextProvider = self
+        controller.performRequests()
+    }
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        guard let window = self.view.window else {
+            // If window is nil, return the key window as fallback
+            return UIApplication.shared.windows.first ?? UIWindow()
+        }
+        return window
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            let email = appleIDCredential.email ?? ""
+            let fullName = appleIDCredential.fullName?.givenName ?? "Apple User"
+            let userIdentifier = appleIDCredential.user
+            // Check if user exists in Supabase
+            self.showLoading()
+            Task {
+                do {
+                    let users = try await SupabaseDataController.shared.getAllUsers()
+                    if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
+                        // User exists, log them in using signIn method
+                        _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            self?.switchToLandingPage()
+                        }
+                    } else {
+                        // Check if user exists with the same email but different Apple ID
+                        if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
+                            // Update the existing user's Apple ID
+                            _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
+                            _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
+                        } else {
+                            // User does not exist, create new user
+                            _ = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
+                        }
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            self?.switchToLandingPage()
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.hideLoading()
+                        self?.showAlert(message: "Apple Sign In failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        self.hideLoading()
+        self.showAlert(message: "Apple Sign In failed: \(error.localizedDescription)")
     }
 }
 

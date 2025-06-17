@@ -103,28 +103,43 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
             Task {
                 do {
                     let users = try await SupabaseDataController.shared.getAllUsers()
+                    
+                    // Check if user exists with the same Apple ID
                     if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
-                        // User exists, log them in
+                        // Existing user - sign them in and check if they've completed questionnaire
+                        _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
-                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
-                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
-                                questionnaireVC.getEmail(email: existingUser.email)
-                                questionnaireVC.modalPresentationStyle = .fullScreen
-                                self?.navigationController?.pushViewController(questionnaireVC, animated: true)
+                            // Check if user has completed questionnaire
+                            if self?.isFirstTimeUser(user: existingUser) == true {
+                                // Haven't completed questionnaire - go to questionnaire
+                                self?.redirectToQuestionnaire(email: existingUser.email)
+                            } else {
+                                // Completed questionnaire - go to landing page
+                                self?.redirectToLandingPage()
+                            }
+                        }
+                    } else if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
+                        // User exists with same email but different Apple ID - update and check questionnaire completion
+                        _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
+                        _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            // Check if user has completed questionnaire
+                            if self?.isFirstTimeUser(user: existingUserWithEmail) == true {
+                                // Haven't completed questionnaire - go to questionnaire
+                                self?.redirectToQuestionnaire(email: existingUserWithEmail.email)
+                            } else {
+                                // Completed questionnaire - go to landing page
+                                self?.redirectToLandingPage()
                             }
                         }
                     } else {
-                        // User does not exist, create new user
-                        let newUser = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
+                        // First-time user - create new user and go to questionnaire
+                        _ = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
-                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
-                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
-                                questionnaireVC.getEmail(email: newUser.email)
-                                questionnaireVC.modalPresentationStyle = .fullScreen
-                                self?.navigationController?.pushViewController(questionnaireVC, animated: true)
-                            }
+                            self?.redirectToQuestionnaire(email: email)
                         }
                     }
                 } catch {
@@ -332,5 +347,56 @@ extension SignUpViewController: SignUpCellDelegate {
                 }
             }
         }
+    }
+}
+
+/*
+ * MARK: - SignUp Flow Update Summary
+ * 
+ * This SignUpViewController has been updated to handle first-time vs existing users:
+ * 
+ * Apple Sign In Flow (authorizationController):
+ * 1. Checks if user exists with Apple ID:
+ *    - If exists and has completed questionnaire (child_name filled) → Landing Page
+ *    - If exists but hasn't completed questionnaire (child_name empty/nil) → Questionnaire
+ * 
+ * 2. Checks if user exists with same email but different Apple ID:
+ *    - Updates Apple ID and follows same logic as above
+ * 
+ * 3. If user doesn't exist:
+ *    - Creates new user → Always goes to Questionnaire (first-time signup)
+ *
+ * Regular SignUp Flow:
+ * - New users always go to Questionnaire after successful signup
+ * - OTP signup also goes to Questionnaire after verification
+ *
+ * The logic uses the child_name field in the User struct to determine if a user
+ * has completed the initial questionnaire setup.
+ */
+
+// MARK: - Navigation Helper Methods
+extension SignUpViewController {
+    private func redirectToLandingPage() {
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let landingPage = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            landingPage.modalPresentationStyle = .fullScreen
+            present(landingPage, animated: true)
+        }
+    }
+    
+    private func redirectToQuestionnaire(email: String) {
+        let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+        if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+            questionnaireVC.getEmail(email: email)
+            questionnaireVC.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(questionnaireVC, animated: true)
+        }
+    }
+    
+    // MARK: - User Check Helper Methods
+    private func isFirstTimeUser(user: SupabaseDataController.User) -> Bool {
+        // Check if user has completed the questionnaire by looking at child_name
+        // If child_name is nil or empty, it means they haven't completed the questionnaire
+        return user.child_name == nil || user.child_name?.isEmpty == true
     }
 }

@@ -7,7 +7,7 @@ class SupabaseDataController {
     
     private let supabase: SupabaseClient
     private let sampleData = SampleDataController.shared
-    private var currentUser: UserData?
+    var currentUser: UserData?
     
     // Add property to store current user ID
     private var currentUserId: UUID?

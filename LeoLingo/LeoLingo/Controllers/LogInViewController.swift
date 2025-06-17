@@ -9,6 +9,30 @@ import UIKit
 import SwiftUI
 import AuthenticationServices
 
+/*
+ * MARK: - Login Flow Update Summary
+ * 
+ * This LoginViewController has been updated to handle first-time vs existing users:
+ * 
+ * 1. Apple Sign In Flow (authorizationController):
+ *    - Checks if user exists with Apple ID (existing user) → Landing Page
+ *    - Checks if user exists with same email but different Apple ID → Update and go to Landing Page
+ *    - If user doesn't exist → Create new user and go to Questionnaire
+ *
+ * 2. Regular Login Flow (validateLogin):
+ *    - After successful login, checks if user has completed questionnaire
+ *    - Uses child_name field to determine completion (nil/empty = first-time)
+ *    - First-time users → Questionnaire
+ *    - Existing users → Landing Page
+ *
+ * 3. OTP Login Flow (handleOTPSuccess):
+ *    - For login: Checks user completion status after OTP verification
+ *    - For signup: Always goes to Questionnaire (new user)
+ *
+ * The logic uses the child_name field in the User struct to determine if a user
+ * has completed the initial questionnaire setup.
+ */
+
 class LogInViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
     @IBOutlet var logInCollectionView: UICollectionView!
@@ -104,26 +128,29 @@ class LogInViewController: UIViewController, ASAuthorizationControllerDelegate, 
             Task {
                 do {
                     let users = try await SupabaseDataController.shared.getAllUsers()
+                    
+                    // Check if user exists with the same Apple ID (existing user)
                     if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
-                        // User exists, log them in using signIn method
+                        // Existing user - sign them in and redirect to landing page
                         _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
-                            self?.switchToLandingPage()
+                            self?.redirectToLandingPage()
                         }
-                    } else {
-                        // Check if user exists with the same email but different Apple ID
-                        if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
-                            // Update the existing user's Apple ID
-                            _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
-                            _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
-                        } else {
-                            // User does not exist, create new user
-                            _ = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
-                        }
+                    } else if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
+                        // User exists with same email but different Apple ID - update and redirect to landing page
+                        _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
+                        _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
-                            self?.switchToLandingPage()
+                            self?.redirectToLandingPage()
+                        }
+                    } else {
+                        // First-time user - create new user and redirect to questionnaire
+                        _ = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            self?.redirectToQuestionnaire(email: email)
                         }
                     }
                 } catch {
@@ -231,6 +258,16 @@ extension LogInViewController: LogInCellDelegate {
                 let userData = try await SupabaseDataController.shared.signIn(email: email, password: password)
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
+                    // Check if this is a first-time user or existing user
+                    self?.checkIfFirstTimeUser(email: email) { isFirstTime in
+                        if isFirstTime {
+                            // First-time user - redirect to questionnaire
+                            self?.redirectToQuestionnaire(email: email)
+                        } else {
+                            // Existing user - redirect to landing page
+                            self?.redirectToLandingPage()
+                        }
+                    }
                     completion(true)
                 }
             } catch {
@@ -286,21 +323,109 @@ extension LogInViewController: LogInCellDelegate {
             do {
                 switch type {
                 case .login:
-                    _ = try await SupabaseDataController.shared.completeLogin()
+                    let userData = try await SupabaseDataController.shared.completeLogin()
                     DispatchQueue.main.async { [weak self] in
                         self?.dismiss(animated: true) {
-                            self?.switchToLandingPage()
+                            // Check if this is a first-time user by looking at user data
+                            // If user has completed questionnaire, go to landing page
+                            // Otherwise, go to questionnaire
+                            self?.checkUserCompletionStatus(userData: userData)
                         }
                     }
                 case .signup:
-                    // Handle signup completion if needed
-                    break
+                    // Handle signup completion - new user should go to questionnaire
+                    DispatchQueue.main.async { [weak self] in
+                        self?.dismiss(animated: true) {
+                            // For signup, always redirect to questionnaire
+                            if let email = SupabaseDataController.shared.currentUser?.email {
+                                self?.redirectToQuestionnaire(email: email)
+                            }
+                        }
+                    }
                 }
             } catch {
                 DispatchQueue.main.async { [weak self] in
                     self?.dismiss(animated: true) {
                         self?.showAlert(message: "Verification failed: \(error.localizedDescription)")
                     }
+                }
+            }
+        }
+    }
+    
+    private func checkUserCompletionStatus(userData: Any) {
+        // Check if user has completed the initial setup/questionnaire
+        Task {
+            do {
+                let users = try await SupabaseDataController.shared.getAllUsers()
+                if let currentUser = users.first(where: { $0.email == SupabaseDataController.shared.currentUser?.email }) {
+                    DispatchQueue.main.async { [weak self] in
+                        // Check if this is their first login based on questionnaire completion
+                        if self?.isFirstTimeLogin(user: currentUser) == true {
+                            self?.redirectToQuestionnaire(email: currentUser.email)
+                        } else {
+                            self?.redirectToLandingPage()
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.redirectToLandingPage()
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.redirectToLandingPage()
+                }
+            }
+        }
+    }
+    
+    private func isFirstTimeLogin(user: SupabaseDataController.User) -> Bool {
+        // Check if user has completed the questionnaire by looking at child_name
+        // If child_name is nil or empty, it means they haven't completed the questionnaire
+        return user.child_name == nil || user.child_name?.isEmpty == true
+    }
+}
+
+// MARK: - Navigation Helper Methods
+extension LogInViewController {
+    private func redirectToLandingPage() {
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let landingPage = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+            landingPage.modalPresentationStyle = .fullScreen
+            present(landingPage, animated: true)
+        }
+    }
+    
+    private func redirectToQuestionnaire(email: String) {
+        let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+        if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+            questionnaireVC.getEmail(email: email)
+            questionnaireVC.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(questionnaireVC, animated: true)
+        }
+    }
+    
+    // MARK: - User Check Helper Methods
+    private func checkIfFirstTimeUser(email: String, completion: @escaping (Bool) -> Void) {
+        Task {
+            do {
+                let users = try await SupabaseDataController.shared.getAllUsers()
+                if let user = users.first(where: { $0.email == email }) {
+                    // Check if user has completed questionnaire (child_name is set)
+                    let isFirstTime = user.child_name == nil || user.child_name?.isEmpty == true
+                    DispatchQueue.main.async {
+                        completion(isFirstTime)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion(true) // User doesn't exist, treat as first-time
+                    }
+                }
+            } catch {
+                print("Error checking user existence: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(true) // Default to first-time user on error
                 }
             }
         }

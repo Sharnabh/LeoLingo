@@ -96,7 +96,21 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
             let email = appleIDCredential.email ?? ""
-            let fullName = appleIDCredential.fullName?.givenName ?? "Apple User"
+            var fullName = "Apple User" // Default fallback
+                if let personName = appleIDCredential.fullName {
+                    var nameComponents: [String] = []
+                    
+                    if let givenName = personName.givenName, !givenName.isEmpty {
+                        nameComponents.append(givenName)
+                    }
+                    if let familyName = personName.familyName, !familyName.isEmpty {
+                        nameComponents.append(familyName)
+                    }
+                    
+                    if !nameComponents.isEmpty {
+                        fullName = nameComponents.joined(separator: " ")
+                    }
+                }
             let userIdentifier = appleIDCredential.user
             // Check if user exists in Supabase
             self.showLoading()
@@ -119,7 +133,7 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                                 self?.redirectToLandingPage()
                             }
                         }
-                    } else if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
+                    } else if !email.isEmpty, let existingUserWithEmail = users.first(where: { $0.email == email }) {
                         // User exists with same email but different Apple ID - update and check questionnaire completion
                         _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
                         _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
@@ -134,14 +148,22 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                                 self?.redirectToLandingPage()
                             }
                         }
-                    } else {
+                    } else if !email.isEmpty {
                         // First-time user - create new user and go to questionnaire
                         _ = try await SupabaseDataController.shared.signUpWithApple(name: fullName, email: email, appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             self?.redirectToQuestionnaire(email: email)
                         }
+                    } else {
+                        // Email not provided by Apple (subsequent sign-ins) - this shouldn't happen for new users
+                        // but if it does, we need to handle it
+                        DispatchQueue.main.async { [weak self] in
+                            self?.hideLoading()
+                            self?.showAlert(message: "Unable to retrieve email from Apple ID. Please try signing in with your email and password instead, or contact support if you're a new user.")
+                        }
                     }
+                    
                 } catch {
                     DispatchQueue.main.async { [weak self] in
                         self?.hideLoading()

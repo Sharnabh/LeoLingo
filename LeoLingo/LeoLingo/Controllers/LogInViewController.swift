@@ -402,7 +402,7 @@ extension LogInViewController {
         if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
             questionnaireVC.getEmail(email: email)
             questionnaireVC.modalPresentationStyle = .fullScreen
-            self.navigationController?.pushViewController(questionnaireVC, animated: true)
+            present(questionnaireVC, animated: true)
         }
     }
     

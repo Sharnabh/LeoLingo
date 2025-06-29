@@ -225,7 +225,18 @@ extension SignUpViewController: SignUpCellDelegate {
     }
     
     func switchToLoginVC() {
-        self.navigationController?.popViewController(animated: true)
+        // self.navigationController?.popViewController(animated: true)
+        guard let navigationController = self.navigationController else {
+            self.dismiss(animated: true)
+            return
+        }
+        
+        // Check if there's a view controller to pop back to
+        if navigationController.viewControllers.count > 1 {
+            navigationController.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true)
+        }
     }
     
     func checkUserExists(email: String, completion: @escaping (Bool) -> Void) {

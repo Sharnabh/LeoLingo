@@ -131,16 +131,16 @@ class LogInViewController: UIViewController, ASAuthorizationControllerDelegate, 
                     
                     // Check if user exists with the same Apple ID (existing user)
                     if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
-                        // Existing user - sign them in and redirect to landing page
-                        _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
+                        // Existing user - sign them in using Apple ID and redirect to landing page
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             self?.redirectToLandingPage()
                         }
                     } else if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
-                        // User exists with same email but different Apple ID - update and redirect to landing page
+                        // User exists with same email but different Apple ID - update and sign in with Apple ID
                         _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
-                        _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             self?.redirectToLandingPage()
@@ -381,9 +381,9 @@ extension LogInViewController: LogInCellDelegate {
     }
     
     private func isFirstTimeLogin(user: SupabaseDataController.User) -> Bool {
-        // Check if user has completed the questionnaire by looking at child_name
-        // If child_name is nil or empty, it means they haven't completed the questionnaire
-        return user.child_name == nil || user.child_name?.isEmpty == true
+        // Check if user has completed the questionnaire by looking at is_first_login
+        // If is_first_login is true or nil, it means they haven't completed the questionnaire
+        return user.is_first_login ?? true
     }
 }
 
@@ -402,7 +402,7 @@ extension LogInViewController {
         if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
             questionnaireVC.getEmail(email: email)
             questionnaireVC.modalPresentationStyle = .fullScreen
-            self.navigationController?.pushViewController(questionnaireVC, animated: true)
+            present(questionnaireVC, animated: true)
         }
     }
     
@@ -412,8 +412,8 @@ extension LogInViewController {
             do {
                 let users = try await SupabaseDataController.shared.getAllUsers()
                 if let user = users.first(where: { $0.email == email }) {
-                    // Check if user has completed questionnaire (child_name is set)
-                    let isFirstTime = user.child_name == nil || user.child_name?.isEmpty == true
+                    // Check if user has completed questionnaire (is_first_login is false)
+                    let isFirstTime = user.is_first_login ?? true
                     DispatchQueue.main.async {
                         completion(isFirstTime)
                     }

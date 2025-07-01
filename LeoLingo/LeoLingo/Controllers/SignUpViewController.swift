@@ -120,8 +120,8 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                     
                     // Check if user exists with the same Apple ID
                     if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
-                        // Existing user - sign them in and check if they've completed questionnaire
-                        _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
+                        // Existing user - sign them in using Apple ID and check if they've completed questionnaire
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             // Check if user has completed questionnaire
@@ -134,9 +134,9 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                             }
                         }
                     } else if !email.isEmpty, let existingUserWithEmail = users.first(where: { $0.email == email }) {
-                        // User exists with same email but different Apple ID - update and check questionnaire completion
+                        // User exists with same email but different Apple ID - update and sign in with Apple ID
                         _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
-                        _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             // Check if user has completed questionnaire
@@ -225,7 +225,18 @@ extension SignUpViewController: SignUpCellDelegate {
     }
     
     func switchToLoginVC() {
-        self.navigationController?.popViewController(animated: true)
+        // self.navigationController?.popViewController(animated: true)
+        guard let navigationController = self.navigationController else {
+            self.dismiss(animated: true)
+            return
+        }
+        
+        // Check if there's a view controller to pop back to
+        if navigationController.viewControllers.count > 1 {
+            navigationController.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true)
+        }
     }
     
     func checkUserExists(email: String, completion: @escaping (Bool) -> Void) {
@@ -417,8 +428,8 @@ extension SignUpViewController {
     
     // MARK: - User Check Helper Methods
     private func isFirstTimeUser(user: SupabaseDataController.User) -> Bool {
-        // Check if user has completed the questionnaire by looking at child_name
-        // If child_name is nil or empty, it means they haven't completed the questionnaire
-        return user.child_name == nil || user.child_name?.isEmpty == true
+        // Check if user has completed the questionnaire by looking at is_first_login
+        // If is_first_login is true or nil, it means they haven't completed the questionnaire
+        return user.is_first_login ?? true
     }
 }

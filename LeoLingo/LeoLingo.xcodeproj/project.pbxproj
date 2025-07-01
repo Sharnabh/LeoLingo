@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CEB40BFA2E0138C500014A90 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40BF92E0138C500014A90 /* Auth */; };
-		CEB40BFC2E0138C500014A90 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40BFB2E0138C500014A90 /* Functions */; };
-		CEB40BFE2E0138C500014A90 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40BFD2E0138C500014A90 /* PostgREST */; };
-		CEB40C002E0138C500014A90 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40BFF2E0138C500014A90 /* Realtime */; };
-		CEB40C022E0138C500014A90 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40C012E0138C500014A90 /* Storage */; };
-		CEB40C042E01392E00014A90 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40C032E01392E00014A90 /* Supabase */; };
-		CEB40C072E01395E00014A90 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40C062E01395E00014A90 /* Lottie */; };
-		CEB40C0A2E01398D00014A90 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = CEB40C092E01398D00014A90 /* SwiftSMTP */; };
+		CE3939162E10533B00933BC4 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939152E10533B00933BC4 /* SwiftSMTP */; };
+		CE3939192E10535100933BC4 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939182E10535100933BC4 /* Auth */; };
+		CE39391B2E10535100933BC4 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CE39391A2E10535100933BC4 /* Functions */; };
+		CE39391D2E10535100933BC4 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = CE39391C2E10535100933BC4 /* PostgREST */; };
+		CE39391F2E10535100933BC4 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = CE39391E2E10535100933BC4 /* Realtime */; };
+		CE3939212E10535100933BC4 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939202E10535100933BC4 /* Storage */; };
+		CE3939242E10537C00933BC4 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939232E10537C00933BC4 /* Lottie */; };
+		CE3939282E1053B300933BC4 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939272E1053B300933BC4 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -61,14 +61,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEB40BFE2E0138C500014A90 /* PostgREST in Frameworks */,
-				CEB40C072E01395E00014A90 /* Lottie in Frameworks */,
-				CEB40C0A2E01398D00014A90 /* SwiftSMTP in Frameworks */,
-				CEB40BFC2E0138C500014A90 /* Functions in Frameworks */,
-				CEB40C042E01392E00014A90 /* Supabase in Frameworks */,
-				CEB40BFA2E0138C500014A90 /* Auth in Frameworks */,
-				CEB40C022E0138C500014A90 /* Storage in Frameworks */,
-				CEB40C002E0138C500014A90 /* Realtime in Frameworks */,
+				CE3939212E10535100933BC4 /* Storage in Frameworks */,
+				CE3939242E10537C00933BC4 /* Lottie in Frameworks */,
+				CE39391D2E10535100933BC4 /* PostgREST in Frameworks */,
+				CE39391B2E10535100933BC4 /* Functions in Frameworks */,
+				CE3939282E1053B300933BC4 /* Supabase in Frameworks */,
+				CE3939192E10535100933BC4 /* Auth in Frameworks */,
+				CE39391F2E10535100933BC4 /* Realtime in Frameworks */,
+				CE3939162E10533B00933BC4 /* SwiftSMTP in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,14 +121,14 @@
 			);
 			name = LeoLingo;
 			packageProductDependencies = (
-				CEB40BF92E0138C500014A90 /* Auth */,
-				CEB40BFB2E0138C500014A90 /* Functions */,
-				CEB40BFD2E0138C500014A90 /* PostgREST */,
-				CEB40BFF2E0138C500014A90 /* Realtime */,
-				CEB40C012E0138C500014A90 /* Storage */,
-				CEB40C032E01392E00014A90 /* Supabase */,
-				CEB40C062E01395E00014A90 /* Lottie */,
-				CEB40C092E01398D00014A90 /* SwiftSMTP */,
+				CE3939152E10533B00933BC4 /* SwiftSMTP */,
+				CE3939182E10535100933BC4 /* Auth */,
+				CE39391A2E10535100933BC4 /* Functions */,
+				CE39391C2E10535100933BC4 /* PostgREST */,
+				CE39391E2E10535100933BC4 /* Realtime */,
+				CE3939202E10535100933BC4 /* Storage */,
+				CE3939232E10537C00933BC4 /* Lottie */,
+				CE3939272E1053B300933BC4 /* Supabase */,
 			);
 			productName = LeoLingo;
 			productReference = CEBB42952D301D6D009859CD /* LeoLingo.app */;
@@ -159,9 +159,9 @@
 			mainGroup = CEBB428C2D301D6D009859CD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */,
-				CEB40C052E01395E00014A90 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				CEB40C082E01398D00014A90 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
+				CE3939142E10533B00933BC4 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
+				CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				CE3939222E10537C00933BC4 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEBB42962D301D6D009859CD /* Products */;
@@ -413,23 +413,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/supabase/supabase-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.1;
-			};
-		};
-		CEB40C052E01395E00014A90 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.2;
-			};
-		};
-		CEB40C082E01398D00014A90 /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
+		CE3939142E10533B00933BC4 /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Kitura/Swift-SMTP";
 			requirement = {
@@ -437,48 +421,64 @@
 				minimumVersion = 6.0.0;
 			};
 		};
+		CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		CE3939222E10537C00933BC4 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CEB40BF92E0138C500014A90 /* Auth */ = {
+		CE3939152E10533B00933BC4 /* SwiftSMTP */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			package = CE3939142E10533B00933BC4 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
+			productName = SwiftSMTP;
+		};
+		CE3939182E10535100933BC4 /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Auth;
 		};
-		CEB40BFB2E0138C500014A90 /* Functions */ = {
+		CE39391A2E10535100933BC4 /* Functions */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Functions;
 		};
-		CEB40BFD2E0138C500014A90 /* PostgREST */ = {
+		CE39391C2E10535100933BC4 /* PostgREST */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = PostgREST;
 		};
-		CEB40BFF2E0138C500014A90 /* Realtime */ = {
+		CE39391E2E10535100933BC4 /* Realtime */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Realtime;
 		};
-		CEB40C012E0138C500014A90 /* Storage */ = {
+		CE3939202E10535100933BC4 /* Storage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Storage;
 		};
-		CEB40C032E01392E00014A90 /* Supabase */ = {
+		CE3939232E10537C00933BC4 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40BF82E0138C500014A90 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Supabase;
-		};
-		CEB40C062E01395E00014A90 /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CEB40C052E01395E00014A90 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = CE3939222E10537C00933BC4 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		CEB40C092E01398D00014A90 /* SwiftSMTP */ = {
+		CE3939272E1053B300933BC4 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CEB40C082E01398D00014A90 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
-			productName = SwiftSMTP;
+			package = CE3939172E10535000933BC4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

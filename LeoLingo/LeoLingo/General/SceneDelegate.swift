@@ -22,6 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Check if user is logged in and we have their ID
         if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
+            print("DEBUG: SceneDelegate - Found logged in user with ID: \(userId)")
+            print("DEBUG: SceneDelegate - Is Apple user: \(UserDefaults.standard.isAppleUser)")
+            print("DEBUG: SceneDelegate - Stored email: \(UserDefaults.standard.string(forKey: "lastEmail") ?? "nil")")
+            
             // Set the user ID in SupabaseDataController
             SupabaseDataController.shared.restoreSession(userId: userId)
             
@@ -35,22 +39,43 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 print("DEBUG: SceneDelegate - Stored badge ID: \(idString)")
             }
             
-            // User is logged in, go to HomePage
-            let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
-            if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
-                // Create a navigation controller with the home page
-                let navigationController = UINavigationController(rootViewController: homePageVC)
-                navigationController.setNavigationBarHidden(true, animated: false)
-                window.rootViewController = navigationController
-                
-                // Load user data
-                Task {
-                    do {
-                        _ = try await SupabaseDataController.shared.getUser(byId: userId)
-                        // Data is now loaded and cached in SupabaseDataController
-                    } catch {
-                        print("Error loading user data: \(error)")
-                        // Handle error - maybe show an alert or redirect to login
+            // Load user data and check if user needs to complete questionnaire
+            Task {
+                do {
+                    let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                    
+                    // Get the user from the database to check is_first_login
+                    let users = try await SupabaseDataController.shared.getAllUsers()
+                    let currentUser = users.first { $0.id == userId }
+                    
+                    // Check if this is the user's first login (questionnaire not completed)
+                    let isFirstLogin = currentUser?.is_first_login ?? true
+                    
+                    DispatchQueue.main.async {
+                        if isFirstLogin {
+                            // User hasn't completed questionnaire, show questionnaire
+                            print("DEBUG: SceneDelegate - User needs to complete questionnaire")
+                            let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
+                            if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
+                                questionnaireVC.getEmail(email: currentUser?.email ?? "")
+                                window.rootViewController = questionnaireVC
+                            }
+                        } else {
+                            // User has completed questionnaire, go to HomePage
+                            print("DEBUG: SceneDelegate - User has completed questionnaire, going to HomePage")
+                            let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+                            if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
+                                // Create a navigation controller with the home page
+                                let navigationController = UINavigationController(rootViewController: homePageVC)
+                                navigationController.setNavigationBarHidden(true, animated: false)
+                                window.rootViewController = navigationController
+                            }
+                        }
+                    }
+                } catch {
+                    print("Error loading user data: \(error)")
+                    // Handle error - redirect to login
+                    DispatchQueue.main.async {
                         UserDefaults.standard.clearSession()
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {

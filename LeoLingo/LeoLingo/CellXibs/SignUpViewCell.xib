@@ -17,13 +17,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="QCR-YF-BfS">
-                        <rect key="frame" x="10" y="10" width="652" height="722"/>
+                        <rect key="frame" x="10" y="10" width="652" height="717"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LeoLingoMainImage" translatesAutoresizingMaskIntoConstraints="NO" id="h6h-me-nZb">
-                                <rect key="frame" x="70" y="0.0" width="512" height="351"/>
+                                <rect key="frame" x="70" y="0.0" width="512" height="346"/>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="guo-hc-Gcu">
-                                <rect key="frame" x="190" y="375" width="272" height="114"/>
+                                <rect key="frame" x="190" y="370" width="272" height="114"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Parent's Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="777-Tw-saY">
                                         <rect key="frame" x="0.0" y="0.0" width="272" height="34"/>
@@ -55,7 +55,7 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z0I-ID-voj">
-                                <rect key="frame" x="220" y="513" width="212" height="34.5"/>
+                                <rect key="frame" x="220" y="508" width="212" height="34.5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34.5" id="n7x-xN-fXs"/>
                                     <constraint firstAttribute="width" constant="212" id="pTW-sZ-jKF"/>
@@ -64,7 +64,7 @@
                                 <buttonConfiguration key="configuration" style="filled" title="Sign Up"/>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Ts0-8i-ip2">
-                                <rect key="frame" x="57" y="571.5" width="538" height="34"/>
+                                <rect key="frame" x="57" y="566.5" width="538" height="34"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="Line" translatesAutoresizingMaskIntoConstraints="NO" id="56b-pK-4IT">
                                         <rect key="frame" x="0.0" y="15.5" width="245" height="3"/>
@@ -87,7 +87,7 @@
                                 </constraints>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="hgd-lA-ujK">
-                                <rect key="frame" x="239" y="629.5" width="174" height="34.5"/>
+                                <rect key="frame" x="239" y="624.5" width="174" height="34.5"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Rm-8t-9Gk">
                                         <rect key="frame" x="0.0" y="0.0" width="79" height="34.5"/>
@@ -110,7 +110,7 @@
                                 </constraints>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57C-6e-y1D">
-                                <rect key="frame" x="213.5" y="688" width="225.5" height="34"/>
+                                <rect key="frame" x="213.5" y="683" width="225.5" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="eQp-BR-syl"/>
                                 </constraints>
@@ -123,7 +123,7 @@
                 <color key="backgroundColor" red="0.97647058823529409" green="0.94901960784313721" blue="0.8784313725490196" alpha="1" colorSpace="calibratedRGB"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="QCR-YF-BfS" secondAttribute="trailing" constant="10" id="Klk-2M-yzF"/>
-                    <constraint firstAttribute="bottom" secondItem="QCR-YF-BfS" secondAttribute="bottom" constant="10" id="Nrn-FA-aPa"/>
+                    <constraint firstAttribute="bottom" secondItem="QCR-YF-BfS" secondAttribute="bottom" constant="15" id="Nrn-FA-aPa"/>
                     <constraint firstItem="QCR-YF-BfS" firstAttribute="top" secondItem="DWJ-2A-aTe" secondAttribute="top" constant="10" id="OtO-Kk-iZD"/>
                     <constraint firstItem="QCR-YF-BfS" firstAttribute="leading" secondItem="DWJ-2A-aTe" secondAttribute="leading" constant="10" id="csB-2I-Zwa"/>
                 </constraints>

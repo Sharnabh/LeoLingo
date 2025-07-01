@@ -53,6 +53,12 @@ class SetPasscodeViewController: UIViewController {
                 // Update passcode in Supabase using stored phone number
                 try await SupabaseDataController.shared.updatePasscode(passcode: myPasscode)
                 
+                // Mark questionnaire as completed
+                if let userId = SupabaseDataController.shared.userId {
+                    try await SupabaseDataController.shared.markQuestionnaireCompleted(userId: userId)
+                    print("DEBUG: SetPasscodeVC - Questionnaire marked as completed")
+                }
+                
                 // Switch to main thread for UI updates
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }

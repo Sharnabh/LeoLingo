@@ -381,9 +381,9 @@ extension LogInViewController: LogInCellDelegate {
     }
     
     private func isFirstTimeLogin(user: SupabaseDataController.User) -> Bool {
-        // Check if user has completed the questionnaire by looking at child_name
-        // If child_name is nil or empty, it means they haven't completed the questionnaire
-        return user.child_name == nil || user.child_name?.isEmpty == true
+        // Check if user has completed the questionnaire by looking at is_first_login
+        // If is_first_login is true or nil, it means they haven't completed the questionnaire
+        return user.is_first_login ?? true
     }
 }
 
@@ -412,8 +412,8 @@ extension LogInViewController {
             do {
                 let users = try await SupabaseDataController.shared.getAllUsers()
                 if let user = users.first(where: { $0.email == email }) {
-                    // Check if user has completed questionnaire (child_name is set)
-                    let isFirstTime = user.child_name == nil || user.child_name?.isEmpty == true
+                    // Check if user has completed questionnaire (is_first_login is false)
+                    let isFirstTime = user.is_first_login ?? true
                     DispatchQueue.main.async {
                         completion(isFirstTime)
                     }

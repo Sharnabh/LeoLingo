@@ -965,6 +965,7 @@ class SupabaseDataController {
         public let passcode: String?
         public let child_name: String?
         public let apple_id: String?
+        public let is_first_login: Bool?
         
         public init(name: String, email: String, password: String) {
             self.id = UUID()
@@ -974,6 +975,7 @@ class SupabaseDataController {
             self.passcode = nil
             self.child_name = nil
             self.apple_id = nil
+            self.is_first_login = true
         }
         
         public init(name: String, email: String, password: String, appleId: String) {
@@ -984,6 +986,7 @@ class SupabaseDataController {
             self.passcode = nil
             self.child_name = nil
             self.apple_id = appleId
+            self.is_first_login = true
         }
     }
     
@@ -1196,6 +1199,42 @@ class SupabaseDataController {
             }
         } catch {
             print("DEBUG: Error in updateUserAppleId: \(error)")
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Add method to mark questionnaire completion
+    public func markQuestionnaireCompleted(userId: UUID) async throws {
+        print("DEBUG: Marking questionnaire completed for user \(userId)")
+        
+        do {
+            let response = try await supabase
+                .from("users")
+                .update(["is_first_login": false])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("DEBUG: Questionnaire completion update response received")
+            print("DEBUG: Response: \(response)")
+            
+            // Verify the update was successful
+            let updatedUser: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: Verification - Updated user data:")
+            print("DEBUG: User ID: \(updatedUser.id)")
+            print("DEBUG: Is first login: \(String(describing: updatedUser.is_first_login))")
+            
+            if updatedUser.is_first_login != false {
+                print("DEBUG: WARNING - is_first_login is still not false after update")
+            }
+        } catch {
+            print("DEBUG: Error in markQuestionnaireCompleted: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }

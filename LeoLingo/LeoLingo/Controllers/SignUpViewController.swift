@@ -428,8 +428,8 @@ extension SignUpViewController {
     
     // MARK: - User Check Helper Methods
     private func isFirstTimeUser(user: SupabaseDataController.User) -> Bool {
-        // Check if user has completed the questionnaire by looking at child_name
-        // If child_name is nil or empty, it means they haven't completed the questionnaire
-        return user.child_name == nil || user.child_name?.isEmpty == true
+        // Check if user has completed the questionnaire by looking at is_first_login
+        // If is_first_login is true or nil, it means they haven't completed the questionnaire
+        return user.is_first_login ?? true
     }
 }

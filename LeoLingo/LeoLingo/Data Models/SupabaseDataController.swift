@@ -104,6 +104,10 @@ class SupabaseDataController {
             // Save user ID to UserDefaults
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(signupData.email, forKey: "lastEmail")
             
             // Clear pending data
             pendingSignupData = nil
@@ -144,6 +148,10 @@ class SupabaseDataController {
             // Save user ID to UserDefaults
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(email, forKey: "lastEmail")
             
             await initializeUserDataWithBadgeAchievement(userId: response.id)
             return try await getUser(byId: response.id)
@@ -165,14 +173,20 @@ class SupabaseDataController {
             
             print("DEBUG: User signed up with Apple successfully")
             print("DEBUG: User ID: \(response.id)")
+            print("DEBUG: Apple ID: \(appleId)")
+            print("DEBUG: Email: \(email)")
             
             self.currentUserId = response.id
-            self.currentEmail = email
+            self.currentEmail = email  // Store email even if empty for Apple users
             self.isFirstTimeUser = true
             
             // Save user ID to UserDefaults
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = true
+            
+            // Save email to UserDefaults for session restoration (even if empty)
+            UserDefaults.standard.set(email, forKey: "lastEmail")
             
             await initializeUserDataWithBadgeAchievement(userId: response.id)
             return try await getUser(byId: response.id)
@@ -308,6 +322,10 @@ class SupabaseDataController {
             // Save user ID to UserDefaults
             UserDefaults.standard.userId = user.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(loginData.email, forKey: "lastEmail")
             
             // Clear pending data
             pendingLoginData = nil
@@ -349,6 +367,10 @@ class SupabaseDataController {
             // Save user ID to UserDefaults
             UserDefaults.standard.userId = user.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(email, forKey: "lastEmail")
             
             // Ensure user data exists
             try await initializeUserData(userId: user.id)
@@ -369,6 +391,12 @@ class SupabaseDataController {
             .single()
             .execute()
             .value
+        
+        print("DEBUG: Retrieved user:")
+        print("  - Name: \(user.name)")
+        print("  - Email: \(user.email)")
+        print("  - Apple ID: \(user.apple_id ?? "nil")")
+        print("  - Child Name: \(user.child_name ?? "nil")")
         
         // Get all word records in a single query
         let wordsResponse: [UserWordRecord] = try await supabase
@@ -416,6 +444,7 @@ class SupabaseDataController {
         )
         
         currentUser = userData
+        print("DEBUG: Successfully created UserData object for user: \(user.name)")
         return userData
     }
     
@@ -1060,10 +1089,21 @@ class SupabaseDataController {
     public func restoreSession(userId: UUID) {
         self.currentUserId = userId
         
-        // Try to get the email from UserDefaults if needed
-        // This is optional since we mainly use the userId now
+        // Check if this is an Apple user from UserDefaults
+        let isAppleUser = UserDefaults.standard.isAppleUser
+        print("DEBUG: Restoring session for \(isAppleUser ? "Apple" : "regular") user with ID: \(userId)")
+        
+        // Try to get the email from UserDefaults for session restoration
+        // For Apple users, this might be empty, but we store it anyway
         if let email = UserDefaults.standard.string(forKey: "lastEmail") {
             self.currentEmail = email
+            if isAppleUser {
+                print("DEBUG: Restored Apple user session with email: \(email.isEmpty ? "(empty)" : email)")
+            } else {
+                print("DEBUG: Restored regular user session with email: \(email)")
+            }
+        } else {
+            print("DEBUG: No stored email found in UserDefaults")
         }
         
         self.isFirstTimeUser = false
@@ -1072,10 +1112,15 @@ class SupabaseDataController {
     // Update sign out method to clear UserDefaults
     public func signOut() {
         UserDefaults.standard.clearSession()
+        // Also clear the lastEmail specifically
+        UserDefaults.standard.removeObject(forKey: "lastEmail")
+        
         currentUserId = nil
         currentEmail = nil
         currentUser = nil
         isFirstTimeUser = false
+        
+        print("DEBUG: User signed out and all session data cleared")
     }
     
     // Add method to update child's name
@@ -1130,6 +1175,9 @@ class SupabaseDataController {
             print("DEBUG: Apple ID update response received")
             print("DEBUG: Response: \(response)")
             
+            // Mark user as Apple user in UserDefaults
+            UserDefaults.standard.isAppleUser = true
+            
             // Verify the update was successful
             let updatedUser: User = try await supabase
                 .from("users")
@@ -1171,6 +1219,68 @@ class SupabaseDataController {
             }
         } catch {
             print("DEBUG: Error initializing user data with badge achievement: \(error)")
+        }
+    }
+    
+    // MARK: - Apple Sign In
+    
+    func signInWithApple(appleId: String) async throws -> UserData {
+        do {
+            print("DEBUG: Attempting Apple sign in with Apple ID: \(appleId)")
+            let response: [User] = try await supabase
+                .from("users")
+                .select()
+                .eq("apple_id", value: appleId)
+                .execute()
+                .value
+            
+            guard let user = response.first else {
+                throw SupabaseError.invalidCredentials
+            }
+            
+            print("DEBUG: ====== APPLE LOGIN ======")
+            print("DEBUG: Found user with ID: \(user.id)")
+            print("DEBUG: Apple ID: \(user.apple_id ?? "nil")")
+            print("DEBUG: Email: \(user.email)")
+            print("DEBUG: ========================")
+            
+            // Store both user ID and email on successful sign in
+            self.currentUserId = user.id
+            self.currentEmail = user.email  // This might be empty for Apple users
+            self.isFirstTimeUser = false
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = user.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = true
+            
+            // Save email to UserDefaults for session restoration (even if empty)
+            UserDefaults.standard.set(user.email, forKey: "lastEmail")
+            
+            // Ensure user data exists
+            try await initializeUserData(userId: user.id)
+            return try await getUser(byId: user.id)
+        } catch {
+            print("DEBUG: Apple sign in error: \(error)")
+            throw SupabaseError.networkError(error)
+        }
+    }
+    
+    // Add method to check if a user is an Apple user
+    private func isAppleUser(userId: UUID) async -> Bool {
+        do {
+            let user: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            
+            return user.apple_id != nil && !user.apple_id!.isEmpty
+        } catch {
+            print("DEBUG: Error checking if user is Apple user: \(error)")
+            return false
         }
     }
 }

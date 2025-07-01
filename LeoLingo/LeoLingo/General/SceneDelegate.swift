@@ -22,6 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Check if user is logged in and we have their ID
         if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
+            print("DEBUG: SceneDelegate - Found logged in user with ID: \(userId)")
+            print("DEBUG: SceneDelegate - Is Apple user: \(UserDefaults.standard.isAppleUser)")
+            print("DEBUG: SceneDelegate - Stored email: \(UserDefaults.standard.string(forKey: "lastEmail") ?? "nil")")
+            
             // Set the user ID in SupabaseDataController
             SupabaseDataController.shared.restoreSession(userId: userId)
             

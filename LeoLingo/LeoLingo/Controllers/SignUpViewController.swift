@@ -120,8 +120,8 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                     
                     // Check if user exists with the same Apple ID
                     if let existingUser = users.first(where: { $0.apple_id == userIdentifier }) {
-                        // Existing user - sign them in and check if they've completed questionnaire
-                        _ = try await SupabaseDataController.shared.signIn(email: existingUser.email, password: userIdentifier)
+                        // Existing user - sign them in using Apple ID and check if they've completed questionnaire
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             // Check if user has completed questionnaire
@@ -134,9 +134,9 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
                             }
                         }
                     } else if !email.isEmpty, let existingUserWithEmail = users.first(where: { $0.email == email }) {
-                        // User exists with same email but different Apple ID - update and check questionnaire completion
+                        // User exists with same email but different Apple ID - update and sign in with Apple ID
                         _ = try await SupabaseDataController.shared.updateUserAppleId(userId: existingUserWithEmail.id, appleId: userIdentifier)
-                        _ = try await SupabaseDataController.shared.signIn(email: email, password: userIdentifier)
+                        _ = try await SupabaseDataController.shared.signInWithApple(appleId: userIdentifier)
                         DispatchQueue.main.async { [weak self] in
                             self?.hideLoading()
                             // Check if user has completed questionnaire

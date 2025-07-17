@@ -1,6 +1,8 @@
 # Xcode
 *.xcuserdata/
 *.xcuserstate
+UserInterfaceState.xcuserstate
+*.xcscmblueprint
 DerivedData/
 build/
 Pods/

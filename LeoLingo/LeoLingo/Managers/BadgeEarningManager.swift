@@ -3,6 +3,11 @@
 //  LeoLingo
 //
 //  Created by Badge System on 2025
+//  Copyright © 2025 Sharnabh. All rights reserved.
+//
+//  PROPRIETARY AND CONFIDENTIAL
+//  This software is protected by copyright and commercial license.
+//  Unauthorized copying, distribution, modification, or reverse engineering is prohibited.
 //
 
 import Foundation

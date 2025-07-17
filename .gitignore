@@ -6,3 +6,4 @@ build/
 Pods/
 *.log
 .DS_Store
+GoogleService-Info.plist

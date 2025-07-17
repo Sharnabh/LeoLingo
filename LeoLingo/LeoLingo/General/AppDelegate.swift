@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Configure Google Sign-In
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") else {
+            print("Warning: GoogleService-Info.plist not found. Google Sign-In will not work.")
+            return true
+        }
+        guard let plist = NSDictionary(contentsOfFile: path) else {
+            print("Warning: Unable to read GoogleService-Info.plist")
+            return true
+        }
+        guard let clientId = plist["CLIENT_ID"] as? String else {
+            print("Warning: CLIENT_ID not found in GoogleService-Info.plist")
+            return true
+        }
+        
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientId)
+        
         return true
+    }
+    
+    // MARK: - Google Sign-In URL Handling
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance.handle(url)
     }
 
     // MARK: UISceneSession Lifecycle

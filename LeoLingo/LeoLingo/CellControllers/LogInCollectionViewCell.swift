@@ -15,6 +15,7 @@ protocol LogInCellDelegate: AnyObject {
     func validateLogin(email: String, password: String, completion: @escaping (Bool) -> Void)
     func initiateOTPLogin(email: String, password: String)
     func handleAppleSignIn()
+    func handleGoogleSignIn()
 }
 
 class LogInCollectionViewCell: UICollectionViewCell {
@@ -23,6 +24,7 @@ class LogInCollectionViewCell: UICollectionViewCell {
     @IBOutlet var loginButton: UIButton!
     @IBOutlet var switchToSignupVCButton: UIButton!
     @IBOutlet var appleSignInButton: UIButton!
+    @IBOutlet var googleSignInButton: UIButton!
     
     // Add password visibility button
     private let passwordToggleButton: UIButton = {
@@ -60,6 +62,7 @@ class LogInCollectionViewCell: UICollectionViewCell {
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         switchToSignupVCButton.addTarget(self, action: #selector(switchToSignup), for: .touchUpInside)
         appleSignInButton.addTarget(self, action: #selector(appleSignInTapped), for: .touchUpInside)
+        googleSignInButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
     }
     
     @objc private func togglePasswordVisibility() {
@@ -92,6 +95,10 @@ class LogInCollectionViewCell: UICollectionViewCell {
     
     @objc private func appleSignInTapped() {
         delegate?.handleAppleSignIn()
+    }
+    
+    @objc private func googleSignInTapped() {
+        delegate?.handleGoogleSignIn()
     }
     
     private func checkUserExists(email: String) {

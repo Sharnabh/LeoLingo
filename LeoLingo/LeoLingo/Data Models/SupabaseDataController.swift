@@ -1,6 +1,22 @@
+//
+//  SupabaseDataController.swift
+//  LeoLingo
+//
+//  Copyright © 2025 Sharnabh. All rights reserved.
+//
+//  PROPRIETARY AND CONFIDENTIAL
+//  This software is protected by copyright and commercial license.
+//  Unauthorized copying, distribution, modification, or reverse engineering is prohibited.
+//
+
 import Foundation
 import Supabase
 import UIKit
+
+// MARK: - Security Notice
+// This file contains proprietary algorithms and business logic.
+// Any attempt to reverse engineer, modify, or extract this code
+// constitutes a violation of copyright and licensing agreements.
 
 class SupabaseDataController {
     static let shared = SupabaseDataController()

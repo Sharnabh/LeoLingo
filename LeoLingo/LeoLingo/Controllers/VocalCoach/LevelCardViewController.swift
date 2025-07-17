@@ -2,6 +2,15 @@
 //  LevelCardViewController.swift
 //  LeoLingo
 //
+//  Created by Batch - 2 on 20/01/25.
+//  Copyright © 2025 Sharnabh. All rights reserved.
+//
+//  PROPRIETARY AND CONFIDENTIAL
+//  This software is protected by copyright and commercial license.
+//  Unauthorized copying, distribution, modification, or reverse engineering is prohibited.
+// LevelCardViewController.swift
+//  LeoLingo
+//
 //  Created by Tarun   on 21/02/25.
 //
 

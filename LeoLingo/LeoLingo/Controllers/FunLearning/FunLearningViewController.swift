@@ -3,6 +3,11 @@
 //  LeoLingo
 //
 //  Created by Sharnabh on 15/01/25.
+//  Copyright © 2025 Sharnabh. All rights reserved.
+//
+//  PROPRIETARY AND CONFIDENTIAL
+//  This software is protected by copyright and commercial license.
+//  Unauthorized copying, distribution, modification, or reverse engineering is prohibited.
 //
 
 import UIKit

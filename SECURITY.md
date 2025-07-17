@@ -58,9 +58,9 @@ User data is collected and processed in accordance with:
 
 ### Contact Information
 
-**Legal Matters**: legal@leolingo.com
-**Technical Support**: support@leolingo.com
-**Copyright Infringement Reports**: dmca@leolingo.com
+**Legal Matters**: vopulse@icloud.com
+**Technical Support**: vopulse@icloud.com
+**Copyright Infringement Reports**: vopulse@icloud.com
 
 ---
 

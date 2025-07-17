@@ -105,6 +105,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration
             UserDefaults.standard.set(signupData.email, forKey: "lastEmail")
@@ -149,6 +150,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration
             UserDefaults.standard.set(email, forKey: "lastEmail")
@@ -184,6 +186,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = response.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = true
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration (even if empty)
             UserDefaults.standard.set(email, forKey: "lastEmail")
@@ -194,6 +197,89 @@ class SupabaseDataController {
             throw SupabaseError.databaseError(error)
         }
     }
+    
+    // MARK: - Google Sign In
+    
+    func signUpWithGoogle(name: String, email: String, googleId: String) async throws -> UserData {
+        do {
+            let userData = User(name: name, email: email, password: googleId, googleId: googleId)
+            let response: User = try await supabase
+                .from("users")
+                .insert(userData)
+                .select()
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: User signed up with Google successfully")
+            print("DEBUG: User ID: \(response.id)")
+            print("DEBUG: Google ID: \(googleId)")
+            print("DEBUG: Email: \(email)")
+            
+            self.currentUserId = response.id
+            self.currentEmail = email
+            self.isFirstTimeUser = true
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = response.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = true
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(email, forKey: "lastEmail")
+            
+            await initializeUserDataWithBadgeAchievement(userId: response.id)
+            return try await getUser(byId: response.id)
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    func signInWithGoogle(googleId: String) async throws -> UserData {
+        do {
+            print("DEBUG: Attempting Google sign in with Google ID: \(googleId)")
+            let response: [User] = try await supabase
+                .from("users")
+                .select()
+                .eq("google_id", value: googleId)
+                .execute()
+                .value
+            
+            guard let user = response.first else {
+                throw SupabaseError.invalidCredentials
+            }
+            
+            print("DEBUG: ====== GOOGLE LOGIN ======")
+            print("DEBUG: Found user with ID: \(user.id)")
+            print("DEBUG: Google ID: \(user.google_id ?? "nil")")
+            print("DEBUG: Email: \(user.email)")
+            print("DEBUG: =========================")
+            
+            // Store both user ID and email on successful sign in
+            self.currentUserId = user.id
+            self.currentEmail = user.email
+            self.isFirstTimeUser = false
+            
+            // Save user ID to UserDefaults
+            UserDefaults.standard.userId = user.id.uuidString
+            UserDefaults.standard.isUserLoggedIn = true
+            UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = true
+            
+            // Save email to UserDefaults for session restoration
+            UserDefaults.standard.set(user.email, forKey: "lastEmail")
+            
+            // Ensure user data exists
+            try await initializeUserData(userId: user.id)
+            return try await getUser(byId: user.id)
+        } catch {
+            print("DEBUG: Google sign in error: \(error)")
+            throw SupabaseError.networkError(error)
+        }
+    }
+    
+    // MARK: - User Data Initialization
     
     private func initializeUserData(userId: UUID) async throws {
         print("DEBUG: Initializing user data for ID: \(userId)")
@@ -268,6 +354,8 @@ class SupabaseDataController {
         }
     }
     
+    // MARK: - Login and OTP
+    
     // New OTP-based login method
     func initiateLogin(email: String, password: String) async throws {
         // First verify credentials without logging in
@@ -323,6 +411,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = user.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration
             UserDefaults.standard.set(loginData.email, forKey: "lastEmail")
@@ -368,6 +457,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = user.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = false
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration
             UserDefaults.standard.set(email, forKey: "lastEmail")
@@ -965,6 +1055,7 @@ class SupabaseDataController {
         public let passcode: String?
         public let child_name: String?
         public let apple_id: String?
+        public let google_id: String?
         public let is_first_login: Bool?
         
         public init(name: String, email: String, password: String) {
@@ -975,6 +1066,7 @@ class SupabaseDataController {
             self.passcode = nil
             self.child_name = nil
             self.apple_id = nil
+            self.google_id = nil
             self.is_first_login = true
         }
         
@@ -986,6 +1078,19 @@ class SupabaseDataController {
             self.passcode = nil
             self.child_name = nil
             self.apple_id = appleId
+            self.google_id = nil
+            self.is_first_login = true
+        }
+        
+        public init(name: String, email: String, password: String, googleId: String) {
+            self.id = UUID()
+            self.name = name
+            self.email = email
+            self.password = password
+            self.passcode = nil
+            self.child_name = nil
+            self.apple_id = nil
+            self.google_id = googleId
             self.is_first_login = true
         }
     }
@@ -1092,9 +1197,17 @@ class SupabaseDataController {
     public func restoreSession(userId: UUID) {
         self.currentUserId = userId
         
-        // Check if this is an Apple user from UserDefaults
+        // Check if this is an Apple user or Google user from UserDefaults
         let isAppleUser = UserDefaults.standard.isAppleUser
-        print("DEBUG: Restoring session for \(isAppleUser ? "Apple" : "regular") user with ID: \(userId)")
+        let isGoogleUser = UserDefaults.standard.isGoogleUser
+        
+        if isAppleUser {
+            print("DEBUG: Restoring session for Apple user with ID: \(userId)")
+        } else if isGoogleUser {
+            print("DEBUG: Restoring session for Google user with ID: \(userId)")
+        } else {
+            print("DEBUG: Restoring session for regular user with ID: \(userId)")
+        }
         
         // Try to get the email from UserDefaults for session restoration
         // For Apple users, this might be empty, but we store it anyway
@@ -1102,6 +1215,8 @@ class SupabaseDataController {
             self.currentEmail = email
             if isAppleUser {
                 print("DEBUG: Restored Apple user session with email: \(email.isEmpty ? "(empty)" : email)")
+            } else if isGoogleUser {
+                print("DEBUG: Restored Google user session with email: \(email)")
             } else {
                 print("DEBUG: Restored regular user session with email: \(email)")
             }
@@ -1292,6 +1407,7 @@ class SupabaseDataController {
             UserDefaults.standard.userId = user.id.uuidString
             UserDefaults.standard.isUserLoggedIn = true
             UserDefaults.standard.isAppleUser = true
+            UserDefaults.standard.isGoogleUser = false
             
             // Save email to UserDefaults for session restoration (even if empty)
             UserDefaults.standard.set(user.email, forKey: "lastEmail")
@@ -1305,8 +1421,49 @@ class SupabaseDataController {
         }
     }
     
-    // Add method to check if a user is an Apple user
-    private func isAppleUser(userId: UUID) async -> Bool {
+    // Add method to update user's Google ID
+    public func updateUserGoogleId(userId: UUID, googleId: String) async throws {
+        print("DEBUG: Starting Google ID update for user \(userId)")
+        print("DEBUG: New Google ID: \(googleId)")
+        
+        do {
+            let response = try await supabase
+                .from("users")
+                .update(["google_id": googleId])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("DEBUG: Google ID update response received")
+            print("DEBUG: Response: \(response)")
+            
+            // Mark user as Google user in UserDefaults
+            UserDefaults.standard.isGoogleUser = true
+            UserDefaults.standard.isAppleUser = false
+            
+            // Verify the update was successful
+            let updatedUser: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            
+            print("DEBUG: Verification - Updated user data:")
+            print("DEBUG: User ID: \(updatedUser.id)")
+            print("DEBUG: Google ID: \(String(describing: updatedUser.google_id))")
+            
+            if updatedUser.google_id == nil {
+                print("DEBUG: WARNING - Google ID is still nil after update")
+            }
+        } catch {
+            print("DEBUG: Error in updateUserGoogleId: \(error)")
+            throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // Add method to check if a user is a Google user
+    private func isGoogleUser(userId: UUID) async -> Bool {
         do {
             let user: User = try await supabase
                 .from("users")
@@ -1316,6 +1473,24 @@ class SupabaseDataController {
                 .execute()
                 .value
             
+            return user.google_id != nil && !user.google_id!.isEmpty
+        } catch {
+            print("DEBUG: Error checking if user is Google user: \(error)")
+            return false
+        }
+    }
+
+    private func isAppleUser(userId: UUID) async -> Bool {
+        // Check if the user has an Apple ID
+        do {
+            let user: User = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+
             return user.apple_id != nil && !user.apple_id!.isEmpty
         } catch {
             print("DEBUG: Error checking if user is Apple user: \(error)")

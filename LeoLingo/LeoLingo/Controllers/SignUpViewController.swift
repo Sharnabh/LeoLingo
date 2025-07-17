@@ -8,6 +8,8 @@
 import UIKit
 import SwiftUI
 import AuthenticationServices
+// NOTE: Make sure to add GoogleSignIn import when GoogleSignIn SDK is properly configured
+import GoogleSignIn
 
 class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
@@ -178,6 +180,70 @@ class SignUpViewController: UIViewController, ASAuthorizationControllerDelegate,
         self.hideLoading()
         self.showAlert(message: "Apple Sign In failed: \(error.localizedDescription)")
     }
+    
+    // MARK: - Google Sign In
+    func performGoogleSignIn() {
+        // TODO: Uncomment when GoogleSignIn SDK is properly configured
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] result, error in
+            if let error = error {
+                self?.showAlert(message: "Google Sign In failed: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let result = result,
+                  let user = result.user.profile else {
+                self?.showAlert(message: "Failed to get Google user information")
+                return
+            }
+            
+            let email = user.email
+            let fullName = user.name ?? "Google User"
+            let googleId = result.user.userID ?? ""
+            
+            self?.showLoading()
+            self?.handleGoogleSignInAsync(email: email, fullName: fullName, googleId: googleId)
+        }
+    }
+    
+    private func handleGoogleSignInAsync(email: String, fullName: String, googleId: String) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            Task {
+                do {
+                    let users = try await SupabaseDataController.shared.getAllUsers()
+                    
+                    // Check if user exists with the same Google ID (existing user)
+                    if let existingUser = users.first(where: { $0.google_id == googleId }) {
+                        // Existing user - sign them in using Google ID and redirect to landing page
+                        _ = try await SupabaseDataController.shared.signInWithGoogle(googleId: googleId)
+                        DispatchQueue.main.async {
+                            self?.hideLoading()
+                            self?.redirectToLandingPage()
+                        }
+                    } else if let existingUserWithEmail = users.first(where: { $0.email == email && $0.email != "" }) {
+                        // User exists with same email but different Google ID - update and sign in with Google ID
+                        _ = try await SupabaseDataController.shared.updateUserGoogleId(userId: existingUserWithEmail.id, googleId: googleId)
+                        _ = try await SupabaseDataController.shared.signInWithGoogle(googleId: googleId)
+                        DispatchQueue.main.async {
+                            self?.hideLoading()
+                            self?.redirectToLandingPage()
+                        }
+                    } else {
+                        // First-time user - create new user and redirect to questionnaire
+                        _ = try await SupabaseDataController.shared.signUpWithGoogle(name: fullName, email: email, googleId: googleId)
+                        DispatchQueue.main.async {
+                            self?.hideLoading()
+                            self?.redirectToQuestionnaire(email: email)
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self?.hideLoading()
+                        self?.showAlert(message: "Google Sign In failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension SignUpViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -216,6 +282,11 @@ extension SignUpViewController: SignUpCellDelegate {
     
     func switchToQuestionnaireVC() {
         // Remove this method or make it empty since we don't want to switch to questionnaire immediately
+    }
+    
+    func handleGoogleSignIn() {
+        // Call the main Google Sign-In implementation
+        self.performGoogleSignIn()
     }
     
     func showAlert(message: String) {

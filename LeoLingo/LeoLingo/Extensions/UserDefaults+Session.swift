@@ -12,6 +12,7 @@ extension UserDefaults {
         static let daysUsed = "daysUsed"
         static let lastEmail = "lastEmail"
         static let isAppleUser = "isAppleUser"
+        static let isGoogleUser = "isGoogleUser"
         static let shouldShowOnboardingBadgeAchievement = "shouldShowOnboardingBadgeAchievement"
         static let earnedBadgeIDs = "earnedBadgeIDs"
         static let shownBadgeIDs = "shownBadgeIDs"
@@ -59,6 +60,15 @@ extension UserDefaults {
         }
         set {
             set(newValue, forKey: Keys.isAppleUser)
+        }
+    }
+    
+    var isGoogleUser: Bool {
+        get {
+            return bool(forKey: Keys.isGoogleUser)
+        }
+        set {
+            set(newValue, forKey: Keys.isGoogleUser)
         }
     }
     
@@ -118,6 +128,7 @@ extension UserDefaults {
         parentModePasscode = nil
         userId = nil
         isAppleUser = false
+        isGoogleUser = false
         
         // Clear timer-related data
         set(0, forKey: Keys.totalTimeSpent)

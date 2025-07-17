@@ -1,8 +1,11 @@
 # Xcode
 *.xcuserdata/
 *.xcuserstate
+UserInterfaceState.xcuserstate
+*.xcscmblueprint
 DerivedData/
 build/
 Pods/
 *.log
 .DS_Store
+GoogleService-Info.plist

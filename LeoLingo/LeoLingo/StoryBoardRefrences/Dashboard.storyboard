@@ -207,12 +207,12 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ohd-my-PBJ">
-                                                                <rect key="frame" x="185.5" y="8" width="40" height="20.5"/>
+                                                                <rect key="frame" x="149" y="8" width="76.5" height="20.5"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="20.5" id="1FF-QT-BLJ"/>
                                                                 </constraints>
                                                                 <state key="normal" title="Button"/>
-                                                                <buttonConfiguration key="configuration" style="plain" image="chevron.right" catalog="system">
+                                                                <buttonConfiguration key="configuration" style="plain" title="See All">
                                                                     <color key="baseForegroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 </buttonConfiguration>
                                                                 <connections>
@@ -430,7 +430,6 @@
     <resources>
         <image name="1" width="512" height="512"/>
         <image name="Mojo" width="1596" height="1834"/>
-        <image name="chevron.right" catalog="system" width="97" height="128"/>
         <namedColor name="AccentColor">
             <color red="0.29399999976158142" green="0.55699998140335083" blue="0.31000000238418579" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

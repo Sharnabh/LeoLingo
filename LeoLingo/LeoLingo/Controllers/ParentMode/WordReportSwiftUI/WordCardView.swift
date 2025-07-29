@@ -80,6 +80,8 @@ struct WordCardView: View {
         )
         .padding(.horizontal, 4)
         .padding(.vertical, 4)
+        .scaleEffect(isSelected ? 1.08 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
 }
 
@@ -97,14 +99,24 @@ struct DonutTextView: View {
 }
 
 #Preview {
-    ZStack {
-        Color.gray.opacity(0.1).ignoresSafeArea()
-        WordCardView(
-            word: "Example",
-            accuracy: 85,
-            attempts: "3",
-            isSelected: true
-        )
-        .padding()
+    // Multiple cards for testing selection
+    struct PreviewWrapper: View {
+        @State private var selected: Int = 1
+        var body: some View {
+            HStack(spacing: 20) {
+                ForEach(0..<3) { idx in
+                    WordCardView(
+                        word: ["Apple", "Banana", "Cherry"][idx],
+                        accuracy: [85, 60, 95][idx],
+                        attempts: String([3, 5, 2][idx]),
+                        isSelected: selected == idx
+                    )
+                    .onTapGesture { selected = idx }
+                }
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1).ignoresSafeArea())
+        }
     }
+    return PreviewWrapper()
 }

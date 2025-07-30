@@ -259,7 +259,8 @@ class DashboardViewController: UIViewController {
                     // Reload collection view and update exercises on main thread
                     DispatchQueue.main.async {
                         self.collectionView.reloadData()
-                        self.updateExerciseForWords()
+//                        self.updateExerciseForWords()
+//                        this part was commented by sachin beacuse the app was crashing on opening on parents mode
                     }
                 } else {
                     print("DEBUG: No user ID found")

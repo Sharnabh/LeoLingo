@@ -89,13 +89,13 @@
                                                                 <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wte-L9-OJJ">
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wte-L9-OJJ">
                                                                 <rect key="frame" x="166" y="0.0" width="90" height="20.5"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="90" id="bet-h7-e29"/>
                                                                 </constraints>
                                                                 <state key="normal" title="Button"/>
-                                                                <buttonConfiguration key="configuration" style="plain" title="See All">
+                                                                <buttonConfiguration key="configuration" style="plain" image="chevron.right.circle.fill" catalog="system" title="">
                                                                     <color key="baseForegroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 </buttonConfiguration>
                                                                 <connections>
@@ -206,19 +206,6 @@
                                                                 <color key="textColor" red="0.52941179279999995" green="0.34901961679999999" blue="0.25490197539999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ohd-my-PBJ">
-                                                                <rect key="frame" x="149" y="8" width="76.5" height="20.5"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="20.5" id="1FF-QT-BLJ"/>
-                                                                </constraints>
-                                                                <state key="normal" title="Button"/>
-                                                                <buttonConfiguration key="configuration" style="plain" title="See All">
-                                                                    <color key="baseForegroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                                                </buttonConfiguration>
-                                                                <connections>
-                                                                    <action selector="moreBadgesButtonTapped:" destination="zqC-mg-RyO" eventType="touchUpInside" id="ZLb-OD-Pzh"/>
-                                                                </connections>
-                                                            </button>
                                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6dM-hG-JtR">
                                                                 <rect key="frame" x="27" y="42.5" width="180" height="100"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -244,11 +231,24 @@
                                                                     </collectionViewCell>
                                                                 </cells>
                                                             </collectionView>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ohd-my-PBJ">
+                                                                <rect key="frame" x="188" y="8" width="50" height="20.5"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="20.5" id="1FF-QT-BLJ"/>
+                                                                </constraints>
+                                                                <state key="normal" title="Button"/>
+                                                                <buttonConfiguration key="configuration" style="plain" image="chevron.right.circle.fill" catalog="system" title="">
+                                                                    <color key="baseForegroundColor" red="0.2941176593" green="0.55686277149999996" blue="0.30980393290000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                                </buttonConfiguration>
+                                                                <connections>
+                                                                    <action selector="moreBadgesButtonTapped:" destination="zqC-mg-RyO" eventType="touchUpInside" id="ZLb-OD-Pzh"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstItem="6dM-hG-JtR" firstAttribute="centerY" secondItem="opb-es-kKC" secondAttribute="centerY" constant="10" id="A3H-Ao-hID"/>
-                                                            <constraint firstAttribute="trailing" secondItem="ohd-my-PBJ" secondAttribute="trailing" constant="8" id="F3c-m8-TFc"/>
+                                                            <constraint firstAttribute="trailing" secondItem="ohd-my-PBJ" secondAttribute="trailing" constant="-4.5" id="F3c-m8-TFc"/>
                                                             <constraint firstItem="ohd-my-PBJ" firstAttribute="top" secondItem="opb-es-kKC" secondAttribute="top" constant="8" id="P5f-cI-zl6"/>
                                                             <constraint firstItem="vzs-Z2-6as" firstAttribute="top" secondItem="opb-es-kKC" secondAttribute="top" constant="8" id="XWb-8r-u7u"/>
                                                             <constraint firstItem="6dM-hG-JtR" firstAttribute="centerX" secondItem="opb-es-kKC" secondAttribute="centerX" id="hy4-O1-n4D"/>
@@ -430,6 +430,7 @@
     <resources>
         <image name="1" width="512" height="512"/>
         <image name="Mojo" width="1596" height="1834"/>
+        <image name="chevron.right.circle.fill" catalog="system" width="128" height="123"/>
         <namedColor name="AccentColor">
             <color red="0.29399999976158142" green="0.55699998140335083" blue="0.31000000238418579" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

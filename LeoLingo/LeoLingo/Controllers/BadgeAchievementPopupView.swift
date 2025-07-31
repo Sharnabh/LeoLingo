@@ -16,21 +16,31 @@ struct BadgeAchievementPopupView: View {
     private let delayBetweenAnimations = 0.2
     private let glowPulseDuration = 1.0
     
-    // Colors
-    private let primaryColor = Color.yellow // Gold
-    private let secondaryColor = Color.orange // Dark Orange
-    private let accentColor = Color.red // Orange Red
+    // App Theme Colors
+    private let creamBackground = Color(red: 255/255, green: 248/255, blue: 240/255)
+    private let greenAccent = Color(red: 76/255, green: 141/255, blue: 95/255)
+    private let brownAccent = Color(red: 143/255, green: 91/255, blue: 66/255)
+    private let orangeAccent = Color(red: 225/255, green: 168/255, blue: 63/255)
     
     var body: some View {
         ZStack {
-            // Background overlay with gradient
-            LinearGradient(
-                gradient: Gradient(colors: [Color.black.opacity(0.85), Color.purple.opacity(0.3), Color.black.opacity(0.85)]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .edgesIgnoringSafeArea(.all)
-            .opacity(opacity)
+            // Liquid glass background overlay
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            creamBackground.opacity(0.3),
+                            brownAccent.opacity(0.2),
+                            creamBackground.opacity(0.4)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .background(.ultraThinMaterial)
+                .blur(radius: 20)
+                .edgesIgnoringSafeArea(.all)
+                .opacity(opacity)
             
             // Confetti effect (randomly positioned small shapes)
             ForEach(0..<30, id: \.self) { index in
@@ -39,19 +49,19 @@ struct BadgeAchievementPopupView: View {
             
             // Main content
             VStack(spacing: 20) {
-                // Congratulations text with gradient
+                // Congratulations text with app theme gradient
                 Text("Achievement Unlocked!")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [primaryColor, secondaryColor],
+                            colors: [greenAccent, orangeAccent],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .padding(.bottom, 5)
                     .opacity(opacity)
-                    .shadow(color: .black.opacity(0.3), radius: 1, x: 1, y: 1)
+                    .shadow(color: brownAccent.opacity(0.3), radius: 2, x: 1, y: 1)
                 
                 // Badge with glow effect
                 ZStack {
@@ -60,7 +70,7 @@ struct BadgeAchievementPopupView: View {
                         Rectangle()
                             .fill(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [primaryColor, secondaryColor.opacity(0.5)]),
+                                    gradient: Gradient(colors: [greenAccent, orangeAccent.opacity(0.5)]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -75,7 +85,7 @@ struct BadgeAchievementPopupView: View {
                     Circle()
                         .fill(
                             RadialGradient(
-                                gradient: Gradient(colors: [primaryColor, primaryColor.opacity(0)]),
+                                gradient: Gradient(colors: [greenAccent, greenAccent.opacity(0)]),
                                 center: .center,
                                 startRadius: 10,
                                 endRadius: 110
@@ -85,17 +95,32 @@ struct BadgeAchievementPopupView: View {
                         .opacity(glowOpacity)
                         .scaleEffect(isAnimating ? 1.2 : 0.8)
                     
-                    // Circular background
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color.white, Color(UIColor.lightGray)]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 140, height: 140)
-                        .shadow(color: primaryColor.opacity(0.7), radius: 15, x: 0, y: 0)
+//                     Circular background with liquid glass effect
+//                    Circle()
+//                        .fill(
+//                            LinearGradient(
+//                                gradient: Gradient(colors: [
+//                                    creamBackground.opacity(0.9),
+//                                    creamBackground.opacity(0.7)
+//                                ]),
+//                                startPoint: .topLeading,
+//                                endPoint: .bottomTrailing
+//                            )
+//                        )
+//                        .background(.ultraThinMaterial)
+//                        .frame(width: 140, height: 140)
+//                        .shadow(color: greenAccent.opacity(0.7), radius: 15, x: 0, y: 0)
+//                        .overlay(
+//                            Circle()
+//                                .stroke(
+//                                    LinearGradient(
+//                                        colors: [greenAccent.opacity(0.3), orangeAccent.opacity(0.3)],
+//                                        startPoint: .topLeading,
+//                                        endPoint: .bottomTrailing
+//                                    ),
+//                                    lineWidth: 1
+//                                )
+//                        )
                     
                     // Badge image
                     if let badgeImage = badgeImage {
@@ -103,43 +128,52 @@ struct BadgeAchievementPopupView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 120, height: 120)
-                            .shadow(color: .black.opacity(0.2), radius: 3, x: 2, y: 2)
+                            .shadow(color: brownAccent.opacity(0.2), radius: 3, x: 2, y: 2)
                     } else {
-                        Image(systemName: "star.circle.fill")
+                        Image("Newleo")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .foregroundColor(primaryColor)
+                            .foregroundColor(greenAccent)
                             .frame(width: 120, height: 120)
-                            .shadow(color: .black.opacity(0.2), radius: 3, x: 2, y: 2)
+                            .shadow(color: brownAccent.opacity(0.2), radius: 3, x: 2, y: 2)
                     }
                 }
                 .scaleEffect(scale)
                 .padding(.vertical, 10)
                 
-                // Badge title with gradient
+                // Badge title with app theme gradient
                 Text(badgeTitle)
                     .font(.system(size: 26, weight: .bold))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [primaryColor, secondaryColor],
+                            colors: [greenAccent, orangeAccent],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .padding(.top, 5)
                     .opacity(opacity)
-                    .shadow(color: .black.opacity(0.3), radius: 1, x: 1, y: 1)
+                    .shadow(color: brownAccent.opacity(0.3), radius: 2, x: 1, y: 1)
                 
-                // Description text
+                // Description text with liquid glass effect
                 Text("You've earned a new badge!")
                     .font(.system(size: 18))
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.white)
+                    .foregroundColor(brownAccent)
                     .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(brownAccent.opacity(0.3), lineWidth: 1)
+                            )
+                    )
                     .opacity(opacity)
                 
-                // Dismiss button
+                // Dismiss button with liquid glass effect
                 Button(action: {
                     withAnimation(.easeOut(duration: 0.3)) {
                         opacity = 0
@@ -160,13 +194,14 @@ struct BadgeAchievementPopupView: View {
                         .frame(width: 200, height: 50)
                         .background(
                             LinearGradient(
-                                colors: [primaryColor, secondaryColor],
+                                colors: [greenAccent, orangeAccent],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
+                        .background(.ultraThinMaterial)
                         .cornerRadius(25)
-                        .shadow(color: primaryColor.opacity(0.5), radius: 8)
+                        .shadow(color: greenAccent.opacity(0.5), radius: 8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 25)
                                 .stroke(Color.white.opacity(0.6), lineWidth: 1)
@@ -178,28 +213,19 @@ struct BadgeAchievementPopupView: View {
             .padding(40)
             .background(
                 RoundedRectangle(cornerRadius: 25)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(UIColor.darkGray).opacity(0.95), 
-                                Color(UIColor(red: 0.1, green: 0.1, blue: 0.15, alpha: 0.97))
-                            ]),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    .fill(.ultraThinMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: 25)
                             .stroke(
                                 LinearGradient(
-                                    colors: [primaryColor.opacity(0.7), primaryColor.opacity(0.3)],
+                                    colors: [greenAccent.opacity(0.7), greenAccent.opacity(0.3)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
                                 lineWidth: 2
                             )
                     )
-                    .shadow(color: primaryColor.opacity(0.5), radius: 25)
+                    .shadow(color: greenAccent.opacity(0.3), radius: 25)
             )
             .padding(.horizontal, 40)
             .scaleEffect(scale)
@@ -279,8 +305,15 @@ struct ConfettiViewBadges: View {
         self.index = index
         self.counter = counter
         
-        // Generate random properties
-        let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink]
+        // Generate random properties with app theme colors
+        let colors: [Color] = [
+            Color(red: 76/255, green: 141/255, blue: 95/255), // Green accent
+            Color(red: 225/255, green: 168/255, blue: 63/255), // Orange accent
+            Color(red: 143/255, green: 91/255, blue: 66/255), // Brown accent
+            Color(red: 255/255, green: 248/255, blue: 240/255), // Cream
+            Color.white,
+            Color(red: 76/255, green: 141/255, blue: 95/255).opacity(0.7) // Light green
+        ]
         self.color = colors[index % colors.count]
         self.rotation = Double.random(in: 0...360)
         self.scale = CGFloat.random(in: 0.5...1.5)

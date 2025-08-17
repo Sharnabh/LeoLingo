@@ -61,10 +61,7 @@ struct Word {
         return (average * 10).rounded() / 10
     }
     
-    var isPassed: Bool {
-        guard let record = record, let accuracy = record.accuracy else { return false }
-        return accuracy.contains(where: { $0 > 70 })
-    }
+    var isPassed: Bool { return record?.mastered ?? false }
 }
 
 struct Record {
@@ -72,6 +69,7 @@ struct Record {
     var attempts: Int = 0
     var accuracy: [Double]?
     var recording: [String]?
+    var mastered: Bool = false // NEW
     
     var avgAccuracy: Double {
         guard let accuracies = accuracy,

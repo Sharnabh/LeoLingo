@@ -600,10 +600,8 @@ class SupabaseDataController {
                 print("  - Current recordings: \(String(describing: existingRecord.recordings))")
                 
                 var newAccuracy = existingRecord.accuracy ?? []
-                if let accuracy = accuracy {
-                    newAccuracy.append(accuracy)
-                }
-                
+                if let accuracy = accuracy { newAccuracy.append(accuracy) }
+                let isNowMastered = (existingRecord.accuracy?.contains { $0 >= 70 } == true) || (accuracy ?? 0) >= 70
                 var newRecordings = existingRecord.recordings ?? []
                 if let recordingPath = recordingPath {
                     // Upload the recording and get the stored filename
@@ -620,7 +618,8 @@ class SupabaseDataController {
                     is_practiced: true,
                     attempts: existingRecord.attempts + 1,
                     accuracy: newAccuracy,
-                    recordings: newRecordings.isEmpty ? nil : newRecordings
+                    recordings: newRecordings.isEmpty ? nil : newRecordings,
+                    mastered: isNowMastered || existingRecord.mastered
                 )
                 
                 print("DEBUG: Updated record:")
@@ -649,13 +648,15 @@ class SupabaseDataController {
                     }
                 }
                 
+                let isMastered = (accuracy ?? 0) >= 70
                 let newRecord = UserWordRecord(
                     user_id: userId,
                     word_id: wordId,
                     is_practiced: true,
                     attempts: 1,
                     accuracy: accuracy.map { [$0] },
-                    recordings: newRecordings
+                    recordings: newRecordings,
+                    mastered: isMastered
                 )
                 
                 print("DEBUG: New record:")
@@ -987,9 +988,9 @@ class SupabaseDataController {
                         id: record.id,
                         attempts: record.attempts,
                         accuracy: record.accuracy,
-                        recording: record.recordings
+                        recording: record.recordings,
+                        mastered: record.mastered
                     )
-                    
                     // Create Word with user's progress
                     let word = Word(
                         id: appWord.id,
@@ -1119,6 +1120,7 @@ class SupabaseDataController {
         let attempts: Int
         let accuracy: [Double]?
         let recordings: [String]?
+        let mastered: Bool // NEW persisted flag
         
         // Add computed property for average accuracy
         var avgAccuracy: Double {
@@ -1136,10 +1138,7 @@ class SupabaseDataController {
         }
         
         // Add computed property to check if word is passed
-        var isPassed: Bool {
-            guard let accuracies = accuracy else { return false }
-            return accuracies.contains(where: { $0 > 70 })
-        }
+        var isPassed: Bool { return mastered }
         
         init(
             user_id: UUID,
@@ -1147,7 +1146,8 @@ class SupabaseDataController {
             is_practiced: Bool,
             attempts: Int = 0,
             accuracy: [Double]? = nil,
-            recordings: [String]? = nil
+            recordings: [String]? = nil,
+            mastered: Bool = false
         ) {
             self.id = UUID()
             self.user_id = user_id
@@ -1156,6 +1156,7 @@ class SupabaseDataController {
             self.attempts = attempts
             self.accuracy = accuracy
             self.recordings = recordings
+            self.mastered = mastered
         }
     }
     

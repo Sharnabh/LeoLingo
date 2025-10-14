@@ -228,6 +228,34 @@ class PracticeScreenViewController: UIViewController {
     var consecutiveWrongWords = 0
     var currentWordAttempts = 0
     
+    private let masteryThreshold: Double = 70.0 // Words reaching this once are excluded in next session
+    
+    // Build the practice list for a new session by excluding mastered words
+    private func filteredLevelsForNewSession(from userLevels: [Level]) -> [Level] {
+        var result: [Level] = []
+        for level in userLevels {
+            let remaining = level.words.filter { word in
+                if let mastered = word.record?.mastered, mastered { return false }
+                guard let accs = word.record?.accuracy, !accs.isEmpty else { return true }
+                return !accs.contains { $0 >= masteryThreshold }
+            }
+            if !remaining.isEmpty {
+                var newLevel = level
+                newLevel.words = remaining
+                result.append(newLevel)
+            }
+        }
+        return result
+    }
+    
+    private func applySessionFilterIfNeeded() {
+        // Only filter once per session (when levels currently empty OR first load)
+        levels = filteredLevelsForNewSession(from: levels)
+        if levels.isEmpty { showCompletionMessage() }
+        levelIndex = 0
+        currentIndex = 0
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -250,17 +278,14 @@ class PracticeScreenViewController: UIViewController {
                 }
                 
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                // Keep all words, including practiced ones
+                // Original full dataset
                 self.levels = userData.userLevels
-                
+                // Apply filter to exclude mastered words from previous sessions
+                self.applySessionFilterIfNeeded()
                 if self.levels.isEmpty {
-                    // Show completion message if no words available
                     showCompletionMessage()
                 } else {
-                    // Always start from the first available level
-                    self.levelIndex = 0
-                    self.currentIndex = 0
-                    updateUI()
+                    self.updateUI()
                 }
             } catch {
                 handleError(error)
@@ -529,13 +554,14 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: speechProcessor.getRecordingURL()?.path
                 )
                 
-                // Refresh data using userId
+                // Refresh data using userId THEN filter & adjust indices
                 guard let userId = SupabaseDataController.shared.userId else {
                     print("No user ID found")
                     return
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
+                self.markAndFilterAfterRefresh()
                 
                 // Check for badge achievements after word completion
                 DispatchQueue.main.async { [weak self] in
@@ -581,6 +607,18 @@ class PracticeScreenViewController: UIViewController {
                 print("Error in handleCorrectPronunciation: \(error)")
             }
         }
+    }
+    
+    private func markAndFilterAfterRefresh() {
+        // After fetching fresh levels, reapply mastery filter
+        applySessionFilterIfNeeded()
+        // Ensure indices valid
+        if levelIndex >= levels.count { levelIndex = 0 }
+        if !levels.isEmpty && currentIndex >= levels[levelIndex].words.count { currentIndex = 0 }
+    }
+    
+    private func removeCurrentWordIfMastered(accuracy: Double) {
+        // Deprecated: server mastered flag now handles filtering
     }
     
     @objc private func wordImageTapped() {
@@ -977,6 +1015,9 @@ class PracticeScreenViewController: UIViewController {
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
+                
+                // Re-filter to drop any newly mastered words
+                self.markAndFilterAfterRefresh()
                 
             } catch {
                 print("Error in recordAccuracy: \(error)")

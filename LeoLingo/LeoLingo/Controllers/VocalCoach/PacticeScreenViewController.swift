@@ -6,8 +6,8 @@ import Combine
 class WaveformView: UIView {
     private var barLayers: [CALayer] = []
     private var displayLink: CADisplayLink?
-    private let numberOfBars: Int = 50 // More bars for smoother look
-    private let waveformColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 0.9) // Enhanced green
+    private let numberOfBars: Int = 50
+    private let waveformColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 0.9)
     private var phase: CGFloat = 0
     private var animationStartTime: CFTimeInterval = 0
     
@@ -22,11 +22,10 @@ class WaveformView: UIView {
     }
     
     private func setupBars() {
-        // Remove existing bars
         barLayers.forEach { $0.removeFromSuperlayer() }
         barLayers.removeAll()
         
-        let barWidth: CGFloat = 3 // Thicker bars for better visibility
+        let barWidth: CGFloat = 3
         let spacing: CGFloat = 4
         let totalWidth = CGFloat(numberOfBars) * (barWidth + spacing)
         let startX = (bounds.width - totalWidth) / 2
@@ -35,17 +34,13 @@ class WaveformView: UIView {
             let bar = CALayer()
             bar.backgroundColor = waveformColor.cgColor
             let x = startX + CGFloat(i) * (barWidth + spacing)
-            // Set initial height
             let initialHeight: CGFloat = 15 + CGFloat(arc4random_uniform(15))
             bar.frame = CGRect(x: x, y: bounds.height/2 - initialHeight/2, width: barWidth, height: initialHeight)
             bar.cornerRadius = barWidth/2
-            
-            // Add subtle shadow for depth
             bar.shadowColor = UIColor.black.cgColor
             bar.shadowOffset = CGSize(width: 0, height: 1)
             bar.shadowRadius = 2
             bar.shadowOpacity = 0.2
-            
             layer.addSublayer(bar)
             barLayers.append(bar)
         }
@@ -54,86 +49,53 @@ class WaveformView: UIView {
     func startAnimation() {
         isHidden = false
         alpha = 1
-        
         displayLink?.invalidate()
         displayLink = CADisplayLink(target: self, selector: #selector(updateBars))
         displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
         displayLink?.add(to: .main, forMode: .common)
-        
         animationStartTime = CACurrentMediaTime()
         phase = 0
-        
-        // Ensure bars are visible with initial animation
         barLayers.forEach { bar in
             bar.opacity = 1.0
             let initialHeight: CGFloat = 20 + CGFloat(arc4random_uniform(20))
-            bar.frame = CGRect(x: bar.frame.origin.x,
-                             y: bounds.height/2 - initialHeight/2,
-                             width: bar.frame.width,
-                             height: initialHeight)
+            bar.frame = CGRect(x: bar.frame.origin.x, y: bounds.height/2 - initialHeight/2, width: bar.frame.width, height: initialHeight)
         }
     }
     
     func stopAnimation() {
         displayLink?.invalidate()
         displayLink = nil
-        
-        // Smooth fade out animation
         CATransaction.begin()
         CATransaction.setAnimationDuration(0.3)
         barLayers.forEach { bar in
             let finalHeight: CGFloat = 20
-            bar.frame = CGRect(x: bar.frame.origin.x,
-                             y: bounds.height/2 - finalHeight/2,
-                             width: bar.frame.width,
-                             height: finalHeight)
+            bar.frame = CGRect(x: bar.frame.origin.x, y: bounds.height/2 - finalHeight/2, width: bar.frame.width, height: finalHeight)
         }
         CATransaction.commit()
     }
     
     @objc private func updateBars() {
-        let currentTime = CACurrentMediaTime()
-        let elapsedTime = currentTime - animationStartTime
-        phase += 0.03 // Slightly faster for more dynamic feel
-        
+        phase += 0.03
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        
         for (index, bar) in barLayers.enumerated() {
-            // Create more complex wave patterns
             let normalizedIndex = CGFloat(index) / CGFloat(numberOfBars)
             let primaryWave = sin(phase * 0.8 + normalizedIndex * 5.0)
             let secondaryWave = sin(phase * 1.2 + normalizedIndex * 3.0) * 0.6
             let fastWave = sin(phase * 2.5 + normalizedIndex * 1.5) * 0.4
-            
-            // Add pulse effect
             let pulseEffect = sin(phase * 0.5) * 0.2
-            
-            // Add some random noise for natural variation
             let noise = CGFloat(arc4random_uniform(8)) / 120.0
-            
-            // Combine all waves with pulse
             let combinedWave = primaryWave + secondaryWave + fastWave + pulseEffect + noise
-            
-            // Calculate height with more variation
             let minHeight: CGFloat = 15
             let maxHeight: CGFloat = 75
             let heightRange = maxHeight - minHeight
             let waveHeight = minHeight + (heightRange * abs(combinedWave))
-            
-            // Add color gradient based on height
             let heightRatio = waveHeight / maxHeight
-            let alpha = 0.7 + (heightRatio * 0.3) // Vary alpha based on height
+            let alpha = 0.7 + (heightRatio * 0.3)
             bar.backgroundColor = waveformColor.withAlphaComponent(alpha).cgColor
-            
-            // Update bar position and height with smooth transition
             let yPosition = bounds.height/2 - waveHeight/2
-            bar.frame = CGRect(x: bar.frame.origin.x,
-                             y: yPosition,
-                             width: bar.frame.width,
-                             height: waveHeight)
+            bar.frame = CGRect(x: bar.frame.origin.x, y: yPosition, width: bar.frame.width, height: waveHeight)
         }
-        
         CATransaction.commit()
     }
     
@@ -156,6 +118,11 @@ class PracticeScreenViewController: UIViewController {
     private var countdownTimer: Timer?
     private var celebrationPlayer: AVAudioPlayer?
     private var confettiLayer: CAEmitterLayer?
+    
+    // TalkingMojo GIF properties
+    private var talkingMojoImageView: UIImageView?
+    private var talkingMojoImages: [UIImage] = []
+    private var talkingMojoDuration: TimeInterval = 0
     
     private lazy var waveformView: WaveformView = {
         let view = WaveformView()
@@ -216,17 +183,14 @@ class PracticeScreenViewController: UIViewController {
         button.layer.shadowOffset = CGSize(width: 2, height: 2)
         button.layer.shadowRadius = 2
         button.layer.shadowOpacity = 0.2
-        
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
             .withTintColor(UIColor(named: "AccentColor") ?? .systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
-        
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    // MARK: - Playback Control Views
     private lazy var controlsContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 0.984, green: 0.969, blue: 0.894, alpha: 1.0)
@@ -242,35 +206,19 @@ class PracticeScreenViewController: UIViewController {
     }()
     
     private lazy var playPauseButton: UIButton = {
-        let button = createControlButton(
-            systemName: "pause.fill",
-            action: #selector(playPauseButtonTapped)
-        )
-        return button
+        return createControlButton(systemName: "pause.fill", action: #selector(playPauseButtonTapped))
     }()
     
     private lazy var skipButton: UIButton = {
-        let button = createControlButton(
-            systemName: "forward.fill",
-            action: #selector(skipButtonTapped)
-        )
-        return button
+        return createControlButton(systemName: "forward.fill", action: #selector(skipButtonTapped))
     }()
     
     private lazy var replayButton: UIButton = {
-        let button = createControlButton(
-            systemName: "arrow.counterclockwise",
-            action: #selector(replayButtonTapped)
-        )
-        return button
+        return createControlButton(systemName: "arrow.counterclockwise", action: #selector(replayButtonTapped))
     }()
     
     private lazy var previousButton: UIButton = {
-        let button = createControlButton(
-            systemName: "backward.fill",
-            action: #selector(previousButtonTapped)
-        )
-        return button
+        return createControlButton(systemName: "backward.fill", action: #selector(previousButtonTapped))
     }()
     
     private lazy var speedTitleLabel: UILabel = {
@@ -340,41 +288,31 @@ class PracticeScreenViewController: UIViewController {
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
         button.layer.shadowRadius = 4
         button.layer.shadowOpacity = 0.1
-        
         let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         let image = UIImage(systemName: systemName, withConfiguration: config)?
             .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
-        
         button.addTarget(self, action: action, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add tap animation
         button.addTarget(self, action: #selector(buttonTapDown(_:)), for: .touchDown)
         button.addTarget(self, action: #selector(buttonTapUp(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
-        
         return button
     }
     
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
     @IBOutlet var wordImage: UIImageView!
-    
-
     @IBOutlet var levelProgress: UIProgressView!
-    
     @IBOutlet var levelLabel: UILabel!
     
     var mojoImageData = ["mojo2", "mojoHearing"]
-    
     var levelIndex = 0
     var currentIndex = 0
     var consecutiveWrongWords = 0
     var currentWordAttempts = 0
     
-    private let masteryThreshold: Double = 70.0 // Words reaching this once are excluded in next session
+    private let masteryThreshold: Double = 70.0
     
-    // Build the practice list for a new session by excluding mastered words
     private func filteredLevelsForNewSession(from userLevels: [Level]) -> [Level] {
         var result: [Level] = []
         for level in userLevels {
@@ -393,7 +331,6 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func applySessionFilterIfNeeded() {
-        // Only filter once per session (when levels currently empty OR first load)
         levels = filteredLevelsForNewSession(from: levels)
         if levels.isEmpty { showCompletionMessage() }
         levelIndex = 0
@@ -402,29 +339,23 @@ class PracticeScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Clear any persisted data
         clearUserDefaults()
         directionLabel.adjustsFontSizeToFitWidth = true
-        
-        // Set vocal coach as active
         UserDefaults.standard.set(true, forKey: "isVocalCoachActive")
-        
-        // Start practice session tracking
         BadgeEarningManager.shared.startPracticeSession()
         
-        // Load levels from Supabase
+        // Hide the storyboard mojoImage immediately
+        mojoImage.isHidden = true
+        mojoImage.alpha = 0
+        
         Task {
             do {
                 guard let userId = SupabaseDataController.shared.userId else {
                     print("No user ID found")
                     return
                 }
-                
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                // Original full dataset
                 self.levels = userData.userLevels
-                // Apply filter to exclude mastered words from previous sessions
                 self.applySessionFilterIfNeeded()
                 if self.levels.isEmpty {
                     showCompletionMessage()
@@ -442,56 +373,40 @@ class PracticeScreenViewController: UIViewController {
         setupPlaybackControls()
         requestSpeechAuthorization()
         startNoiseMonitoring()
-        
-        // Add speech processor setup
         speechProcessor.requestSpeechRecognitionPermission()
         
         levelLabel.layer.cornerRadius = 21
         levelLabel.layer.masksToBounds = true
         
-        // Add tap gesture to wordImage
+        setupTalkingMojoGif()
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(wordImageTapped))
         wordImage.isUserInteractionEnabled = true
         wordImage.addGestureRecognizer(tapGesture)
-        
-        // Hide the default back button
         navigationItem.setHidesBackButton(true, animated: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopNoiseMonitoring()
-        
-        // End practice session tracking
         BadgeEarningManager.shared.endPracticeSession()
-        
-        // Only set vocal coach as inactive if we're going back to home
         if isMovingFromParent {
             UserDefaults.standard.set(false, forKey: "isVocalCoachActive")
         }
     }
     
-    private func setupCountdownLabel() {
-        // Countdown and waveform will be added in setupPlaybackControls
-    }
+    private func setupCountdownLabel() {}
     
     private func updateCountdownLabel() {
-        if isListening {
-            countdownLabel.alpha = 0
-        }
+        if isListening { countdownLabel.alpha = 0 }
     }
     
     private func startCountdown() {
         var count = 3
         countdownLabel.alpha = 1
         countdownLabel.text = "\(count)"
-        
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            guard let self = self else {
-                timer.invalidate()
-                return
-            }
-            
+            guard let self = self else { timer.invalidate(); return }
             count -= 1
             if count > 0 {
                 self.countdownLabel.text = "\(count)"
@@ -505,7 +420,6 @@ class PracticeScreenViewController: UIViewController {
     
     private func setupWarningLabel() {
         view.addSubview(warningLabel)
-        
         NSLayoutConstraint.activate([
             warningLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -200),
             warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -518,30 +432,17 @@ class PracticeScreenViewController: UIViewController {
         SFSpeechRecognizer.requestAuthorization { [weak self] authStatus in
             DispatchQueue.main.async {
                 switch authStatus {
-                case .authorized:
-                    print("Speech recognition authorized")
-                default:
-                    self?.handleError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Speech recognition not authorized"]))
+                case .authorized: print("Speech recognition authorized")
+                default: self?.handleError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Speech recognition not authorized"]))
                 }
             }
         }
     }
     
     private func startListening() {
-        // Check noise level before starting
         if warningLabel.alpha == 1.0 {
-            // Show alert for noisy environment
-            let alert = UIAlertController(
-                title: "Noisy Environment",
-                message: "The background noise level is high. Please move to a quieter place.",
-                preferredStyle: .alert
-            )
-            
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-                // Restart the countdown after user acknowledges
-                self?.startCountdown()
-            })
-            
+            let alert = UIAlertController(title: "Noisy Environment", message: "The background noise level is high. Please move to a quieter place.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in self?.startCountdown() })
             present(alert, animated: true)
         } else {
             startSpeechRecognition()
@@ -549,39 +450,28 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func startSpeechRecognition() {
-        // Cancel any existing subscription
         speechSubscription?.cancel()
-        
         let currentWord = getCurrentWord()
         let currentAttempt = levels[levelIndex].words[currentIndex].record?.attempts ?? 0
-        
-        // Start recording with current word and attempt number
         speechProcessor.startRecording(word: currentWord, wordId: levels[levelIndex].words[currentIndex].id, attemptNumber: currentAttempt + 1)
         isListening = true
         
-        // Handle speech recognition results
         speechSubscription = speechProcessor.$userSpokenText
             .filter { !$0.isEmpty }
             .sink { [weak self] spokenText in
                 guard let self = self else { return }
-                
                 let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
                 let maxLength = max(spokenText.count, currentWord.count)
                 let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
-                
-                // Record the accuracy and recording path
                 self.recordAccuracy(accuracy)
-                
                 if accuracy >= 70.0 {
                     self.handleCorrectPronunciation()
                 } else {
                     self.handleIncorrectPronunciation()
                 }
-                
                 self.stopListening()
             }
-            
-        // Set a timeout for speech recognition
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             guard let self = self else { return }
             if self.isListening {
@@ -607,42 +497,29 @@ class PracticeScreenViewController: UIViewController {
     
     private func handleIncorrectPronunciation() {
         currentWordAttempts += 1
-        
         if currentWordAttempts >= 2 {
-            // Reset attempts for next word
             currentWordAttempts = 0
             consecutiveWrongWords += 1
-            
             if consecutiveWrongWords >= 3 {
-                // Reset counter and show fun learning
                 consecutiveWrongWords = 0
                 showFunLearningPopOver()
             } else {
-                // Show incorrect popup and move to next word after dismissal
                 showPopover(isCorrect: false, levelChange: false) {
-                    // Move to next word and start its utterance after popover dismissal
                     self.moveToNextWord()
                 }
             }
         } else {
-            // First attempt was wrong, give another try
             showPopover(isCorrect: false, levelChange: false) {
-                // Get the current word and direction after popover dismissal
                 let currentWord = self.getCurrentWord()
                 let direction = "This is \(currentWord). Say \(currentWord)."
-                
-                // Update the direction label and pronounce it
                 self.directionLabel.text = direction
                 self.pronounceDirection(direction)
-                
-                // Start countdown after direction is spoken
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     self.startCountdown()
                 }
             }
         }
         
-        // Record the attempt in the database
         Task {
             do {
                 let currentWord = levels[levelIndex].words[currentIndex]
@@ -651,12 +528,7 @@ class PracticeScreenViewController: UIViewController {
                 let distance = speechProcessor.levenshteinDistance(spokenText.lowercased(), wordTitle.lowercased())
                 let maxLength = max(spokenText.count, wordTitle.count)
                 let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
-                
-                try await SupabaseDataController.shared.updateWordProgress(
-                    wordId: currentWord.id,
-                    accuracy: accuracy,
-                    recordingPath: speechProcessor.getRecordingURL()?.path
-                )
+                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: accuracy, recordingPath: speechProcessor.getRecordingURL()?.path)
             } catch {
                 print("Error updating word progress: \(error)")
             }
@@ -664,10 +536,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func handleCorrectPronunciation() {
-        // Reset counters on correct pronunciation
         consecutiveWrongWords = 0
-        
-        // Mark current word as practiced in database
         Task {
             do {
                 let currentWord = levels[levelIndex].words[currentIndex]
@@ -677,56 +546,34 @@ class PracticeScreenViewController: UIViewController {
                 let maxLength = max(spokenText.count, wordTitle.count)
                 let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
                 
-                try await SupabaseDataController.shared.updateWordProgress(
-                    wordId: currentWord.id,
-                    accuracy: accuracy,
-                    recordingPath: speechProcessor.getRecordingURL()?.path
-                )
+                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: accuracy, recordingPath: speechProcessor.getRecordingURL()?.path)
                 
-                // Refresh data using userId THEN filter & adjust indices
-                guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user ID found")
-                    return
-                }
+                guard let userId = SupabaseDataController.shared.userId else { return }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
                 self.markAndFilterAfterRefresh()
                 
-                // Check for badge achievements after word completion
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: accuracy, in: self)
                 }
                 
-                // Show success feedback and move to next word on main thread
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    let isLastWordInLevel = currentIndex == levels[levelIndex].words.count - 1
-                    
-                    // Show the success popup first
+                    let isLastWordInLevel = self.currentIndex == self.levels[self.levelIndex].words.count - 1
                     self.showPopover(isCorrect: true, levelChange: isLastWordInLevel) {
                         if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
                             if self.levelIndex < self.levels.count - 1 {
-                                // Check for level completion badges before moving to next level
-                                let completedLevelIndex = self.levelIndex
-                                BadgeEarningManager.shared.checkBadgesAfterLevelCompletion(levelIndex: completedLevelIndex, in: self)
-                                
-                                // Move to next level if available
                                 self.levelIndex += 1
                                 self.currentIndex = 0
                                 self.showLevelChangePopover()
                                 self.showConfettiEffect()
                             } else {
-                                // At the last word of the last level
-                                let completedLevelIndex = self.levelIndex
-                                BadgeEarningManager.shared.checkBadgesAfterLevelCompletion(levelIndex: completedLevelIndex, in: self)
-                                
                                 self.levelIndex = 0
                                 self.currentIndex = 0
                                 self.updateUIAfterPopover()
                             }
                         } else {
-                            // Move to next word in current level
                             self.currentIndex += 1
                             self.updateUIAfterPopover()
                         }
@@ -739,43 +586,45 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func markAndFilterAfterRefresh() {
-        // After fetching fresh levels, reapply mastery filter
         applySessionFilterIfNeeded()
-        // Ensure indices valid
         if levelIndex >= levels.count { levelIndex = 0 }
         if !levels.isEmpty && currentIndex >= levels[levelIndex].words.count { currentIndex = 0 }
-    }
-    
-    private func removeCurrentWordIfMastered(accuracy: Double) {
-        // Deprecated: server mastered flag now handles filtering
     }
     
     @objc private func wordImageTapped() {
         let currentData = levels[levelIndex].words[currentIndex]
         if let word = DataController.shared.wordData(by: currentData.id) {
-            // Only pronounce the word itself, not the full direction
             pronounceWord(word.wordTitle)
         }
     }
     
     private func pronounceWord(_ word: String) {
+        startTalkingAnimation()
         let utterance = AVSpeechUtterance(string: word)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * currentSpeechRate
         synthesizer.speak(utterance)
+        let estimatedDuration = Double(word.count) * 0.08 / Double(currentSpeechRate)
+        DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) { [weak self] in
+            self?.stopTalkingAnimation()
+        }
     }
     
     private func pronounceDirection(_ direction: String) {
+        startTalkingAnimation()
         let utterance = AVSpeechUtterance(string: direction)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * currentSpeechRate
         synthesizer.speak(utterance)
+        let estimatedDuration = Double(direction.count) * 0.06 / Double(currentSpeechRate)
+        DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) { [weak self] in
+            self?.stopTalkingAnimation()
+        }
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {
         let appLevels = SupabaseDataController.shared.getLevelsData()
         let currentWord = levels[levelIndex].words[index]
-        
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentWord.id }) {
                 return "This is \(word.wordTitle). Say \(word.wordTitle)."
@@ -785,65 +634,49 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func updateUI() {
-        // Validate indices before updating UI
-        guard !levels.isEmpty,
-              levelIndex < levels.count,
-              currentIndex < levels[levelIndex].words.count else {
+        guard !levels.isEmpty, levelIndex < levels.count, currentIndex < levels[levelIndex].words.count else {
             showCompletionMessage()
             return
         }
         
         let currentData = levels[levelIndex].words[currentIndex]
         directionLabel.text = ""
-        
-        // Get word data from app levels
         let appLevels = SupabaseDataController.shared.getLevelsData()
-        var wordImage: String?
+        var wordImageName: String?
         var wordTitle: String?
         
-        // Update level label with current level
         if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
             levelLabel.text = currentLevel.levelTitle
         }
         
-        // Update progress bar based on current word index
         let totalWordsInLevel = levels[levelIndex].words.count
         let progress = Float(currentIndex) / Float(totalWordsInLevel)
         levelProgress.setProgress(progress, animated: true)
         
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentData.id }) {
-                wordImage = word.wordImage
+                wordImageName = word.wordImage
                 wordTitle = word.wordTitle
                 break
             }
         }
         
-        if let wordImage = wordImage {
-            self.wordImage.image = UIImage(named: wordImage)
+        if let wordImageName = wordImageName {
+            self.wordImage.image = UIImage(named: wordImageName)
         }
-        self.mojoImage.image = UIImage(named: "mojo2")
+        // mojoImage is permanently hidden - talkingMojoImageView replaces it
         
         if let wordTitle = wordTitle {
             let direction = "This is \(wordTitle). Say \(wordTitle)."
-            
-            // Show word title in countdown area immediately
             countdownLabel.text = wordTitle
             countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
             countdownLabel.alpha = 1.0
-            
-            // Sequence the animations
             animateWordImage()
-            
-            // Update direction label and start utterance after animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                 guard let self = self else { return }
                 self.directionLabel.text = direction
                 self.pronounceDirection(direction)
-                
-                // Start countdown after direction is spoken
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    // Reset font size for countdown
                     self.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                     self.startCountdown()
                 }
@@ -851,7 +684,6 @@ class PracticeScreenViewController: UIViewController {
         }
     }
     
-    //MARK: - Animation
     func animateWordImage() {
         wordImage.transform = CGAffineTransform(translationX: 0, y: -500)
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [], animations: {
@@ -859,58 +691,28 @@ class PracticeScreenViewController: UIViewController {
         }, completion: nil)
     }
     
-    func typeEffect(text: String, label: UILabel?) {
-        guard let label = label else { return }
-        label.text = ""
-        var characterIndex = 0.0
-        for letter in text {
-            Timer.scheduledTimer(withTimeInterval: 0.05 * characterIndex, repeats: false) { _ in
-                label.text?.append(letter)
-            }
-            characterIndex += 1
-        }
-    }
-    
     func moveToNextWord() {
         Task {
             do {
-                // Use userId consistently for fetching data
-                guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user ID found")
-                    return
-                }
-                
-                // Refresh data from Supabase using userId
+                guard let userId = SupabaseDataController.shared.userId else { return }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
-                
-                // Move to next word
                 currentIndex += 1
-                
-                // If we've reached the end of current level's words
                 if currentIndex >= levels[levelIndex].words.count {
-                    // Try to move to next level
                     levelIndex += 1
                     currentIndex = 0
-                    
-                    // If we've reached the end of all levels
                     if levelIndex >= levels.count {
                         showCompletionMessage()
                         return
                     }
-                    
                     showLevelChangePopover()
                     showConfettiEffect()
                 } else {
-                    // Update UI with the next word
                     updateUI()
                 }
             } catch {
                 print("Error in moveToNextWord: \(error)")
-                // Handle the error gracefully without disrupting the user experience
-                DispatchQueue.main.async {
-                    self.handleError(error)
-                }
+                DispatchQueue.main.async { self.handleError(error) }
             }
         }
     }
@@ -918,26 +720,17 @@ class PracticeScreenViewController: UIViewController {
     func showFunLearningPopOver() {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
-            
             popoverVC.configurePopover(message: "Lets Play Some Games!", image: "mojo2")
-            
-            // Present the popover and ensure navigation happens after dismissal
             present(popoverVC, animated: true) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                     guard let self = self else { return }
-                    // Ensure we're on the main thread for UI updates
-                    DispatchQueue.main.async {
-                        popoverVC.dismiss(animated: true) { [weak self] in
-                            guard let self = self else { return }
-                            // Load FunLearning storyboard
-                            let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
-                            if let funLearningNavController = storyboard.instantiateViewController(withIdentifier: "FunLearningNavBar") as? UINavigationController {
-                                funLearningNavController.modalPresentationStyle = .fullScreen
-                                self.present(funLearningNavController, animated: true)
-                            }
+                    popoverVC.dismiss(animated: true) {
+                        let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
+                        if let funLearningNavController = storyboard.instantiateViewController(withIdentifier: "FunLearningNavBar") as? UINavigationController {
+                            funLearningNavController.modalPresentationStyle = .fullScreen
+                            self.present(funLearningNavController, animated: true)
                         }
                     }
                 }
@@ -948,21 +741,15 @@ class PracticeScreenViewController: UIViewController {
     func showLevelChangePopover() {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
-            // Change to full screen presentation
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
-            
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
                 popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", image: level.levelImage)
-                
-                // Present the popover and dismiss after 2 seconds
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }
-                        popoverVC.dismiss(animated: true) {
-                            self.updateUIAfterPopover()
-                        }
+                        popoverVC.dismiss(animated: true) { self.updateUIAfterPopover() }
                     }
                 }
             }
@@ -970,10 +757,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func showConfettiEffect() {
-        // Remove existing confetti layer if any
         confettiLayer?.removeFromSuperlayer()
-        
-        // Create new confetti layer
         let newConfettiLayer = CAEmitterLayer()
         confettiLayer = newConfettiLayer
         newConfettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
@@ -982,7 +766,6 @@ class PracticeScreenViewController: UIViewController {
         
         let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
         let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
-        
         var cells: [CAEmitterCell] = []
         for color in colors {
             for shape in shapes {
@@ -1005,7 +788,6 @@ class PracticeScreenViewController: UIViewController {
         newConfettiLayer.emitterCells = cells
         view.layer.addSublayer(newConfettiLayer)
         
-        // Setup and play celebration sound
         if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
             do {
                 celebrationPlayer = try AVAudioPlayer(contentsOf: soundURL)
@@ -1014,8 +796,6 @@ class PracticeScreenViewController: UIViewController {
             } catch {
                 print("Error playing celebration sound: \(error.localizedDescription)")
             }
-        } else {
-            print("Celebration sound file not found")
         }
     }
     
@@ -1034,17 +814,12 @@ class PracticeScreenViewController: UIViewController {
             
             if isCorrect && !levelChange {
                 popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
-                
-                // Show confetti effect for correct pronunciation
                 showConfettiEffect()
-                
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }
-                        // Stop confetti before dismissing popover
                         self.stopConfetti()
                         popoverVC.dismiss(animated: true) {
-                            // Progress to next word or level
                             if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
                                 if self.levelIndex < self.levels.count - 1 {
                                     self.levelIndex += 1
@@ -1065,69 +840,51 @@ class PracticeScreenViewController: UIViewController {
                 }
             } else {
                 popoverVC.configurePopover(message: "Let's try that pronunciation again.", image: "SadMojo")
-                // Present the popover and dismiss after 2 seconds
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                        popoverVC.dismiss(animated: true) {
-                            completion?()
-                        }
+                        popoverVC.dismiss(animated: true) { completion?() }
                     }
                 }
             }
         }
     }
     
-    // New function to handle UI updates after popover dismissal
     private func updateUIAfterPopover() {
-        // Validate indices before updating UI
-        guard !levels.isEmpty,
-              levelIndex < levels.count,
-              currentIndex < levels[levelIndex].words.count else {
+        guard !levels.isEmpty, levelIndex < levels.count, currentIndex < levels[levelIndex].words.count else {
             showCompletionMessage()
             return
         }
         
         let currentData = levels[levelIndex].words[currentIndex]
         directionLabel.text = ""
-        
-        // Get word data from app levels
         let appLevels = SupabaseDataController.shared.getLevelsData()
-        var wordImage: String?
+        var wordImageName: String?
         var wordTitle: String?
         
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentData.id }) {
-                wordImage = word.wordImage
+                wordImageName = word.wordImage
                 wordTitle = word.wordTitle
                 break
             }
         }
         
-        if let wordImage = wordImage {
-            self.wordImage.image = UIImage(named: wordImage)
+        if let wordImageName = wordImageName {
+            self.wordImage.image = UIImage(named: wordImageName)
         }
-        self.mojoImage.image = UIImage(named: "mojo2")
+        // mojoImage is permanently hidden - talkingMojoImageView replaces it
         
         if let wordTitle = wordTitle {
             let direction = "This is \(wordTitle). Say \(wordTitle)."
-            
-            // Show word title in countdown area immediately
             countdownLabel.text = wordTitle
             countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
             countdownLabel.alpha = 1.0
-            
-            // Sequence the animations
             animateWordImage()
-            
-            // Update direction label and start utterance after animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                 guard let self = self else { return }
                 self.directionLabel.text = direction
                 self.pronounceDirection(direction)
-                
-                // Start countdown after direction is spoken
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    // Reset font size for countdown
                     self.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                     self.startCountdown()
                 }
@@ -1135,119 +892,51 @@ class PracticeScreenViewController: UIViewController {
         }
     }
     
-    func navigateToFunLearning() {
-        let storyboard = UIStoryboard(name: "FunLearning", bundle: nil)
-        if let funLearningVC = storyboard.instantiateViewController(withIdentifier: "FunLearningVC") as? FunLearningViewController {
-            self.navigationController?.pushViewController(funLearningVC, animated: true)
-        }
-    }
-    
     private func recordAccuracy(_ accuracy: Double) {
         let currentWord = levels[levelIndex].words[currentIndex]
-        
         Task {
             do {
-                // Get recording path from speech processor if available
                 let recordingPath = speechProcessor.getRecordingURL()?.path
-                
-                // Update word progress in Supabase
-                try await SupabaseDataController.shared.updateWordProgress(
-                    wordId: currentWord.id,
-                    accuracy: accuracy,
-                    recordingPath: recordingPath
-                )
-                
-                // Refresh local data using userId
-                guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user ID found")
-                    return
-                }
+                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: accuracy, recordingPath: recordingPath)
+                guard let userId = SupabaseDataController.shared.userId else { return }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
-                
-                // Re-filter to drop any newly mastered words
                 self.markAndFilterAfterRefresh()
-                
             } catch {
                 print("Error in recordAccuracy: \(error)")
             }
         }
     }
     
-    private func updateLevelProgress(_ accuracy: Double) {
-        let currentLevel = levels[levelIndex]
-        
-        // Calculate overall level progress and update UI
-        updateProgressUI()
-    }
-    
-    private func updateProgressUI() {
-        let currentLevel = levels[levelIndex]
-        
-        // Calculate progress
-        let totalWords = currentLevel.words.count
-        let practicedWords = currentLevel.words.filter { $0.isPracticed }.count
-        let progress = Float(practicedWords) / Float(totalWords)
-        
-        // Calculate accuracy
-        let accuracies = currentLevel.words.compactMap { word -> Double? in
-            if let record = word.record, let accuracies = record.accuracy, !accuracies.isEmpty {
-                return accuracies.reduce(0.0, +) / Double(accuracies.count)
-            }
-            return nil
-        }
-        let accuracy = accuracies.isEmpty ? 0.0 : accuracies.reduce(0.0, +) / Double(accuracies.count)
-        
-        // Update progress bar if it exists
-        if let progressBar = view.viewWithTag(100) as? UIProgressView {
-            progressBar.progress = progress
-        }
-        
-        // Update accuracy label if it exists
-        if let accuracyLabel = view.viewWithTag(101) as? UILabel {
-            accuracyLabel.text = String(format: "%.1f%%", accuracy)
-        }
-    }
-    
     private func setupBackButton() {
         view.addSubview(backButton)
         backButton.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             backButton.widthAnchor.constraint(equalToConstant: 60),
             backButton.heightAnchor.constraint(equalToConstant: 60)
         ])
-        
-        // Ensure the button is always on top of other views
         view.bringSubviewToFront(backButton)
     }
     
     @objc private func backButtonTapped() {
         if let navigationController = self.navigationController {
-            // Pop to previous view controller
             navigationController.popViewController(animated: true)
         } else {
-            // If no navigation controller, handle modal dismissal
             dismiss(animated: true, completion: nil)
         }
     }
     
-    // MARK: - Playback Controls Setup
     private func setupPlaybackControls() {
         view.addSubview(controlsContainerView)
-        
-        // Add waveform and countdown to the container
         controlsContainerView.addSubview(waveformView)
         controlsContainerView.addSubview(countdownLabel)
         
-        // Create divider line
         let dividerLine = UIView()
         dividerLine.backgroundColor = UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 0.3)
         dividerLine.translatesAutoresizingMaskIntoConstraints = false
         
-        // Create speed control stack
         let speedHeaderStack = UIStackView(arrangedSubviews: [speedTitleLabel, speedLabel])
         speedHeaderStack.axis = .horizontal
         speedHeaderStack.distribution = .equalSpacing
@@ -1259,64 +948,45 @@ class PracticeScreenViewController: UIViewController {
         speedSliderStack.spacing = 10
         speedSliderStack.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add all to container
         controlsContainerView.addSubview(dividerLine)
         controlsContainerView.addSubview(speedHeaderStack)
         controlsContainerView.addSubview(speedSliderStack)
         
         NSLayoutConstraint.activate([
-            // Main controls container - single unified box
             controlsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             controlsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             controlsContainerView.widthAnchor.constraint(equalToConstant: 350),
             controlsContainerView.heightAnchor.constraint(equalToConstant: 150),
-            
-            // Waveform and countdown at top
             waveformView.topAnchor.constraint(equalTo: controlsContainerView.topAnchor, constant: 12),
             waveformView.centerXAnchor.constraint(equalTo: controlsContainerView.centerXAnchor),
             waveformView.widthAnchor.constraint(equalToConstant: 280),
             waveformView.heightAnchor.constraint(equalToConstant: 55),
-            
             countdownLabel.centerXAnchor.constraint(equalTo: waveformView.centerXAnchor),
             countdownLabel.centerYAnchor.constraint(equalTo: waveformView.centerYAnchor),
             countdownLabel.leadingAnchor.constraint(greaterThanOrEqualTo: waveformView.leadingAnchor, constant: 10),
             countdownLabel.trailingAnchor.constraint(lessThanOrEqualTo: waveformView.trailingAnchor, constant: -10),
-            
-            // Divider line
             dividerLine.topAnchor.constraint(equalTo: waveformView.bottomAnchor, constant: 10),
             dividerLine.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 20),
             dividerLine.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -20),
             dividerLine.heightAnchor.constraint(equalToConstant: 1.5),
-            
-            // Speed header
             speedHeaderStack.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 8),
             speedHeaderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 25),
             speedHeaderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -25),
-            
-            // Speed slider stack
             speedSliderStack.topAnchor.constraint(equalTo: speedHeaderStack.bottomAnchor, constant: 5),
             speedSliderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 25),
             speedSliderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -25),
             speedSliderStack.bottomAnchor.constraint(equalTo: controlsContainerView.bottomAnchor, constant: -12),
-            
             speedIconLeft.widthAnchor.constraint(equalToConstant: 24),
             speedIconLeft.heightAnchor.constraint(equalToConstant: 24),
-            
             speedIconRight.widthAnchor.constraint(equalToConstant: 24),
             speedIconRight.heightAnchor.constraint(equalToConstant: 24)
         ])
-        
-        // Ensure countdown label is above waveform
         controlsContainerView.bringSubviewToFront(countdownLabel)
-        
-        // Set initial speech rate
         currentSpeechRate = 1.0
     }
     
-    // MARK: - Control Button Actions
     @objc private func playPauseButtonTapped() {
         isPlaybackPaused.toggle()
-        
         let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         let imageName = isPlaybackPaused ? "pause.fill" : "play.fill"
         let image = UIImage(systemName: imageName, withConfiguration: config)?
@@ -1324,28 +994,18 @@ class PracticeScreenViewController: UIViewController {
         playPauseButton.setImage(image, for: .normal)
         
         if isPlaybackPaused {
-            // Pause everything
-            if synthesizer.isSpeaking {
-                synthesizer.stopSpeaking(at: .immediate)
-            }
+            if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate) }
             stopListening()
             countdownTimer?.invalidate()
         } else {
-            // Resume - replay current word instruction
             let currentWord = getCurrentWord()
             let direction = "This is \(currentWord). Say \(currentWord)."
             directionLabel.text = direction
-            
-            // Show word title in countdown area
             countdownLabel.text = currentWord
             countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
             countdownLabel.alpha = 1.0
-            
             pronounceDirection(direction)
-            
-            // Start countdown after direction is spoken
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                // Reset font size for countdown
                 self?.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                 self?.startCountdown()
             }
@@ -1353,83 +1013,60 @@ class PracticeScreenViewController: UIViewController {
     }
     
     @objc private func skipButtonTapped() {
-        // Stop current speech and listening
         synthesizer.stopSpeaking(at: .immediate)
         stopListening()
         countdownTimer?.invalidate()
         isPlaybackPaused = false
-        
-        // Reset play/pause button to pause icon
         let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
             .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
         playPauseButton.setImage(image, for: .normal)
-        
-        // Move to next word
         moveToNextWord()
     }
     
     @objc private func previousButtonTapped() {
-        // Stop current activities
         synthesizer.stopSpeaking(at: .immediate)
         stopListening()
         countdownTimer?.invalidate()
         isPlaybackPaused = false
-        
-        // Reset play/pause button to pause icon
         let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
             .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
         playPauseButton.setImage(image, for: .normal)
         
-        // Move to previous word
         if currentIndex > 0 {
             currentIndex -= 1
         } else if levelIndex > 0 {
-            // Go to previous level's last word
             levelIndex -= 1
             currentIndex = levels[levelIndex].words.count - 1
         } else {
-            // Already at first word
             showAlert(message: "This is the first word")
             return
         }
-        
-        // Update UI with previous word
         updateUI()
     }
     
     @objc private func replayButtonTapped() {
-        // Stop current activities
         synthesizer.stopSpeaking(at: .immediate)
         stopListening()
         countdownTimer?.invalidate()
         isPlaybackPaused = false
-        
-        // Reset play/pause button to pause icon
         let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
         let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
             .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
         playPauseButton.setImage(image, for: .normal)
-        
-        // Replay current word direction
         let currentWord = getCurrentWord()
         let direction = "This is \(currentWord). Say \(currentWord)."
         directionLabel.text = direction
         pronounceDirection(direction)
-        
-        // Start countdown after direction
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.startCountdown()
         }
     }
     
     @objc private func speedSliderChanged(_ sender: UISlider) {
-        // Round to nearest 0.05 for smoother control
         let roundedValue = round(sender.value * 20) / 20
         currentSpeechRate = roundedValue
-        
-        // Update label
         speedLabel.text = String(format: "%.2fx", roundedValue)
     }
     
@@ -1453,27 +1090,86 @@ class PracticeScreenViewController: UIViewController {
         }
     }
     
-    // Error handling helper
+    // MARK: - TalkingMojo GIF
+    private func setupTalkingMojoGif() {
+        guard let gifPath = Bundle.main.path(forResource: "TalkingMojo", ofType: "gif"),
+              let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("❌ GIF file 'TalkingMojo.gif' not found")
+            return
+        }
+        
+        print("✅ Loading TalkingMojo.gif")
+        let imageCount = CGImageSourceGetCount(source)
+        var totalDuration: TimeInterval = 0
+        
+        for i in 0..<imageCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
+                let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
+                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                    ?? 0.1
+                totalDuration += frameDuration
+                talkingMojoImages.append(UIImage(cgImage: cgImage))
+            }
+        }
+        
+        talkingMojoDuration = totalDuration
+        talkingMojoImageView = UIImageView(frame: mojoImage.frame)
+        talkingMojoImageView?.animationImages = talkingMojoImages
+        talkingMojoImageView?.animationDuration = talkingMojoDuration
+        talkingMojoImageView?.animationRepeatCount = 0
+        talkingMojoImageView?.contentMode = .scaleAspectFit
+        talkingMojoImageView?.backgroundColor = .clear
+        // Show the first frame as static image (always visible)
+        talkingMojoImageView?.image = talkingMojoImages.first
+        talkingMojoImageView?.isHidden = false
+        
+        if let talkingMojoImageView = talkingMojoImageView {
+            view.addSubview(talkingMojoImageView)
+            talkingMojoImageView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                talkingMojoImageView.centerXAnchor.constraint(equalTo: mojoImage.centerXAnchor),
+                talkingMojoImageView.centerYAnchor.constraint(equalTo: mojoImage.centerYAnchor),
+                talkingMojoImageView.widthAnchor.constraint(equalTo: mojoImage.widthAnchor),
+                talkingMojoImageView.heightAnchor.constraint(equalTo: mojoImage.heightAnchor)
+            ])
+        }
+        
+        // Hide the original static mojoImage permanently
+        mojoImage.isHidden = true
+        mojoImage.alpha = 0
+        
+        print("✅ TalkingMojo GIF loaded with \(imageCount) frames")
+    }
+    
+    private func startTalkingAnimation() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // Just start animating - GIF is already visible
+            self.talkingMojoImageView?.startAnimating()
+        }
+    }
+    
+    private func stopTalkingAnimation() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // Stop animating but keep showing the first frame
+            self.talkingMojoImageView?.stopAnimating()
+        }
+    }
+    
     private func handleError(_ error: Error) {
-        let alert = UIAlertController(
-            title: "Error",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
     
     private func showCompletionMessage() {
-        let alert = UIAlertController(
-            title: "Congratulations! 🎉",
-            message: "You have practiced all available words. Would you like to review them again?",
-            preferredStyle: .alert
-        )
-        
+        let alert = UIAlertController(title: "Congratulations! 🎉", message: "You have practiced all available words. Would you like to review them again?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Review Again", style: .default) { [weak self] _ in
             Task {
-                // Reset practice status for all words
                 if let userId = SupabaseDataController.shared.userId,
                    let userData = try? await SupabaseDataController.shared.getUser(byId: userId) {
                     self?.levels = userData.userLevels
@@ -1481,37 +1177,13 @@ class PracticeScreenViewController: UIViewController {
                 }
             }
         })
-        
         alert.addAction(UIAlertAction(title: "Back", style: .cancel) { [weak self] _ in
             self?.navigationController?.popViewController(animated: true)
         })
-        
         present(alert, animated: true)
     }
     
-    private func refreshData() {
-        Task {
-            do {
-                guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user logged in")
-                    return
-                }
-                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                self.levels = userData.userLevels
-                
-                if self.levels.isEmpty {
-                    showCompletionMessage()
-                } else {
-                    updateUI()
-                }
-            } catch {
-                handleError(error)
-            }
-        }
-    }
-    
     private func clearUserDefaults() {
-        // Only clear app-specific data, not user session
         UserDefaults.standard.removeObject(forKey: "LastPracticedWord")
         UserDefaults.standard.removeObject(forKey: "LastPracticedLevel")
         UserDefaults.standard.synchronize()
@@ -1522,32 +1194,22 @@ class PracticeScreenViewController: UIViewController {
         do {
             try audioSession.setCategory(.playAndRecord, mode: .default, options: [.mixWithOthers, .defaultToSpeaker])
             try audioSession.setActive(true)
-            
             let inputNode = audioEngine.inputNode
             let recordingFormat = inputNode.outputFormat(forBus: 0)
-            
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
                 guard let self = self else { return }
-                
                 let channelData = buffer.floatChannelData?[0]
                 let frameLength = UInt(buffer.frameLength)
-                
                 var sum: Float = 0
                 for i in 0..<frameLength {
                     let sample = channelData?[Int(i)] ?? 0
                     sum += sample * sample
                 }
-                
                 let avgPower = 10 * log10f(sum / Float(frameLength))
-                
-                DispatchQueue.main.async {
-                    self.updateWarningForNoiseLevel(avgPower)
-                }
+                DispatchQueue.main.async { self.updateWarningForNoiseLevel(avgPower) }
             }
-            
             audioEngine.prepare()
             try audioEngine.start()
-            
         } catch {
             print("Error setting up noise monitoring: \(error.localizedDescription)")
         }
@@ -1559,18 +1221,14 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func updateWarningForNoiseLevel(_ power: Float) {
-        // Threshold for "noisy" environment (adjust as needed)
         let noisyThreshold: Float = -30
-        
         if power > noisyThreshold {
             UIView.animate(withDuration: 0.3) {
                 self.warningLabel.alpha = 1.0
                 self.warningLabel.text = "⚠️ High background noise detected.\nPlease move to a quieter place for better recognition."
             }
         } else {
-            UIView.animate(withDuration: 0.3) {
-                self.warningLabel.alpha = 0
-            }
+            UIView.animate(withDuration: 0.3) { self.warningLabel.alpha = 0 }
         }
     }
 }

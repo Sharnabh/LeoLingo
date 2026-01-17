@@ -569,7 +569,7 @@
                                     <constraint firstAttribute="width" constant="295" id="sqW-iY-jNn"/>
                                 </constraints>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mojo2" translatesAutoresizingMaskIntoConstraints="NO" id="O8z-jA-JrD">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="O8z-jA-JrD">
                                 <rect key="frame" x="557" y="278.5" width="301" height="337"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="337" id="8GZ-Qy-OxV"/>
@@ -742,7 +742,6 @@
         <image name="Vocal coach button" width="196" height="208"/>
         <image name="WordBox" width="622" height="466"/>
         <image name="ball" width="1756" height="1454"/>
-        <image name="mojo2" width="1332" height="1202"/>
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
         <image name="practiceBox" width="1164" height="882"/>
         <systemColor name="systemBackgroundColor">

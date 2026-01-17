@@ -4,7 +4,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Image references" minToolsVersion="12.0"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -584,11 +583,10 @@
                                 <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="K52-J1-naM">
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="K52-J1-naM">
                                 <rect key="frame" x="375" y="110" width="460" height="12"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" red="0.29411764709999999" green="0.55686274509999996" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="progressTintColor" red="0.29411764709999999" green="0.55686274509999996" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="tintColor" red="0.29411764709999999" green="0.5568627451" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="progressTintColor" red="0.29411764709999999" green="0.5568627451" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="trackTintColor" red="0.87843137250000003" green="0.85098039219999999" blue="0.72156862749999995" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -623,6 +621,7 @@
                             <constraint firstItem="6el-kL-dsL" firstAttribute="top" secondItem="I4h-ne-fTj" secondAttribute="top" id="8fL-ml-kdY"/>
                             <constraint firstItem="6el-kL-dsL" firstAttribute="trailing" secondItem="TPY-iH-bfp" secondAttribute="trailing" id="IM0-2l-25t"/>
                             <constraint firstItem="X6W-Ke-O0j" firstAttribute="leading" secondItem="O8z-jA-JrD" secondAttribute="trailing" constant="-73" id="JkO-Rc-W9k"/>
+                            <constraint firstItem="K52-J1-naM" firstAttribute="centerX" secondItem="I4h-ne-fTj" secondAttribute="centerX" id="Kgx-Jw-Tsc"/>
                             <constraint firstItem="U01-YN-9SK" firstAttribute="centerX" secondItem="X6W-Ke-O0j" secondAttribute="centerX" id="Nvp-Zr-OfL"/>
                             <constraint firstItem="O8z-jA-JrD" firstAttribute="leading" secondItem="2e5-px-tAE" secondAttribute="trailing" constant="-15" id="PDC-uX-eAk"/>
                             <constraint firstItem="2e5-px-tAE" firstAttribute="leading" secondItem="TPY-iH-bfp" secondAttribute="leading" constant="210" id="UBn-L0-7bv"/>
@@ -743,9 +742,6 @@
         <image name="mojo2" width="1332" height="1202"/>
         <image name="person.circle.fill" catalog="system" width="128" height="123"/>
         <image name="practiceBox" width="1164" height="882"/>
-        <namedColor name="AccentColor">
-            <color red="0.29399999976158142" green="0.55699998140335083" blue="0.31000000238418579" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

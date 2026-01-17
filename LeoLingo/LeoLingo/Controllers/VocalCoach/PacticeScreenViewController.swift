@@ -191,6 +191,9 @@ class PracticeScreenViewController: UIViewController {
         label.layer.shadowOffset = CGSize(width: 0, height: 2)
         label.layer.shadowRadius = 4
         label.layer.shadowOpacity = 0.3
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        label.numberOfLines = 1
         return label
     }()
     
@@ -824,6 +827,11 @@ class PracticeScreenViewController: UIViewController {
         if let wordTitle = wordTitle {
             let direction = "This is \(wordTitle). Say \(wordTitle)."
             
+            // Show word title in countdown area immediately
+            countdownLabel.text = wordTitle
+            countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
+            countdownLabel.alpha = 1.0
+            
             // Sequence the animations
             animateWordImage()
             
@@ -835,6 +843,8 @@ class PracticeScreenViewController: UIViewController {
                 
                 // Start countdown after direction is spoken
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // Reset font size for countdown
+                    self.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                     self.startCountdown()
                 }
             }
@@ -1101,6 +1111,11 @@ class PracticeScreenViewController: UIViewController {
         if let wordTitle = wordTitle {
             let direction = "This is \(wordTitle). Say \(wordTitle)."
             
+            // Show word title in countdown area immediately
+            countdownLabel.text = wordTitle
+            countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
+            countdownLabel.alpha = 1.0
+            
             // Sequence the animations
             animateWordImage()
             
@@ -1112,6 +1127,8 @@ class PracticeScreenViewController: UIViewController {
                 
                 // Start countdown after direction is spoken
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // Reset font size for countdown
+                    self.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                     self.startCountdown()
                 }
             }
@@ -1262,8 +1279,8 @@ class PracticeScreenViewController: UIViewController {
             
             countdownLabel.centerXAnchor.constraint(equalTo: waveformView.centerXAnchor),
             countdownLabel.centerYAnchor.constraint(equalTo: waveformView.centerYAnchor),
-            countdownLabel.widthAnchor.constraint(equalToConstant: 80),
-            countdownLabel.heightAnchor.constraint(equalToConstant: 80),
+            countdownLabel.leadingAnchor.constraint(greaterThanOrEqualTo: waveformView.leadingAnchor, constant: 10),
+            countdownLabel.trailingAnchor.constraint(lessThanOrEqualTo: waveformView.trailingAnchor, constant: -10),
             
             // Divider line
             dividerLine.topAnchor.constraint(equalTo: waveformView.bottomAnchor, constant: 16),
@@ -1318,10 +1335,18 @@ class PracticeScreenViewController: UIViewController {
             let currentWord = getCurrentWord()
             let direction = "This is \(currentWord). Say \(currentWord)."
             directionLabel.text = direction
+            
+            // Show word title in countdown area
+            countdownLabel.text = currentWord
+            countdownLabel.font = .systemFont(ofSize: 32, weight: .bold)
+            countdownLabel.alpha = 1.0
+            
             pronounceDirection(direction)
             
             // Start countdown after direction is spoken
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                // Reset font size for countdown
+                self?.countdownLabel.font = .systemFont(ofSize: 56, weight: .black)
                 self?.startCountdown()
             }
         }

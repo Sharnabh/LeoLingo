@@ -218,23 +218,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.showOnboardingBadgeAchievement()
             }
-        } else {
-            print("DEBUG: HomeVC - Checking for unshown badges")
-            // Check for any earned badges that haven't been shown yet
-            // This handles the case where the app was closed and reopened
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                BadgeAchievementManager.shared.checkAndShowUnshownBadges(in: self)
-            }
         }
+        // Don't check for unshown badges on every viewDidAppear
+        // This prevents showing the same badge multiple times
         
         // Refresh practices and badges when view appears
         loadRecentPractices()
         refreshBadgeData()
         
-        // Check for progress-based badges periodically
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            BadgeEarningManager.shared.checkProgressBadges(in: self)
-        }
+        // Only check for progress-based badges if coming from practice session
+        // Not on every view appear
     }
     
     private func refreshBadgeData() {

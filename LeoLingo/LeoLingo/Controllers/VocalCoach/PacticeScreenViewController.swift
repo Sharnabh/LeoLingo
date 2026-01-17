@@ -6,8 +6,8 @@ import Combine
 class WaveformView: UIView {
     private var barLayers: [CALayer] = []
     private var displayLink: CADisplayLink?
-    private let numberOfBars: Int = 40 // Increased number of bars for smoother look
-    private let waveformColor = UIColor(red: 79/255, green: 144/255, blue: 76/255, alpha: 1.0) // #4F904C
+    private let numberOfBars: Int = 50 // More bars for smoother look
+    private let waveformColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 0.9) // Enhanced green
     private var phase: CGFloat = 0
     private var animationStartTime: CFTimeInterval = 0
     
@@ -26,8 +26,8 @@ class WaveformView: UIView {
         barLayers.forEach { $0.removeFromSuperlayer() }
         barLayers.removeAll()
         
-        let barWidth: CGFloat = 2 // Thinner bars
-        let spacing: CGFloat = 4 // More spacing between bars
+        let barWidth: CGFloat = 3 // Thicker bars for better visibility
+        let spacing: CGFloat = 4
         let totalWidth = CGFloat(numberOfBars) * (barWidth + spacing)
         let startX = (bounds.width - totalWidth) / 2
         
@@ -36,16 +36,15 @@ class WaveformView: UIView {
             bar.backgroundColor = waveformColor.cgColor
             let x = startX + CGFloat(i) * (barWidth + spacing)
             // Set initial height
-            let initialHeight: CGFloat = 20 + CGFloat(arc4random_uniform(20))
+            let initialHeight: CGFloat = 15 + CGFloat(arc4random_uniform(15))
             bar.frame = CGRect(x: x, y: bounds.height/2 - initialHeight/2, width: barWidth, height: initialHeight)
             bar.cornerRadius = barWidth/2
             
-            // Add initial animation
-            let animation = CABasicAnimation(keyPath: "bounds.size.height")
-            animation.duration = 0.5
-            animation.repeatCount = .infinity
-            animation.autoreverses = true
-            bar.add(animation, forKey: "height")
+            // Add subtle shadow for depth
+            bar.shadowColor = UIColor.black.cgColor
+            bar.shadowOffset = CGSize(width: 0, height: 1)
+            bar.shadowRadius = 2
+            bar.shadowOpacity = 0.2
             
             layer.addSublayer(bar)
             barLayers.append(bar)
@@ -95,29 +94,37 @@ class WaveformView: UIView {
     @objc private func updateBars() {
         let currentTime = CACurrentMediaTime()
         let elapsedTime = currentTime - animationStartTime
-        phase += 0.02 // Slowed down from 0.05 to 0.02 for smoother animation
+        phase += 0.03 // Slightly faster for more dynamic feel
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         
         for (index, bar) in barLayers.enumerated() {
-            // Create more complex wave patterns with slower movement
+            // Create more complex wave patterns
             let normalizedIndex = CGFloat(index) / CGFloat(numberOfBars)
-            let primaryWave = sin(phase * 0.7 + normalizedIndex * 4.0) // Slowed primary wave
-            let secondaryWave = sin(phase * 1.0 + normalizedIndex * 2.0) * 0.5 // Slowed secondary wave
-            let fastWave = sin(phase * 2.0 + normalizedIndex) * 0.3 // Slowed fast wave
+            let primaryWave = sin(phase * 0.8 + normalizedIndex * 5.0)
+            let secondaryWave = sin(phase * 1.2 + normalizedIndex * 3.0) * 0.6
+            let fastWave = sin(phase * 2.5 + normalizedIndex * 1.5) * 0.4
+            
+            // Add pulse effect
+            let pulseEffect = sin(phase * 0.5) * 0.2
             
             // Add some random noise for natural variation
-            let noise = CGFloat(arc4random_uniform(10)) / 150.0 // Reduced noise
+            let noise = CGFloat(arc4random_uniform(8)) / 120.0
             
-            // Combine all waves
-            let combinedWave = primaryWave + secondaryWave + fastWave + noise
+            // Combine all waves with pulse
+            let combinedWave = primaryWave + secondaryWave + fastWave + pulseEffect + noise
             
             // Calculate height with more variation
-            let minHeight: CGFloat = 20
-            let maxHeight: CGFloat = 80
+            let minHeight: CGFloat = 15
+            let maxHeight: CGFloat = 75
             let heightRange = maxHeight - minHeight
             let waveHeight = minHeight + (heightRange * abs(combinedWave))
+            
+            // Add color gradient based on height
+            let heightRatio = waveHeight / maxHeight
+            let alpha = 0.7 + (heightRatio * 0.3) // Vary alpha based on height
+            bar.backgroundColor = waveformColor.withAlphaComponent(alpha).cgColor
             
             // Update bar position and height with smooth transition
             let yPosition = bounds.height/2 - waveHeight/2
@@ -177,9 +184,13 @@ class PracticeScreenViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 40, weight: .bold)
-        label.textColor = .systemGreen
+        label.font = .systemFont(ofSize: 56, weight: .black)
+        label.textColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 1.0)
         label.alpha = 0
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOffset = CGSize(width: 0, height: 2)
+        label.layer.shadowRadius = 4
+        label.layer.shadowOpacity = 0.3
         return label
     }()
     
@@ -211,6 +222,136 @@ class PracticeScreenViewController: UIViewController {
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         return button
     }()
+    
+    // MARK: - Playback Control Views
+    private lazy var controlsContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0.984, green: 0.969, blue: 0.894, alpha: 1.0)
+        view.layer.cornerRadius = 25
+        view.layer.borderWidth = 3
+        view.layer.borderColor = UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 1.0).cgColor
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize(width: 0, height: 4)
+        view.layer.shadowRadius = 8
+        view.layer.shadowOpacity = 0.2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var playPauseButton: UIButton = {
+        let button = createControlButton(
+            systemName: "pause.fill",
+            action: #selector(playPauseButtonTapped)
+        )
+        return button
+    }()
+    
+    private lazy var skipButton: UIButton = {
+        let button = createControlButton(
+            systemName: "forward.fill",
+            action: #selector(skipButtonTapped)
+        )
+        return button
+    }()
+    
+    private lazy var replayButton: UIButton = {
+        let button = createControlButton(
+            systemName: "arrow.counterclockwise",
+            action: #selector(replayButtonTapped)
+        )
+        return button
+    }()
+    
+    private lazy var previousButton: UIButton = {
+        let button = createControlButton(
+            systemName: "backward.fill",
+            action: #selector(previousButtonTapped)
+        )
+        return button
+    }()
+    
+    private lazy var speedTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Speed"
+        label.textColor = UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0)
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var speedSlider: UISlider = {
+        let slider = UISlider()
+        slider.minimumValue = 0.5
+        slider.maximumValue = 1.5
+        slider.value = 1.0
+        slider.minimumTrackTintColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 1.0)
+        slider.maximumTrackTintColor = UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 0.3)
+        slider.thumbTintColor = UIColor(red: 0.294, green: 0.557, blue: 0.310, alpha: 1.0)
+        slider.addTarget(self, action: #selector(speedSliderChanged(_:)), for: .valueChanged)
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        return slider
+    }()
+    
+    private lazy var speedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "1.0x"
+        label.textColor = UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0)
+        label.font = .systemFont(ofSize: 13, weight: .bold)
+        label.textAlignment = .right
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var speedIconLeft: UIImageView = {
+        let imageView = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        imageView.image = UIImage(systemName: "tortoise.fill", withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 1.0), renderingMode: .alwaysOriginal)
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    private lazy var speedIconRight: UIImageView = {
+        let imageView = UIImageView()
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        imageView.image = UIImage(systemName: "hare.fill", withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 1.0), renderingMode: .alwaysOriginal)
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    private var isPlaybackPaused = false
+    private var currentSpeechRate: Float = 1.0
+    private let synthesizer = AVSpeechSynthesizer()
+    
+    private func createControlButton(systemName: String, action: Selector) -> UIButton {
+        let button = UIButton(type: .custom)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 28
+        button.layer.borderWidth = 2.5
+        button.layer.borderColor = UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 0.4).cgColor
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.1
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: systemName, withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        
+        button.addTarget(self, action: action, for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add tap animation
+        button.addTarget(self, action: #selector(buttonTapDown(_:)), for: .touchDown)
+        button.addTarget(self, action: #selector(buttonTapUp(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        
+        return button
+    }
     
     @IBOutlet var directionLabel: UILabel!
     @IBOutlet var mojoImage: UIImageView!
@@ -295,6 +436,7 @@ class PracticeScreenViewController: UIViewController {
         setupBackButton()
         setupCountdownLabel()
         setupWarningLabel()
+        setupPlaybackControls()
         requestSpeechAuthorization()
         startNoiseMonitoring()
         
@@ -327,23 +469,7 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func setupCountdownLabel() {
-        view.addSubview(countdownLabel)
-        view.addSubview(waveformView)
-        
-        NSLayoutConstraint.activate([
-            countdownLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            countdownLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            countdownLabel.heightAnchor.constraint(equalToConstant: 60),
-            countdownLabel.widthAnchor.constraint(equalToConstant: 60),
-            
-            waveformView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            waveformView.centerYAnchor.constraint(equalTo: countdownLabel.centerYAnchor),
-            waveformView.widthAnchor.constraint(equalToConstant: 200),
-            waveformView.heightAnchor.constraint(equalToConstant: 60)
-        ])
-        
-        // Ensure countdown label is above waveform
-        view.bringSubviewToFront(countdownLabel)
+        // Countdown and waveform will be added in setupPlaybackControls
     }
     
     private func updateCountdownLabel() {
@@ -378,7 +504,7 @@ class PracticeScreenViewController: UIViewController {
         view.addSubview(warningLabel)
         
         NSLayoutConstraint.activate([
-            warningLabel.bottomAnchor.constraint(equalTo: countdownLabel.topAnchor, constant: -8),
+            warningLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -250),
             warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             warningLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             warningLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
@@ -630,11 +756,17 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func pronounceWord(_ word: String) {
-        VoiceManager.shared.speak(word)
+        let utterance = AVSpeechUtterance(string: word)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * currentSpeechRate
+        synthesizer.speak(utterance)
     }
     
     private func pronounceDirection(_ direction: String) {
-        VoiceManager.shared.speak(direction)
+        let utterance = AVSpeechUtterance(string: direction)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * currentSpeechRate
+        synthesizer.speak(utterance)
     }
     
     func getDirection(for index: Int, at levelIndex: Int) -> String {
@@ -1082,6 +1214,217 @@ class PracticeScreenViewController: UIViewController {
         } else {
             // If no navigation controller, handle modal dismissal
             dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    // MARK: - Playback Controls Setup
+    private func setupPlaybackControls() {
+        view.addSubview(controlsContainerView)
+        
+        // Add waveform and countdown to the container
+        controlsContainerView.addSubview(waveformView)
+        controlsContainerView.addSubview(countdownLabel)
+        
+        // Create divider line
+        let dividerLine = UIView()
+        dividerLine.backgroundColor = UIColor(red: 0.631, green: 0.412, blue: 0.302, alpha: 0.3)
+        dividerLine.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Create speed control stack
+        let speedHeaderStack = UIStackView(arrangedSubviews: [speedTitleLabel, speedLabel])
+        speedHeaderStack.axis = .horizontal
+        speedHeaderStack.distribution = .equalSpacing
+        speedHeaderStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let speedSliderStack = UIStackView(arrangedSubviews: [speedIconLeft, speedSlider, speedIconRight])
+        speedSliderStack.axis = .horizontal
+        speedSliderStack.alignment = .center
+        speedSliderStack.spacing = 10
+        speedSliderStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add all to container
+        controlsContainerView.addSubview(dividerLine)
+        controlsContainerView.addSubview(speedHeaderStack)
+        controlsContainerView.addSubview(speedSliderStack)
+        
+        NSLayoutConstraint.activate([
+            // Main controls container - single unified box
+            controlsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
+            controlsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            controlsContainerView.widthAnchor.constraint(equalToConstant: 400),
+            controlsContainerView.heightAnchor.constraint(equalToConstant: 180),
+            
+            // Waveform and countdown at top
+            waveformView.topAnchor.constraint(equalTo: controlsContainerView.topAnchor, constant: 20),
+            waveformView.centerXAnchor.constraint(equalTo: controlsContainerView.centerXAnchor),
+            waveformView.widthAnchor.constraint(equalToConstant: 320),
+            waveformView.heightAnchor.constraint(equalToConstant: 80),
+            
+            countdownLabel.centerXAnchor.constraint(equalTo: waveformView.centerXAnchor),
+            countdownLabel.centerYAnchor.constraint(equalTo: waveformView.centerYAnchor),
+            countdownLabel.widthAnchor.constraint(equalToConstant: 80),
+            countdownLabel.heightAnchor.constraint(equalToConstant: 80),
+            
+            // Divider line
+            dividerLine.topAnchor.constraint(equalTo: waveformView.bottomAnchor, constant: 16),
+            dividerLine.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 24),
+            dividerLine.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -24),
+            dividerLine.heightAnchor.constraint(equalToConstant: 1.5),
+            
+            // Speed header
+            speedHeaderStack.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 12),
+            speedHeaderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 30),
+            speedHeaderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -30),
+            
+            // Speed slider stack
+            speedSliderStack.topAnchor.constraint(equalTo: speedHeaderStack.bottomAnchor, constant: 8),
+            speedSliderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 30),
+            speedSliderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -30),
+            speedSliderStack.bottomAnchor.constraint(equalTo: controlsContainerView.bottomAnchor, constant: -20),
+            
+            speedIconLeft.widthAnchor.constraint(equalToConstant: 24),
+            speedIconLeft.heightAnchor.constraint(equalToConstant: 24),
+            
+            speedIconRight.widthAnchor.constraint(equalToConstant: 24),
+            speedIconRight.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        
+        // Ensure countdown label is above waveform
+        controlsContainerView.bringSubviewToFront(countdownLabel)
+        
+        // Set initial speech rate
+        currentSpeechRate = 1.0
+    }
+    
+    // MARK: - Control Button Actions
+    @objc private func playPauseButtonTapped() {
+        isPlaybackPaused.toggle()
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let imageName = isPlaybackPaused ? "pause.fill" : "play.fill"
+        let image = UIImage(systemName: imageName, withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
+        playPauseButton.setImage(image, for: .normal)
+        
+        if isPlaybackPaused {
+            // Pause everything
+            if synthesizer.isSpeaking {
+                synthesizer.stopSpeaking(at: .immediate)
+            }
+            stopListening()
+            countdownTimer?.invalidate()
+        } else {
+            // Resume - replay current word instruction
+            let currentWord = getCurrentWord()
+            let direction = "This is \(currentWord). Say \(currentWord)."
+            directionLabel.text = direction
+            pronounceDirection(direction)
+            
+            // Start countdown after direction is spoken
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                self?.startCountdown()
+            }
+        }
+    }
+    
+    @objc private func skipButtonTapped() {
+        // Stop current speech and listening
+        synthesizer.stopSpeaking(at: .immediate)
+        stopListening()
+        countdownTimer?.invalidate()
+        isPlaybackPaused = false
+        
+        // Reset play/pause button to pause icon
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
+        playPauseButton.setImage(image, for: .normal)
+        
+        // Move to next word
+        moveToNextWord()
+    }
+    
+    @objc private func previousButtonTapped() {
+        // Stop current activities
+        synthesizer.stopSpeaking(at: .immediate)
+        stopListening()
+        countdownTimer?.invalidate()
+        isPlaybackPaused = false
+        
+        // Reset play/pause button to pause icon
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
+        playPauseButton.setImage(image, for: .normal)
+        
+        // Move to previous word
+        if currentIndex > 0 {
+            currentIndex -= 1
+        } else if levelIndex > 0 {
+            // Go to previous level's last word
+            levelIndex -= 1
+            currentIndex = levels[levelIndex].words.count - 1
+        } else {
+            // Already at first word
+            showAlert(message: "This is the first word")
+            return
+        }
+        
+        // Update UI with previous word
+        updateUI()
+    }
+    
+    @objc private func replayButtonTapped() {
+        // Stop current activities
+        synthesizer.stopSpeaking(at: .immediate)
+        stopListening()
+        countdownTimer?.invalidate()
+        isPlaybackPaused = false
+        
+        // Reset play/pause button to pause icon
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: "pause.fill", withConfiguration: config)?
+            .withTintColor(UIColor(red: 0.482, green: 0.314, blue: 0.227, alpha: 1.0), renderingMode: .alwaysOriginal)
+        playPauseButton.setImage(image, for: .normal)
+        
+        // Replay current word direction
+        let currentWord = getCurrentWord()
+        let direction = "This is \(currentWord). Say \(currentWord)."
+        directionLabel.text = direction
+        pronounceDirection(direction)
+        
+        // Start countdown after direction
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            self?.startCountdown()
+        }
+    }
+    
+    @objc private func speedSliderChanged(_ sender: UISlider) {
+        // Round to nearest 0.05 for smoother control
+        let roundedValue = round(sender.value * 20) / 20
+        currentSpeechRate = roundedValue
+        
+        // Update label
+        speedLabel.text = String(format: "%.2fx", roundedValue)
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    @objc private func buttonTapDown(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1) {
+            sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            sender.alpha = 0.7
+        }
+    }
+    
+    @objc private func buttonTapUp(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.1) {
+            sender.transform = .identity
+            sender.alpha = 1.0
         }
     }
     

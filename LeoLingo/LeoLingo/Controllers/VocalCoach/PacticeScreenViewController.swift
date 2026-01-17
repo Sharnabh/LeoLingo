@@ -813,10 +813,10 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalTransitionStyle = .crossDissolve
             
             if isCorrect && !levelChange {
-                popoverVC.configurePopover(message: "Great pronunciation!", image: "mojo2")
+                popoverVC.configurePopover(message: "Great pronunciation!", image: "DancingMojo")
                 showConfettiEffect()
                 present(popoverVC, animated: true) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
                         guard let self = self else { return }
                         self.stopConfetti()
                         popoverVC.dismiss(animated: true) {
@@ -841,7 +841,7 @@ class PracticeScreenViewController: UIViewController {
             } else {
                 popoverVC.configurePopover(message: "Let's try that pronunciation again.", image: "SadMojo")
                 present(popoverVC, animated: true) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                         popoverVC.dismiss(animated: true) { completion?() }
                     }
                 }

@@ -13,7 +13,6 @@ protocol LogInCellDelegate: AnyObject {
     func switchToLandingPage()
     func checkUserExists(email: String, completion: @escaping (Bool) -> Void)
     func validateLogin(email: String, password: String, completion: @escaping (Bool) -> Void)
-    func initiateOTPLogin(email: String, password: String)
     func handleAppleSignIn()
     func handleGoogleSignIn()
 }
@@ -113,8 +112,12 @@ class LogInCollectionViewCell: UICollectionViewCell {
     }
     
     private func validateLogin(email: String, password: String) {
-        // Use OTP-based authentication instead of direct login
-        delegate?.initiateOTPLogin(email: email, password: password)
+        // Validate login credentials directly
+        delegate?.validateLogin(email: email, password: password) { [weak self] success in
+            if !success {
+                self?.delegate?.showAlert(message: "Invalid email or password")
+            }
+        }
     }
 }
 

@@ -209,17 +209,17 @@ class PracticeScreenViewController: UIViewController {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
-        button.backgroundColor = .white
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.77)
         button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 6
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowRadius = 2
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
-            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor(named: "AccentColor") ?? .systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
         
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
@@ -507,7 +507,7 @@ class PracticeScreenViewController: UIViewController {
         view.addSubview(warningLabel)
         
         NSLayoutConstraint.activate([
-            warningLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -250),
+            warningLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -200),
             warningLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             warningLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             warningLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
@@ -1266,16 +1266,16 @@ class PracticeScreenViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Main controls container - single unified box
-            controlsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
+            controlsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             controlsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            controlsContainerView.widthAnchor.constraint(equalToConstant: 400),
-            controlsContainerView.heightAnchor.constraint(equalToConstant: 180),
+            controlsContainerView.widthAnchor.constraint(equalToConstant: 350),
+            controlsContainerView.heightAnchor.constraint(equalToConstant: 150),
             
             // Waveform and countdown at top
-            waveformView.topAnchor.constraint(equalTo: controlsContainerView.topAnchor, constant: 20),
+            waveformView.topAnchor.constraint(equalTo: controlsContainerView.topAnchor, constant: 12),
             waveformView.centerXAnchor.constraint(equalTo: controlsContainerView.centerXAnchor),
-            waveformView.widthAnchor.constraint(equalToConstant: 320),
-            waveformView.heightAnchor.constraint(equalToConstant: 80),
+            waveformView.widthAnchor.constraint(equalToConstant: 280),
+            waveformView.heightAnchor.constraint(equalToConstant: 55),
             
             countdownLabel.centerXAnchor.constraint(equalTo: waveformView.centerXAnchor),
             countdownLabel.centerYAnchor.constraint(equalTo: waveformView.centerYAnchor),
@@ -1283,21 +1283,21 @@ class PracticeScreenViewController: UIViewController {
             countdownLabel.trailingAnchor.constraint(lessThanOrEqualTo: waveformView.trailingAnchor, constant: -10),
             
             // Divider line
-            dividerLine.topAnchor.constraint(equalTo: waveformView.bottomAnchor, constant: 16),
-            dividerLine.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 24),
-            dividerLine.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -24),
+            dividerLine.topAnchor.constraint(equalTo: waveformView.bottomAnchor, constant: 10),
+            dividerLine.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 20),
+            dividerLine.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -20),
             dividerLine.heightAnchor.constraint(equalToConstant: 1.5),
             
             // Speed header
-            speedHeaderStack.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 12),
-            speedHeaderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 30),
-            speedHeaderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -30),
+            speedHeaderStack.topAnchor.constraint(equalTo: dividerLine.bottomAnchor, constant: 8),
+            speedHeaderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 25),
+            speedHeaderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -25),
             
             // Speed slider stack
-            speedSliderStack.topAnchor.constraint(equalTo: speedHeaderStack.bottomAnchor, constant: 8),
-            speedSliderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 30),
-            speedSliderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -30),
-            speedSliderStack.bottomAnchor.constraint(equalTo: controlsContainerView.bottomAnchor, constant: -20),
+            speedSliderStack.topAnchor.constraint(equalTo: speedHeaderStack.bottomAnchor, constant: 5),
+            speedSliderStack.leadingAnchor.constraint(equalTo: controlsContainerView.leadingAnchor, constant: 25),
+            speedSliderStack.trailingAnchor.constraint(equalTo: controlsContainerView.trailingAnchor, constant: -25),
+            speedSliderStack.bottomAnchor.constraint(equalTo: controlsContainerView.bottomAnchor, constant: -12),
             
             speedIconLeft.widthAnchor.constraint(equalToConstant: 24),
             speedIconLeft.heightAnchor.constraint(equalToConstant: 24),

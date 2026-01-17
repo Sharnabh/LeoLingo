@@ -12,17 +12,17 @@ class VocalCoachViewController: UIViewController {
     var word: Word!
     
     private lazy var backButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
-        button.backgroundColor = .white
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.77)
         button.layer.cornerRadius = 30
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 6
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowRadius = 2
         button.layer.shadowOpacity = 0.2
         
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
-            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor(named: "AccentColor") ?? .systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
         
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)

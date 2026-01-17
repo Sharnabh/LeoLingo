@@ -24,19 +24,23 @@ class FunLearningViewController: UIViewController {
     let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo",]
     
     private lazy var backButton: UIButton = {
-        let size: CGFloat = 46
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: size, height: size))
-        button.backgroundColor = .white
-        button.layer.cornerRadius = size/2
+        let button = UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.77)
+        button.layer.cornerRadius = 30
+        button.clipsToBounds = true
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 6
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowRadius = 2
         button.layer.shadowOpacity = 0.2
+        button.layer.masksToBounds = false
         
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: symbolConfig)?
-            .withTintColor(.systemGreen, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor(named: "AccentColor") ?? .systemGreen, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
+        
+        // Explicitly set content mode to center
         button.imageView?.contentMode = .center
         
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
@@ -46,30 +50,37 @@ class FunLearningViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Create a container view to hold the back button with fixed size
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        containerView.addSubview(backButton)
+        
         // Setup back button in navigation bar
-        let backBarButton = UIBarButtonItem(customView: backButton)
+        let backBarButton = UIBarButtonItem(customView: containerView)
         navigationItem.leftBarButtonItem = backBarButton
         
-        // Create custom Kids Mode button
-        let customButton = UIButton(frame: CGRect(x: 0, y: 0, width: 151, height: 46))
-        customButton.backgroundColor = .white.withAlphaComponent(0.77)
-        customButton.setTitle("Kid Mode", for: .normal)
-        customButton.setTitleColor(.black, for: .normal)
-        customButton.layer.cornerRadius = 23 // Half of height for capsule shape
+        // Create custom Kids Mode button with home screen style
+        let customButton = UIButton(type: .custom)
+        customButton.frame = CGRect(x: 0, y: 0, width: 151, height: 46)
         
-        // Configure image
+        // Configure button appearance to match home screen
+        var config = UIButton.Configuration.filled()
+        config.title = "Kid Mode"
+        config.imagePlacement = .trailing
+        config.imagePadding = 15
+        config.cornerStyle = .capsule
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
+        
+        // Set image
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
         let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
-        customButton.setImage(personImage, for: .normal)
-        customButton.tintColor = .black
+        config.image = personImage
         
-        // Set image padding and position
-        customButton.configuration = .plain()
-        customButton.configuration?.imagePlacement = .trailing
-        customButton.configuration?.imagePadding = 8
-        customButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
-        customButton.configuration?.background.backgroundColor = .white.withAlphaComponent(0.77)
-        customButton.configuration?.background.cornerRadius = 23
+        // Colors to match home screen
+        config.baseBackgroundColor = UIColor.white.withAlphaComponent(0.77)
+        config.baseForegroundColor = .black
+        
+        // Apply configuration
+        customButton.configuration = config
         
         // Add shadow
         customButton.layer.shadowColor = UIColor.black.cgColor

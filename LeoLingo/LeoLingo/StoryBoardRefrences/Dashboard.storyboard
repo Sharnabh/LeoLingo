@@ -374,7 +374,6 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="gWi-WI-W73"/>
-                        <color key="backgroundColor" red="0.9882352941176471" green="0.96862745098039216" blue="0.88627450980392153" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="qVC-Aq-wXA" firstAttribute="top" secondItem="gWi-WI-W73" secondAttribute="top" constant="16" id="ElB-j2-yXH"/>
                             <constraint firstItem="qVC-Aq-wXA" firstAttribute="leading" secondItem="gWi-WI-W73" secondAttribute="leading" constant="16" id="HTo-m2-lzZ"/>

@@ -104,25 +104,10 @@
                                     </imageView>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="CBO-2Y-i5l">
-                                <rect key="frame" x="239" y="629.5" width="174" height="34.5"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cdv-S4-aK6">
-                                        <rect key="frame" x="0.0" y="0.0" width="79" height="34.5"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="79" id="V60-Zj-SQ2"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" image="apple.logo" catalog="system"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="254" verticalHuggingPriority="254" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Yl-77-Hc0">
-                                        <rect key="frame" x="95" y="0.0" width="79" height="34.5"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" image="vecteezy_google-lens-icon-logo-symbol_22484503"/>
-                                    </button>
-                                </subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="CBO-2Y-i5l">
+                                <rect key="frame" x="186" y="629.5" width="300" height="112"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="34.5" id="OFz-Tb-xXf"/>
+                                    <constraint firstAttribute="width" constant="300" id="social-buttons-width"/>
                                 </constraints>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sgn-xO-eHG">
@@ -145,11 +130,10 @@
                 </constraints>
             </collectionViewCellContentView>
             <connections>
-                <outlet property="appleSignInButton" destination="Cdv-S4-aK6" id="apple-sign-in-button"/>
                 <outlet property="emailTextField" destination="lUM-qG-4Io" id="21W-Dy-9w2"/>
-                <outlet property="googleSignInButton" destination="8Yl-77-Hc0" id="bCc-qx-dAd"/>
                 <outlet property="loginButton" destination="8oS-xD-NVk" id="4os-a0-H6p"/>
                 <outlet property="passwordTextField" destination="cpE-vf-yKL" id="ZbQ-af-GhF"/>
+                <outlet property="socialButtonsStackView" destination="CBO-2Y-i5l" id="social-buttons-stack"/>
                 <outlet property="switchToSignupVCButton" destination="Sgn-xO-eHG" id="byk-ak-wk3"/>
             </connections>
             <point key="canvasLocation" x="690.73170731707319" y="-9.1525423728813564"/>

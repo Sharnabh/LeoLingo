@@ -86,27 +86,10 @@
                                     <constraint firstAttribute="height" constant="34" id="OL7-Ss-2B8"/>
                                 </constraints>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="hgd-lA-ujK">
-                                <rect key="frame" x="239" y="624.5" width="174" height="34.5"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Rm-8t-9Gk">
-                                        <rect key="frame" x="0.0" y="0.0" width="79" height="34.5"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="79" id="TTT-Bm-Zos"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" image="apple.logo" catalog="system"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="254" verticalHuggingPriority="254" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jBe-vC-YFa">
-                                        <rect key="frame" x="95" y="0.0" width="79" height="34.5"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" image="vecteezy_google-lens-icon-logo-symbol_22484503">
-                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage"/>
-                                        </buttonConfiguration>
-                                    </button>
-                                </subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="hgd-lA-ujK">
+                                <rect key="frame" x="186" y="624.5" width="300" height="112"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="34.5" id="rD4-JV-Wb6"/>
+                                    <constraint firstAttribute="width" constant="300" id="social-buttons-width-signup"/>
                                 </constraints>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57C-6e-y1D">
@@ -129,12 +112,11 @@
                 </constraints>
             </collectionViewCellContentView>
             <connections>
-                <outlet property="appleSignInButton" destination="1Rm-8t-9Gk" id="bj1-xg-Tez"/>
                 <outlet property="emailTextField" destination="0Bc-sp-zEG" id="WMJ-6v-P04"/>
-                <outlet property="googleSignInButton" destination="jBe-vC-YFa" id="Dbh-5p-1fR"/>
                 <outlet property="parentsNameTextField" destination="777-Tw-saY" id="FJU-Lf-jDt"/>
                 <outlet property="passwordTextField" destination="CH4-gL-EyW" id="aZA-7y-cBS"/>
                 <outlet property="signUpButton" destination="z0I-ID-voj" id="p8V-8t-8CA"/>
+                <outlet property="socialButtonsStackView" destination="hgd-lA-ujK" id="social-buttons-stack-signup"/>
                 <outlet property="switchToLoginVCButton" destination="57C-6e-y1D" id="w9f-3t-qt5"/>
             </connections>
             <point key="canvasLocation" x="690.73170731707319" y="-9.1525423728813564"/>

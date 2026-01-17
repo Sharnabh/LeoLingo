@@ -1,11 +1,34 @@
 import UIKit
+import AVFoundation
+import AVKit
+
+// Custom view that properly handles AVPlayerLayer sizing
+class VideoPlayerView: UIView {
+    override class var layerClass: AnyClass {
+        return AVPlayerLayer.self
+    }
+    
+    var playerLayer: AVPlayerLayer {
+        return layer as! AVPlayerLayer
+    }
+    
+    var player: AVPlayer? {
+        get { playerLayer.player }
+        set { playerLayer.player = newValue }
+    }
+}
 
 class VocalCoachViewController: UIViewController {
+    
+    private var videoCardView: VideoCardView?
     
     @IBOutlet var practiceCardView: UIView!
     @IBOutlet var soundCards: UICollectionView!
     @IBOutlet var wordLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
+    @IBOutlet weak var mojoImageView: UIImageView!
+    @IBOutlet weak var wordBoxImageView: UIImageView!
+    @IBOutlet weak var continueButton: UIButton!
     
     let levels = DataController.shared.getAllLevels()
     var words: [Word] = []
@@ -54,6 +77,15 @@ class VocalCoachViewController: UIViewController {
         soundCards.register(firstNib, forCellWithReuseIdentifier: "First")
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // Setup video card after layout is complete (only once)
+        if videoCardView == nil {
+            setupVideoCard()
+        }
+    }
+    
     private func setupBackButton() {
         view.addSubview(backButton)
         backButton.translatesAutoresizingMaskIntoConstraints = false
@@ -64,6 +96,95 @@ class VocalCoachViewController: UIViewController {
             backButton.widthAnchor.constraint(equalToConstant: 60),
             backButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+    
+    private func setupVideoCard() {
+        // Use animated GIF for better transparency support
+        guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
+              let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("❌ GIF file 'mojodance.gif' not found")
+            practiceCardView.isHidden = false
+            return
+        }
+        
+        print("✅ Loading mojodance.gif")
+        
+        let imageCount = CGImageSourceGetCount(source)
+        var images: [UIImage] = []
+        var totalDuration: TimeInterval = 0
+        
+        // Extract all frames from the GIF
+        for i in 0..<imageCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                // Get frame duration
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
+                let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
+                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                    ?? 0.1
+                
+                totalDuration += frameDuration
+                images.append(UIImage(cgImage: cgImage))
+            }
+        }
+        
+        // Hide original Mojo image
+        mojoImageView.isHidden = true
+        
+        // Create an image view for the animated GIF
+        let animatedImageView = UIImageView(frame: mojoImageView.frame)
+        animatedImageView.animationImages = images
+        animatedImageView.animationDuration = totalDuration
+        animatedImageView.animationRepeatCount = 0 // Loop forever
+        animatedImageView.contentMode = .scaleAspectFit
+        animatedImageView.backgroundColor = .clear
+        
+        // Add to practice card
+        practiceCardView.addSubview(animatedImageView)
+        
+        // Bring UI elements to front
+        practiceCardView.bringSubviewToFront(wordBoxImageView)
+        practiceCardView.bringSubviewToFront(wordLabel)
+        practiceCardView.bringSubviewToFront(continueButton)
+        
+        // Start animation
+        animatedImageView.startAnimating()
+        
+        print("✅ Animated GIF playing with \(imageCount) frames! �")
+        print("📍 Animation duration: \(totalDuration)s")
+    }
+    
+    private func navigateToPracticeScreen() {
+        let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
+        if let practiceVC = storyboard.instantiateViewController(withIdentifier: "PracticeScreenViewController") as? PracticeScreenViewController {
+            practiceVC.levelIndex = 0
+            practiceVC.currentIndex = 0
+            
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(practiceVC, animated: true)
+            } else {
+                practiceVC.modalPresentationStyle = .fullScreen
+                present(practiceVC, animated: true)
+            }
+        }
+    }
+    
+    @objc private func backButtonTapped() {
+        if let navController = self.navigationController {
+            for viewController in navController.viewControllers {
+                if viewController is HomePageViewController {
+                    navController.popToViewController(viewController, animated: true)
+                    return
+                }
+            }
+            
+            if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
+                navController.setViewControllers([homeVC], animated: true)
+            }
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     func updatePracticeCardView() {
@@ -91,7 +212,6 @@ class VocalCoachViewController: UIViewController {
     @IBAction func continueButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let practiceVC = storyboard.instantiateViewController(withIdentifier: "PracticeScreenViewController") as? PracticeScreenViewController {
-            // Always start from the beginning
             practiceVC.levelIndex = 0
             practiceVC.currentIndex = 0
             
@@ -107,7 +227,8 @@ class VocalCoachViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // Post notification when vocal coach becomes inactive
+        videoCardView?.pause()
+        
         NotificationCenter.default.post(name: NSNotification.Name("VocalCoachDidBecomeInactive"), object: nil)
         
         if self.isMovingFromParent {
@@ -119,42 +240,14 @@ class VocalCoachViewController: UIViewController {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected level card at index: \(indexPath.item)")
-        
-        // Create the LevelCardViewController
-        let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)
-        levelCardVC.title = "Level \(indexPath.item + 1)"
-        
-        if let navController = self.navigationController {
-            // We have a navigation controller, just push
-            navController.pushViewController(levelCardVC, animated: true)
-        } else {
-            // Create a new navigation controller and present it
-            let navController = UINavigationController(rootViewController: levelCardVC)
-            navController.modalPresentationStyle = .fullScreen
-            present(navController, animated: true, completion: nil)
-        }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        videoCardView?.play()
     }
     
-    @objc private func backButtonTapped() {
-        if let navController = self.navigationController {
-            // First try to find HomePageViewController in the navigation stack
-            for viewController in navController.viewControllers {
-                if viewController is HomePageViewController {
-                    navController.popToViewController(viewController, animated: true)
-                    return
-                }
-            }
-            
-            // If not found in stack, create and set a new HomePageViewController
-            if let homeVC = storyboard?.instantiateViewController(withIdentifier: "HomePageViewController") {
-                navController.setViewControllers([homeVC], animated: true)
-            }
-        } else {
-            // If no navigation controller, handle modal dismissal
-            dismiss(animated: true, completion: nil)
-        }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        videoCardView = nil
     }
 }
 
@@ -177,7 +270,21 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
         return cell
     }
     
-    // Add touch handling methods
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Selected level card at index: \(indexPath.item)")
+        
+        let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)
+        levelCardVC.title = "Level \(indexPath.item + 1)"
+        
+        if let navController = self.navigationController {
+            navController.pushViewController(levelCardVC, animated: true)
+        } else {
+            let navController = UINavigationController(rootViewController: levelCardVC)
+            navController.modalPresentationStyle = .fullScreen
+            present(navController, animated: true, completion: nil)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? LevelCardCollectionViewCell {
             cell.animateTapDown()

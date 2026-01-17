@@ -520,15 +520,18 @@
                         <barButtonItem key="leftBarButtonItem" title="Item" id="jm0-Ar-scI"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="continueButton" destination="Qmh-lr-hrs" id="iJM-CV-BOU"/>
                         <outlet property="headingTitle" destination="7wK-nf-QJv" id="VMj-rY-GFI"/>
+                        <outlet property="mojoImageView" destination="dfz-6M-bZv" id="cSE-M4-UT6"/>
                         <outlet property="practiceCardView" destination="F2W-56-G4c" id="I0P-ZS-Luq"/>
                         <outlet property="soundCards" destination="zmz-2j-SO4" id="k3P-zf-f3j"/>
+                        <outlet property="wordBoxImageView" destination="8O1-YX-ga0" id="Blp-Nz-PbH"/>
                         <outlet property="wordLabel" destination="SSq-DF-5CO" id="ZVK-bI-jiz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HXC-BQ-5KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-157" y="1336"/>
+            <point key="canvasLocation" x="-238" y="1359"/>
         </scene>
         <!--Practice Screen View Controller-->
         <scene sceneID="EWS-Mh-7zW">
@@ -583,7 +586,7 @@
                                 <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="K52-J1-naM">
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" ambiguous="YES" progress="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="K52-J1-naM">
                                 <rect key="frame" x="375" y="110" width="460" height="12"/>
                                 <color key="tintColor" red="0.29411764709999999" green="0.5568627451" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="progressTintColor" red="0.29411764709999999" green="0.5568627451" blue="0.30980392159999998" alpha="1" colorSpace="calibratedRGB"/>

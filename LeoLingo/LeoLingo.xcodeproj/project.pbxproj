@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		40547E922F1D50B800500933 /* HeyMojo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 40547E8F2F1D50B800500933 /* HeyMojo.gif */; };
+		40547E932F1D50B800500933 /* SadMojo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 40547E902F1D50B800500933 /* SadMojo.gif */; };
+		40547E942F1D50B800500933 /* TalkingMojo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 40547E912F1D50B800500933 /* TalkingMojo.gif */; };
+		40547E952F1D50B800500933 /* DancingMojo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 40547E8E2F1D50B800500933 /* DancingMojo.gif */; };
 		CE3939162E10533B00933BC4 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939152E10533B00933BC4 /* SwiftSMTP */; };
 		CE3939192E10535100933BC4 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = CE3939182E10535100933BC4 /* Auth */; };
 		CE39391B2E10535100933BC4 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = CE39391A2E10535100933BC4 /* Functions */; };
@@ -33,6 +37,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		40547E8E2F1D50B800500933 /* DancingMojo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = DancingMojo.gif; sourceTree = "<group>"; };
+		40547E8F2F1D50B800500933 /* HeyMojo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = HeyMojo.gif; sourceTree = "<group>"; };
+		40547E902F1D50B800500933 /* SadMojo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SadMojo.gif; sourceTree = "<group>"; };
+		40547E912F1D50B800500933 /* TalkingMojo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = TalkingMojo.gif; sourceTree = "<group>"; };
 		CEBB42952D301D6D009859CD /* LeoLingo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeoLingo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CECA75912D3CD99600733E65 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -82,6 +90,10 @@
 		CEBB428C2D301D6D009859CD = {
 			isa = PBXGroup;
 			children = (
+				40547E8E2F1D50B800500933 /* DancingMojo.gif */,
+				40547E8F2F1D50B800500933 /* HeyMojo.gif */,
+				40547E902F1D50B800500933 /* SadMojo.gif */,
+				40547E912F1D50B800500933 /* TalkingMojo.gif */,
 				CEBB42972D301D6D009859CD /* LeoLingo */,
 				CECA75902D3CD96B00733E65 /* Frameworks */,
 				CEBB42962D301D6D009859CD /* Products */,
@@ -185,6 +197,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40547E922F1D50B800500933 /* HeyMojo.gif in Resources */,
+				40547E932F1D50B800500933 /* SadMojo.gif in Resources */,
+				40547E942F1D50B800500933 /* TalkingMojo.gif in Resources */,
+				40547E952F1D50B800500933 /* DancingMojo.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

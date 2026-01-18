@@ -16,6 +16,8 @@ import UIKit
 class BadgeEarningManager {
     static let shared = BadgeEarningManager()
     
+    private var practiceSessionActive = false
+    
     private init() {}
     
     // MARK: - Main Badge Checking Function
@@ -321,49 +323,144 @@ extension BadgeEarningManager {
     
     /// Call this when a practice session ends
     func endPracticeSession() {
-        guard let startTime = UserDefaults.standard.object(forKey: "lastPracticeSessionStart") as? Date else { return }
-        
-        let sessionDuration = Date().timeIntervalSince(startTime)
-        
-        // Add to total daily practice time
-        let currentDailyTime = UserDefaults.standard.double(forKey: "dailyTimeSpent")
-        UserDefaults.standard.set(currentDailyTime + sessionDuration, forKey: "dailyTimeSpent")
-        
-        // Track total practice time across all days
-        let totalPracticeTime = UserDefaults.standard.double(forKey: "totalPracticeTime")
-        UserDefaults.standard.set(totalPracticeTime + sessionDuration, forKey: "totalPracticeTime")
-        
-        // Update practice streak
-        updatePracticeStreak()
+        practiceSessionActive = false
     }
     
-    /// Update practice streak for consistent practice tracking
-    private func updatePracticeStreak() {
-        let today = Calendar.current.startOfDay(for: Date())
-        let lastPracticeDate = UserDefaults.standard.object(forKey: "lastPracticeDate") as? Date ?? Date.distantPast
-        let lastPracticeDayStart = Calendar.current.startOfDay(for: lastPracticeDate)
+    // MARK: - Progress Badge Checking
+    
+    /// Check and award progress-based badges based on user achievements
+    func checkAndAwardProgressBadges() async {
+        guard let userId = SupabaseDataController.shared.userId else { return }
         
-        let daysBetween = Calendar.current.dateComponents([.day], from: lastPracticeDayStart, to: today).day ?? 0
-        
-        var currentStreak = UserDefaults.standard.integer(forKey: "practiceStreak")
-        
-        if daysBetween == 0 {
-            // Same day, no change to streak
-        } else if daysBetween == 1 {
-            // Consecutive day, increment streak
-            currentStreak += 1
-        } else {
-            // Streak broken, reset to 1
-            currentStreak = 1
+        do {
+            let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+            let allBadges = SupabaseDataController.shared.getBadgesData()
+            
+            // Get all words across all levels
+            let allWords = userData.userLevels.flatMap { $0.words }
+            let practicedWords = allWords.filter { $0.isPracticed }
+            let masteredWords = allWords.filter { word in
+                if let accuracies = word.record?.accuracy, !accuracies.isEmpty {
+                    return accuracies.max() ?? 0 >= 70.0
+                }
+                return false
+            }
+            
+            // Calculate statistics
+            let totalPracticeDays = UserDefaults.standard.integer(forKey: "daysUsed")
+            let totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
+            let completedLevels = userData.userLevels.filter { level in
+                let totalWords = level.words.count
+                let completedWords = level.words.filter { word in
+                    if let accuracies = word.record?.accuracy, !accuracies.isEmpty {
+                        return accuracies.max() ?? 0 >= 70.0
+                    }
+                    return false
+                }.count
+                return completedWords == totalWords
+            }.count
+            
+            // Check each badge condition
+            await checkBeeBadge(practicedWords: practicedWords, allBadges: allBadges)
+            await checkTurtleBadge(totalDays: totalPracticeDays, allBadges: allBadges)
+            await checkElephantBadge(completedLevels: completedLevels, masteredWords: masteredWords.count, allBadges: allBadges)
+            await checkDogBadge(totalDays: totalPracticeDays, allBadges: allBadges)
+            await checkBunnyBadge(practicedWords: practicedWords, timeSpent: totalTimeSpent, allBadges: allBadges)
+            await checkLionBadge(completedLevels: completedLevels, masteredWords: masteredWords.count, allBadges: allBadges)
+            
+        } catch {
+            print("DEBUG: Error checking progress badges: \(error)")
         }
+    }
+    
+    // MARK: - Individual Badge Checks
+    
+    /// Bee Badge: Vocalized first word
+    private func checkBeeBadge(practicedWords: [Word], allBadges: [AppBadge]) async {
+        guard practicedWords.count >= 1,
+              let beeBadge = allBadges.first(where: { $0.badgeTitle == "Bee" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(beeBadge.id.uuidString) else { return }
         
-        UserDefaults.standard.set(currentStreak, forKey: "practiceStreak")
-        UserDefaults.standard.set(Date(), forKey: "lastPracticeDate")
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: beeBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Bee badge - First word vocalized!")
+        } catch {
+            print("DEBUG: Error awarding Bee badge: \(error)")
+        }
+    }
+    
+    /// Turtle Badge: Steady progress over time (7+ days of practice)
+    private func checkTurtleBadge(totalDays: Int, allBadges: [AppBadge]) async {
+        guard totalDays >= 7,
+              let turtleBadge = allBadges.first(where: { $0.badgeTitle == "Turtle" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(turtleBadge.id.uuidString) else { return }
         
-        // Update max streak if current is higher
-        let maxStreak = UserDefaults.standard.integer(forKey: "maxPracticeStreak")
-        if currentStreak > maxStreak {
-            UserDefaults.standard.set(currentStreak, forKey: "maxPracticeStreak")
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: turtleBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Turtle badge - 7 days of steady practice!")
+        } catch {
+            print("DEBUG: Error awarding Turtle badge: \(error)")
+        }
+    }
+    
+    /// Elephant Badge: Major milestones (10+ levels completed OR 50+ words mastered)
+    private func checkElephantBadge(completedLevels: Int, masteredWords: Int, allBadges: [AppBadge]) async {
+        guard (completedLevels >= 10 || masteredWords >= 50),
+              let elephantBadge = allBadges.first(where: { $0.badgeTitle == "Elephant" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(elephantBadge.id.uuidString) else { return }
+        
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: elephantBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Elephant badge - Major milestone reached!")
+        } catch {
+            print("DEBUG: Error awarding Elephant badge: \(error)")
+        }
+    }
+    
+    /// Dog Badge: Loyal learner (14+ consecutive days OR total 30+ days)
+    private func checkDogBadge(totalDays: Int, allBadges: [AppBadge]) async {
+        guard totalDays >= 14,
+              let dogBadge = allBadges.first(where: { $0.badgeTitle == "Dog" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(dogBadge.id.uuidString) else { return }
+        
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: dogBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Dog badge - Loyal learner!")
+        } catch {
+            print("DEBUG: Error awarding Dog badge: \(error)")
+        }
+    }
+    
+    /// Bunny Badge: Quick learner (20+ words practiced in first 3 days OR 10+ words in 1 day)
+    private func checkBunnyBadge(practicedWords: [Word], timeSpent: TimeInterval, allBadges: [AppBadge]) async {
+        let totalDays = UserDefaults.standard.integer(forKey: "daysUsed")
+        
+        // Quick learner: 20+ words in first 3 days OR currently has 10+ practiced words
+        let isQuickLearner = (totalDays <= 3 && practicedWords.count >= 20) || (practicedWords.count >= 10)
+        
+        guard isQuickLearner,
+              let bunnyBadge = allBadges.first(where: { $0.badgeTitle == "Bunny" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(bunnyBadge.id.uuidString) else { return }
+        
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: bunnyBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Bunny badge - Quick learner!")
+        } catch {
+            print("DEBUG: Error awarding Bunny badge: \(error)")
+        }
+    }
+    
+    /// Lion Badge: Master learner (20+ levels completed OR 100+ words mastered)
+    private func checkLionBadge(completedLevels: Int, masteredWords: Int, allBadges: [AppBadge]) async {
+        guard (completedLevels >= 20 || masteredWords >= 100),
+              let lionBadge = allBadges.first(where: { $0.badgeTitle == "Lion" }),
+              !UserDefaults.standard.earnedBadgeIDs.contains(lionBadge.id.uuidString) else { return }
+        
+        do {
+            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: lionBadge.id, isEarned: true, showPopup: true)
+            print("DEBUG: ✅ Awarded Lion badge - Master learner!")
+        } catch {
+            print("DEBUG: Error awarding Lion badge: \(error)")
         }
     }
 }

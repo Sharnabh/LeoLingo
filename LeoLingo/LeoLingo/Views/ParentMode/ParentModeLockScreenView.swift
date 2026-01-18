@@ -31,11 +31,14 @@ struct ParentModeLockScreenView: View {
                 HStack {
                     Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
-                            .font(.title2)
-                            .foregroundColor(.black)
-                            .padding(12)
-                            .background(Circle().fill(.white))
-                            .shadow(radius: 3)
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(Color(uiColor: UIColor(named: "AccentColor") ?? .systemGreen))
+                            .frame(width: 60, height: 60)
+                            .background(
+                                Circle()
+                                    .fill(Color.white.opacity(0.77))
+                            )
+                            .shadow(color: Color.black.opacity(0.2), radius: 2, x: 2, y: 2)
                     }
                     .padding(.leading, 20)
                     .padding(.top, 20)

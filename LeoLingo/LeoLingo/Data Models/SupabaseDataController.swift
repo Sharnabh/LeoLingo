@@ -577,8 +577,18 @@ class SupabaseDataController {
         print("DEBUG: Recording path: \(String(describing: recordingPath))")
         
         // Verify the word exists in our local data
-        guard wordData(by: wordId) != nil else {
+        guard let appWord = wordData(by: wordId) else {
             throw SupabaseError.invalidData
+        }
+        
+        // Find the level this word belongs to
+        var wordLevelId: UUID? = nil
+        let appLevels = sampleData.getLevelsData()
+        for level in appLevels {
+            if level.words.contains(where: { $0.id == wordId }) {
+                wordLevelId = level.id
+                break
+            }
         }
         
         do {
@@ -598,17 +608,18 @@ class SupabaseDataController {
                 print("  - Attempts: \(existingRecord.attempts)")
                 print("  - Current accuracy array: \(String(describing: existingRecord.accuracy))")
                 print("  - Current recordings: \(String(describing: existingRecord.recordings))")
+                print("  - Currently mastered: \(existingRecord.mastered)")
                 
                 var newAccuracy = existingRecord.accuracy ?? []
                 if let accuracy = accuracy { newAccuracy.append(accuracy) }
-                let isNowMastered = (existingRecord.accuracy?.contains { $0 >= 70 } == true) || (accuracy ?? 0) >= 70
+                
+                // Check if word should be marked as mastered (any accuracy >= 70%)
+                let isNowMastered = existingRecord.mastered || (accuracy ?? 0) >= 70 || newAccuracy.contains { $0 >= 70 }
+                
                 var newRecordings = existingRecord.recordings ?? []
                 if let recordingPath = recordingPath {
-                    // Upload the recording and get the stored filename
-                    if let storedFilename = try await uploadRecording(at: recordingPath, wordId: wordId) {
-                        newRecordings.append(storedFilename)
-                        print("DEBUG: Added new recording filename: \(storedFilename)")
-                        print("DEBUG: Updated recordings array: \(newRecordings)")
+                    if let uploadedPath = try await uploadRecording(at: recordingPath, wordId: wordId) {
+                        newRecordings.append(uploadedPath)
                     }
                 }
                 
@@ -619,7 +630,8 @@ class SupabaseDataController {
                     attempts: existingRecord.attempts + 1,
                     accuracy: newAccuracy,
                     recordings: newRecordings.isEmpty ? nil : newRecordings,
-                    mastered: isNowMastered || existingRecord.mastered
+                    mastered: isNowMastered,
+                    level_id: wordLevelId
                 )
                 
                 print("DEBUG: Updated record:")
@@ -627,12 +639,18 @@ class SupabaseDataController {
                 print("  - New accuracy array: \(String(describing: updatedRecord.accuracy))")
                 print("  - New recordings array: \(String(describing: updatedRecord.recordings))")
                 print("  - Average accuracy: \(updatedRecord.avgAccuracy)")
+                print("  - Mastered: \(updatedRecord.mastered)")
                 
                 try await supabase
                     .from("user_word_records")
                     .update(updatedRecord)
                     .eq("id", value: existingRecord.id)
                     .execute()
+                
+                // Check if level is now completed after this word update
+                if let levelId = wordLevelId, isNowMastered {
+                    try await checkAndUpdateLevelCompletion(userId: userId, levelId: levelId)
+                }
                 
                 // Refresh current user data to ensure we have the latest records
                 currentUser = try await getUser(byId: userId)
@@ -641,10 +659,8 @@ class SupabaseDataController {
                 
                 var newRecordings: [String]? = nil
                 if let recordingPath = recordingPath {
-                    // Upload the recording and get the stored filename
-                    if let storedFilename = try await uploadRecording(at: recordingPath, wordId: wordId) {
-                        newRecordings = [storedFilename]
-                        print("DEBUG: Added new recording filename: \(storedFilename)")
+                    if let uploadedPath = try await uploadRecording(at: recordingPath, wordId: wordId) {
+                        newRecordings = [uploadedPath]
                     }
                 }
                 
@@ -654,9 +670,10 @@ class SupabaseDataController {
                     word_id: wordId,
                     is_practiced: true,
                     attempts: 1,
-                    accuracy: accuracy.map { [$0] },
+                    accuracy: accuracy != nil ? [accuracy!] : nil,
                     recordings: newRecordings,
-                    mastered: isMastered
+                    mastered: isMastered,
+                    level_id: wordLevelId
                 )
                 
                 print("DEBUG: New record:")
@@ -664,11 +681,17 @@ class SupabaseDataController {
                 print("  - Accuracy array: \(String(describing: newRecord.accuracy))")
                 print("  - Recordings array: \(String(describing: newRecord.recordings))")
                 print("  - Average accuracy: \(newRecord.avgAccuracy)")
+                print("  - Mastered: \(newRecord.mastered)")
                 
                 try await supabase
                     .from("user_word_records")
                     .insert(newRecord)
                     .execute()
+                
+                // Check if level is now completed after this word update
+                if let levelId = wordLevelId, isMastered {
+                    try await checkAndUpdateLevelCompletion(userId: userId, levelId: levelId)
+                }
                 
                 // Refresh current user data to ensure we have the latest records
                 currentUser = try await getUser(byId: userId)
@@ -676,6 +699,90 @@ class SupabaseDataController {
         } catch {
             print("Error updating word progress: \(error)")
             throw SupabaseError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Level Completion Check
+    
+    /// Checks if all words in a level are mastered and updates the user_levels table
+    private func checkAndUpdateLevelCompletion(userId: UUID, levelId: UUID) async throws {
+        print("DEBUG: Checking level completion for level: \(levelId)")
+        
+        // Get all words for this level from app data
+        guard let appLevel = sampleData.getLevelsData().first(where: { $0.id == levelId }) else {
+            print("DEBUG: Level not found in app data")
+            return
+        }
+        
+        let levelWordIds = appLevel.words.map { $0.id }
+        print("DEBUG: Level has \(levelWordIds.count) words")
+        
+        // Get all user word records for this level
+        let wordRecords: [UserWordRecord] = try await supabase
+            .from("user_word_records")
+            .select()
+            .eq("user_id", value: userId)
+            .eq("level_id", value: levelId)
+            .execute()
+            .value
+        
+        print("DEBUG: Found \(wordRecords.count) word records for this level")
+        
+        // Check if all words in the level are mastered
+        let masteredWordIds = Set(wordRecords.filter { $0.mastered }.map { $0.word_id })
+        let allWordsSet = Set(levelWordIds)
+        let isLevelCompleted = allWordsSet.isSubset(of: masteredWordIds)
+        
+        print("DEBUG: Mastered words: \(masteredWordIds.count)/\(levelWordIds.count)")
+        print("DEBUG: Level completed: \(isLevelCompleted)")
+        
+        if isLevelCompleted {
+            // Calculate average accuracy for the level
+            let accuracies = wordRecords.compactMap { record -> Double? in
+                guard let accs = record.accuracy, !accs.isEmpty else { return nil }
+                return accs.reduce(0, +) / Double(accs.count)
+            }
+            let avgAccuracy = accuracies.isEmpty ? 0 : Float(accuracies.reduce(0, +) / Double(accuracies.count))
+            
+            // Check if user_levels record exists
+            let existingLevelRecords: [UserLevelRecord] = try await supabase
+                .from("user_levels")
+                .select()
+                .eq("user_id", value: userId)
+                .eq("level_id", value: levelId)
+                .execute()
+                .value
+            
+            if existingLevelRecords.first != nil {
+                // Update existing record using user_id and level_id
+                // Create update struct to handle mixed types
+                struct LevelUpdate: Encodable {
+                    let is_completed: Bool
+                    let avg_accuracy: Float
+                }
+                let updateData = LevelUpdate(is_completed: true, avg_accuracy: avgAccuracy)
+                
+                try await supabase
+                    .from("user_levels")
+                    .update(updateData)
+                    .eq("user_id", value: userId)
+                    .eq("level_id", value: levelId)
+                    .execute()
+                print("DEBUG: Updated existing level record - Level marked as completed")
+            } else {
+                // Create new record
+                let newLevelRecord = UserLevelRecord(
+                    user_id: userId,
+                    level_id: levelId,
+                    avg_accuracy: avgAccuracy,
+                    is_completed: true
+                )
+                try await supabase
+                    .from("user_levels")
+                    .insert(newLevelRecord)
+                    .execute()
+                print("DEBUG: Created new level record - Level marked as completed")
+            }
         }
     }
     
@@ -958,12 +1065,13 @@ class SupabaseDataController {
         print("DEBUG: Constructing user levels from \(wordsResponse.count) word records")
         print("DEBUG: Word records in database:")
         for record in wordsResponse where record.is_practiced {
-            print("  - Word ID: \(record.word_id) (Practiced: \(record.is_practiced), Attempts: \(record.attempts))")
+            print("  - Word ID: \(record.word_id) (Practiced: \(record.is_practiced), Attempts: \(record.attempts), Mastered: \(record.mastered))")
         }
         
         let appLevels = sampleData.getLevelsData()
         var userLevels: [Level] = []
         var foundPracticedWords = 0
+        var foundMasteredWords = 0
         
         // Group words by their level
         for appLevel in appLevels {
@@ -971,43 +1079,25 @@ class SupabaseDataController {
             
             // Create Word objects for each word in the level
             for appWord in appLevel.words {
-                // Find user's progress for this word
-                if let record = wordsResponse.first(where: { $0.word_id == appWord.id }) {
-                    print("DEBUG: Found record for word \(appWord.wordTitle):")
-                    print("  - Word ID: \(record.word_id)")
-                    print("  - Attempts: \(record.attempts)")
-                    print("  - Accuracy: \(record.accuracy ?? [])")
-                    print("  - Is practiced: \(record.is_practiced)")
-                    
-                    if record.is_practiced {
-                        foundPracticedWords += 1
-                    }
-                    
-                    // Create Record if exists
-                    let wordRecord = Record(
-                        id: record.id,
+                // Find matching record in response
+                let matchingRecord = wordsResponse.first { $0.word_id == appWord.id }
+                
+                var word = Word(id: appWord.id)
+                
+                if let record = matchingRecord {
+                    word.isPracticed = record.is_practiced
+                    word.record = Record(
                         attempts: record.attempts,
                         accuracy: record.accuracy,
                         recording: record.recordings,
                         mastered: record.mastered
                     )
-                    // Create Word with user's progress
-                    let word = Word(
-                        id: appWord.id,
-                        record: wordRecord,
-                        isPracticed: record.is_practiced
-                    )
-                    levelWords.append(word)
-                } else {
-                    print("DEBUG: No record found for word \(appWord.wordTitle)")
-                    // Create Word with no progress
-                    let word = Word(
-                        id: appWord.id,
-                        record: nil,
-                        isPracticed: false
-                    )
-                    levelWords.append(word)
+                    
+                    if record.is_practiced { foundPracticedWords += 1 }
+                    if record.mastered { foundMasteredWords += 1 }
                 }
+                
+                levelWords.append(word)
             }
             
             // Create Level with its words
@@ -1019,23 +1109,9 @@ class SupabaseDataController {
             userLevels.append(level)
         }
         
-        // Print summary of practiced words
-        let allWords = userLevels.flatMap { $0.words }
-        let practicedWords = allWords.filter { $0.isPracticed }
-        print("DEBUG: Found \(practicedWords.count) practiced words out of \(allWords.count) total words")
-        print("DEBUG: Database shows \(foundPracticedWords) practiced words")
-        
-        if practicedWords.count != foundPracticedWords {
-            print("DEBUG: WARNING - Mismatch between database practiced words (\(foundPracticedWords)) and constructed practiced words (\(practicedWords.count))")
-        }
-        
-        for word in practicedWords {
-            if let appWord = wordData(by: word.id) {
-                print("DEBUG: Practiced word: \(appWord.wordTitle)")
-                print("  - Attempts: \(word.record?.attempts ?? 0)")
-                print("  - Accuracy: \(word.record?.accuracy ?? [])")
-            }
-        }
+        // Print summary
+        print("DEBUG: Found \(foundPracticedWords) practiced words")
+        print("DEBUG: Found \(foundMasteredWords) mastered words")
         
         return userLevels
     }
@@ -1115,29 +1191,24 @@ class SupabaseDataController {
     private struct UserWordRecord: Codable {
         let id: UUID
         let user_id: UUID
-        let word_id: UUID      // References local word
+        let word_id: UUID
         let is_practiced: Bool
         let attempts: Int
         let accuracy: [Double]?
         let recordings: [String]?
-        let mastered: Bool // NEW persisted flag
+        let mastered: Bool
+        let level_id: UUID?
         
-        // Add computed property for average accuracy
         var avgAccuracy: Double {
-            guard let accuracies = accuracy,
-                  !accuracies.isEmpty else {
+            guard let accuracies = accuracy, !accuracies.isEmpty else {
                 return 0.0
             }
-            
-            // Cap individual accuracies at 100%
             let cappedAccuracies = accuracies.map { min(100.0, max(0.0, $0)) }
             let total = cappedAccuracies.reduce(0.0, +)
             let average = total / Double(accuracies.count)
-            
             return (average * 10).rounded() / 10
         }
         
-        // Add computed property to check if word is passed
         var isPassed: Bool { return mastered }
         
         init(
@@ -1147,7 +1218,8 @@ class SupabaseDataController {
             attempts: Int = 0,
             accuracy: [Double]? = nil,
             recordings: [String]? = nil,
-            mastered: Bool = false
+            mastered: Bool = false,
+            level_id: UUID? = nil
         ) {
             self.id = UUID()
             self.user_id = user_id
@@ -1157,6 +1229,23 @@ class SupabaseDataController {
             self.accuracy = accuracy
             self.recordings = recordings
             self.mastered = mastered
+            self.level_id = level_id
+        }
+    }
+    
+    private struct UserLevelRecord: Codable {
+        let id: Int64?
+        let user_id: UUID
+        let level_id: UUID
+        let avg_accuracy: Float?
+        let is_completed: Bool
+        
+        init(user_id: UUID, level_id: UUID, avg_accuracy: Float? = nil, is_completed: Bool = false) {
+            self.id = nil
+            self.user_id = user_id
+            self.level_id = level_id
+            self.avg_accuracy = avg_accuracy
+            self.is_completed = is_completed
         }
     }
     
@@ -1498,7 +1587,6 @@ class SupabaseDataController {
     }
 
     private func isAppleUser(userId: UUID) async -> Bool {
-        // Check if the user has an Apple ID
         do {
             let user: User = try await supabase
                 .from("users")

@@ -7,12 +7,18 @@
 
 import UIKit
 import AVFoundation
+import ImageIO
 
 class GreetViewController: UIViewController {
     
     @IBOutlet var greetLabel: UILabel!
     @IBOutlet var greetEmojiLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
+    @IBOutlet weak var mojoImageView: UIImageView!
+    
+    // GIF properties
+    private var heyMojoImages: [UIImage] = []
+    private var heyMojoDuration: TimeInterval = 0
     
     private var greetings: [String] = []
     private var tips = [
@@ -30,7 +36,46 @@ class GreetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        loadHeyMojoGif()
         fetchUserDataAndStartGreeting()
+    }
+    
+    private func loadHeyMojoGif() {
+        guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
+              let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("❌ GIF file 'HeyMojo.gif' not found")
+            return
+        }
+        
+        print("✅ Loading HeyMojo.gif")
+        let imageCount = CGImageSourceGetCount(source)
+        var totalDuration: TimeInterval = 0
+        
+        for i in 0..<imageCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
+                let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
+                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                    ?? 0.1
+                totalDuration += frameDuration
+                heyMojoImages.append(UIImage(cgImage: cgImage))
+            }
+        }
+        
+        heyMojoDuration = totalDuration
+        
+        // Configure the image view with the GIF
+        mojoImageView.animationImages = heyMojoImages
+        mojoImageView.animationDuration = heyMojoDuration
+        mojoImageView.animationRepeatCount = 0 // Loop indefinitely
+        mojoImageView.contentMode = .scaleAspectFit
+        
+        // Start animating
+        mojoImageView.startAnimating()
+        
+        print("✅ HeyMojo GIF loaded with \(imageCount) frames")
     }
         
     private func setupUI() {

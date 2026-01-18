@@ -178,6 +178,7 @@ struct BadgeAchievementPopupView: View {
                     withAnimation(.easeOut(duration: 0.3)) {
                         opacity = 0
                         scale = 0.5
+                        glowOpacity = 0
                     }
                     
                     // Add a callback for when animation is done

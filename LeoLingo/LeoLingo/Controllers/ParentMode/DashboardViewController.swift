@@ -9,6 +9,7 @@
 
 import UIKit
 import WebKit
+import ImageIO
 
 class DashboardViewController: UIViewController {
     
@@ -17,6 +18,11 @@ class DashboardViewController: UIViewController {
     
     var minAccuracyWords: [Word]?
     var inaccurateWords: [String] = []
+    
+    // HeyMojo GIF properties
+    private var heyMojoImageView: UIImageView?
+    private var heyMojoImages: [UIImage] = []
+    private var heyMojoDuration: TimeInterval = 0
     
     @IBOutlet var descriptionW1: UILabel!
     @IBOutlet var descriptionW2: UILabel!
@@ -52,6 +58,9 @@ class DashboardViewController: UIViewController {
         updateView()
         
         configureMojoSuggestionVideos()
+        
+        // Setup HeyMojo GIF
+        setupHeyMojoGif()
         
         loadInaccurateWords()
         
@@ -336,6 +345,73 @@ class DashboardViewController: UIViewController {
         
         
     }
+    
+    // MARK: - HeyMojo GIF Setup
+    private func setupHeyMojoGif() {
+        guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
+              let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("❌ GIF file 'HeyMojo.gif' not found in Dashboard")
+            return
+        }
+        
+        print("✅ Loading HeyMojo.gif for Dashboard")
+        let imageCount = CGImageSourceGetCount(source)
+        var totalDuration: TimeInterval = 0
+        
+        for i in 0..<imageCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
+                let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
+                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                    ?? 0.1
+                totalDuration += frameDuration
+                heyMojoImages.append(UIImage(cgImage: cgImage))
+            }
+        }
+        
+        guard !heyMojoImages.isEmpty else {
+            print("❌ Could not extract frames from HeyMojo.gif")
+            return
+        }
+        
+        heyMojoDuration = max(totalDuration, 0.5)
+        
+        // Hide any existing static Mojo image in mojoSuggestion
+        for subview in mojoSuggestion.subviews {
+            if let imageView = subview as? UIImageView {
+                imageView.isHidden = true
+                imageView.alpha = 0
+            }
+        }
+        
+        // Create animated image view
+        heyMojoImageView = UIImageView()
+        heyMojoImageView?.animationImages = heyMojoImages
+        heyMojoImageView?.animationDuration = heyMojoDuration
+        heyMojoImageView?.animationRepeatCount = 0 // Loop forever
+        heyMojoImageView?.contentMode = .scaleAspectFit
+        heyMojoImageView?.backgroundColor = .clear
+        heyMojoImageView?.image = heyMojoImages.first
+        
+        if let heyMojoImageView = heyMojoImageView {
+            mojoSuggestion.addSubview(heyMojoImageView)
+            heyMojoImageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Position at the right side of mojoSuggestion view
+            NSLayoutConstraint.activate([
+                heyMojoImageView.trailingAnchor.constraint(equalTo: mojoSuggestion.trailingAnchor, constant: 0),
+                heyMojoImageView.topAnchor.constraint(equalTo: mojoSuggestion.topAnchor, constant: -20),
+                heyMojoImageView.bottomAnchor.constraint(equalTo: mojoSuggestion.bottomAnchor, constant: 20),
+                heyMojoImageView.widthAnchor.constraint(equalToConstant: 300)
+            ])
+            
+            heyMojoImageView.startAnimating()
+            print("✅ HeyMojo GIF loaded with \(imageCount) frames, duration: \(heyMojoDuration)s")
+        }
+    }
+    
     @IBAction func seeAllButtonTapped(_ sender: UIButton) {
         if let tabBarController = self.tabBarController {
             tabBarController.selectedIndex = 1

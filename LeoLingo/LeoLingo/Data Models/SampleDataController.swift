@@ -206,100 +206,108 @@ class SampleDataController {
         
         exercises = [
             "a": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for A words.",
-                videos: ["https://youtu.be/4SNO61r4Nz8?si=RLnQ3s69xJEYPyLS"]
+                description: "Practice the 'A' sound with mouth opening exercises.",
+                videos: ["https://www.youtube.com/watch?v=4SNO61r4Nz8"]
             ),
             "b": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for B words.",
-                videos: ["https://youtu.be/746Aq0ndZy0"]
+                description: "Practice the 'B' sound by pressing lips together.",
+                videos: ["https://www.youtube.com/watch?v=746Aq0ndZy0"]
             ),
             "c": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for C words.",
-                videos: ["https://youtu.be/0z80Zt66RcU"]
+                description: "Practice the 'C/K' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=0z80Zt66RcU"]
             ),
             "d": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for D words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'D' sound with tongue tip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
             ),
             "e": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for E words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'E' sound with smile position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
             ),
             "f": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for F words.",
-                videos: ["https://youtu.be/xA61MYdspgM"]
+                description: "Practice the 'F' sound by placing top teeth on lower lip.",
+                videos: ["https://www.youtube.com/watch?v=xA61MYdspgM"]
             ),
             "g": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for G words.",
-                videos: ["https://youtu.be/bSlb9yscpbw"]
+                description: "Practice the 'G' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=bSlb9yscpbw"]
             ),
             "h": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for H words.",
-                videos: ["https://youtu.be/3-qJF9ZstLQ"]
+                description: "Practice the 'H' sound with gentle breath exercises.",
+                videos: ["https://www.youtube.com/watch?v=3-qJF9ZstLQ"]
             ),
             "i": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for I words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'I' sound with tongue position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
             ),
             "j": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for J words.",
-                videos: ["https://youtu.be/xETjN3Y24cQ"]
+                description: "Practice the 'J' sound with tongue and lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=xETjN3Y24cQ"]
             ),
             "k": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for K words.",
-                videos: ["https://youtu.be/JwKKfHIpOX8"]
+                description: "Practice the 'K' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=JwKKfHIpOX8"]
             ),
             "l": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for L words.",
-                videos: ["https://youtu.be/_IAEg3igJVI"]
+                description: "Practice the 'L' sound by lifting tongue tip to roof of mouth.",
+                videos: ["https://www.youtube.com/watch?v=_IAEg3igJVI"]
             ),
             "m": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for M words.",
-                videos: ["https://youtu.be/0VCeITL8P4E"]
+                description: "Practice the 'M' sound by humming with closed lips.",
+                videos: ["https://www.youtube.com/watch?v=0VCeITL8P4E"]
             ),
             "n": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for N words.",
-                videos: ["https://youtu.be/oun0cGPMHZQ"]
+                description: "Practice the 'N' sound with tongue tip behind front teeth.",
+                videos: ["https://www.youtube.com/watch?v=oun0cGPMHZQ"]
             ),
             "o": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for O words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'O' sound with rounded lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
             ),
             "p": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for P words.",
-                videos: ["https://youtu.be/yJK2UZ2YkwA"]
+                description: "Practice the 'P' sound by popping lips together.",
+                videos: ["https://www.youtube.com/watch?v=yJK2UZ2YkwA"]
+            ),
+            "q": Exercise(
+                description: "Practice the 'Q/KW' sound combination exercises.",
+                videos: ["https://www.youtube.com/watch?v=JwKKfHIpOX8"]
             ),
             "r": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for R words.",
-                videos: ["https://youtu.be/dgAwcWO72z0"]
+                description: "Practice the 'R' sound by curling tongue back.",
+                videos: ["https://www.youtube.com/watch?v=dgAwcWO72z0"]
             ),
             "s": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for S words.",
-                videos: ["https://youtu.be/KRbxUiF2dkw"]
+                description: "Practice the 'S' sound with tongue behind front teeth.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
             ),
             "t": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for T words.",
-                videos: ["https://youtu.be/j1ia8QFUIyg"]
+                description: "Practice the 'T' sound by tapping tongue tip.",
+                videos: ["https://www.youtube.com/watch?v=j1ia8QFUIyg"]
             ),
             "u": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for U words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'U' sound with rounded lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
             ),
             "v": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for V words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'V' sound by placing top teeth on lower lip with voice.",
+                videos: ["https://www.youtube.com/watch?v=xA61MYdspgM"]
             ),
             "w": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for W words.",
-                videos: ["https://youtu.be/WHP9rOFibd4"]
+                description: "Practice the 'W' sound by rounding lips forward.",
+                videos: ["https://www.youtube.com/watch?v=WHP9rOFibd4"]
             ),
             "x": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for X words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'X/KS' sound combination exercises.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
             ),
             "y": Exercise(
-                description: "Your child is doing good. Try the suggested exercise for Y words.",
-                videos: ["https://youtu.be/61xe97Nf8J4"]
+                description: "Practice the 'Y' sound with tongue position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "z": Exercise(
+                description: "Practice the 'Z' sound with buzzing exercises.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
             )
         ]
         let levelCardImages = ["Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10"]

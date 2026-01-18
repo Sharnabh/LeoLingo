@@ -11,13 +11,17 @@ import UIKit
 import WebKit
 import ImageIO
 
-class DashboardViewController: UIViewController {
+class DashboardViewController: UIViewController, WKNavigationDelegate {
     
     private let exercises: [String : Exercise] = SampleDataController.shared.getExercisesData()
     var earnedBadges: [AppBadge] = DataController.shared.getEarnedBadges()!
     
     var minAccuracyWords: [Word]?
     var inaccurateWords: [String] = []
+    
+    // Store video URLs for tap handling
+    private var videoURL1: String?
+    private var videoURL2: String?
     
     // HeyMojo GIF properties
     private var heyMojoImageView: UIImageView?
@@ -31,6 +35,7 @@ class DashboardViewController: UIViewController {
     @IBOutlet var levelView: UIView!
     
     @IBOutlet var levelBadgeImage: UIImageView!
+    @IBOutlet weak var levelTierLabel: UILabel?
     
     @IBOutlet var practiceTimeView: UIView!
     
@@ -64,6 +69,12 @@ class DashboardViewController: UIViewController {
         
         loadInaccurateWords()
         
+        // Update level badge section
+        updateLevelBadge()
+        
+        // Show default exercises initially (will be updated when data loads)
+        showDefaultExercises()
+        
         layout = UICollectionViewFlowLayout()
         if let layout = layout {
             layout.scrollDirection = .horizontal
@@ -92,6 +103,89 @@ class DashboardViewController: UIViewController {
         loadInaccurateWords()
         updatePracticeTime()
         refreshBadgeData()
+        updateLevelBadge()
+    }
+    
+    // MARK: - Level Badge Update
+    
+    private func updateLevelBadge() {
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else { return }
+                
+                // Fetch user data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                let allAppLevels = SupabaseDataController.shared.getLevelsData()
+                
+                // Count total completed levels (levels where all words are mastered)
+                var completedLevelCount = 0
+                var currentLevelProgress: Float = 0.0
+                
+                for userLevel in userData.userLevels {
+                    let totalWords = userLevel.words.count
+                    let completedWords = userLevel.words.filter { word in
+                        // Check accuracy - word is mastered if any accuracy >= 70%
+                        if let record = word.record,
+                           let accuracies = record.accuracy,
+                           !accuracies.isEmpty {
+                            let maxAccuracy = accuracies.max() ?? 0
+                            return maxAccuracy >= 70.0
+                        }
+                        return false
+                    }.count
+                    
+                    if completedWords == totalWords && totalWords > 0 {
+                        // Level fully completed
+                        completedLevelCount += 1
+                    } else {
+                        // This is the current level in progress
+                        if totalWords > 0 {
+                            currentLevelProgress = Float(completedWords) / Float(totalWords)
+                        }
+                        break
+                    }
+                }
+                
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    // Find the level badge for the current/latest level
+                    let displayLevelIndex = min(completedLevelCount, allAppLevels.count - 1)
+                    let displayLevel = allAppLevels[displayLevelIndex]
+                    
+                    // Update level badge image
+                    self.levelBadgeImage?.image = UIImage(named: displayLevel.levelImage)
+                    
+                    // Update progress bar
+                    self.beginnerProgressBar?.progress = min(currentLevelProgress, 1.0)
+                    
+                    // Update the tier label based on current level
+                    let currentDisplayLevel = completedLevelCount + 1 // Display starts from level 1
+                    let tierLabel: String
+                    
+                    if currentDisplayLevel <= 10 {
+                        // Beginner tier (Levels 1-10)
+                        tierLabel = "Beginner"
+                    } else if currentDisplayLevel <= 20 {
+                        // Intermediate tier (Levels 11-20)
+                        tierLabel = "Intermediate"
+                    } else {
+                        // Advanced tier (Levels 21-30)
+                        tierLabel = "Advanced"
+                    }
+                    
+                    // Update the tier label if connected
+                    self.levelTierLabel?.text = tierLabel
+                    
+                    print("DEBUG: Dashboard - Level badge updated:")
+                    print("  - Current level: \(currentDisplayLevel)")
+                    print("  - Tier: \(tierLabel)")
+                    print("  - Progress: \(currentLevelProgress * 100)%")
+                    print("  - Badge image: \(displayLevel.levelImage)")
+                }
+            } catch {
+                print("Error updating level badge in dashboard: \(error)")
+            }
+        }
     }
     
     private func refreshBadgeData() {
@@ -159,45 +253,68 @@ class DashboardViewController: UIViewController {
     
     private func configureMojoSuggestionVideos() {
         // Configure WebViews for video playback
-        exerciseForW1.backgroundColor = .clear
-        exerciseForW1.isOpaque = false
+        exerciseForW1.backgroundColor = .black
+        exerciseForW1.isOpaque = true
         exerciseForW1.scrollView.isScrollEnabled = false
+        exerciseForW1.scrollView.bounces = false
         exerciseForW1.configuration.allowsInlineMediaPlayback = true
         exerciseForW1.configuration.mediaTypesRequiringUserActionForPlayback = []
+        exerciseForW1.configuration.preferences.javaScriptEnabled = true
+        exerciseForW1.navigationDelegate = self
         
-        exerciseForW2.backgroundColor = .clear
-        exerciseForW2.isOpaque = false
+        exerciseForW2.backgroundColor = .black
+        exerciseForW2.isOpaque = true
         exerciseForW2.scrollView.isScrollEnabled = false
+        exerciseForW2.scrollView.bounces = false
         exerciseForW2.configuration.allowsInlineMediaPlayback = true
         exerciseForW2.configuration.mediaTypesRequiringUserActionForPlayback = []
+        exerciseForW2.configuration.preferences.javaScriptEnabled = true
+        exerciseForW2.navigationDelegate = self
         
         // Load and display average practice time
         updatePracticeTime()
         
-        // Set fixed frame for WebViews to maintain 16:9 ratio
-        exerciseForW1.frame = CGRect(x: exerciseForW1.frame.origin.x,
-                                     y: exerciseForW1.frame.origin.y,
-                                     width: 250,
-                                     height: 149)
-        exerciseForW2.frame = CGRect(x: exerciseForW2.frame.origin.x,
-                                     y: exerciseForW2.frame.origin.y,
-                                     width: 250,
-                                     height: 149)
-        
-        // Add border and corner radius to WebViews
-        exerciseForW1.layer.borderWidth = 1
-        exerciseForW1.layer.borderColor = UIColor.lightGray.cgColor
-        exerciseForW1.layer.cornerRadius = 8
+        // Add border and corner radius to WebViews - make them bigger
+        exerciseForW1.layer.cornerRadius = 12
         exerciseForW1.clipsToBounds = true
+        exerciseForW1.layer.borderWidth = 0
         
-        let height = CGFloat(mojoSuggestion.frame.height)
-        exerciseForW1.heightAnchor.constraint(equalToConstant: height/6).isActive = true
-        
-        exerciseForW2.layer.borderWidth = 1
-        exerciseForW2.layer.borderColor = UIColor.lightGray.cgColor
-        exerciseForW2.layer.cornerRadius = 8
+        exerciseForW2.layer.cornerRadius = 12
         exerciseForW2.clipsToBounds = true
-        exerciseForW2.heightAnchor.constraint(equalToConstant: height/6).isActive = true
+        exerciseForW2.layer.borderWidth = 0
+        
+        // Set larger size constraints for better visibility
+        exerciseForW1.translatesAutoresizingMaskIntoConstraints = false
+        exerciseForW2.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Remove existing height constraints
+        for constraint in exerciseForW1.constraints where constraint.firstAttribute == .height {
+            exerciseForW1.removeConstraint(constraint)
+        }
+        for constraint in exerciseForW2.constraints where constraint.firstAttribute == .height {
+            exerciseForW2.removeConstraint(constraint)
+        }
+        
+        // Add new larger height constraints (16:9 aspect ratio friendly)
+        exerciseForW1.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        exerciseForW1.widthAnchor.constraint(equalToConstant: 320).isActive = true
+        
+        exerciseForW2.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        exerciseForW2.widthAnchor.constraint(equalToConstant: 320).isActive = true
+    }
+    
+    // MARK: - WKNavigationDelegate
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        // Check if this is a YouTube link click
+        if let url = navigationAction.request.url,
+           (url.absoluteString.contains("youtube.com") || url.absoluteString.contains("youtu.be")) {
+            // Open in Safari/YouTube app
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            decisionHandler(.cancel)
+            return
+        }
+        decisionHandler(.allow)
     }
     
     private func loadInaccurateWords() {
@@ -268,8 +385,7 @@ class DashboardViewController: UIViewController {
                     // Reload collection view and update exercises on main thread
                     DispatchQueue.main.async {
                         self.collectionView.reloadData()
-//                        self.updateExerciseForWords()
-//                        this part was commented by sachin beacuse the app was crashing on opening on parents mode
+                        self.updateExerciseForWords()
                     }
                 } else {
                     print("DEBUG: No user ID found")
@@ -434,26 +550,118 @@ class DashboardViewController: UIViewController {
     }
     
     func convertToEmbedURL(_ youtubeURL: String) -> String {
-        // Extract video ID from YouTube URL
-        if let videoID = youtubeURL.components(separatedBy: "/").last {
-            // Create embed URL with custom parameters for clean player
-            return "https://www.youtube.com/embed/\(videoID)?showinfo=0&controls=1&rel=0&modestbranding=1"
+        // Extract video ID from various YouTube URL formats
+        var videoID: String?
+        
+        if youtubeURL.contains("youtu.be/") {
+            // Short URL format: https://youtu.be/VIDEO_ID
+            videoID = youtubeURL.components(separatedBy: "youtu.be/").last?.components(separatedBy: "?").first
+        } else if youtubeURL.contains("youtube.com/watch?v=") {
+            // Standard URL format: https://www.youtube.com/watch?v=VIDEO_ID
+            if let range = youtubeURL.range(of: "v=") {
+                let startIndex = range.upperBound
+                let endIndex = youtubeURL[startIndex...].firstIndex(of: "&") ?? youtubeURL.endIndex
+                videoID = String(youtubeURL[startIndex..<endIndex])
+            }
+        } else if youtubeURL.contains("youtube.com/embed/") {
+            // Already embed format
+            videoID = youtubeURL.components(separatedBy: "embed/").last?.components(separatedBy: "?").first
         }
-        return youtubeURL
+        
+        guard let id = videoID, !id.isEmpty else {
+            print("DEBUG: Could not extract video ID from URL: \(youtubeURL)")
+            return youtubeURL
+        }
+        
+        return id
+    }
+    
+    func getVideoThumbnailURL(_ videoID: String) -> String {
+        // YouTube provides thumbnail images at these URLs
+        return "https://img.youtube.com/vi/\(videoID)/hqdefault.jpg"
+    }
+    
+    func createThumbnailHTML(videoID: String, videoURL: String) -> String {
+        let thumbnailURL = getVideoThumbnailURL(videoID)
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                html, body {
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    background-color: #000;
+                }
+                .thumbnail-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                }
+                .thumbnail {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 12px;
+                }
+                .play-button {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 68px;
+                    height: 48px;
+                    background-color: rgba(255, 0, 0, 0.9);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .play-button::after {
+                    content: '';
+                    border-style: solid;
+                    border-width: 10px 0 10px 18px;
+                    border-color: transparent transparent transparent white;
+                    margin-left: 4px;
+                }
+                .thumbnail-container:hover .play-button {
+                    background-color: rgba(255, 0, 0, 1);
+                }
+            </style>
+        </head>
+        <body>
+            <div class="thumbnail-container" onclick="window.location.href='\(videoURL)'">
+                <img class="thumbnail" src="\(thumbnailURL)" alt="Video Thumbnail" onerror="this.src='https://via.placeholder.com/320x180/333/fff?text=Video'"/>
+                <div class="play-button"></div>
+            </div>
+        </body>
+        </html>
+        """
     }
     
     func createVideoHTML(embedURL: String) -> String {
+        // This is now used as a fallback - prefer createThumbnailHTML
         return """
+        <!DOCTYPE html>
         <html>
         <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <style>
-                body { margin: 0; background-color: transparent; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                html, body {
+                    width: 100%;
+                    height: 100%;
+                    background-color: #000;
+                    overflow: hidden;
+                }
                 .video-container {
                     position: relative;
                     width: 100%;
                     height: 100%;
-                    overflow: hidden;
                 }
                 iframe {
                     position: absolute;
@@ -461,13 +669,19 @@ class DashboardViewController: UIViewController {
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    border: 0;
+                    border: none;
+                    border-radius: 12px;
                 }
             </style>
         </head>
         <body>
             <div class="video-container">
-                <iframe src="\(embedURL)" frameborder="0" allowfullscreen></iframe>
+                <iframe 
+                    src="\(embedURL)" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
             </div>
         </body>
         </html>
@@ -475,57 +689,86 @@ class DashboardViewController: UIViewController {
     }
     
     func updateExerciseForWords() {
-        if let words = minAccuracyWords, words.count >= 2 {
-            
-            let appLevels = SampleDataController.shared.getLevelsData()
-            
-            if let word1Title = getAppWordTitle(for: words[0], appLevels: appLevels),
-               let word2Title = getAppWordTitle(for: words[1], appLevels: appLevels) {
-                
-                let firstLetter1 = word1Title.first?.lowercased() ?? ""
-                let firstLetter2 = word2Title.first?.lowercased() ?? ""
-                
-                if let exercise1 = exercises[firstLetter1], let exercise2 = exercises[firstLetter2] {
-                    
-                    descriptionW1.text = exercise1.description
-                    descriptionW2.text = exercise2.description
-                    
-                    if let videoURL1 = exercise1.videos.first,
-                       let videoURL2 = exercise2.videos.first {
-                        // Convert to embed URLs
-                        let embedURL1 = convertToEmbedURL(videoURL1)
-                        let embedURL2 = convertToEmbedURL(videoURL2)
-                        
-                        // Create HTML with proper sizing
-                        let html1 = createVideoHTML(embedURL: embedURL1)
-                        let html2 = createVideoHTML(embedURL: embedURL2)
-                        
-                        // Load HTML content
-                        exerciseForW1.loadHTMLString(html1, baseURL: nil)
-                        exerciseForW2.loadHTMLString(html2, baseURL: nil)
-                        
-                        if word1Title.first == word2Title.first {
-                            exerciseForW2.isHidden = true
-                            descriptionW2.isHidden = true
-                            descriptionLabel.isHidden = true
-                            
-                            // Remove any existing height constraints for exerciseForW1
-                            exerciseForW1.constraints.forEach { constraint in
-                                if constraint.firstAttribute == .height {
-                                    exerciseForW1.removeConstraint(constraint)
-                                }
-                            }
-                            
-                            // Add new expanded height constraint
-                            let expandedHeight = mojoSuggestion.frame.height/2
-                            exerciseForW1.heightAnchor.constraint(equalToConstant: expandedHeight).isActive = true
-                            
-                            // Update layout
-                            exerciseForW1.setNeedsLayout()
-                            exerciseForW1.layoutIfNeeded()
-                        }
-                    }
-                }
+        let appLevels = SampleDataController.shared.getLevelsData()
+        
+        // Handle case with no practiced words - show default exercises
+        guard let words = minAccuracyWords, !words.isEmpty else {
+            print("DEBUG: No inaccurate words found, showing default exercises")
+            showDefaultExercises()
+            return
+        }
+        
+        // Get word titles for the inaccurate words
+        var wordTitles: [String] = []
+        for word in words {
+            if let title = getAppWordTitle(for: word, appLevels: appLevels) {
+                wordTitles.append(title)
+            }
+        }
+        
+        guard !wordTitles.isEmpty else {
+            print("DEBUG: Could not find word titles, showing default exercises")
+            showDefaultExercises()
+            return
+        }
+        
+        // Get first letters for exercise lookup
+        let firstLetter1 = wordTitles[0].first?.lowercased() ?? "a"
+        let firstLetter2 = wordTitles.count > 1 ? (wordTitles[1].first?.lowercased() ?? firstLetter1) : firstLetter1
+        
+        print("DEBUG: Looking up exercises for letters: \(firstLetter1), \(firstLetter2)")
+        
+        // Get exercises for the weak letters
+        let exercise1 = exercises[firstLetter1] ?? exercises["a"]!
+        let exercise2 = exercises[firstLetter2] ?? exercises["a"]!
+        
+        // Update descriptions with word-specific feedback
+        descriptionW1?.text = "Your child needs practice with '\(wordTitles[0])'. \(exercise1.description)"
+        
+        if wordTitles.count > 1 && firstLetter1 != firstLetter2 {
+            descriptionW2?.text = "Your child needs practice with '\(wordTitles[1])'. \(exercise2.description)"
+            descriptionW2?.isHidden = false
+            descriptionLabel?.isHidden = false
+            exerciseForW2?.isHidden = false
+        } else {
+            // Same letter or only one word - hide second exercise
+            descriptionW2?.isHidden = true
+            descriptionLabel?.isHidden = true
+            exerciseForW2?.isHidden = true
+        }
+        
+        // Load video thumbnails
+        if let videoURL1 = exercise1.videos.first {
+            let videoID = convertToEmbedURL(videoURL1)
+            self.videoURL1 = videoURL1
+            let html1 = createThumbnailHTML(videoID: videoID, videoURL: videoURL1)
+            exerciseForW1?.loadHTMLString(html1, baseURL: nil)
+            print("DEBUG: Loaded exercise thumbnail 1 for letter '\(firstLetter1)' with ID: \(videoID)")
+        }
+        
+        if wordTitles.count > 1 && firstLetter1 != firstLetter2, let videoURL2 = exercise2.videos.first {
+            let videoID = convertToEmbedURL(videoURL2)
+            self.videoURL2 = videoURL2
+            let html2 = createThumbnailHTML(videoID: videoID, videoURL: videoURL2)
+            exerciseForW2?.loadHTMLString(html2, baseURL: nil)
+            print("DEBUG: Loaded exercise thumbnail 2 for letter '\(firstLetter2)' with ID: \(videoID)")
+        }
+    }
+    
+    private func showDefaultExercises() {
+        // Show general speech exercises when no specific weaknesses detected
+        descriptionW1?.text = "Start practicing to get personalized exercise recommendations!"
+        descriptionW2?.isHidden = true
+        descriptionLabel?.isHidden = true
+        exerciseForW2?.isHidden = true
+        
+        // Load a default helpful video thumbnail
+        if let defaultExercise = exercises["l"] {
+            if let videoURL = defaultExercise.videos.first {
+                let videoID = convertToEmbedURL(videoURL)
+                self.videoURL1 = videoURL
+                let html = createThumbnailHTML(videoID: videoID, videoURL: videoURL)
+                exerciseForW1?.loadHTMLString(html, baseURL: nil)
             }
         }
     }

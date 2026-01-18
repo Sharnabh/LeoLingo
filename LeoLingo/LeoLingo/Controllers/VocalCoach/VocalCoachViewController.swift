@@ -60,13 +60,51 @@ class VocalCoachViewController: UIViewController {
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
         
-        words = levels.flatMap { $0.words }
-        word = words.first{ $0.isPracticed == false }
-        let word = DataController.shared.wordData(by: word.id)
-        wordLabel.text = word?.wordTitle
+        // Get all levels and find first unmastered word
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else { return }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                
+                // Find first unmastered word across all levels
+                var firstUnmasteredWord: Word?
+                for level in userData.userLevels {
+                    for word in level.words {
+                        // Check if word is NOT mastered
+                        let isMastered = word.record?.mastered ?? false
+                        let hasHighAccuracy = (word.record?.accuracy?.max() ?? 0) >= 70
+                        
+                        if !isMastered && !hasHighAccuracy {
+                            firstUnmasteredWord = word
+                            break
+                        }
+                    }
+                    if firstUnmasteredWord != nil {
+                        break
+                    }
+                }
+                
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    if let unmasteredWord = firstUnmasteredWord,
+                       let appWord = SupabaseDataController.shared.wordData(by: unmasteredWord.id) {
+                        self.wordLabel.text = appWord.wordTitle
+                        print("DEBUG: VocalCoach showing first unmastered word: \(appWord.wordTitle)")
+                    } else {
+                        self.wordLabel.text = "All words mastered!"
+                        print("DEBUG: All words are mastered!")
+                    }
+                }
+            } catch {
+                print("DEBUG: Error loading user data: \(error)")
+            }
+        }
         
         updatePracticeCardView()
         setupCollectionViewLayout()
+        
+        // Setup animated GIF (only once in viewDidLoad)
+        setupAnimatedMojoGif()
         
         soundCards.delegate = self
         soundCards.dataSource = self
@@ -79,11 +117,7 @@ class VocalCoachViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        // Setup video card after layout is complete (only once)
-        if videoCardView == nil {
-            setupVideoCard()
-        }
+        // Video card setup removed - using animated GIF instead
     }
     
     private func setupBackButton() {
@@ -98,17 +132,17 @@ class VocalCoachViewController: UIViewController {
         ])
     }
     
-    private func setupVideoCard() {
+    private func setupAnimatedMojoGif() {
         // Use animated GIF for better transparency support
         guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("❌ GIF file 'mojodance.gif' not found")
-            practiceCardView.isHidden = false
+            print("❌ GIF file 'HeyMojo.gif' not found")
+            mojoImageView.isHidden = false
             return
         }
         
-        print("✅ Loading mojodance.gif")
+        print("✅ Loading HeyMojo.gif")
         
         let imageCount = CGImageSourceGetCount(source)
         var images: [UIImage] = []
@@ -151,7 +185,7 @@ class VocalCoachViewController: UIViewController {
         // Start animation
         animatedImageView.startAnimating()
         
-        print("✅ Animated GIF playing with \(imageCount) frames! �")
+        print("✅ Animated GIF playing with \(imageCount) frames!")
         print("📍 Animation duration: \(totalDuration)s")
     }
     
@@ -243,6 +277,46 @@ class VocalCoachViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         videoCardView?.play()
+        
+        // Refresh the first unmastered word when returning to this screen
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else { return }
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                
+                // Find first unmastered word across all levels
+                var firstUnmasteredWord: Word?
+                for level in userData.userLevels {
+                    for word in level.words {
+                        // Check if word is NOT mastered
+                        let isMastered = word.record?.mastered ?? false
+                        let hasHighAccuracy = (word.record?.accuracy?.max() ?? 0) >= 70
+                        
+                        if !isMastered && !hasHighAccuracy {
+                            firstUnmasteredWord = word
+                            break
+                        }
+                    }
+                    if firstUnmasteredWord != nil {
+                        break
+                    }
+                }
+                
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    if let unmasteredWord = firstUnmasteredWord,
+                       let appWord = SupabaseDataController.shared.wordData(by: unmasteredWord.id) {
+                        self.wordLabel.text = appWord.wordTitle
+                        print("DEBUG: VocalCoach updated to show: \(appWord.wordTitle)")
+                    } else {
+                        self.wordLabel.text = "All words mastered!"
+                        print("DEBUG: All words are mastered!")
+                    }
+                }
+            } catch {
+                print("DEBUG: Error refreshing word: \(error)")
+            }
+        }
     }
     
     deinit {

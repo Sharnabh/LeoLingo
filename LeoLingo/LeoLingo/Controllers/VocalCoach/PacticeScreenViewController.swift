@@ -313,26 +313,88 @@ class PracticeScreenViewController: UIViewController {
     
     private let masteryThreshold: Double = 70.0
     
+    /// Filters out mastered words and completed levels for personalized practice
+    /// A word is considered mastered if:
+    /// - mastered flag is true in database, OR
+    /// - any accuracy score is >= masteryThreshold (70%)
     private func filteredLevelsForNewSession(from userLevels: [Level]) -> [Level] {
         var result: [Level] = []
-        for level in userLevels {
-            let remaining = level.words.filter { word in
-                if let mastered = word.record?.mastered, mastered { return false }
-                guard let accs = word.record?.accuracy, !accs.isEmpty else { return true }
-                return !accs.contains { $0 >= masteryThreshold }
+        
+        print("DEBUG: === FILTERING SESSION START ===")
+        print("DEBUG: Processing \(userLevels.count) levels")
+        
+        for (levelIndex, level) in userLevels.enumerated() {
+            print("DEBUG: Processing Level #\(levelIndex + 1) - ID: \(level.id)")
+            print("DEBUG: Level has \(level.words.count) total words")
+            
+            // Print all word IDs in this level
+            print("DEBUG: Word IDs in this level:")
+            for (wordIndex, word) in level.words.enumerated() {
+                let wordTitle = SupabaseDataController.shared.wordData(by: word.id)?.wordTitle ?? "Unknown"
+                print("DEBUG:   [\(wordIndex)] \(word.id) - \(wordTitle)")
             }
-            if !remaining.isEmpty {
+            
+            // Filter words that still need practice
+            let remainingWords = level.words.filter { word in
+                // Skip if already marked as mastered
+                if let mastered = word.record?.mastered, mastered {
+                    print("DEBUG: ❌ Skipping word \(word.id) - mastered flag is true")
+                    return false
+                }
+                
+                // Check accuracy history - if any attempt reached threshold, consider mastered
+                guard let accuracies = word.record?.accuracy, !accuracies.isEmpty else {
+                    // No practice history - include this word
+                    print("DEBUG: ✅ Including word \(word.id) - no practice history")
+                    return true
+                }
+                
+                // If any accuracy >= threshold, word is mastered - skip it
+                let hasMasteredAttempt = accuracies.contains { $0 >= masteryThreshold }
+                if hasMasteredAttempt {
+                    let maxAccuracy = accuracies.max() ?? 0
+                    print("DEBUG: ❌ Skipping word \(word.id) - has accuracy \(maxAccuracy)% >= \(masteryThreshold)%")
+                    return false
+                }
+                
+                // Word still needs practice
+                let maxAccuracy = accuracies.max() ?? 0
+                print("DEBUG: ✅ Including word \(word.id) - max accuracy \(maxAccuracy)% < \(masteryThreshold)%")
+                return true
+            }
+            
+            // Only include level if it has remaining words to practice
+            if !remainingWords.isEmpty {
                 var newLevel = level
-                newLevel.words = remaining
+                newLevel.words = remainingWords
                 result.append(newLevel)
+                print("DEBUG: ✅ Level \(level.id) has \(remainingWords.count) words remaining for practice")
+            } else {
+                print("DEBUG: ❌ Level \(level.id) is completed - all words mastered")
             }
         }
+        
+        print("DEBUG: Filtered \(result.count) levels with unmastered words from \(userLevels.count) total levels")
+        print("DEBUG: Total words after filter: \(result.flatMap { $0.words }.count)")
+        print("DEBUG: === FILTERING SESSION END ===")
         return result
     }
     
     private func applySessionFilterIfNeeded() {
+        print("DEBUG: Applying session filter...")
+        print("DEBUG: Before filter - Levels: \(levels.count), Total words: \(levels.flatMap { $0.words }.count)")
+        
         levels = filteredLevelsForNewSession(from: levels)
-        if levels.isEmpty { showCompletionMessage() }
+        
+        print("DEBUG: After filter - Levels: \(levels.count), Total words: \(levels.flatMap { $0.words }.count)")
+        
+        if levels.isEmpty {
+            print("DEBUG: All words mastered! Showing completion message.")
+            showCompletionMessage()
+            return
+        }
+        
+        // Reset indices after filtering
         levelIndex = 0
         currentIndex = 0
     }
@@ -351,16 +413,25 @@ class PracticeScreenViewController: UIViewController {
         Task {
             do {
                 guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user ID found")
+                    print("DEBUG: No user ID found")
                     return
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
+                
+                print("DEBUG: Loaded \(self.levels.count) levels with \(self.levels.flatMap { $0.words }.count) total words")
+                
+                // Apply personalized filtering - skip mastered words and completed levels
                 self.applySessionFilterIfNeeded()
+                
+                print("DEBUG: After filtering - \(self.levels.count) levels with \(self.levels.flatMap { $0.words }.count) words remaining")
+                
                 if self.levels.isEmpty {
                     showCompletionMessage()
                 } else {
-                    self.updateUI()
+                    DispatchQueue.main.async {
+                        self.updateUI()
+                    }
                 }
             } catch {
                 handleError(error)
@@ -537,6 +608,8 @@ class PracticeScreenViewController: UIViewController {
     
     private func handleCorrectPronunciation() {
         consecutiveWrongWords = 0
+        currentWordAttempts = 0
+        
         Task {
             do {
                 let currentWord = levels[levelIndex].words[currentIndex]
@@ -546,35 +619,30 @@ class PracticeScreenViewController: UIViewController {
                 let maxLength = max(spokenText.count, wordTitle.count)
                 let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
                 
-                try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: accuracy, recordingPath: speechProcessor.getRecordingURL()?.path)
+                // Update word progress in Supabase (this will mark as mastered if accuracy >= 70%)
+                try await SupabaseDataController.shared.updateWordProgress(
+                    wordId: currentWord.id,
+                    accuracy: accuracy,
+                    recordingPath: speechProcessor.getRecordingURL()?.path
+                )
                 
+                // Refresh user data from Supabase
                 guard let userId = SupabaseDataController.shared.userId else { return }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
+                
+                // Re-apply filtering to skip newly mastered word
                 self.markAndFilterAfterRefresh()
                 
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: accuracy, in: self)
-                }
-                
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    let isLastWordInLevel = self.currentIndex == self.levels[self.levelIndex].words.count - 1
-                    self.showPopover(isCorrect: true, levelChange: isLastWordInLevel) {
-                        if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
-                            if self.levelIndex < self.levels.count - 1 {
-                                self.levelIndex += 1
-                                self.currentIndex = 0
-                                self.showLevelChangePopover()
-                                self.showConfettiEffect()
-                            } else {
-                                self.levelIndex = 0
-                                self.currentIndex = 0
-                                self.updateUIAfterPopover()
-                            }
-                        } else {
-                            self.currentIndex += 1
+                    
+                    // Check if user completed all words
+                    if self.levels.isEmpty {
+                        self.showCompletionMessage()
+                    } else {
+                        // Show success and move to next word
+                        self.showPopover(isCorrect: true, levelChange: false) {
                             self.updateUIAfterPopover()
                         }
                     }
@@ -587,8 +655,14 @@ class PracticeScreenViewController: UIViewController {
     
     private func markAndFilterAfterRefresh() {
         applySessionFilterIfNeeded()
-        if levelIndex >= levels.count { levelIndex = 0 }
-        if !levels.isEmpty && currentIndex >= levels[levelIndex].words.count { currentIndex = 0 }
+        
+        // Ensure indices are valid after filtering
+        if levelIndex >= levels.count {
+            levelIndex = 0
+        }
+        if !levels.isEmpty && currentIndex >= levels[levelIndex].words.count {
+            currentIndex = 0
+        }
     }
     
     @objc private func wordImageTapped() {
@@ -645,8 +719,10 @@ class PracticeScreenViewController: UIViewController {
         var wordImageName: String?
         var wordTitle: String?
         
+        // Find and display correct level title
         if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
             levelLabel.text = currentLevel.levelTitle
+            print("DEBUG: Displaying level: \(currentLevel.levelTitle)")
         }
         
         let totalWordsInLevel = levels[levelIndex].words.count
@@ -745,7 +821,22 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalTransitionStyle = .crossDissolve
             let appLevels = SupabaseDataController.shared.getLevelsData()
             if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
-                popoverVC.configurePopover(message: "Congratulations!! You have unlocked this level.", image: level.levelImage)
+                popoverVC.configurePopover(message: "Congratulations!! You have unlocked \(level.levelTitle).", image: level.levelImage)
+                
+                // Award level badge
+                Task {
+                    do {
+                        let allBadges = SupabaseDataController.shared.getBadgesData()
+                        // Find badge matching level title
+                        if let levelBadge = allBadges.first(where: { $0.badgeTitle == level.levelTitle }) {
+                            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: levelBadge.id, isEarned: true, showPopup: false)
+                            print("DEBUG: ✅ Awarded badge: \(levelBadge.badgeTitle)")
+                        }
+                    } catch {
+                        print("DEBUG: Error awarding level badge: \(error)")
+                    }
+                }
+                
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         guard let self = self else { return }

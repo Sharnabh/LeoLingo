@@ -414,6 +414,11 @@ class PracticeScreenViewController: UIViewController {
                     print("DEBUG: No user ID found")
                     return
                 }
+                
+                // Force refresh user data from Supabase to ensure sync across devices
+                print("DEBUG: Fetching fresh user data from Supabase...")
+                try await SupabaseDataController.shared.refreshUserData()
+                
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
                 

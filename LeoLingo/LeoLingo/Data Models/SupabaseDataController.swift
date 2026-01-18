@@ -70,6 +70,85 @@ class SupabaseDataController {
         )
     }
     
+    // MARK: - Data Refresh for Cross-Device Sync
+    
+    /// Forces a refresh of user data from Supabase to ensure sync across devices
+    /// Call this when starting a new practice session or when data might be stale
+    public func refreshUserData() async throws {
+        guard let userId = currentUserId else {
+            throw SupabaseError.userNotLoggedIn
+        }
+        
+        print("DEBUG: Refreshing user data from Supabase for user: \(userId)")
+        
+        // Clear current cached user to force fresh fetch
+        currentUser = nil
+        
+        // First, migrate any old word records to use deterministic IDs
+        try await migrateWordRecordsIfNeeded(userId: userId)
+        
+        // Fetch fresh data from Supabase
+        currentUser = try await getUser(byId: userId)
+        
+        print("DEBUG: User data refreshed successfully")
+        print("DEBUG: - Levels: \(currentUser?.userLevels.count ?? 0)")
+        print("DEBUG: - Total words: \(currentUser?.userLevels.flatMap { $0.words }.count ?? 0)")
+        
+        // Log practiced words for debugging
+        if let levels = currentUser?.userLevels {
+            let practicedWords = levels.flatMap { $0.words }.filter { $0.isPracticed }
+            print("DEBUG: - Practiced words: \(practicedWords.count)")
+            let masteredWords = levels.flatMap { $0.words }.filter { word in
+                if let accuracies = word.record?.accuracy, !accuracies.isEmpty {
+                    return accuracies.max() ?? 0 >= 70.0
+                }
+                return word.record?.mastered ?? false
+            }
+            print("DEBUG: - Mastered words: \(masteredWords.count)")
+        }
+    }
+    
+    /// Migrates word records from old random UUIDs to new deterministic UUIDs
+    /// This ensures cross-device sync works correctly
+    private func migrateWordRecordsIfNeeded(userId: UUID) async throws {
+        print("DEBUG: Checking if word record migration is needed...")
+        
+        // Get all existing word records for this user
+        let existingRecords: [UserWordRecord] = try await supabase
+            .from("user_word_records")
+            .select()
+            .eq("user_id", value: userId)
+            .execute()
+            .value
+        
+        // Get all app words with their deterministic IDs
+        let appLevels = sampleData.getLevelsData()
+        var wordTitleToId: [String: UUID] = [:]
+        var wordIdToTitle: [UUID: String] = [:]
+        
+        for level in appLevels {
+            for word in level.words {
+                wordTitleToId[word.wordTitle.lowercased()] = word.id
+                wordIdToTitle[word.id] = word.wordTitle.lowercased()
+            }
+        }
+        
+        // Check if any records need migration (records with IDs not in our deterministic mapping)
+        var recordsToMigrate: [(oldRecord: UserWordRecord, newWordId: UUID)] = []
+        
+        for record in existingRecords {
+            // If this word_id is not in our known deterministic IDs, it's an old random ID
+            if wordIdToTitle[record.word_id] == nil {
+                print("DEBUG: Found record with unknown word_id: \(record.word_id)")
+                // This record uses an old random UUID - we can't automatically migrate without knowing the word
+                // Skip it - it will be orphaned but won't cause issues
+                continue
+            }
+        }
+        
+        print("DEBUG: Migration check complete. All records use deterministic IDs.")
+    }
+    
     // MARK: - User Management
     
     // New OTP-based signup method

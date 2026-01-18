@@ -24,11 +24,13 @@ class VocalCoachViewController: UIViewController {
     
     @IBOutlet var practiceCardView: UIView!
     @IBOutlet var soundCards: UICollectionView!
-    @IBOutlet var wordLabel: UILabel!
     @IBOutlet weak var headingTitle: UILabel!
-    @IBOutlet weak var mojoImageView: UIImageView!
-    @IBOutlet weak var wordBoxImageView: UIImageView!
-    @IBOutlet weak var continueButton: UIButton!
+    @IBOutlet weak var mojoImageView: UIImageView?
+    @IBOutlet weak var wordBoxImageView: UIImageView?
+    @IBOutlet weak var continueButton: UIButton?
+    
+    // Programmatically created image view for word
+    private var wordImageView: UIImageView?
     
     let levels = DataController.shared.getAllLevels()
     var words: [Word] = []
@@ -56,6 +58,7 @@ class VocalCoachViewController: UIViewController {
         super.viewDidLoad()
         
         setupBackButton()
+        setupWordImageView()
         
         headingTitle.layer.cornerRadius = 21
         headingTitle.layer.masksToBounds = true
@@ -88,10 +91,13 @@ class VocalCoachViewController: UIViewController {
                 DispatchQueue.main.async {
                     if let unmasteredWord = firstUnmasteredWord,
                        let appWord = SupabaseDataController.shared.wordData(by: unmasteredWord.id) {
-                        self.wordLabel.text = appWord.wordTitle
-                        print("DEBUG: VocalCoach showing first unmastered word: \(appWord.wordTitle)")
+                        // Show word image
+                        self.wordImageView?.image = UIImage(named: appWord.wordImage)
+                        self.wordImageView?.contentMode = .scaleAspectFit
+                        print("DEBUG: VocalCoach showing first unmastered word image: \(appWord.wordImage)")
                     } else {
-                        self.wordLabel.text = "All words mastered!"
+                        // Show placeholder if all words are mastered
+                        self.wordImageView?.image = UIImage(systemName: "checkmark.circle.fill")
                         print("DEBUG: All words are mastered!")
                     }
                 }
@@ -132,13 +138,41 @@ class VocalCoachViewController: UIViewController {
         ])
     }
     
+    private func setupWordImageView() {
+        guard let wordBox = wordBoxImageView else {
+            print("❌ wordBoxImageView is nil, cannot setup word image")
+            return
+        }
+        
+        // Create the word image view programmatically
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .clear
+        
+        // Add it to the practice card view
+        practiceCardView.addSubview(imageView)
+        
+        // Position it centered inside the wordBox with some padding
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: wordBox.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: wordBox.centerYAnchor, constant: -5),
+            imageView.widthAnchor.constraint(equalTo: wordBox.widthAnchor, multiplier: 0.7),
+            imageView.heightAnchor.constraint(equalTo: wordBox.heightAnchor, multiplier: 0.6)
+        ])
+        
+        wordImageView = imageView
+        
+        print("✅ Word image view created and positioned inside word box")
+    }
+    
     private func setupAnimatedMojoGif() {
         // Use animated GIF for better transparency support
         guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
             print("❌ GIF file 'HeyMojo.gif' not found")
-            mojoImageView.isHidden = false
+            mojoImageView?.isHidden = false
             return
         }
         
@@ -164,10 +198,13 @@ class VocalCoachViewController: UIViewController {
         }
         
         // Hide original Mojo image
-        mojoImageView.isHidden = true
+        mojoImageView?.isHidden = true
+        
+        // Safely get the frame - use a default if mojoImageView is nil
+        let imageFrame = mojoImageView?.frame ?? CGRect(x: 0, y: 0, width: 200, height: 200)
         
         // Create an image view for the animated GIF
-        let animatedImageView = UIImageView(frame: mojoImageView.frame)
+        let animatedImageView = UIImageView(frame: imageFrame)
         animatedImageView.animationImages = images
         animatedImageView.animationDuration = totalDuration
         animatedImageView.animationRepeatCount = 0 // Loop forever
@@ -177,10 +214,16 @@ class VocalCoachViewController: UIViewController {
         // Add to practice card
         practiceCardView.addSubview(animatedImageView)
         
-        // Bring UI elements to front
-        practiceCardView.bringSubviewToFront(wordBoxImageView)
-        practiceCardView.bringSubviewToFront(wordLabel)
-        practiceCardView.bringSubviewToFront(continueButton)
+        // Bring UI elements to front (with nil checks)
+        if let wordBox = wordBoxImageView {
+            practiceCardView.bringSubviewToFront(wordBox)
+        }
+        if let wordImg = wordImageView {
+            practiceCardView.bringSubviewToFront(wordImg)
+        }
+        if let button = continueButton {
+            practiceCardView.bringSubviewToFront(button)
+        }
         
         // Start animation
         animatedImageView.startAnimating()
@@ -306,10 +349,13 @@ class VocalCoachViewController: UIViewController {
                 DispatchQueue.main.async {
                     if let unmasteredWord = firstUnmasteredWord,
                        let appWord = SupabaseDataController.shared.wordData(by: unmasteredWord.id) {
-                        self.wordLabel.text = appWord.wordTitle
-                        print("DEBUG: VocalCoach updated to show: \(appWord.wordTitle)")
+                        // Show word image
+                        self.wordImageView?.image = UIImage(named: appWord.wordImage)
+                        self.wordImageView?.contentMode = .scaleAspectFit
+                        print("DEBUG: VocalCoach updated to show: \(appWord.wordImage)")
                     } else {
-                        self.wordLabel.text = "All words mastered!"
+                        // Show placeholder if all words are mastered
+                        self.wordImageView?.image = UIImage(systemName: "checkmark.circle.fill")
                         print("DEBUG: All words are mastered!")
                     }
                 }

@@ -15,6 +15,7 @@ import SwiftUI
 
 class HomePageViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var levelImageView: UIImageView!
+    @IBOutlet var levelLabel: UILabel!
     
     @IBOutlet var remainingTimeView: UIView!
     @IBOutlet var timeLeft: UILabel!
@@ -392,6 +393,24 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                     
                     // Update progress bar to show current level progress
                     self.levelProgress.progress = min(currentLevelProgress, 1.0)
+                    
+                    // Update the level label to show tier based on current level
+                    let currentDisplayLevel = completedLevelCount + 1 // Display starts from level 1
+                    let tierLabel: String
+                    
+                    if currentDisplayLevel <= 10 {
+                        // Beginner tier (Levels 1-10)
+                        tierLabel = "Beginner"
+                    } else if currentDisplayLevel <= 20 {
+                        // Intermediate tier (Levels 11-20)
+                        tierLabel = "Intermediate"
+                    } else {
+                        // Advanced tier (Levels 21-30)
+                        tierLabel = "Advanced"
+                    }
+                    
+                    // Update the existing level label from storyboard
+                    self.levelLabel.text = tierLabel
                 }
             } catch {
                 print("Error updating level image: \(error)")

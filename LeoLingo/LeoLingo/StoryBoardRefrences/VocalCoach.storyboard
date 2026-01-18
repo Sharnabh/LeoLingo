@@ -95,7 +95,7 @@
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="1nJ-OO-FZh">
                                                         <rect key="frame" x="16" y="16" width="330" height="333"/>
                                                         <subviews>
-                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="EmU-07-Qnb">
+                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EmU-07-Qnb">
                                                                 <rect key="frame" x="0.0" y="0.0" width="330" height="290"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="330" id="4hr-aX-zQW"/>
@@ -105,8 +105,8 @@
                                                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="USE-GG-2QZ">
                                                                 <rect key="frame" x="0.0" y="298" width="330" height="35"/>
                                                                 <subviews>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Beginner" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bQ4-xC-wS1">
-                                                                        <rect key="frame" x="0.0" y="2.5" width="118" height="30"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bQ4-xC-wS1">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="118" height="35"/>
                                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
                                                                         <color key="textColor" red="0.3058823645" green="0.61568629740000003" blue="0.19607841970000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                         <nil key="highlightedColor"/>
@@ -280,6 +280,7 @@
                         <outlet property="badgesEarnedCollectionView" destination="wOt-KL-0Ad" id="XQS-5E-GiZ"/>
                         <outlet property="badgesView" destination="92f-Yx-evU" id="fyB-Gd-BlX"/>
                         <outlet property="levelImageView" destination="EmU-07-Qnb" id="FiJ-O7-4zn"/>
+                        <outlet property="levelLabel" destination="bQ4-xC-wS1" id="dIO-BT-Wak"/>
                         <outlet property="levelProgress" destination="NJp-jF-c0A" id="tAW-Bq-0mD"/>
                         <outlet property="levelView" destination="Dct-6M-gWp" id="L6x-z9-bmj"/>
                         <outlet property="practicesView" destination="hgz-VL-LQq" id="khu-Cb-CAX"/>
@@ -464,8 +465,8 @@
                                             <constraint firstAttribute="height" constant="123" id="usN-88-VeF"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSq-DF-5CO">
-                                        <rect key="frame" x="275" y="96.5" width="62" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSq-DF-5CO">
+                                        <rect key="frame" x="306" y="111.5" width="0.0" height="0.0"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
                                         <color key="textColor" red="0.48235297199999999" green="0.31372550129999999" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <nil key="highlightedColor"/>
@@ -526,12 +527,11 @@
                         <outlet property="practiceCardView" destination="F2W-56-G4c" id="I0P-ZS-Luq"/>
                         <outlet property="soundCards" destination="zmz-2j-SO4" id="k3P-zf-f3j"/>
                         <outlet property="wordBoxImageView" destination="8O1-YX-ga0" id="Blp-Nz-PbH"/>
-                        <outlet property="wordLabel" destination="SSq-DF-5CO" id="ZVK-bI-jiz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HXC-BQ-5KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-238" y="1359"/>
+            <point key="canvasLocation" x="-238.01652892561984" y="1358.2733812949641"/>
         </scene>
         <!--Practice Screen View Controller-->
         <scene sceneID="EWS-Mh-7zW">
@@ -576,7 +576,7 @@
                                     <constraint firstAttribute="width" constant="301" id="f0i-wJ-tYI"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U01-YN-9SK">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U01-YN-9SK">
                                 <rect key="frame" x="812.5" y="229" width="240" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="240" id="epG-LA-Iei"/>
@@ -691,7 +691,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-G6-nIp">
                                 <rect key="frame" x="32" y="111" width="1146" height="698"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zpM-4f-gwg">
                                         <rect key="frame" x="317" y="0.0" width="512" height="698"/>
                                     </imageView>
                                 </subviews>
@@ -722,7 +722,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="1" width="512" height="512"/>
         <image name="BaseBackdrop" width="605" height="417"/>
         <image name="Fun Learning Button" width="196" height="214"/>
         <image name="Greetbox" width="1274" height="1260"/>

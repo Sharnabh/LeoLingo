@@ -116,8 +116,6 @@ class PracticeScreenViewController: UIViewController {
     private let speechProcessor = SpeechProcessor()
     private var speechSubscription: AnyCancellable?
     private var countdownTimer: Timer?
-    private var celebrationPlayer: AVAudioPlayer?
-    private var confettiLayer: CAEmitterLayer?
     
     // TalkingMojo GIF properties
     private var talkingMojoImageView: UIImageView?
@@ -626,25 +624,13 @@ class PracticeScreenViewController: UIViewController {
                     recordingPath: speechProcessor.getRecordingURL()?.path
                 )
                 
-                // Refresh user data from Supabase
-                guard let userId = SupabaseDataController.shared.userId else { return }
-                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                self.levels = userData.userLevels
-                
-                // Re-apply filtering to skip newly mastered word
-                self.markAndFilterAfterRefresh()
-                
+                // DON'T refresh or re-filter - just move to next word
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     
-                    // Check if user completed all words
-                    if self.levels.isEmpty {
-                        self.showCompletionMessage()
-                    } else {
-                        // Show success and move to next word
-                        self.showPopover(isCorrect: true, levelChange: false) {
-                            self.updateUIAfterPopover()
-                        }
+                    // Show success and move to next word
+                    self.showPopover(isCorrect: true, levelChange: false) {
+                        self.updateUIAfterPopover()
                     }
                 }
             } catch {
@@ -768,28 +754,21 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func moveToNextWord() {
-        Task {
-            do {
-                guard let userId = SupabaseDataController.shared.userId else { return }
-                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                self.levels = userData.userLevels
-                currentIndex += 1
-                if currentIndex >= levels[levelIndex].words.count {
-                    levelIndex += 1
-                    currentIndex = 0
-                    if levelIndex >= levels.count {
-                        showCompletionMessage()
-                        return
-                    }
-                    showLevelChangePopover()
-                    showConfettiEffect()
-                } else {
-                    updateUI()
-                }
-            } catch {
-                print("Error in moveToNextWord: \(error)")
-                DispatchQueue.main.async { self.handleError(error) }
+        // Move to next word in the CURRENT filtered session
+        currentIndex += 1
+        
+        if currentIndex >= levels[levelIndex].words.count {
+            levelIndex += 1
+            currentIndex = 0
+            
+            if levelIndex >= levels.count {
+                showCompletionMessage()
+                return
             }
+            
+            showLevelChangePopover()
+        } else {
+            updateUI()
         }
     }
     
@@ -815,86 +794,68 @@ class PracticeScreenViewController: UIViewController {
     }
     
     func showLevelChangePopover() {
+        let appLevels = SupabaseDataController.shared.getLevelsData()
+        guard let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) else {
+            updateUI()
+            return
+        }
+        
+        // Check if this is the FIRST TIME this level is being completed
+        // We check this by seeing if there's a previous level (the one we just finished)
+        guard levelIndex > 0 else {
+            // This is level 0 (first level), so just continue
+            updateUI()
+            return
+        }
+        
+        // Get the PREVIOUS level that was just completed
+        let previousLevelIndex = levelIndex - 1
+        let previousLevel = levels[previousLevelIndex]
+        
+        // Check if we already showed the badge for THIS level
+        let levelBadgeShownKey = "LevelBadgeShown_\(level.id.uuidString)"
+        let alreadyShown = UserDefaults.standard.bool(forKey: levelBadgeShownKey)
+        
+        if alreadyShown {
+            // Already shown this level's badge, just continue
+            print("DEBUG: Level badge for \(level.levelTitle) already shown this session, skipping popup")
+            updateUI()
+            return
+        }
+        
+        // First time showing this level badge - show popup
         let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
         if let popoverVC = storyboard.instantiateViewController(withIdentifier: "PopoverViewController") as? PopoverViewController {
             popoverVC.modalPresentationStyle = .fullScreen
             popoverVC.modalTransitionStyle = .crossDissolve
-            let appLevels = SupabaseDataController.shared.getLevelsData()
-            if let level = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
-                popoverVC.configurePopover(message: "Congratulations!! You have unlocked \(level.levelTitle).", image: level.levelImage)
-                
-                // Award level badge
-                Task {
-                    do {
-                        let allBadges = SupabaseDataController.shared.getBadgesData()
-                        // Find badge matching level title
-                        if let levelBadge = allBadges.first(where: { $0.badgeTitle == level.levelTitle }) {
-                            try await SupabaseDataController.shared.updateBadgeStatus(badgeId: levelBadge.id, isEarned: true, showPopup: false)
-                            print("DEBUG: ✅ Awarded badge: \(levelBadge.badgeTitle)")
-                        }
-                    } catch {
-                        print("DEBUG: Error awarding level badge: \(error)")
+            popoverVC.configurePopover(message: "Congratulations!! You have unlocked \(level.levelTitle).", image: level.levelImage)
+            
+            // Mark this level badge as shown
+            UserDefaults.standard.set(true, forKey: levelBadgeShownKey)
+            
+            // Award the level badge
+            Task {
+                do {
+                    let allBadges = SupabaseDataController.shared.getBadgesData()
+                    if let levelBadge = allBadges.first(where: { $0.badgeTitle == level.levelTitle }) {
+                        try await SupabaseDataController.shared.updateBadgeStatus(badgeId: levelBadge.id, isEarned: true, showPopup: false)
+                        print("DEBUG: ✅ Awarded badge: \(levelBadge.badgeTitle)")
                     }
-                }
-                
-                present(popoverVC, animated: true) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                        guard let self = self else { return }
-                        popoverVC.dismiss(animated: true) { self.updateUIAfterPopover() }
-                    }
+                } catch {
+                    print("DEBUG: Error awarding level badge: \(error)")
                 }
             }
-        }
-    }
-    
-    func showConfettiEffect() {
-        confettiLayer?.removeFromSuperlayer()
-        let newConfettiLayer = CAEmitterLayer()
-        confettiLayer = newConfettiLayer
-        newConfettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
-        newConfettiLayer.emitterShape = .line
-        newConfettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
-        
-        let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
-        let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
-        var cells: [CAEmitterCell] = []
-        for color in colors {
-            for shape in shapes {
-                let cell = CAEmitterCell()
-                cell.birthRate = 8
-                cell.lifetime = 2.0
-                cell.velocity = CGFloat.random(in: 200...300)
-                cell.velocityRange = 100
-                cell.emissionLongitude = .pi
-                cell.emissionRange = .pi / 2
-                cell.spin = 3
-                cell.spinRange = 5
-                cell.scale = 0.15
-                cell.scaleRange = 0.25
-                cell.contents = shape.cgImage
-                cell.color = color.cgColor
-                cells.append(cell)
+            
+            present(popoverVC, animated: true) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    guard let self = self else { return }
+                    popoverVC.dismiss(animated: true) {
+                        // After level change popup, start practicing the new level
+                        self.updateUI()
+                    }
+                }
             }
         }
-        newConfettiLayer.emitterCells = cells
-        view.layer.addSublayer(newConfettiLayer)
-        
-        if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
-            do {
-                celebrationPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                celebrationPlayer?.prepareToPlay()
-                celebrationPlayer?.play()
-            } catch {
-                print("Error playing celebration sound: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func stopConfetti() {
-        confettiLayer?.removeFromSuperlayer()
-        confettiLayer = nil
-        celebrationPlayer?.stop()
-        celebrationPlayer = nil
     }
     
     func showPopover(isCorrect: Bool, levelChange: Bool, completion: (() -> Void)? = nil) {
@@ -904,28 +865,13 @@ class PracticeScreenViewController: UIViewController {
             popoverVC.modalTransitionStyle = .crossDissolve
             
             if isCorrect && !levelChange {
-                popoverVC.configurePopover(message: "Great pronunciation!", image: "DancingMojo")
-                showConfettiEffect()
+                popoverVC.configurePopover(message: "Great pronunciation!", image: "DancingMojo", showConfetti: true)
                 present(popoverVC, animated: true) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
                         guard let self = self else { return }
-                        self.stopConfetti()
                         popoverVC.dismiss(animated: true) {
-                            if self.currentIndex >= self.levels[self.levelIndex].words.count - 1 {
-                                if self.levelIndex < self.levels.count - 1 {
-                                    self.levelIndex += 1
-                                    self.currentIndex = 0
-                                    self.showLevelChangePopover()
-                                    self.showConfettiEffect()
-                                } else {
-                                    self.levelIndex = 0
-                                    self.currentIndex = 0
-                                    self.updateUIAfterPopover()
-                                }
-                            } else {
-                                self.currentIndex += 1
-                                self.updateUIAfterPopover()
-                            }
+                            // Just call updateUIAfterPopover - it already handles everything
+                            self.updateUIAfterPopover()
                         }
                     }
                 }
@@ -941,6 +887,27 @@ class PracticeScreenViewController: UIViewController {
     }
     
     private func updateUIAfterPopover() {
+        // Move to next word
+        currentIndex += 1
+        
+        // Check if we've completed the current level
+        if currentIndex >= levels[levelIndex].words.count {
+            // Move to next level
+            levelIndex += 1
+            currentIndex = 0
+            
+            // Check if we've completed all levels
+            if levelIndex >= levels.count {
+                showCompletionMessage()
+                return
+            }
+            
+            // Show level change popup for the new level
+            showLevelChangePopover()
+            return
+        }
+        
+        // Normal word transition - update UI
         guard !levels.isEmpty, levelIndex < levels.count, currentIndex < levels[levelIndex].words.count else {
             showCompletionMessage()
             return
@@ -951,6 +918,16 @@ class PracticeScreenViewController: UIViewController {
         let appLevels = SupabaseDataController.shared.getLevelsData()
         var wordImageName: String?
         var wordTitle: String?
+        
+        // Update level title and progress
+        if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
+            levelLabel.text = currentLevel.levelTitle
+            print("DEBUG: updateUIAfterPopover - Displaying level: \(currentLevel.levelTitle)")
+        }
+        
+        let totalWordsInLevel = levels[levelIndex].words.count
+        let progress = Float(currentIndex) / Float(totalWordsInLevel)
+        levelProgress.setProgress(progress, animated: true)
         
         for level in appLevels {
             if let word = level.words.first(where: { $0.id == currentData.id }) {
@@ -963,7 +940,6 @@ class PracticeScreenViewController: UIViewController {
         if let wordImageName = wordImageName {
             self.wordImage.image = UIImage(named: wordImageName)
         }
-        // mojoImage is permanently hidden - talkingMojoImageView replaces it
         
         if let wordTitle = wordTitle {
             let direction = "This is \(wordTitle). Say \(wordTitle)."
@@ -989,10 +965,7 @@ class PracticeScreenViewController: UIViewController {
             do {
                 let recordingPath = speechProcessor.getRecordingURL()?.path
                 try await SupabaseDataController.shared.updateWordProgress(wordId: currentWord.id, accuracy: accuracy, recordingPath: recordingPath)
-                guard let userId = SupabaseDataController.shared.userId else { return }
-                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                self.levels = userData.userLevels
-                self.markAndFilterAfterRefresh()
+                // Don't refresh or re-filter - keep the current session intact
             } catch {
                 print("Error in recordAccuracy: \(error)")
             }
@@ -1277,7 +1250,15 @@ class PracticeScreenViewController: UIViewController {
     private func clearUserDefaults() {
         UserDefaults.standard.removeObject(forKey: "LastPracticedWord")
         UserDefaults.standard.removeObject(forKey: "LastPracticedLevel")
+        
+        // Clear all level badge shown flags for NEW practice session
+        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
+        for key in allKeys where key.hasPrefix("LevelBadgeShown_") {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+        
         UserDefaults.standard.synchronize()
+        print("DEBUG: Cleared all level badge shown flags for new session")
     }
     
     private func startNoiseMonitoring() {

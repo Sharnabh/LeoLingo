@@ -7,6 +7,7 @@
 
 import UIKit
 import ImageIO
+import AVFoundation
 
 class PopoverViewController: UIViewController {
 
@@ -16,12 +17,17 @@ class PopoverViewController: UIViewController {
     var message: String?
     var imageName: String?
     var onProceed: (() -> Void)?
+    var showConfetti: Bool = false
     
     // GIF animation properties
     private var animatedImageView: UIImageView?
     private var gifImages: [UIImage] = []
     private var gifDuration: TimeInterval = 0
     private var hasSetupGif = false
+    
+    // Confetti properties
+    private var confettiLayer: CAEmitterLayer?
+    private var celebrationPlayer: AVAudioPlayer?
     
     // New feedback label
     private lazy var feedbackLabel: UILabel = {
@@ -113,12 +119,18 @@ class PopoverViewController: UIViewController {
         super.viewDidAppear(animated)
         // Start animation when view appears
         animatedImageView?.startAnimating()
+        
+        // Start confetti if requested
+        if showConfetti {
+            startConfettiEffect()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // Stop animation when view disappears
         animatedImageView?.stopAnimating()
+        stopConfettiEffect()
     }
     
     private func loadGif(named name: String) -> Bool {
@@ -204,8 +216,60 @@ class PopoverViewController: UIViewController {
         return true
     }
 
-    func configurePopover(message: String, image: String) {
+    func configurePopover(message: String, image: String, showConfetti: Bool = false) {
         self.message = message
         self.imageName = image
+        self.showConfetti = showConfetti
+    }
+    
+    private func startConfettiEffect() {
+        confettiLayer?.removeFromSuperlayer()
+        let newConfettiLayer = CAEmitterLayer()
+        confettiLayer = newConfettiLayer
+        newConfettiLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
+        newConfettiLayer.emitterShape = .line
+        newConfettiLayer.emitterSize = CGSize(width: view.bounds.width, height: 1)
+        
+        let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .orange]
+        let shapes: [UIImage] = [UIImage(named: "confetti1")!, UIImage(named: "confetti2")!, UIImage(named: "confetti3")!]
+        var cells: [CAEmitterCell] = []
+        for color in colors {
+            for shape in shapes {
+                let cell = CAEmitterCell()
+                cell.birthRate = 8
+                cell.lifetime = 2.0
+                cell.velocity = CGFloat.random(in: 200...300)
+                cell.velocityRange = 100
+                cell.emissionLongitude = .pi
+                cell.emissionRange = .pi / 2
+                cell.spin = 3
+                cell.spinRange = 5
+                cell.scale = 0.15
+                cell.scaleRange = 0.25
+                cell.contents = shape.cgImage
+                cell.color = color.cgColor
+                cells.append(cell)
+            }
+        }
+        newConfettiLayer.emitterCells = cells
+        view.layer.addSublayer(newConfettiLayer)
+        
+        // Play celebration sound
+        if let soundURL = Bundle.main.url(forResource: "celebration", withExtension: "mp3") {
+            do {
+                celebrationPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                celebrationPlayer?.prepareToPlay()
+                celebrationPlayer?.play()
+            } catch {
+                print("Error playing celebration sound: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func stopConfettiEffect() {
+        confettiLayer?.removeFromSuperlayer()
+        confettiLayer = nil
+        celebrationPlayer?.stop()
+        celebrationPlayer = nil
     }
 }

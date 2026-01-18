@@ -101,9 +101,15 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         super.viewDidAppear(animated)
         // Refresh data when view appears
         loadInaccurateWords()
-        updatePracticeTime()
+        updatePracticeTime()  // Refresh practice time from UserDefaults
         refreshBadgeData()
         updateLevelBadge()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Also update practice time when view is about to appear
+        updatePracticeTime()
     }
     
     // MARK: - Level Badge Update
@@ -399,26 +405,39 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
     private func updatePracticeTime() {
         // Get total time spent and days used from UserDefaults
         let totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
-        let daysUsed = UserDefaults.standard.integer(forKey: "daysUsed")
+        let daysUsed = max(UserDefaults.standard.integer(forKey: "daysUsed"), 1)
+        
+        print("DEBUG: Dashboard - Practice time calculation:")
+        print("  - Total time spent: \(totalTimeSpent) seconds")
+        print("  - Days used: \(daysUsed)")
         
         // Calculate daily average (in seconds)
-        let dailyAverage = daysUsed > 0 ? totalTimeSpent / Double(daysUsed) : totalTimeSpent
+        let dailyAverage = totalTimeSpent / Double(daysUsed)
+        
+        print("  - Daily average: \(dailyAverage) seconds")
         
         // Format the average time
-        let averageMinutes = Int(dailyAverage / 60)
-        let hours = averageMinutes / 60
-        let minutes = averageMinutes % 60
+        let totalSeconds = Int(dailyAverage)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
         
         // Create formatted string
         var timeText = ""
         if hours > 0 {
             timeText = "\(hours)h \(minutes)m"
+        } else if minutes > 0 {
+            timeText = "\(minutes)m \(seconds)s"
+        } else if seconds > 0 {
+            timeText = "\(seconds)s"
         } else {
-            timeText = "\(minutes)m"
+            timeText = "0m"
         }
         
         // Update the label with average indicator
-        practiceTime.text = timeText
+        practiceTime?.text = timeText
+        
+        print("  - Display text: \(timeText)")
     }
     
     func updateView() {

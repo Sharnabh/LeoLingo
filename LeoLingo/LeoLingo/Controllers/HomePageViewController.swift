@@ -114,7 +114,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         selectedDuration = UserDefaults.standard.double(forKey: "selectedDuration")
         
         // Initialize days used if not set
-        if !UserDefaults.standard.contains(key: "daysUsed") {
+        if UserDefaults.standard.object(forKey: "daysUsed") == nil {
             UserDefaults.standard.set(1, forKey: "daysUsed")
         }
         
@@ -219,15 +219,53 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                 self.showOnboardingBadgeAchievement()
             }
         }
-        // Don't check for unshown badges on every viewDidAppear
-        // This prevents showing the same badge multiple times
+        
+        // Check for any newly earned badges that haven't been shown yet
+        checkForNewlyEarnedBadges()
         
         // Refresh practices and badges when view appears
         loadRecentPractices()
         refreshBadgeData()
-        
-        // Only check for progress-based badges if coming from practice session
-        // Not on every view appear
+    }
+    
+    private func checkForNewlyEarnedBadges() {
+        Task {
+            do {
+                guard let userId = SupabaseDataController.shared.userId else { return }
+                
+                // First, check and award any progress badges the user has earned
+                await BadgeEarningManager.shared.checkAndAwardProgressBadges()
+                
+                // Get user data from Supabase
+                let userData = try await SupabaseDataController.shared.getUser(byId: userId)
+                
+                // Get list of badges shown before
+                let shownBadgeIDs = UserDefaults.standard.array(forKey: "shownBadgeAchievements") as? [String] ?? []
+                
+                // Find any earned badge that hasn't been shown yet
+                for badge in userData.userBadges where badge.isEarned {
+                    let badgeIDString = badge.id.uuidString
+                    if !shownBadgeIDs.contains(badgeIDString) {
+                        // This is a newly earned badge - show achievement popup
+                        print("DEBUG: HomeVC - Found newly earned badge: \(badge.badgeTitle)")
+                        
+                        DispatchQueue.main.async {
+                            BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
+                        }
+                        
+                        // Mark this badge as shown
+                        var updatedShownBadges = shownBadgeIDs
+                        updatedShownBadges.append(badgeIDString)
+                        UserDefaults.standard.set(updatedShownBadges, forKey: "shownBadgeAchievements")
+                        
+                        // Only show one badge at a time
+                        break
+                    }
+                }
+            } catch {
+                print("DEBUG: Error checking for newly earned badges: \(error)")
+            }
+        }
     }
     
     private func refreshBadgeData() {
@@ -312,52 +350,48 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                 
                 // Fetch user data from Supabase
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
-                let levels = userData.userLevels
-                var currentLevel: Level? = nil
+                let allAppLevels = SupabaseDataController.shared.getLevelsData()
                 
-                // Find the first incomplete level
-                for level in levels {
-                    let totalWords = level.words.count
-                    let completedWords = level.words.filter { word in
-                        // A word is considered completed if it has been practiced with good accuracy
+                // Count total completed levels (levels where all words are mastered)
+                var completedLevelCount = 0
+                var currentLevelProgress: Float = 0.0
+                var isAllLevelsComplete = true
+                
+                for (index, userLevel) in userData.userLevels.enumerated() {
+                    let totalWords = userLevel.words.count
+                    let completedWords = userLevel.words.filter { word in
+                        // Check accuracy - word is mastered if any accuracy >= 70%
                         if let record = word.record,
                            let accuracies = record.accuracy,
                            !accuracies.isEmpty {
-                            let avgAccuracy = accuracies.reduce(0.0, +) / Double(accuracies.count)
-                            return avgAccuracy >= 70.0 // Consider word completed if average accuracy is 70% or higher
+                            let maxAccuracy = accuracies.max() ?? 0
+                            return maxAccuracy >= 70.0
                         }
                         return false
                     }.count
                     
-                    if completedWords < totalWords {
-                        currentLevel = level
-                        
-                        // Calculate and update progress for this level
-                        let progress = Float(completedWords) / Float(totalWords)
-                        
-                        // Update UI on main thread
-                        DispatchQueue.main.async {
-                            self.levelProgress.progress = progress
-                            
-                            // Get AppLevel using the level ID
-                            if let appLevel = DataController.shared.getLevel(by: level.id) {
-                                self.levelImageView.image = UIImage(named: appLevel.levelImage)
-                            }
-                        }
+                    if completedWords == totalWords {
+                        // Level fully completed
+                        completedLevelCount += 1
+                    } else {
+                        // This is the current level in progress
+                        currentLevelProgress = Float(completedWords) / Float(totalWords)
+                        isAllLevelsComplete = false
                         break
                     }
                 }
                 
-                // If no current level found (all levels completed)
-                if currentLevel == nil && !levels.isEmpty {
-                    DispatchQueue.main.async {
-                        // Show the last level's image with full progress
-                        if let lastLevel = levels.last,
-                           let lastAppLevel = DataController.shared.getLevel(by: lastLevel.id) {
-                            self.levelImageView.image = UIImage(named: lastAppLevel.levelImage)
-                            self.levelProgress.progress = 1.0
-                        }
-                    }
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    // Find the level badge for the latest completed level
+                    let displayLevelIndex = min(completedLevelCount, allAppLevels.count - 1)
+                    let displayLevel = allAppLevels[displayLevelIndex]
+                    
+                    // Update level image to show the latest completed/current level badge
+                    self.levelImageView.image = UIImage(named: displayLevel.levelImage)
+                    
+                    // Update progress bar to show current level progress
+                    self.levelProgress.progress = min(currentLevelProgress, 1.0)
                 }
             } catch {
                 print("Error updating level image: \(error)")

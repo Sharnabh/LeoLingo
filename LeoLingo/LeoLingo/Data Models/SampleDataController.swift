@@ -36,7 +36,7 @@ class SampleDataController {
         
         levels = [
             AppLevel(levelTitle: "Level 1", levelImage: "1", words: [
-                createWord(title: "A", image: "a"),
+//                createWord(title: "A", image: "a"),
                 createWord(title: "Alarm", image: "alarm"),
                 createWord(title: "Army", image: "army"),
                 createWord(title: "Art", image: "art"),
@@ -44,7 +44,7 @@ class SampleDataController {
                 createWord(title: "Ant", image: "ant")
             ]),
             AppLevel(levelTitle: "Level 2", levelImage: "2", words: [
-                createWord(title: "B", image: "b"),
+//                createWord(title: "B", image: "b"),
                 createWord(title: "Black", image: "black"),
                 createWord(title: "Bread", image: "bread"),
                 createWord(title: "Broom", image: "broom"),
@@ -52,7 +52,7 @@ class SampleDataController {
                 createWord(title: "Brother", image: "brother")
             ]),
             AppLevel(levelTitle: "Level 3", levelImage: "3", words: [
-                createWord(title: "R", image: "r"),
+//                createWord(title: "R", image: "r"),
                 createWord(title: "Ring", image: "ring"),
                 createWord(title: "Rice", image: "rice"),
                 createWord(title: "Red", image: "red"),

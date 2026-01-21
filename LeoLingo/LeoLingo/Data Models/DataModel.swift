@@ -137,55 +137,57 @@ struct AppLevel {
 
 class WordIDManager {
     static let shared = WordIDManager()
-    private let plistName = "WordIDs.plist"
-    private var wordIDs: [String: String] = [:] // [wordTitle: uuidString]
+    private var wordIDs: [String: String] = [:] // [wordTitle: uuidString] - cache only
     
     private init() {
-        loadWordIDs()
         printCurrentMappings()
     }
     
-    private var plistURL: URL? {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent(plistName)
-    }
-    
-    private func loadWordIDs() {
-        guard let url = plistURL,
-              let data = try? Data(contentsOf: url),
-              let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String] else {
-            print("DEBUG: No existing word ID mappings found or failed to load")
-            return
+    /// Generates a deterministic UUID based on word title
+    /// This ensures the same word always gets the same UUID across all devices
+    private func generateDeterministicUUID(for title: String) -> UUID {
+        let cleanTitle = title.lowercased().trimmingCharacters(in: .whitespaces)
+        // Use a namespace UUID (version 5) approach - create consistent hash
+        let namespace = "com.leolingo.word."
+        let combined = namespace + cleanTitle
+        
+        // Create a deterministic UUID using MD5-like approach
+        let data = combined.data(using: .utf8)!
+        var hash = [UInt8](repeating: 0, count: 16)
+        
+        // Simple hash function to create consistent bytes
+        for (index, byte) in data.enumerated() {
+            hash[index % 16] ^= byte
+            hash[index % 16] = hash[index % 16] &+ UInt8(index % 256)
         }
-        wordIDs = dict
-        print("DEBUG: Loaded \(dict.count) word ID mappings from plist")
-    }
-    
-    private func saveWordIDs() {
-        guard let url = plistURL,
-              let data = try? PropertyListSerialization.data(fromPropertyList: wordIDs, format: .xml, options: 0) else {
-            print("DEBUG: Failed to save word ID mappings")
-            return
-        }
-        try? data.write(to: url)
-        print("DEBUG: Saved \(wordIDs.count) word ID mappings to plist")
+        
+        // Set version (4) and variant bits for valid UUID
+        hash[6] = (hash[6] & 0x0F) | 0x40  // Version 4
+        hash[8] = (hash[8] & 0x3F) | 0x80  // Variant
+        
+        let uuidString = String(format: "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                                hash[0], hash[1], hash[2], hash[3],
+                                hash[4], hash[5], hash[6], hash[7],
+                                hash[8], hash[9], hash[10], hash[11],
+                                hash[12], hash[13], hash[14], hash[15])
+        
+        return UUID(uuidString: uuidString)!
     }
     
     func getID(for wordTitle: String) -> UUID {
         let cleanTitle = wordTitle.lowercased().trimmingCharacters(in: .whitespaces)
         
+        // Check cache first
         if let existingIDString = wordIDs[cleanTitle],
            let existingID = UUID(uuidString: existingIDString) {
-            print("DEBUG: Found existing ID for word '\(cleanTitle)': \(existingID)")
             return existingID
         }
         
-        let newID = UUID()
-        wordIDs[cleanTitle] = newID.uuidString
-        print("DEBUG: Generated new ID for word '\(cleanTitle)': \(newID)")
-        saveWordIDs()
-        return newID
+        // Generate deterministic UUID - same on all devices
+        let deterministicID = generateDeterministicUUID(for: cleanTitle)
+        wordIDs[cleanTitle] = deterministicID.uuidString
+        print("DEBUG: Generated deterministic ID for word '\(cleanTitle)': \(deterministicID)")
+        return deterministicID
     }
     
     func printCurrentMappings() {
@@ -208,55 +210,57 @@ class WordIDManager {
 
 class BadgeIDManager {
     static let shared = BadgeIDManager()
-    private let plistName = "BadgeIDs.plist"
-    private var badgeIDs: [String: String] = [:] // [wordTitle: uuidString]
+    private var badgeIDs: [String: String] = [:] // [badgeTitle: uuidString] - cache only
     
     private init() {
-        loadBadgeIDs()
         printCurrentMappings()
     }
     
-    private var plistURL: URL? {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent(plistName)
-    }
-    
-    private func loadBadgeIDs() {
-        guard let url = plistURL,
-              let data = try? Data(contentsOf: url),
-              let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String] else {
-            print("DEBUG: No existing word ID mappings found or failed to load")
-            return
-        }
-        badgeIDs = dict
-        print("DEBUG: Loaded \(dict.count) word ID mappings from plist")
-    }
-    
-    private func saveBadgeIDs() {
-        guard let url = plistURL,
-              let data = try? PropertyListSerialization.data(fromPropertyList: badgeIDs, format: .xml, options: 0) else {
-            print("DEBUG: Failed to save word ID mappings")
-            return
-        }
-        try? data.write(to: url)
-        print("DEBUG: Saved \(badgeIDs.count) word ID mappings to plist")
-    }
-    
-    func getID(for wordTitle: String) -> UUID {
-        let cleanTitle = wordTitle.lowercased().trimmingCharacters(in: .whitespaces)
+    /// Generates a deterministic UUID based on badge title
+    /// This ensures the same badge always gets the same UUID across all devices
+    private func generateDeterministicUUID(for title: String) -> UUID {
+        let cleanTitle = title.lowercased().trimmingCharacters(in: .whitespaces)
+        // Use a namespace UUID approach - create consistent hash
+        let namespace = "com.leolingo.badge."
+        let combined = namespace + cleanTitle
         
+        // Create a deterministic UUID using hash approach
+        let data = combined.data(using: .utf8)!
+        var hash = [UInt8](repeating: 0, count: 16)
+        
+        // Simple hash function to create consistent bytes
+        for (index, byte) in data.enumerated() {
+            hash[index % 16] ^= byte
+            hash[index % 16] = hash[index % 16] &+ UInt8(index % 256)
+        }
+        
+        // Set version (4) and variant bits for valid UUID
+        hash[6] = (hash[6] & 0x0F) | 0x40  // Version 4
+        hash[8] = (hash[8] & 0x3F) | 0x80  // Variant
+        
+        let uuidString = String(format: "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                                hash[0], hash[1], hash[2], hash[3],
+                                hash[4], hash[5], hash[6], hash[7],
+                                hash[8], hash[9], hash[10], hash[11],
+                                hash[12], hash[13], hash[14], hash[15])
+        
+        return UUID(uuidString: uuidString)!
+    }
+    
+    func getID(for badgeTitle: String) -> UUID {
+        let cleanTitle = badgeTitle.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        // Check cache first
         if let existingIDString = badgeIDs[cleanTitle],
            let existingID = UUID(uuidString: existingIDString) {
-            print("DEBUG: Found existing ID for word '\(cleanTitle)': \(existingID)")
             return existingID
         }
         
-        let newID = UUID()
-        badgeIDs[cleanTitle] = newID.uuidString
-        print("DEBUG: Generated new ID for word '\(cleanTitle)': \(newID)")
-        saveBadgeIDs()
-        return newID
+        // Generate deterministic UUID - same on all devices
+        let deterministicID = generateDeterministicUUID(for: cleanTitle)
+        badgeIDs[cleanTitle] = deterministicID.uuidString
+        print("DEBUG: Generated deterministic ID for badge '\(cleanTitle)': \(deterministicID)")
+        return deterministicID
     }
     
     func printCurrentMappings() {

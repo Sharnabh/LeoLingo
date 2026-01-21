@@ -10,6 +10,7 @@ struct BadgeAchievementPopupView: View {
     @State private var glowOpacity: Double = 0
     @State private var rotationAngle: Double = 0
     @State private var confettiCounter = 0
+    @State private var confettiTimer: Timer?
     
     // Animation timings
     private let animationDuration = 0.6
@@ -175,13 +176,16 @@ struct BadgeAchievementPopupView: View {
                 
                 // Dismiss button with liquid glass effect
                 Button(action: {
-                    withAnimation(.easeOut(duration: 0.3)) {
+                    // Stop all animations first before any UI changes
+                    self.stopAllAnimations()
+                    
+                    // Animate out
+                    withAnimation(.easeOut(duration: 0.25)) {
                         opacity = 0
-                        scale = 0.5
-                        glowOpacity = 0
+                        scale = 0.3
                     }
                     
-                    // Add a callback for when animation is done
+                    // Post notification after animation completes
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         NotificationCenter.default.post(
                             name: NSNotification.Name("DismissBadgeAchievement"),
@@ -235,6 +239,9 @@ struct BadgeAchievementPopupView: View {
             animateIn()
             startConfettiAnimation()
         }
+        .onDisappear {
+            stopAllAnimations()
+        }
     }
     
     private func animateIn() {
@@ -278,15 +285,30 @@ struct BadgeAchievementPopupView: View {
     }
     
     private func startConfettiAnimation() {
+        // Invalidate any existing timer first
+        confettiTimer?.invalidate()
+        
         // Periodically update the confetti counter to trigger redraws
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-            self.confettiCounter += 1
-            
-            // Stop the timer when the view is dismissed
+        confettiTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] timer in
             if self.opacity < 0.1 {
                 timer.invalidate()
+                self.confettiTimer = nil
+            } else {
+                self.confettiCounter += 1
             }
         }
+    }
+    
+    private func stopAllAnimations() {
+        // Stop confetti timer
+        confettiTimer?.invalidate()
+        confettiTimer = nil
+        
+        // Reset all animation states to prevent crashes
+        isAnimating = false
+        glowOpacity = 0
+        rotationAngle = 0
+        confettiCounter = 0
     }
 }
 

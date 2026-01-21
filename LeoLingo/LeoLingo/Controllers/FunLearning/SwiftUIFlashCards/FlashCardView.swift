@@ -2,11 +2,124 @@ import SwiftUI
 import AVFoundation
 import Speech
 import Combine
+import ImageIO
 
 // Add MojoPosition enum at file level scope
 enum MojoPosition {
     case left
     case right
+}
+
+// Mojo GIF types
+enum MojoGifType: String {
+    case hey = "HeyMojo"
+    case talking = "TalkingMojo"
+    case dancing = "DancingMojo"
+    case sad = "SadMojo"
+    case idle = "Mojo"  // Static image fallback
+}
+
+// GIF Image View for Mojo animations
+struct MojoGifView: View {
+    let gifType: MojoGifType
+    let height: CGFloat
+    @State private var images: [UIImage] = []
+    @State private var currentFrame: Int = 0
+    @State private var isAnimating = false
+    @State private var timer: Timer?
+    @State private var animationDuration: TimeInterval = 0
+    var playOnce: Bool = false
+    var onAnimationComplete: (() -> Void)?
+    
+    var body: some View {
+        Group {
+            if images.isEmpty {
+                // Fallback to static Mojo image
+                Image("Mojo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: height)
+            } else {
+                Image(uiImage: images[currentFrame])
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: height)
+            }
+        }
+        .onAppear {
+            loadGif()
+        }
+        .onDisappear {
+            stopAnimation()
+        }
+        .onChange(of: gifType) { _ in
+            stopAnimation()
+            loadGif()
+        }
+    }
+    
+    private func loadGif() {
+        guard let gifPath = Bundle.main.path(forResource: gifType.rawValue, ofType: "gif"),
+              let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
+              let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
+            print("DEBUG: GIF file '\(gifType.rawValue).gif' not found")
+            images = []
+            return
+        }
+        
+        let imageCount = CGImageSourceGetCount(source)
+        var loadedImages: [UIImage] = []
+        var totalDuration: TimeInterval = 0
+        
+        for i in 0..<imageCount {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
+                let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
+                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                    ?? 0.1
+                totalDuration += frameDuration
+                loadedImages.append(UIImage(cgImage: cgImage))
+            }
+        }
+        
+        images = loadedImages
+        animationDuration = max(totalDuration, 0.5)
+        
+        if !images.isEmpty {
+            startAnimation()
+        }
+    }
+    
+    private func startAnimation() {
+        guard !images.isEmpty else { return }
+        
+        isAnimating = true
+        currentFrame = 0
+        
+        let frameInterval = animationDuration / Double(images.count)
+        var loopCount = 0
+        
+        timer = Timer.scheduledTimer(withTimeInterval: frameInterval, repeats: true) { _ in
+            if currentFrame < images.count - 1 {
+                currentFrame += 1
+            } else {
+                if playOnce {
+                    stopAnimation()
+                    onAnimationComplete?()
+                } else {
+                    currentFrame = 0
+                    loopCount += 1
+                }
+            }
+        }
+    }
+    
+    private func stopAnimation() {
+        timer?.invalidate()
+        timer = nil
+        isAnimating = false
+    }
 }
 
 struct FlashCardView: View {
@@ -104,6 +217,11 @@ struct FlashCardView: View {
     @State private var mojoInitialPosition: CGPoint = .zero
     @State private var cardScale: CGFloat = 1.0
     @State private var isMojoOnLeft = true  // This will determine Mojo's fixed position
+    
+    // Mojo GIF state
+    @State private var currentMojoGif: MojoGifType = .hey
+    @State private var playMojoOnce: Bool = false
+    @State private var mojoGifKey: UUID = UUID() // Used to force refresh GIF
     
     var body: some View {
         GeometryReader { geometry in
@@ -453,10 +571,13 @@ struct FlashCardView: View {
         if isSpeakingFact {
             factSpeechSynthesizer.stopSpeaking(at: .immediate)
             isSpeakingFact = false
+            monkeyState = .thinking
             return
         }
         
-        // Start speaking the fact
+        // Start speaking the fact - use TalkingMojo
+        monkeyState = .speakingFact(text: currentFact)
+        
         let utterance = AVSpeechUtterance(string: currentFact)
         utterance.rate = 0.5
         utterance.pitchMultiplier = 1.1
@@ -466,6 +587,16 @@ struct FlashCardView: View {
         // Start speaking and update state
         isSpeakingFact = true
         factSpeechSynthesizer.speak(utterance)
+        
+        // Listen for speech completion to reset state
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(currentFact.count) * 0.08) {
+            if self.isSpeakingFact {
+                self.isSpeakingFact = false
+                withAnimation {
+                    self.monkeyState = .thinking
+                }
+            }
+        }
     }
     
     private func toggleFact() {
@@ -501,6 +632,16 @@ struct FlashCardView: View {
             }
         }
         
+        // Configure audio session before starting
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("DEBUG: Failed to configure audio session: \(error)")
+            return
+        }
+        
         isListening = true
         
         // Cancel any existing subscription
@@ -530,6 +671,13 @@ struct FlashCardView: View {
         isListening = false
         speechProcessor.stopRecording()
         speechSubscription?.cancel()
+        
+        // Deactivate audio session
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("DEBUG: Failed to deactivate audio session: \(error)")
+        }
     }
     
     private func setupCelebrationSound() {
@@ -1239,6 +1387,27 @@ struct MojoWithDialog: View {
     let scale: CGFloat
     let opacity: Double
     
+    // GIF animation states
+    @State private var currentGifType: MojoGifType = .hey
+    @State private var playOnce: Bool = false
+    @State private var gifKey: UUID = UUID()
+    @State private var showStaticMojo: Bool = false
+    @State private var lastStateId: String = ""
+    
+    // Convert state to string ID for comparison
+    private var stateId: String {
+        switch state {
+        case .greeting: return "greeting"
+        case .listening: return "listening"
+        case .happy: return "happy"
+        case .encouraging: return "encouraging"
+        case .thinking: return "thinking"
+        case .speaking(let text): return "speaking_\(text)"
+        case .speakingFact(let text): return "speakingFact_\(text)"
+        case .speakingFeedback(let text, let isGood): return "speakingFeedback_\(text)_\(isGood)"
+        }
+    }
+    
     init(state: MonkeyInstructorView.MonkeyState, 
          size: CGSize, 
          position: MojoPosition, 
@@ -1272,25 +1441,106 @@ struct MojoWithDialog: View {
                     .opacity(opacity)
             }
             
-            // Mojo image
-            Image("Mojo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: size.height * 0.4)
-                .scaleEffect(isAnimating ? 1.05 * scale : 1.0 * scale)
-                .offset(y: isAnimating ? -5 : 0)
-                .opacity(opacity)
-                .animation(
-                    Animation.easeInOut(duration: 1.5)
-                        .repeatForever(autoreverses: true),
-                    value: isAnimating
-                )
-                .onAppear {
-                    isAnimating = true
+            // Mojo GIF or static image
+            Group {
+                if showStaticMojo {
+                    Image("Mojo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: size.height * 0.4)
+                } else {
+                    MojoGifView(
+                        gifType: currentGifType,
+                        height: size.height * 0.4,
+                        playOnce: playOnce,
+                        onAnimationComplete: {
+                            // After one-time animation completes, switch to hey or idle
+                            withAnimation {
+                                currentGifType = .hey
+                                playOnce = false
+                                gifKey = UUID()
+                            }
+                        }
+                    )
+                    .id(gifKey)
                 }
+            }
+            .scaleEffect(isAnimating ? 1.05 * scale : 1.0 * scale)
+            .offset(y: isAnimating ? -5 : 0)
+            .opacity(opacity)
+            .animation(
+                Animation.easeInOut(duration: 1.5)
+                    .repeatForever(autoreverses: true),
+                value: isAnimating
+            )
+            .onAppear {
+                isAnimating = true
+                lastStateId = stateId
+                updateGifForState()
+            }
+            .onChange(of: stateId) { newStateId in
+                if newStateId != lastStateId {
+                    lastStateId = newStateId
+                    updateGifForState()
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .zIndex(0)
+    }
+    
+    private func updateGifForState() {
+        withAnimation {
+            switch state {
+            case .greeting:
+                currentGifType = .hey
+                playOnce = false
+                showStaticMojo = false
+                
+            case .listening:
+                currentGifType = .hey
+                playOnce = false
+                showStaticMojo = false
+                
+            case .happy:
+                currentGifType = .dancing
+                playOnce = true
+                showStaticMojo = false
+                gifKey = UUID() // Force refresh
+                
+            case .encouraging:
+                currentGifType = .sad
+                playOnce = true
+                showStaticMojo = false
+                gifKey = UUID() // Force refresh
+                
+            case .thinking:
+                currentGifType = .hey
+                playOnce = false
+                showStaticMojo = false
+                
+            case .speaking:
+                currentGifType = .talking
+                playOnce = false
+                showStaticMojo = false
+                
+            case .speakingFact:
+                currentGifType = .talking
+                playOnce = false
+                showStaticMojo = false
+                
+            case .speakingFeedback(_, let isGood):
+                if isGood {
+                    currentGifType = .dancing
+                    playOnce = true
+                } else {
+                    currentGifType = .sad
+                    playOnce = true
+                }
+                showStaticMojo = false
+                gifKey = UUID() // Force refresh
+            }
+        }
     }
     
     private func getMessageForState() -> String? {

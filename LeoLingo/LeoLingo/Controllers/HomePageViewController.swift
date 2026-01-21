@@ -109,10 +109,16 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     private func loadPersistedData() {
-        // Load total time spent
+        // Load total time spent (cumulative across all sessions)
         totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
         dailyTimeSpent = UserDefaults.standard.double(forKey: "dailyTimeSpent")
         selectedDuration = UserDefaults.standard.double(forKey: "selectedDuration")
+        
+        // Set default duration if not set
+        if selectedDuration == 0 {
+            selectedDuration = 1800 // Default 30 minutes
+            UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
+        }
         
         // Initialize days used if not set
         if UserDefaults.standard.object(forKey: "daysUsed") == nil {
@@ -123,15 +129,21 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if let lastResetTimeStamp = UserDefaults.standard.object(forKey: "lastResetDate") as? Date {
             lastResetDate = lastResetTimeStamp
             
-            // Check if we need to reset (if we've passed midnight since last reset)
+            // Check if we need to reset daily time (if we've passed midnight since last reset)
             if shouldResetTimer() {
-                resetTimer()
+                resetDailyTimer()
             }
         } else {
             // First time running app, set initial reset date
             lastResetDate = Date()
             UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
         }
+        
+        print("DEBUG: Loaded persisted data:")
+        print("  - Total time spent: \(totalTimeSpent) seconds")
+        print("  - Daily time spent: \(dailyTimeSpent) seconds")
+        print("  - Selected duration: \(selectedDuration) seconds")
+        print("  - Days used: \(UserDefaults.standard.integer(forKey: "daysUsed"))")
     }
     
     private func shouldResetTimer() -> Bool {
@@ -146,7 +158,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         return !calendar.isDate(lastReset, inSameDayAs: now)
     }
     
-    private func resetTimer() {
+    private func resetDailyTimer() {
+        // Only reset daily time, NOT total time
         dailyTimeSpent = 0
         lastResetDate = Date()
         
@@ -159,31 +172,45 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
         UserDefaults.standard.synchronize()
         
+        print("DEBUG: Daily timer reset. New day started. Days used: \(daysUsed + 1)")
+        
         // Update UI
         updateTimeDisplay()
     }
     
     @objc private func appWillResignActive() {
-        // Save timer state
+        // Save timer state when app goes to background
         pausedDate = Date()
-        if let startTime = startTime {
-            elapsedTimeBeforePause = Date().timeIntervalSince(startTime)
-            // Save to UserDefaults
-            UserDefaults.standard.set(totalTimeSpent, forKey: "totalTimeSpent")
-            UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
-            UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
-            UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
-            UserDefaults.standard.synchronize()
-        }
+        
+        // Save all time data
+        UserDefaults.standard.set(totalTimeSpent, forKey: "totalTimeSpent")
+        UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
+        UserDefaults.standard.set(selectedDuration, forKey: "selectedDuration")
+        UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
+        UserDefaults.standard.synchronize()
+        
+        print("DEBUG: App going to background. Saved time data:")
+        print("  - Total time: \(totalTimeSpent) seconds")
+        print("  - Daily time: \(dailyTimeSpent) seconds")
+        
         timer?.invalidate()
         timer = nil
     }
     
     @objc private func appDidBecomeActive() {
-        // Check if we need to reset the timer
+        // Reload persisted data
+        totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
+        dailyTimeSpent = UserDefaults.standard.double(forKey: "dailyTimeSpent")
+        
+        // Check if we need to reset the daily timer
         if shouldResetTimer() {
-            resetTimer()
+            resetDailyTimer()
         }
+        
+        print("DEBUG: App became active. Restored time data:")
+        print("  - Total time: \(totalTimeSpent) seconds")
+        print("  - Daily time: \(dailyTimeSpent) seconds")
+        
         restoreTimerState()
     }
     
@@ -485,7 +512,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             // Check for midnight reset before updating display
             if self.shouldResetTimer() {
-                self.resetTimer()
+                self.resetDailyTimer()
             }
             self.updateTimeDisplay()
         }
@@ -510,8 +537,7 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     private func updateTimeDisplay() {
-        guard let startTime = startTime else { return }
-        let currentElapsedTime = Date().timeIntervalSince(startTime)
+        guard startTime != nil else { return }
         
         // Check if vocal coach is active from UserDefaults
         let isVocalCoachActive = UserDefaults.standard.bool(forKey: "isVocalCoachActive")
@@ -521,12 +547,12 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             dailyTimeSpent += 1 // Add one second
             totalTimeSpent += 1
             
-            // Save total time immediately for real-time updates in dashboard
+            // Save time data for persistence
             UserDefaults.standard.set(totalTimeSpent, forKey: "totalTimeSpent")
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
         }
         
-        // Format daily time
+        // Format daily time - show remaining time for today's goal
         let remainingSeconds = max(selectedDuration - dailyTimeSpent, 0)
         let hours = Int(remainingSeconds) / 3600
         let minutes = Int(remainingSeconds) / 60 % 60
@@ -543,17 +569,14 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             }
             timeLeft.textColor = .black
         } else {
-            timeLeft.text = "Daily limit reached!"
-            timeLeft.textColor = .black
+            timeLeft.text = "Daily goal reached! 🎉"
+            timeLeft.textColor = UIColor(red: 75/255, green: 142/255, blue: 79/255, alpha: 1.0)
         }
         
         // Update progress bar with smooth animation
         UIView.animate(withDuration: 0.3) {
             self.timeLeftBar.progress = min(Float(self.dailyTimeSpent) / Float(self.selectedDuration), 1.0)
         }
-        
-        // Save daily state
-        UserDefaults.standard.set(dailyTimeSpent, forKey: "dailyTimeSpent")
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

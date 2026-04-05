@@ -21,7 +21,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="hzj-Up-NnC">
-                                <rect key="frame" x="352" y="147" width="672" height="742"/>
+                                <rect key="frame" x="246" y="123" width="884" height="786"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="G9u-LQ-kXi">
                                     <size key="itemSize" width="128" height="128"/>
@@ -44,17 +44,17 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="hzj-Up-NnC" secondAttribute="trailing" constant="352" id="0RC-Fw-ghI"/>
-                            <constraint firstItem="hzj-Up-NnC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="352" id="4AQ-jr-LbK"/>
-                            <constraint firstItem="hzj-Up-NnC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="123" id="9Gh-Zg-8XU"/>
-                            <constraint firstItem="hzj-Up-NnC" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="A07-fa-SdL"/>
+                            <constraint firstItem="hzj-Up-NnC" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" constant="-246" id="0RC-Fw-ghI"/>
+                            <constraint firstItem="hzj-Up-NnC" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="246" id="4AQ-jr-LbK"/>
+                            <constraint firstItem="hzj-Up-NnC" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="123" id="9Gh-Zg-8XU"/>
                             <constraint firstAttribute="bottom" secondItem="cee-6c-Sgc" secondAttribute="bottom" id="ffT-W4-nen"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="hzj-Up-NnC" secondAttribute="bottom" constant="123" id="fpM-to-Qv3"/>
+                            <constraint firstItem="hzj-Up-NnC" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" constant="-123" id="fpM-to-Qv3"/>
                             <constraint firstItem="cee-6c-Sgc" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="hIL-JL-149"/>
                             <constraint firstItem="cee-6c-Sgc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="l1Q-hs-Lpe"/>
                             <constraint firstItem="cee-6c-Sgc" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="yVT-BJ-4Si"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Jwb-0t-PVn"/>
                     <connections>
                         <outlet property="signUpCollectionView" destination="hzj-Up-NnC" id="o7O-kL-hkD"/>
                     </connections>
@@ -63,18 +63,10 @@
             </objects>
             <point key="canvasLocation" x="-281" y="863"/>
         </scene>
-        <!--Questionnaire-->
-        <scene sceneID="Bev-DK-9Yr">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Questionnaire" id="ALH-8T-U74" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4Xj-m9-jHr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="641"/>
-        </scene>
         <!--Log In View Controller-->
         <scene sceneID="hVp-PR-TXh">
             <objects>
-                <viewController id="tTY-aK-vk7" customClass="LogInViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="tTY-aK-vk7" customClass="LogInViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="m1U-xL-amb">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -83,7 +75,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="1Dv-zG-HmB">
-                                <rect key="frame" x="352" y="197" width="672" height="692"/>
+                                <rect key="frame" x="246" y="123" width="884" height="786"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="kqC-6x-3Uo">
                                     <size key="itemSize" width="128" height="128"/>
@@ -106,13 +98,12 @@
                         <viewLayoutGuide key="safeArea" id="834-BB-6hL"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="834-BB-6hL" firstAttribute="trailing" secondItem="1Dv-zG-HmB" secondAttribute="trailing" constant="352" id="1AH-zh-qsn"/>
+                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="trailing" secondItem="m1U-xL-amb" secondAttribute="trailing" constant="-246" id="1AH-zh-qsn"/>
                             <constraint firstItem="jsd-cd-aVk" firstAttribute="top" secondItem="m1U-xL-amb" secondAttribute="top" id="6wo-cu-8iO"/>
-                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="centerX" secondItem="m1U-xL-amb" secondAttribute="centerX" id="TSX-aU-Eje"/>
-                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="leading" secondItem="834-BB-6hL" secondAttribute="leading" constant="352" id="XY0-VC-fLK"/>
-                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="top" secondItem="834-BB-6hL" secondAttribute="top" constant="123" id="aXg-wI-dMi"/>
+                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="leading" secondItem="m1U-xL-amb" secondAttribute="leading" constant="246" id="XY0-VC-fLK"/>
+                            <constraint firstItem="1Dv-zG-HmB" firstAttribute="top" secondItem="m1U-xL-amb" secondAttribute="top" constant="123" id="aXg-wI-dMi"/>
                             <constraint firstAttribute="bottom" secondItem="jsd-cd-aVk" secondAttribute="bottom" id="fHv-Pz-rBN"/>
-                            <constraint firstItem="834-BB-6hL" firstAttribute="bottom" secondItem="1Dv-zG-HmB" secondAttribute="bottom" constant="123" id="kdH-V3-2Aw"/>
+                            <constraint firstAttribute="bottom" secondItem="1Dv-zG-HmB" secondAttribute="bottom" constant="123" id="kdH-V3-2Aw"/>
                             <constraint firstItem="jsd-cd-aVk" firstAttribute="trailing" secondItem="834-BB-6hL" secondAttribute="trailing" id="rZ2-Ju-Hpi"/>
                             <constraint firstItem="jsd-cd-aVk" firstAttribute="leading" secondItem="834-BB-6hL" secondAttribute="leading" id="u9v-xP-zJK"/>
                         </constraints>
@@ -120,6 +111,7 @@
                     <navigationItem key="navigationItem" id="ZWK-Lh-aWQ"/>
                     <connections>
                         <outlet property="logInCollectionView" destination="1Dv-zG-HmB" id="ZQc-QT-22e"/>
+                        <segue destination="BYZ-38-t0r" kind="show" id="NmE-Nm-bDF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ywb-eV-zgh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -143,30 +135,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q8W-gb-EKU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-977" y="139"/>
-        </scene>
-        <!--Storyboard Reference-->
-        <scene sceneID="dAg-3H-yMU">
-            <objects>
-                <viewControllerPlaceholder id="auY-R7-qgd" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="STc-T6-jBU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="693"/>
-        </scene>
-        <!--Storyboard Reference-->
-        <scene sceneID="0sn-8a-ied">
-            <objects>
-                <viewControllerPlaceholder id="mEG-Y8-daL" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Yoe-V3-ZtW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="756"/>
-        </scene>
-        <!--Tarun-->
-        <scene sceneID="GCQ-Hh-hEg">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Tarun" id="to0-1A-Jfx" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tQC-mw-dfu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="182" y="823"/>
         </scene>
     </scenes>
     <resources>

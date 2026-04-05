@@ -1,0 +1,375 @@
+//
+//  BadgesDataController.swift
+//  LeoLingo
+//
+//  Created by Batch - 2  on 23/01/25.
+//
+
+import Foundation
+// Import the containing module to disambiguate types
+import SwiftUI
+
+class SampleDataController {
+    
+    private var badges: [AppBadge] = []
+    private var levels: [AppLevel] = []
+    private var cards: [AppCard] = []
+    private var levelCards : [LevelCard] = []
+    private var exercises: [String: Exercise] = [:]
+    private var categories: [AppCategory] = []
+    private var categoryCards : [CategoryCard] = []
+    
+    static var shared = SampleDataController()
+    
+    private init() {
+        loadData()
+    }
+    
+    func loadData() {
+        // Initialize WordIDManager
+        let wordManager = WordIDManager.shared
+        
+        // Helper function to create AppWord with consistent ID
+        func createWord(title: String, image: String) -> AppWord {
+            return AppWord(wordTitle: title, wordImage: image)
+        }
+        
+        levels = [
+            AppLevel(levelTitle: "Level 1", levelImage: "1", words: [
+//                createWord(title: "A", image: "a"),
+                createWord(title: "Alarm", image: "alarm"),
+                createWord(title: "Army", image: "army"),
+                createWord(title: "Art", image: "art"),
+                createWord(title: "Apple", image: "apple"),
+                createWord(title: "Ant", image: "ant")
+            ]),
+            AppLevel(levelTitle: "Level 2", levelImage: "2", words: [
+//                createWord(title: "B", image: "b"),
+                createWord(title: "Black", image: "black"),
+                createWord(title: "Bread", image: "bread"),
+                createWord(title: "Broom", image: "broom"),
+                createWord(title: "Brick", image: "brick"),
+                createWord(title: "Brother", image: "brother")
+            ]),
+            AppLevel(levelTitle: "Level 3", levelImage: "3", words: [
+//                createWord(title: "R", image: "r"),
+                createWord(title: "Ring", image: "ring"),
+                createWord(title: "Rice", image: "rice"),
+                createWord(title: "Red", image: "red"),
+                createWord(title: "Read", image: "read"),
+                createWord(title: "Run", image: "run")
+            ]),
+            AppLevel(levelTitle: "Level 4", levelImage: "4", words: [
+                createWord(title: "Fire", image: "fire"),
+                createWord(title: "Frog", image: "frog"),
+                createWord(title: "Fruit", image: "fruits"),
+                createWord(title: "Frame", image: "frame"),
+                createWord(title: "Flute", image: "flute"),
+                createWord(title: "Flower", image: "flower")
+            ]),
+            AppLevel(levelTitle: "Level 5", levelImage: "5", words: [
+                createWord(title: "Lunch", image: "lunch"),
+                createWord(title: "Lips", image: "lips"),
+                createWord(title: "Lamp", image: "lamp"),
+                createWord(title: "Laugh", image: "laugh"),
+                createWord(title: "Lamp", image: "lamp"),
+                createWord(title: "Leaf", image: "leaf")
+            ]),
+            AppLevel(levelTitle: "Level 6", levelImage: "6", words: [
+                createWord(title: "Lion", image: "JungleLion"),
+                createWord(title: "Wire", image: "wire"),
+                createWord(title: "Wrist", image: "wrist"),
+                createWord(title: "Watch", image: "watch"),
+                createWord(title: "Wall", image: "wall"),
+                createWord(title: "Market", image: "market")
+            ]),
+            AppLevel(levelTitle: "Level 7", levelImage: "7", words: [
+                createWord(title: "City", image: "city"),
+                createWord(title: "Ear", image: "ear"),
+                createWord(title: "Eye", image: "eye"),
+                createWord(title: "Book", image: "book"),
+                createWord(title: "Pen", image: "pen"),
+                createWord(title: "Sun", image: "sun")
+            ]),
+            AppLevel(levelTitle: "Level 8", levelImage: "8", words: [
+                createWord(title: "Sand", image: "sand"),
+                createWord(title: "Snow", image: "snow"),
+                createWord(title: "Sky", image: "sky"),
+                createWord(title: "Snake", image: "snake"),
+                createWord(title: "Sing", image: "sing"),
+                createWord(title: "Superhero", image: "superhero")
+            ]),
+            AppLevel(levelTitle: "Level 9", levelImage: "9", words: [
+                createWord(title: "School", image: "school"),
+                createWord(title: "Sweater", image: "sweater"),
+                createWord(title: "Swim", image: "swim"),
+                createWord(title: "Star", image: "star"),
+                createWord(title: "Soup", image: "soup"),
+                createWord(title: "Swan", image: "swan")
+            ]),
+            AppLevel(levelTitle: "Level 10", levelImage: "10", words: [
+                createWord(title: "School", image: "school"),
+                createWord(title: "Sweater", image: "sweater"),
+                createWord(title: "Swim", image: "swim"),
+                createWord(title: "Star", image: "star"),
+                createWord(title: "Soup", image: "soup"),
+                createWord(title: "Swan", image: "swan")
+            ])
+        ]
+        categories = [
+            AppCategory(categoryTitle: "Body Parts", categoryImage: "BodyParts", words: [
+                AppWord(wordTitle: "Eye", wordImage: "eye"),
+                AppWord(wordTitle: "Thumb", wordImage: "thumb"),
+                AppWord(wordTitle: "Palm", wordImage: "palm"),
+                AppWord(wordTitle: "Nose", wordImage: "nose"),
+                AppWord(wordTitle: "Lips", wordImage: "lips"),
+                AppWord(wordTitle: "Ear", wordImage: "ear")
+                ]),
+            AppCategory(categoryTitle: "Fruits", categoryImage: "Fruits", words: [
+                AppWord(wordTitle: "Apple", wordImage: "apple"),
+                AppWord(wordTitle: "Banana", wordImage: "banana")
+                ]),
+            AppCategory(categoryTitle: "Vehicles", categoryImage: "Vehicles", words: [
+                AppWord(wordTitle: "Car", wordImage: "car"),
+                AppWord(wordTitle: "Bus", wordImage: "bus")
+                ]),
+            AppCategory(categoryTitle: "Fruits", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Animals", categoryImage: "Animals", words: []),
+            AppCategory(categoryTitle: "Clothes", categoryImage: "Clothes", words: []),
+            AppCategory(categoryTitle: "Monuments", categoryImage: "Monuments", words: []),
+            AppCategory(categoryTitle: "Time", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Actions", categoryImage: "Fruits", words: []),
+            AppCategory(categoryTitle: "Relations", categoryImage: "Fruits", words: []),
+        ]
+        badges = [
+            AppBadge(badgeTitle: "NewLeo", badgeDescription: "NewLeo (You have taken the first step)", badgeImage: "Newleo"),
+            AppBadge(badgeTitle: "Bee", badgeDescription: "Busy Bee(You have vocalised the first word)", badgeImage: "bee"),
+            AppBadge(badgeTitle: "Turtle", badgeDescription: "Persistent Achiever(Steady Progress Over Time", badgeImage: "turtle"),
+            AppBadge(badgeTitle: "Elephant", badgeDescription: "Master of Speech(Major Milestones Reached)", badgeImage: "elephant"),
+            AppBadge(badgeTitle: "Dog", badgeDescription: "Loyal Learner(Regular Practice)", badgeImage: "dog"),
+            AppBadge(badgeTitle: "Bunny", badgeDescription: "Quick Learner(Fast Improvement)", badgeImage: "bunny"),
+            AppBadge(badgeTitle: "Lion", badgeDescription: "Learner(Fast Improvements)", badgeImage: "lion"),
+            AppBadge(badgeTitle: "Level 1", badgeDescription: "This is Level 1", badgeImage: "1"),
+            AppBadge(badgeTitle: "Level 2", badgeDescription: "This is Level 2", badgeImage: "2"),
+            AppBadge(badgeTitle: "Level 3", badgeDescription: "This is Level 3", badgeImage: "3"),
+            AppBadge(badgeTitle: "Level 4", badgeDescription: "This is Level 4", badgeImage: "4"),
+            AppBadge(badgeTitle: "Level 5", badgeDescription: "This is Level 5", badgeImage: "5"),
+            AppBadge(badgeTitle: "Level 6", badgeDescription: "This is Level 6", badgeImage: "6"),
+            AppBadge(badgeTitle: "Level 7", badgeDescription: "This is Level 7", badgeImage: "7"),
+            AppBadge(badgeTitle: "Level 8", badgeDescription: "This is Level 8", badgeImage: "8"),
+            AppBadge(badgeTitle: "Level 9", badgeDescription: "This is Level 9", badgeImage: "9"),
+            AppBadge(badgeTitle: "Level 10", badgeDescription: "This is Level 10", badgeImage: "10"),
+            AppBadge(badgeTitle: "Level 11", badgeDescription: "This is Level 11", badgeImage: "11"),
+            AppBadge(badgeTitle: "Level 12", badgeDescription: "This is Level 12", badgeImage: "12"),
+            AppBadge(badgeTitle: "Level 13", badgeDescription: "This is Level 13", badgeImage: "13"),
+            AppBadge(badgeTitle: "Level 14", badgeDescription: "This is Level 14", badgeImage: "14"),
+            AppBadge(badgeTitle: "Level 15", badgeDescription: "This is Level 15", badgeImage: "15"),
+            AppBadge(badgeTitle: "Level 16", badgeDescription: "This is Level 16", badgeImage: "16"),
+            AppBadge(badgeTitle: "Level 17", badgeDescription: "This is Level 17", badgeImage: "17"),
+            AppBadge(badgeTitle: "Level 18", badgeDescription: "This is Level 18", badgeImage: "18"),
+            AppBadge(badgeTitle: "Level 19", badgeDescription: "This is Level 19", badgeImage: "19"),
+            AppBadge(badgeTitle: "Level 20", badgeDescription: "This is Level 20", badgeImage: "20"),
+            AppBadge(badgeTitle: "Level 21", badgeDescription: "This is Level 21", badgeImage: "21"),
+            AppBadge(badgeTitle: "Level 22", badgeDescription: "This is Level 22", badgeImage: "22"),
+            AppBadge(badgeTitle: "Level 23", badgeDescription: "This is Level 23", badgeImage: "23"),
+            AppBadge(badgeTitle: "Level 24", badgeDescription: "This is Level 24", badgeImage: "24"),
+            AppBadge(badgeTitle: "Level 25", badgeDescription: "This is Level 25", badgeImage: "25"),
+            AppBadge(badgeTitle: "Level 26", badgeDescription: "This is Level 26", badgeImage: "26"),
+            AppBadge(badgeTitle: "Level 27", badgeDescription: "This is Level 27", badgeImage: "27"),
+            AppBadge(badgeTitle: "Level 28", badgeDescription: "This is Level 28", badgeImage: "28"),
+            AppBadge(badgeTitle: "Level 29", badgeDescription: "This is Level 29", badgeImage: "29"),
+            AppBadge(badgeTitle: "Level 30", badgeDescription: "This is Level 30", badgeImage: "30")
+        ]
+        cards = [
+            AppCard(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
+            AppCard(cardTitle: "BodyParts", cardImage: "BodyParts", words: [
+                createWord(title: "Wrist", image: "wrist"),
+                createWord(title: "Lips", image: "lips"),
+                createWord(title: "Eye", image: "eye"),
+                createWord(title: "Ear", image: "ear"),
+                createWord(title: "Thumb", image: "thumb"),
+                createWord(title: "Nose", image: "nose"),
+                createWord(title: "Palm", image: "palm")
+            ]),
+            AppCard(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            AppCard(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            AppCard(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            AppCard(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
+            AppCard(cardTitle: "Earlywords", cardImage: "EarlyWords", words: []),
+            AppCard(cardTitle: "BodyParts", cardImage: "BodyParts", words: []),
+            AppCard(cardTitle: "Lsounds", cardImage: "Lsounds", words: []),
+            AppCard(cardTitle: "Rsounds", cardImage: "Rsounds", words: []),
+            AppCard(cardTitle: "Ssounds", cardImage: "Ssounds", words: []),
+            AppCard(cardTitle: "Vsounds", cardImage: "Vsounds", words: []),
+            AppCard(cardTitle: "EarlyWords", cardImage: "EarlyWords", words: [])
+        ]
+        
+        exercises = [
+            "a": Exercise(
+                description: "Practice the 'A' sound with mouth opening exercises.",
+                videos: ["https://www.youtube.com/watch?v=4SNO61r4Nz8"]
+            ),
+            "b": Exercise(
+                description: "Practice the 'B' sound by pressing lips together.",
+                videos: ["https://www.youtube.com/watch?v=746Aq0ndZy0"]
+            ),
+            "c": Exercise(
+                description: "Practice the 'C/K' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=0z80Zt66RcU"]
+            ),
+            "d": Exercise(
+                description: "Practice the 'D' sound with tongue tip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "e": Exercise(
+                description: "Practice the 'E' sound with smile position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "f": Exercise(
+                description: "Practice the 'F' sound by placing top teeth on lower lip.",
+                videos: ["https://www.youtube.com/watch?v=xA61MYdspgM"]
+            ),
+            "g": Exercise(
+                description: "Practice the 'G' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=bSlb9yscpbw"]
+            ),
+            "h": Exercise(
+                description: "Practice the 'H' sound with gentle breath exercises.",
+                videos: ["https://www.youtube.com/watch?v=3-qJF9ZstLQ"]
+            ),
+            "i": Exercise(
+                description: "Practice the 'I' sound with tongue position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "j": Exercise(
+                description: "Practice the 'J' sound with tongue and lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=xETjN3Y24cQ"]
+            ),
+            "k": Exercise(
+                description: "Practice the 'K' sound with back of tongue exercises.",
+                videos: ["https://www.youtube.com/watch?v=JwKKfHIpOX8"]
+            ),
+            "l": Exercise(
+                description: "Practice the 'L' sound by lifting tongue tip to roof of mouth.",
+                videos: ["https://www.youtube.com/watch?v=_IAEg3igJVI"]
+            ),
+            "m": Exercise(
+                description: "Practice the 'M' sound by humming with closed lips.",
+                videos: ["https://www.youtube.com/watch?v=0VCeITL8P4E"]
+            ),
+            "n": Exercise(
+                description: "Practice the 'N' sound with tongue tip behind front teeth.",
+                videos: ["https://www.youtube.com/watch?v=oun0cGPMHZQ"]
+            ),
+            "o": Exercise(
+                description: "Practice the 'O' sound with rounded lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "p": Exercise(
+                description: "Practice the 'P' sound by popping lips together.",
+                videos: ["https://www.youtube.com/watch?v=yJK2UZ2YkwA"]
+            ),
+            "q": Exercise(
+                description: "Practice the 'Q/KW' sound combination exercises.",
+                videos: ["https://www.youtube.com/watch?v=JwKKfHIpOX8"]
+            ),
+            "r": Exercise(
+                description: "Practice the 'R' sound by curling tongue back.",
+                videos: ["https://www.youtube.com/watch?v=dgAwcWO72z0"]
+            ),
+            "s": Exercise(
+                description: "Practice the 'S' sound with tongue behind front teeth.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
+            ),
+            "t": Exercise(
+                description: "Practice the 'T' sound by tapping tongue tip.",
+                videos: ["https://www.youtube.com/watch?v=j1ia8QFUIyg"]
+            ),
+            "u": Exercise(
+                description: "Practice the 'U' sound with rounded lip exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "v": Exercise(
+                description: "Practice the 'V' sound by placing top teeth on lower lip with voice.",
+                videos: ["https://www.youtube.com/watch?v=xA61MYdspgM"]
+            ),
+            "w": Exercise(
+                description: "Practice the 'W' sound by rounding lips forward.",
+                videos: ["https://www.youtube.com/watch?v=WHP9rOFibd4"]
+            ),
+            "x": Exercise(
+                description: "Practice the 'X/KS' sound combination exercises.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
+            ),
+            "y": Exercise(
+                description: "Practice the 'Y' sound with tongue position exercises.",
+                videos: ["https://www.youtube.com/watch?v=61xe97Nf8J4"]
+            ),
+            "z": Exercise(
+                description: "Practice the 'Z' sound with buzzing exercises.",
+                videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
+            )
+        ]
+        let levelCardImages = ["Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10"]
+       
+        levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
+        
+        let categoryCardImages = ["BodyParts", "Fruits", "Vehicles", "Animals", "Clothes", "Monuments", "Fruits", "Fruits", "Fruits"]
+        
+        categoryCards = zip(categories, categoryCardImages).map { CategoryCard(from: $0.0, categoryCardImage: $0.1) }
+    }
+    
+    func getLevelsData() -> [AppLevel] {
+        return levels
+    }
+    
+    func getCategoriesData() -> [AppCategory] {
+        return categories
+    }
+    func countWordsInCategory(at index: Int) -> Int {
+        let categories = SampleDataController.shared.getCategoriesData()
+        
+        guard index < categories.count else {
+            return 0
+        }
+        
+        return categories[index].words.count
+    }
+
+
+    func getBadgesData() -> [AppBadge] {
+        return badges
+    }
+    
+    func getBadges(by id: UUID) -> AppBadge? {
+        for badge in badges {
+            if badge.id == id {
+                return badge
+            }
+        }
+        return nil
+    }
+    
+    func getCardsData() -> [AppCard] {
+        return cards
+    }
+    
+    func countCards() -> Int {
+        return cards.count
+    }
+    func getExercisesData() -> [String : Exercise] {
+        return exercises
+    }
+    func getLevelCards() -> [LevelCard] {
+        return levelCards
+    }
+    func countLevelCards() -> Int {
+        return levelCards.count
+    }
+    func getCategoryCards() -> [CategoryCard] {
+        return categoryCards
+    }
+    func countCategoryCards() -> Int {
+        return categoryCards.count
+    }
+}

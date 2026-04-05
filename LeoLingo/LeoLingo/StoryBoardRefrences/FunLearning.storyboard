@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gd2-qT-yBX">
+    <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Fun Learning View Controller-->
+        <scene sceneID="Ivd-LC-U9p">
+            <objects>
+                <viewController storyboardIdentifier="FunLearningVC" id="dNv-Th-DI3" customClass="FunLearningViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kX9-gt-BHf">
+                        <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BaseBackdrop" translatesAutoresizingMaskIntoConstraints="NO" id="lzE-zW-nlS">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fun Learning" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kT7-al-VhL">
+                                <rect key="frame" x="360" y="25" width="460" height="60"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="460" id="9DZ-Dw-bot"/>
+                                    <constraint firstAttribute="height" constant="60" id="n63-eY-xdh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                <color key="textColor" red="0.52941176470588236" green="0.34901960784313724" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3N-lJ-2Oc">
+                                <rect key="frame" x="1004" y="25" width="151" height="46"/>
+                                <size key="titleShadowOffset" width="2" height="2"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" imagePlacement="trailing" title="Kid Mode" imagePadding="15" cornerStyle="capsule" titleAlignment="center">
+                                    <imageReference key="image" image="person.circle.fill" catalog="system" symbolScale="large"/>
+                                    <backgroundConfiguration key="background">
+                                        <color key="backgroundColor" white="1" alpha="0.77000000000000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </backgroundConfiguration>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26"/>
+                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="kidsModeButtonTapped:" destination="dNv-Th-DI3" eventType="touchUpInside" id="wbt-cu-y34"/>
+                                </connections>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="n0F-IR-SxY">
+                                <rect key="frame" x="133" y="141" width="914" height="539"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="539" id="O0F-3k-CzK"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="OA4-Th-Wyd">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="TON-cc-cfc">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="yIw-QJ-6YD">
+                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </collectionViewCellContentView>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="R9T-Zw-OeI"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="lzE-zW-nlS" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" id="52Z-eg-oaY"/>
+                            <constraint firstItem="lzE-zW-nlS" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" id="9bK-Bh-mr3"/>
+                            <constraint firstItem="R9T-Zw-OeI" firstAttribute="trailing" secondItem="t3N-lJ-2Oc" secondAttribute="trailing" constant="25" id="Eho-fx-8KF"/>
+                            <constraint firstAttribute="bottom" secondItem="lzE-zW-nlS" secondAttribute="bottom" id="IR5-4i-zz0"/>
+                            <constraint firstItem="lzE-zW-nlS" firstAttribute="trailing" secondItem="R9T-Zw-OeI" secondAttribute="trailing" id="N8d-Sa-UEm"/>
+                            <constraint firstItem="kT7-al-VhL" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="X4X-MI-QMr"/>
+                            <constraint firstItem="n0F-IR-SxY" firstAttribute="leading" secondItem="R9T-Zw-OeI" secondAttribute="leading" constant="133" id="Zns-Oe-FAt"/>
+                            <constraint firstItem="kT7-al-VhL" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="aaU-9M-GSk"/>
+                            <constraint firstItem="n0F-IR-SxY" firstAttribute="centerY" secondItem="kX9-gt-BHf" secondAttribute="centerY" constant="110" id="bdM-v9-vdh"/>
+                            <constraint firstItem="t3N-lJ-2Oc" firstAttribute="top" secondItem="kX9-gt-BHf" secondAttribute="top" constant="25" id="jyA-LT-Ibm"/>
+                            <constraint firstItem="n0F-IR-SxY" firstAttribute="centerX" secondItem="kX9-gt-BHf" secondAttribute="centerX" id="s3s-3a-nJ3"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="t3N-lJ-2Oc"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Cy9-KQ-HSd">
+                        <barButtonItem key="backBarButtonItem" title="Back" style="plain" id="d1U-G2-RbG"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="gamesCollectionView" destination="n0F-IR-SxY" id="siK-H4-xun"/>
+                        <outlet property="headingLabel" destination="kT7-al-VhL" id="d4u-yY-Kof"/>
+                        <outlet property="parentModeButton" destination="t3N-lJ-2Oc" id="OxU-JX-Ohc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pGA-nV-vB3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1455.0872093023256" y="-2.3255813953488373"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="nFS-6h-9Mc">
+            <objects>
+                <navigationController storyboardIdentifier="FunLearningNavBar" automaticallyAdjustsScrollViewInsets="NO" id="gd2-qT-yBX" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="g64-cu-BUz">
+                        <rect key="frame" x="0.0" y="24" width="1180" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dNv-Th-DI3" kind="relationship" relationship="rootViewController" id="lKY-5F-DcU"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yCr-4f-cTP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="761.77325581395348" y="-2.3255813953488373"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="BaseBackdrop" width="605" height="417"/>
+        <image name="person.circle.fill" catalog="system" width="128" height="123"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

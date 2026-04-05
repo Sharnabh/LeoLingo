@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build LeoLingo Project",
+			"type": "shell",
+			"command": "cd /Users/user/Documents/LeoLingo/LeoLingo && xcodebuild -project LeoLingo.xcodeproj -scheme LeoLingo -configuration Debug build",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [
+				"$xcodebuild"
+			]
+		}
+	]
+}

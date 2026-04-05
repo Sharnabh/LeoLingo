@@ -18,8 +18,8 @@ class OTPService {
         static let smtpHost = "smtp.gmail.com"
         static let smtpPort: Int32 = 587
         static let fromEmail = "sharnabhbanerjee3@gmail.com" // Replace with your email
-        static let fromPassword = "yqdv hzxg xsxl abpp" // Replace with your app password
-        static let fromName = "LeoLingo"
+        static let fromPassword = "jltf plkm ordx yzdw" // Replace with your app password
+        static let fromName = "Leo Lingo"
     }
     
     private init() {}

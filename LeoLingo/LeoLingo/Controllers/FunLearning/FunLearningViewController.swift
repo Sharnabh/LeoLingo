@@ -26,6 +26,7 @@ class FunLearningViewController: UIViewController {
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor.white.withAlphaComponent(0.77)
         button.layer.cornerRadius = 30
         button.clipsToBounds = true
@@ -46,53 +47,45 @@ class FunLearningViewController: UIViewController {
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         return button
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Create a container view to hold the back button with fixed size
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
-        containerView.addSubview(backButton)
-        
-        // Setup back button in navigation bar
-        let backBarButton = UIBarButtonItem(customView: containerView)
-        navigationItem.leftBarButtonItem = backBarButton
-        
-        // Create custom Kids Mode button with home screen style
-        let customButton = UIButton(type: .custom)
-        customButton.frame = CGRect(x: 0, y: 0, width: 151, height: 46)
-        
-        // Configure button appearance to match home screen
+
+    private lazy var kidsModeButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
         var config = UIButton.Configuration.filled()
         config.title = "Kid Mode"
+        config.titleLineBreakMode = .byTruncatingTail
         config.imagePlacement = .trailing
         config.imagePadding = 15
         config.cornerStyle = .capsule
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
-        
-        // Set image
+
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
-        let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
-        config.image = personImage
-        
-        // Colors to match home screen
+        config.image = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
         config.baseBackgroundColor = UIColor.white.withAlphaComponent(0.77)
         config.baseForegroundColor = .black
-        
-        // Apply configuration
-        customButton.configuration = config
-        
-        // Add shadow
-        customButton.layer.shadowColor = UIColor.black.cgColor
-        customButton.layer.shadowOffset = CGSize(width: 2, height: 2)
-        customButton.layer.shadowRadius = 2
-        customButton.layer.shadowOpacity = 0.2
-        
-        customButton.addTarget(self, action: #selector(kidsModeButtonTapped), for: .touchUpInside)
-        
-        // Create bar button item with custom button
-        let customBarButton = UIBarButtonItem(customView: customButton)
-        navigationItem.rightBarButtonItem = customBarButton
+        button.configuration = config
+        button.titleLabel?.numberOfLines = 1
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.85
+
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowRadius = 2
+        button.layer.shadowOpacity = 0.2
+
+        button.addTarget(self, action: #selector(kidsModeButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Use in-view controls instead of navigation bar items to avoid iOS 26 glass treatment.
+        navigationItem.leftBarButtonItem = nil
+        navigationItem.rightBarButtonItem = nil
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        setupTopButtons()
         
         // Hide the original button since we're using the custom one
         parentModeButton.isHidden = true
@@ -108,6 +101,23 @@ class FunLearningViewController: UIViewController {
         
         gamesCollectionView.delegate = self
         gamesCollectionView.dataSource = self
+    }
+
+    private func setupTopButtons() {
+        view.addSubview(backButton)
+        view.addSubview(kidsModeButton)
+
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.widthAnchor.constraint(equalToConstant: 60),
+            backButton.heightAnchor.constraint(equalToConstant: 60),
+
+            kidsModeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            kidsModeButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            kidsModeButton.widthAnchor.constraint(equalToConstant: 170),
+            kidsModeButton.heightAnchor.constraint(equalToConstant: 46)
+        ])
     }
     
     @objc private func backButtonTapped() {

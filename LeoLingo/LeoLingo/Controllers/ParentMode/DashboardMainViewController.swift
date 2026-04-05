@@ -10,42 +10,53 @@ import UIKit
 class DashboardMainViewController: UIViewController {
 
     @IBOutlet var dashbaordView: UIView!
+
+    private lazy var kidsModeButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 46))
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .white.withAlphaComponent(0.77)
+        button.setTitle("Go to Kids Mode", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.layer.cornerRadius = 23
+
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
+        let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
+        button.setImage(personImage, for: .normal)
+        button.tintColor = .black
+
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -15, bottom: 0, right: 0)
+        button.semanticContentAttribute = .forceRightToLeft
+
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowRadius = 2
+        button.layer.shadowOpacity = 0.2
+
+        button.addTarget(self, action: #selector(switchToKidsMode), for: .touchUpInside)
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Create custom Kids Mode button
-        let customButton = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 46))
-        customButton.backgroundColor = .white.withAlphaComponent(0.77)
-        customButton.setTitle("Go to Kids Mode", for: .normal)
-        customButton.setTitleColor(.black, for: .normal)
-        customButton.layer.cornerRadius = 23 // Half of height for capsule shape
-        
-        // Configure image
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 26)
-        let personImage = UIImage(systemName: "person.circle.fill", withConfiguration: imageConfig)
-        customButton.setImage(personImage, for: .normal)
-        customButton.tintColor = .black
-        
-        // Set image padding and position
-        customButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
-        customButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: -15, bottom: 0, right: 0)
-        customButton.semanticContentAttribute = .forceRightToLeft // Image on right
-        
-        // Add shadow
-        customButton.layer.shadowColor = UIColor.black.cgColor
-        customButton.layer.shadowOffset = CGSize(width: 2, height: 2)
-        customButton.layer.shadowRadius = 2
-        customButton.layer.shadowOpacity = 0.2
-        
-        customButton.addTarget(self, action: #selector(switchToKidsMode), for: .touchUpInside)
-        
-        // Create bar button item with custom button
-        let customBarButton = UIBarButtonItem(customView: customButton)
-        navigationItem.rightBarButtonItem = customBarButton
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationItem.rightBarButtonItem = nil
+        setupKidsModeButton()
 
         dashbaordView.backgroundColor = .none
         dashbaordView.layer.borderColor = .none
         dashbaordView.layer.borderWidth = 0
+    }
+
+    private func setupKidsModeButton() {
+        view.addSubview(kidsModeButton)
+        NSLayoutConstraint.activate([
+            kidsModeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            kidsModeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            kidsModeButton.widthAnchor.constraint(equalToConstant: 200),
+            kidsModeButton.heightAnchor.constraint(equalToConstant: 46)
+        ])
     }
     
     @objc private func switchToKidsMode() {

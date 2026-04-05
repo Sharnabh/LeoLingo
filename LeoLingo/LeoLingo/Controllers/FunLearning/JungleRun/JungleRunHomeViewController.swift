@@ -14,6 +14,7 @@ class JungleRunHomeViewController: UIViewController {
     private lazy var backButton: UIButton = {
         let size: CGFloat = 46
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: size, height: size))
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .white
         button.layer.cornerRadius = size/2
         button.layer.shadowColor = UIColor.black.cgColor
@@ -41,10 +42,20 @@ class JungleRunHomeViewController: UIViewController {
         diamondScoreLabel.text = "💎 Diamonds: \(diamondScore)"
         coinScoreLabel.textColor = .systemBrown
         diamondScoreLabel.textColor = .systemBrown
-        
-        // Setup back button in navigation bar
-        let backBarButton = UIBarButtonItem(customView: backButton)
-        navigationItem.leftBarButtonItem = backBarButton
+
+        navigationItem.leftBarButtonItem = nil
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        setupBackButton()
+    }
+
+    private func setupBackButton() {
+        view.addSubview(backButton)
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.widthAnchor.constraint(equalToConstant: 46),
+            backButton.heightAnchor.constraint(equalToConstant: 46)
+        ])
     }
     
     func updateScore(coin: Int, diamond: Int) {

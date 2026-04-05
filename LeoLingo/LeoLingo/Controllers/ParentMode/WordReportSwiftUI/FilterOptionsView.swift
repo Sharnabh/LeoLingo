@@ -55,18 +55,20 @@ struct FilterOptionsView: View {
             mapWordToInfo(level, word)
         }
     }
+
+    private func loadAllWordsFromDataController() -> [WordInfo] {
+        let userLevels = dataController.getAllLevels()
+        return userLevels.flatMap { level in
+            getWordsForLevel(level)
+        }
+    }
     
     private var allWords: [WordInfo] {
         if !cachedWords.isEmpty {
             return cachedWords
         }
-        
-        let userLevels = dataController.getAllLevels()
-        let words = userLevels.flatMap { level in
-            getWordsForLevel(level)
-        }
-        cachedWords = words
-        return words
+
+        return loadAllWordsFromDataController()
     }
     
     private func processWord(_ info: WordInfo) -> ProcessedWord {
@@ -202,7 +204,7 @@ struct FilterOptionsView: View {
                 isLoading = true
                 do {
                     _ = try await dataController.getUser(byId: userId)
-                    cachedWords = []  // Clear cache to force refresh
+                    cachedWords = loadAllWordsFromDataController()
                     shouldReloadProgress.toggle()
                 } catch {
                     print("Error loading user data: \(error)")

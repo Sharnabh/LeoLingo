@@ -152,8 +152,8 @@ class LevelCardViewController: UIViewController {
         progressView.translatesAutoresizingMaskIntoConstraints = false
         progressView.layer.cornerRadius = 6
         progressView.clipsToBounds = true
-        progressView.layer.sublayers![1].cornerRadius = 6
-        progressView.subviews[1].clipsToBounds = true
+        progressView.trackTintColor = UIColor.white.withAlphaComponent(0.25)
+        progressView.progressTintColor = UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
         progressView.transform = CGAffineTransform(scaleX: 1, y: 2)
         return progressView
     }()

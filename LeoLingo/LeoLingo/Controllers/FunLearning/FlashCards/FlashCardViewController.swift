@@ -44,7 +44,6 @@ class FlashCardViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Welcome to Flashcards")
 
         setupCollectionViewLayout()
         heading.text = "Body Parts"
@@ -141,8 +140,6 @@ class FlashCardViewController: UIViewController {
             // ✅ Ensure a centered word is selected
             guard let currentCell = centeredCell,
                   let currentWord = currentCell.title.text else { return }
-
-            print("Centered word: \(currentWord)")  // Print the centered word
             
             isListening = true
             updateSpeakButtonState(isListening: true)
@@ -158,10 +155,6 @@ class FlashCardViewController: UIViewController {
                     let distance = self.speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
                     let maxLength = max(spokenText.count, currentWord.count)
                     let accuracy = (1.0 - Double(distance) / Double(maxLength)) * 100.0
-                    
-                    print("Spoken text: \(spokenText)")  // Print what was spoken
-                    print("Distance: \(distance)")       // Print the Levenshtein distance
-                    print("Accuracy: \(accuracy)%")      // Print the accuracy
 
                     DispatchQueue.main.async {
                         if accuracy >= 70.0 {

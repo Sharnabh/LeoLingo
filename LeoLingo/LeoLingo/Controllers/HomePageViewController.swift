@@ -139,11 +139,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
         }
         
-        print("DEBUG: Loaded persisted data:")
-        print("  - Total time spent: \(totalTimeSpent) seconds")
-        print("  - Daily time spent: \(dailyTimeSpent) seconds")
-        print("  - Selected duration: \(selectedDuration) seconds")
-        print("  - Days used: \(UserDefaults.standard.integer(forKey: "daysUsed"))")
     }
     
     private func shouldResetTimer() -> Bool {
@@ -172,8 +167,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
         UserDefaults.standard.synchronize()
         
-        print("DEBUG: Daily timer reset. New day started. Days used: \(daysUsed + 1)")
-        
         // Update UI
         updateTimeDisplay()
     }
@@ -189,10 +182,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         UserDefaults.standard.set(lastResetDate, forKey: "lastResetDate")
         UserDefaults.standard.synchronize()
         
-        print("DEBUG: App going to background. Saved time data:")
-        print("  - Total time: \(totalTimeSpent) seconds")
-        print("  - Daily time: \(dailyTimeSpent) seconds")
-        
         timer?.invalidate()
         timer = nil
     }
@@ -206,10 +195,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         if shouldResetTimer() {
             resetDailyTimer()
         }
-        
-        print("DEBUG: App became active. Restored time data:")
-        print("  - Total time: \(totalTimeSpent) seconds")
-        print("  - Daily time: \(dailyTimeSpent) seconds")
         
         restoreTimerState()
     }
@@ -234,11 +219,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        print("DEBUG: HomeVC - View did appear")
         
         // Check if we should show the badge achievement popup after onboarding
         if UserDefaults.standard.shouldShowOnboardingBadgeAchievement {
-            print("DEBUG: HomeVC - Should show onboarding badge achievement")
             // Reset the flag so it doesn't show again
             UserDefaults.standard.shouldShowOnboardingBadgeAchievement = false
             
@@ -275,7 +258,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                     let badgeIDString = badge.id.uuidString
                     if !shownBadgeIDs.contains(badgeIDString) {
                         // This is a newly earned badge - show achievement popup
-                        print("DEBUG: HomeVC - Found newly earned badge: \(badge.badgeTitle)")
                         
                         DispatchQueue.main.async {
                             BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
@@ -297,11 +279,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     private func refreshBadgeData() {
-        print("DEBUG: HomePageVC - Starting badge data refresh")
         
         // Check what's in UserDefaults first
         let savedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
-        print("DEBUG: HomePageVC - Found \(savedBadgeIDs.count) earned badges in UserDefaults")
         
         // Debug badge IDs
         for idString in savedBadgeIDs {
@@ -319,40 +299,33 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Ensure we have the latest user data and sync badges with UserDefaults
         Task {
             if let userId = SupabaseDataController.shared.userId {
-                print("DEBUG: HomePageVC - Fetching user data for ID: \(userId)")
                 do {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     
                     // Count earned badges
                     let earnedBadges = userData.userBadges.filter { $0.isEarned }
-                    print("DEBUG: HomePageVC - Found \(earnedBadges.count) earned badges in user data")
                     
                     // Sync earned badges with UserDefaults to ensure persistence
                     for badge in userData.userBadges where badge.isEarned {
-                        print("DEBUG: HomePageVC - Adding earned badge to UserDefaults: \(badge.badgeTitle) (ID: \(badge.id))")
                         UserDefaults.standard.addEarnedBadge(badge.id)
                     }
                     
                     // Pre-load badge cache to ensure images can be found
                     let allBadges = SampleDataController.shared.getBadgesData()
-                    print("DEBUG: HomePageVC - Pre-loaded \(allBadges.count) badge definitions")
                     
                     // Reload badges on main thread after fetching latest data
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
-                        print("DEBUG: HomePageVC - Badge collection view reloaded")
                     }
                 } catch {
                     print("ERROR: HomePageVC - Error refreshing badge data: \(error)")
                 }
             } else {
-                print("ERROR: HomePageVC - No user ID found, cannot fetch badge data")
                 
                 // Even without a user ID, try to display any badges from UserDefaults
                 if !savedBadgeIDs.isEmpty {
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
-                        print("DEBUG: HomePageVC - Badge collection view reloaded from UserDefaults only")
                     }
                 }
             }
@@ -603,28 +576,23 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             
             guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData(),
                   indexPath.row < earnedBadges.count else {
-                print("DEBUG: Failed to get earned badge at index \(indexPath.row)")
                 return UICollectionViewCell()
             }
             
             // Get the badge at this specific index
             let badge = earnedBadges[indexPath.row]
-            print("DEBUG: HomePageVC - Processing badge with ID: \(badge.id), title: \(badge.badgeTitle)")
             
             // Find the corresponding app badge to get the image
             let appBadges = SampleDataController.shared.getBadgesData()
             if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
-                print("DEBUG: HomePageVC - Found matching badge: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                 cell.configure(with: appBadge.badgeImage)
             } else {
                 // Try fuzzy matching by title if ID doesn't match
                 if let appBadge = appBadges.first(where: { $0.badgeTitle.lowercased() == badge.badgeTitle.lowercased() }) {
-                    print("DEBUG: HomePageVC - Found badge by title match: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                     // Update UserDefaults with the correct ID for future reference
                     UserDefaults.standard.addEarnedBadge(appBadge.id)
                     cell.configure(with: appBadge.badgeImage)
                 } else {
-                    print("DEBUG: HomePageVC - Could not find app badge matching ID: \(badge.id) or title: \(badge.badgeTitle)")
                     // Fallback configuration
                     cell.configure(with: "star")
                 }
@@ -782,37 +750,13 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         Task {
             do {
                 if let userId = SupabaseDataController.shared.userId {
-                    print("DEBUG: Loading practices for user ID: \(userId)")
                     // Fetch latest user data from Supabase using ID
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     let words = userData.userLevels.flatMap { $0.words }
-                    print("DEBUG: Total words loaded: \(words.count)")
                     
                     // Filter words that have been practiced
                     let practicedWords = words.filter { word in
-                        print("DEBUG: Checking word \(word.id):")
-                        print("  - Is practiced: \(word.isPracticed)")
-                        print("  - Has record: \(word.record != nil)")
-                        print("  - Attempts: \(word.record?.attempts ?? 0)")
-                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
                         return word.isPracticed
-                    }
-                    
-                    print("DEBUG: Found \(practicedWords.count) practiced words")
-                    
-                    if practicedWords.isEmpty {
-                        print("DEBUG: No practiced words found")
-                    } else {
-                        print("DEBUG: Practiced words details:")
-                        for word in practicedWords {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                                print("    Attempts: \(word.record?.attempts ?? 0)")
-                                print("    Practiced: \(word.isPracticed)")
-                                print("    Record exists: \(word.record != nil)")
-                            }
-                        }
                     }
                     
                     // Sort by accuracy (highest first) and take only the last 2 practiced words
@@ -820,16 +764,6 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                         .sorted { $0.avgAccuracy > $1.avgAccuracy }
                         .prefix(2)
                         .map { $0 }
-                    
-                    print("DEBUG: Selected \(sortedWords?.count ?? 0) words for display")
-                    if let selected = sortedWords {
-                        for word in selected {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Selected word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                            }
-                        }
-                    }
                     
                     // Reload collection view on main thread
                     DispatchQueue.main.async {
@@ -845,11 +779,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     private func showOnboardingBadgeAchievement() {
-        print("DEBUG: HomeVC - Showing onboarding badge achievement")
         
         guard let userId = UserDefaults.standard.userId, 
               let id = UUID(uuidString: userId) else {
-            print("ERROR: HomeVC - Cannot show badge, no user ID found")
             return
         }
         
@@ -857,11 +789,9 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
             do {
                 // Get all badges data
                 let badges = SupabaseDataController.shared.getBadgesData()
-                print("DEBUG: HomeVC - Got \(badges.count) total badges")
                 
                 // Find the NewLeo badge
                 if let newLeoBadge = badges.first(where: { $0.badgeTitle == "NewLeo" }) {
-                    print("DEBUG: HomeVC - Found NewLeo badge with ID: \(newLeoBadge.id)")
                     
                     // Track this badge as earned in UserDefaults
                     UserDefaults.standard.addEarnedBadge(newLeoBadge.id)
@@ -871,14 +801,12 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                     
                     // First try to find the badge in user's data
                     if let badge = userData.userBadges.first(where: { $0.id == newLeoBadge.id }) {
-                        print("DEBUG: HomeVC - Found badge in user data, showing achievement popup")
                         // Show the achievement popup
                         DispatchQueue.main.async {
                             BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
                         }
                     } else {
                         // If not found in user data, create a badge object from the app badge
-                        print("DEBUG: HomePageVC - Creating badge from app badge data")
                         let badge = Badge(
                             id: newLeoBadge.id,
                             badgeTitle: newLeoBadge.badgeTitle,

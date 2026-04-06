@@ -136,7 +136,6 @@ class SpeechProcessor: ObservableObject {
             try audioEngine.start()
             
         } catch {
-            print("Error setting up audio session: \(error.localizedDescription)")
             stopRecording()
         }
     }

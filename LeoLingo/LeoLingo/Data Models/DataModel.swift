@@ -139,9 +139,7 @@ class WordIDManager {
     static let shared = WordIDManager()
     private var wordIDs: [String: String] = [:] // [wordTitle: uuidString] - cache only
     
-    private init() {
-        printCurrentMappings()
-    }
+    private init() {}
     
     /// Generates a deterministic UUID based on word title
     /// This ensures the same word always gets the same UUID across all devices
@@ -186,17 +184,9 @@ class WordIDManager {
         // Generate deterministic UUID - same on all devices
         let deterministicID = generateDeterministicUUID(for: cleanTitle)
         wordIDs[cleanTitle] = deterministicID.uuidString
-        print("DEBUG: Generated deterministic ID for word '\(cleanTitle)': \(deterministicID)")
         return deterministicID
     }
-    
-    func printCurrentMappings() {
-        print("DEBUG: Current word ID mappings:")
-        for (word, id) in wordIDs {
-            print("  \(word): \(id)")
-        }
-    }
-    
+        
     func getAllMappings() -> [String: UUID] {
         var mappings: [String: UUID] = [:]
         for (word, idString) in wordIDs {
@@ -212,9 +202,7 @@ class BadgeIDManager {
     static let shared = BadgeIDManager()
     private var badgeIDs: [String: String] = [:] // [badgeTitle: uuidString] - cache only
     
-    private init() {
-        printCurrentMappings()
-    }
+    private init() {}
     
     /// Generates a deterministic UUID based on badge title
     /// This ensures the same badge always gets the same UUID across all devices
@@ -259,25 +247,9 @@ class BadgeIDManager {
         // Generate deterministic UUID - same on all devices
         let deterministicID = generateDeterministicUUID(for: cleanTitle)
         badgeIDs[cleanTitle] = deterministicID.uuidString
-        print("DEBUG: Generated deterministic ID for badge '\(cleanTitle)': \(deterministicID)")
         return deterministicID
     }
     
-    func printCurrentMappings() {
-        print("DEBUG: Current badge ID mappings:")
-        for (badgeTitle, id) in badgeIDs {
-            print("  \(badgeTitle): \(id)")
-        }
-    }
-    
-    func logAllBadgeIDs() {
-        print("DEBUG: BADGE ID VALIDATION - All badge IDs at app startup:")
-        for (badgeTitle, idString) in badgeIDs {
-            if let uuid = UUID(uuidString: idString) {
-                print("  \(badgeTitle): \(uuid)")
-            }
-        }
-    }
     
     func getAllMappings() -> [String: UUID] {
         var mappings: [String: UUID] = [:]

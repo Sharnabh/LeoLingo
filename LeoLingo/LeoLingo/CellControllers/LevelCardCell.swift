@@ -104,7 +104,6 @@ class LevelCardCell: UICollectionViewCell, CAAnimationDelegate {
     }
     
     func configure(with wordData: AppWord, tapToPronounce: @escaping () -> Void) {
-        print("Loading image: \(wordData.wordImage)")
         
         if let image = UIImage(named: wordData.wordImage) {
             wordImageView.image = image

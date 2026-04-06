@@ -62,7 +62,6 @@ struct MojoGifView: View {
         guard let gifPath = Bundle.main.path(forResource: gifType.rawValue, ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("DEBUG: GIF file '\(gifType.rawValue).gif' not found")
             images = []
             return
         }
@@ -638,7 +637,6 @@ struct FlashCardView: View {
             try audioSession.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .allowBluetooth])
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            print("DEBUG: Failed to configure audio session: \(error)")
             return
         }
         

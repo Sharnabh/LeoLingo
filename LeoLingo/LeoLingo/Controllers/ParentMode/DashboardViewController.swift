@@ -182,11 +182,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
                     // Update the tier label if connected
                     self.levelTierLabel?.text = tierLabel
                     
-                    print("DEBUG: Dashboard - Level badge updated:")
-                    print("  - Current level: \(currentDisplayLevel)")
-                    print("  - Tier: \(tierLabel)")
-                    print("  - Progress: \(currentLevelProgress * 100)%")
-                    print("  - Badge image: \(displayLevel.levelImage)")
                 }
             } catch {
                 print("Error updating level badge in dashboard: \(error)")
@@ -195,11 +190,9 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
     }
     
     private func refreshBadgeData() {
-        print("DEBUG: DashboardVC - Starting badge data refresh")
         
         // Check what's in UserDefaults first
         let savedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
-        print("DEBUG: DashboardVC - Found \(savedBadgeIDs.count) earned badges in UserDefaults")
         
         // Debug badge IDs
         for idString in savedBadgeIDs {
@@ -207,7 +200,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
                 // Try to find the matching app badge
                 let appBadges = SampleDataController.shared.getBadgesData()
                 if let match = appBadges.first(where: { $0.id == id }) {
-                    print("DEBUG: DashboardVC - Found matching badge: \(match.badgeTitle) (\(match.id))")
                 } else {
                     print("DEBUG: DashboardVC - No matching badge found for ID: \(id)")
                 }
@@ -217,40 +209,33 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         // Ensure we have the latest user data and sync badges with UserDefaults
         Task {
             if let userId = SupabaseDataController.shared.userId {
-                print("DEBUG: DashboardVC - Fetching user data for ID: \(userId)")
                 do {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     
                     // Count earned badges
                     let earnedBadges = userData.userBadges.filter { $0.isEarned }
-                    print("DEBUG: DashboardVC - Found \(earnedBadges.count) earned badges in user data")
                     
                     // Sync earned badges with UserDefaults to ensure persistence
                     for badge in userData.userBadges where badge.isEarned {
-                        print("DEBUG: DashboardVC - Adding earned badge to UserDefaults: \(badge.badgeTitle) (ID: \(badge.id))")
                         UserDefaults.standard.addEarnedBadge(badge.id)
                     }
                     
                     // Pre-load badge cache to ensure images can be found
                     let allBadges = SampleDataController.shared.getBadgesData()
-                    print("DEBUG: DashboardVC - Pre-loaded \(allBadges.count) badge definitions")
                     
                     // Reload badges on main thread after fetching latest data
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
-                        print("DEBUG: DashboardVC - Badge collection view reloaded")
                     }
                 } catch {
                     print("ERROR: DashboardVC - Error refreshing badge data: \(error)")
                 }
             } else {
-                print("ERROR: DashboardVC - No user ID found, cannot fetch badge data")
                 
                 // Even without a user ID, try to display any badges from UserDefaults
                 if !savedBadgeIDs.isEmpty {
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
-                        print("DEBUG: DashboardVC - Badge collection view reloaded from UserDefaults only")
                     }
                 }
             }
@@ -327,54 +312,20 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         Task {
             do {
                 if let userId = SupabaseDataController.shared.userId {
-                    print("DEBUG: Loading practices for user ID: \(userId)")
                     // Fetch latest user data from Supabase using ID
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     let words = userData.userLevels.flatMap { $0.words }
-                    print("DEBUG: Total words loaded: \(words.count)")
                     
                     // Filter words that have been practiced
                     let practicedWords = words.filter { word in
-                        print("DEBUG: Checking word \(word.id):")
-                        print("  - Is practiced: \(word.isPracticed)")
-                        print("  - Has record: \(word.record != nil)")
-                        print("  - Attempts: \(word.record?.attempts ?? 0)")
-                        print("  - Accuracy: \(word.record?.accuracy ?? [])")
                         return word.isPracticed
                     }
-                    
-                    print("DEBUG: Found \(practicedWords.count) practiced words")
-                    
-                    if practicedWords.isEmpty {
-                        print("DEBUG: No practiced words found")
-                    } else {
-                        print("DEBUG: Practiced words details:")
-                        for word in practicedWords {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                                print("    Attempts: \(word.record?.attempts ?? 0)")
-                                print("    Practiced: \(word.isPracticed)")
-                                print("    Record exists: \(word.record != nil)")
-                            }
-                        }
-                    }
-                    
+                                        
                     // Sort by accuracy (lowest first) and take the first 2 practiced words
                     minAccuracyWords = practicedWords
                         .sorted { $0.avgAccuracy < $1.avgAccuracy }
                         .prefix(2)
                         .map { $0 }
-                    
-                    print("DEBUG: Selected \(minAccuracyWords?.count ?? 0) words for display")
-                    if let selected = minAccuracyWords {
-                        for word in selected {
-                            if let appWord = DataController.shared.wordData(by: word.id) {
-                                print("  Selected word: \(appWord.wordTitle)")
-                                print("    Accuracy: \(word.avgAccuracy)")
-                            }
-                        }
-                    }
                     
                     // Calculate average accuracy
                     if !practicedWords.isEmpty {
@@ -407,14 +358,9 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         let totalTimeSpent = UserDefaults.standard.double(forKey: "totalTimeSpent")
         let daysUsed = max(UserDefaults.standard.integer(forKey: "daysUsed"), 1)
         
-        print("DEBUG: Dashboard - Practice time calculation:")
-        print("  - Total time spent: \(totalTimeSpent) seconds")
-        print("  - Days used: \(daysUsed)")
         
         // Calculate daily average (in seconds)
         let dailyAverage = totalTimeSpent / Double(daysUsed)
-        
-        print("  - Daily average: \(dailyAverage) seconds")
         
         // Format the average time
         let totalSeconds = Int(dailyAverage)
@@ -436,8 +382,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         
         // Update the label with average indicator
         practiceTime?.text = timeText
-        
-        print("  - Display text: \(timeText)")
     }
     
     func updateView() {
@@ -486,11 +430,9 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("❌ GIF file 'HeyMojo.gif' not found in Dashboard")
             return
         }
         
-        print("✅ Loading HeyMojo.gif for Dashboard")
         let imageCount = CGImageSourceGetCount(source)
         var totalDuration: TimeInterval = 0
         
@@ -507,7 +449,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         }
         
         guard !heyMojoImages.isEmpty else {
-            print("❌ Could not extract frames from HeyMojo.gif")
             return
         }
         
@@ -543,7 +484,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
             ])
             
             heyMojoImageView.startAnimating()
-            print("✅ HeyMojo GIF loaded with \(imageCount) frames, duration: \(heyMojoDuration)s")
         }
     }
     
@@ -588,7 +528,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         }
         
         guard let id = videoID, !id.isEmpty else {
-            print("DEBUG: Could not extract video ID from URL: \(youtubeURL)")
             return youtubeURL
         }
         
@@ -712,7 +651,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         
         // Handle case with no practiced words - show default exercises
         guard let words = minAccuracyWords, !words.isEmpty else {
-            print("DEBUG: No inaccurate words found, showing default exercises")
             showDefaultExercises()
             return
         }
@@ -726,7 +664,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         }
         
         guard !wordTitles.isEmpty else {
-            print("DEBUG: Could not find word titles, showing default exercises")
             showDefaultExercises()
             return
         }
@@ -735,7 +672,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
         let firstLetter1 = wordTitles[0].first?.lowercased() ?? "a"
         let firstLetter2 = wordTitles.count > 1 ? (wordTitles[1].first?.lowercased() ?? firstLetter1) : firstLetter1
         
-        print("DEBUG: Looking up exercises for letters: \(firstLetter1), \(firstLetter2)")
         
         // Get exercises for the weak letters
         let exercise1 = exercises[firstLetter1] ?? exercises["a"]!
@@ -762,7 +698,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
             self.videoURL1 = videoURL1
             let html1 = createThumbnailHTML(videoID: videoID, videoURL: videoURL1)
             exerciseForW1?.loadHTMLString(html1, baseURL: nil)
-            print("DEBUG: Loaded exercise thumbnail 1 for letter '\(firstLetter1)' with ID: \(videoID)")
         }
         
         if wordTitles.count > 1 && firstLetter1 != firstLetter2, let videoURL2 = exercise2.videos.first {
@@ -770,7 +705,6 @@ class DashboardViewController: UIViewController, WKNavigationDelegate {
             self.videoURL2 = videoURL2
             let html2 = createThumbnailHTML(videoID: videoID, videoURL: videoURL2)
             exerciseForW2?.loadHTMLString(html2, baseURL: nil)
-            print("DEBUG: Loaded exercise thumbnail 2 for letter '\(firstLetter2)' with ID: \(videoID)")
         }
     }
     
@@ -813,10 +747,8 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
             if let badges = SupabaseDataController.shared.getEarnedBadgesData(), !badges.isEmpty {
-                print("DEBUG: Found \(badges.count) earned badges for display")
                 return badges.count
             } else {
-                print("DEBUG: No earned badges found or empty array returned")
                 return 0
             }
         }
@@ -833,7 +765,6 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
             // Get earned badges safely
             guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData(),
                   indexPath.row < earnedBadges.count else {
-                print("DEBUG: Failed to get earned badge at index \(indexPath.row)")
                 return UICollectionViewCell()
             }
             
@@ -841,23 +772,18 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
             let badge = earnedBadges[indexPath.row]
             
             // Log badge details for debugging
-            print("DEBUG: Processing badge with ID: \(badge.id), title: \(badge.badgeTitle)")
             
             // Find the corresponding app badge to get the image
             let appBadges = SampleDataController.shared.getBadgesData()
             if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
-                print("DEBUG: Configuring badge cell: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                 cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
             } else {
                 // Try fuzzy matching by title if ID doesn't match
-                print("DEBUG: Could not find badge by ID, trying title match for: \(badge.badgeTitle)")
                 if let appBadge = appBadges.first(where: { $0.badgeTitle.lowercased() == badge.badgeTitle.lowercased() }) {
-                    print("DEBUG: Found badge by title match: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                     // Update UserDefaults with the correct ID for future reference
                     UserDefaults.standard.addEarnedBadge(appBadge.id)
                     cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
                 } else {
-                    print("DEBUG: Could not find app badge matching ID: \(badge.id) or title: \(badge.badgeTitle)")
                     // Fallback configuration
                     cell.configure(with: "star", title: badge.badgeTitle)
                 }

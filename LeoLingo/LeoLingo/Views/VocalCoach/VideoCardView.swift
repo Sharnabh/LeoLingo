@@ -72,11 +72,8 @@ class VideoCardView: UIView {
     private func setupVideoPlayer() {
         // Find the video file
         guard let videoURL = Bundle.main.url(forResource: "mojodance", withExtension: "mp4") else {
-            print("❌ Video file not found")
             return
         }
-        
-        print("✅ Setting up video player in VideoCardView")
         
         // Create player
         let asset = AVURLAsset(url: videoURL)
@@ -99,7 +96,6 @@ class VideoCardView: UIView {
         
         player = queuePlayer
         
-        print("✅ Video player layer created (will be added in layoutSubviews)")
     }
     
     override func layoutSubviews() {
@@ -109,18 +105,10 @@ class VideoCardView: UIView {
         if let playerLayer = playerLayer, playerLayer.superlayer == nil {
             // Insert the layer above the background view but below word bubble and button
             layer.insertSublayer(playerLayer, at: 1)
-            print("✅ Video player layer added to view hierarchy")
         }
         
         // Position video player layer (left side of the card, below the word bubble)
         playerLayer?.frame = CGRect(x: 16, y: 89, width: 289, height: 351)
-        
-        print("📍 Player layer frame updated: \(playerLayer?.frame ?? .zero)")
-        print("📊 Player layer superlayer: \(playerLayer?.superlayer != nil ? "exists" : "nil")")
-        print("📊 Player: \(player != nil ? "exists" : "nil")")
-        print("📊 Current item: \(player?.currentItem != nil ? "exists" : "nil")")
-        print("📊 Player rate: \(player?.rate ?? 0)")
-        print("📊 Layer zPosition: \(playerLayer?.zPosition ?? 0)")
     }
     
     private func setupConstraints() {
@@ -145,12 +133,10 @@ class VideoCardView: UIView {
     
     func play() {
         player?.play()
-        print("▶️ Playing video")
     }
     
     func pause() {
         player?.pause()
-        print("⏸ Pausing video")
     }
     
     func updateWordLabel(text: String) {
@@ -163,6 +149,5 @@ class VideoCardView: UIView {
         playerLayer?.removeFromSuperlayer()
         playerLayer = nil
         playerLooper = nil
-        print("🗑 VideoCardView deallocated")
     }
 }

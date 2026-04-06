@@ -98,10 +98,6 @@ class PopoverViewController: UIViewController {
     }
     
     private func setupGifAnimation(named imageName: String) {
-        print("🔍 PopoverViewController: Loading GIF '\(imageName)'")
-        if let levelBadge = levelBadge {
-            print("📐 levelBadge frame: \(levelBadge.frame)")
-        }
         
         if loadGif(named: imageName) {
             // GIF loaded successfully, hide the original imageView
@@ -109,7 +105,6 @@ class PopoverViewController: UIViewController {
                 levelBadge.isHidden = true
                 levelBadge.alpha = 0
             }
-            print("✅ GIF loaded successfully, levelBadge hidden")
         } else {
             print("📷 GIF not found, keeping static image")
         }
@@ -140,26 +135,21 @@ class PopoverViewController: UIViewController {
         // Method 1: Direct path
         if let gifPath = Bundle.main.path(forResource: name, ofType: "gif") {
             gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath))
-            print("📁 Found GIF at path: \(gifPath)")
         }
         
         // Method 2: URL for resource
         if gifData == nil, let gifURL = Bundle.main.url(forResource: name, withExtension: "gif") {
             gifData = try? Data(contentsOf: gifURL)
-            print("📁 Found GIF at URL: \(gifURL)")
         }
         
         guard let data = gifData,
               let source = CGImageSourceCreateWithData(data as CFData, nil) else {
-            print("❌ Could not load GIF data for: \(name).gif")
             return false
         }
         
         let imageCount = CGImageSourceGetCount(source)
-        print("🎬 GIF has \(imageCount) frames")
         
         guard imageCount > 0 else {
-            print("❌ GIF has no frames")
             return false
         }
         
@@ -179,7 +169,6 @@ class PopoverViewController: UIViewController {
         }
         
         guard !gifImages.isEmpty else {
-            print("❌ Could not extract frames from GIF")
             return false
         }
         
@@ -209,10 +198,8 @@ class PopoverViewController: UIViewController {
             view.bringSubviewToFront(animatedImageView)
             view.layoutIfNeeded()
             animatedImageView.startAnimating()
-            print("✅ Animated ImageView created, frame: \(animatedImageView.frame), isAnimating: \(animatedImageView.isAnimating)")
         }
         
-        print("✅ \(name).gif loaded with \(imageCount) frames, duration: \(gifDuration)s")
         return true
     }
 

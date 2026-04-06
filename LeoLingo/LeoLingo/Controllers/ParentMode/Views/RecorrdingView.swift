@@ -54,10 +54,8 @@ extension RecorrdingView: UITableViewDelegate, UITableViewDataSource {
     func handlePlayAction(for indexPath: IndexPath) {
             // Check if a row is already playing
             if currentlyPlayingIndex == indexPath {
-                print("Stopping recording \(indexPath.row)")
                 currentlyPlayingIndex = nil
             } else {
-                print("Playing recording \(indexPath.row)")
                 currentlyPlayingIndex = indexPath
             }
             

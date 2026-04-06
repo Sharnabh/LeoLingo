@@ -22,7 +22,6 @@ class CoreDataManager {
             let users = try context.fetch(fetchRequest)
             return users.first
         } catch {
-            print("Error fetching user: \(error)")
             return nil
         }
     }
@@ -35,7 +34,6 @@ class CoreDataManager {
             let users = try context.fetch(fetchRequest)
             return users.first
         } catch {
-            print("Error validating user: \(error)")
             return nil
         }
     }

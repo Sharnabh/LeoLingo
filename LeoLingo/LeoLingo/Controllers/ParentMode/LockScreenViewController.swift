@@ -35,7 +35,6 @@ class LockScreenViewController: UIViewController {
                 if let userId = SupabaseDataController.shared.userId {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     self.code = userData.passcode ?? "1234"
-                    print("Found user with ID:", userId)
                 } else {
                     print("No user logged in, using default passcode")
                 }
@@ -84,7 +83,6 @@ class LockScreenViewController: UIViewController {
             // Remove last digit and clear last filled circle
             if !myPasscode.isEmpty {
                 myPasscode.removeLast()
-                print(myPasscode)
                 updateCircleViews()
                 navigationItem.rightBarButtonItem?.isEnabled = false // Disable when deleting
             }
@@ -92,7 +90,6 @@ class LockScreenViewController: UIViewController {
             // Add new digit if we haven't reached the maximum length
             if myPasscode.count < passCodeLength {
                 myPasscode += String(sender.tag)
-                print(myPasscode)
                 updateCircleViews()
                 
                 // Enable the bar button item when passcode length is 4

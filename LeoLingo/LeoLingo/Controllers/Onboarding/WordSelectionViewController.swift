@@ -190,7 +190,6 @@ extension WordSelectionViewController: UITextFieldDelegate {
         letters.append(newSound)
         searchedWordCollectionView.insertItems(at: [IndexPath(item: letters.count - 1, section: 0)])
         searchedWordCollectionView.reloadData()
-        print(letters)
         
         textField.text = ""
         textField.resignFirstResponder()
@@ -215,7 +214,5 @@ extension WordSelectionViewController: LetterSearchedDelegate {
             // Reload the collection view to ensure everything is in sync
             self.searchedWordCollectionView.reloadData()
         }
-        
-        print(letters)
     }
 }

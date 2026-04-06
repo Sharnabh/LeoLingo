@@ -190,7 +190,6 @@ class DataController {
                 }
             }
         }
-        print(earnedBadges)
         return earnedBadges
     }
     

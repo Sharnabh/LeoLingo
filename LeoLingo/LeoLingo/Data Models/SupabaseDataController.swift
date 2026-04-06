@@ -79,7 +79,6 @@ class SupabaseDataController {
             throw SupabaseError.userNotLoggedIn
         }
         
-        print("DEBUG: Refreshing user data from Supabase for user: \(userId)")
         
         // Clear current cached user to force fresh fetch
         currentUser = nil
@@ -90,28 +89,22 @@ class SupabaseDataController {
         // Fetch fresh data from Supabase
         currentUser = try await getUser(byId: userId)
         
-        print("DEBUG: User data refreshed successfully")
-        print("DEBUG: - Levels: \(currentUser?.userLevels.count ?? 0)")
-        print("DEBUG: - Total words: \(currentUser?.userLevels.flatMap { $0.words }.count ?? 0)")
         
         // Log practiced words for debugging
         if let levels = currentUser?.userLevels {
             let practicedWords = levels.flatMap { $0.words }.filter { $0.isPracticed }
-            print("DEBUG: - Practiced words: \(practicedWords.count)")
             let masteredWords = levels.flatMap { $0.words }.filter { word in
                 if let accuracies = word.record?.accuracy, !accuracies.isEmpty {
                     return accuracies.max() ?? 0 >= 70.0
                 }
                 return word.record?.mastered ?? false
             }
-            print("DEBUG: - Mastered words: \(masteredWords.count)")
         }
     }
     
     /// Migrates word records from old random UUIDs to new deterministic UUIDs
     /// This ensures cross-device sync works correctly
     private func migrateWordRecordsIfNeeded(userId: UUID) async throws {
-        print("DEBUG: Checking if word record migration is needed...")
         
         // Get all existing word records for this user
         let existingRecords: [UserWordRecord] = try await supabase
@@ -139,14 +132,11 @@ class SupabaseDataController {
         for record in existingRecords {
             // If this word_id is not in our known deterministic IDs, it's an old random ID
             if wordIdToTitle[record.word_id] == nil {
-                print("DEBUG: Found record with unknown word_id: \(record.word_id)")
                 // This record uses an old random UUID - we can't automatically migrate without knowing the word
                 // Skip it - it will be orphaned but won't cause issues
                 continue
             }
         }
-        
-        print("DEBUG: Migration check complete. All records use deterministic IDs.")
     }
     
     // MARK: - User Management
@@ -186,10 +176,6 @@ class SupabaseDataController {
                 .single()
                 .execute()
                 .value
-            
-            print("DEBUG: ====== SIGNUP ======")
-            print("DEBUG: Created new user with ID: \(response.id)")
-            print("DEBUG: ===================")
             
             // Store both user ID and email on successful sign up
             self.currentUserId = response.id
@@ -231,10 +217,7 @@ class SupabaseDataController {
                 .single()
                 .execute()
                 .value
-            
-            print("DEBUG: ====== SIGNUP ======")
-            print("DEBUG: Created new user with ID: \(response.id)")
-            print("DEBUG: ===================")
+
             
             // Store both user ID and email on successful sign up
             self.currentUserId = response.id
@@ -267,11 +250,6 @@ class SupabaseDataController {
                 .single()
                 .execute()
                 .value
-            
-            print("DEBUG: User signed up with Apple successfully")
-            print("DEBUG: User ID: \(response.id)")
-            print("DEBUG: Apple ID: \(appleId)")
-            print("DEBUG: Email: \(email)")
             
             self.currentUserId = response.id
             self.currentEmail = email  // Store email even if empty for Apple users
@@ -306,11 +284,6 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: User signed up with Google successfully")
-            print("DEBUG: User ID: \(response.id)")
-            print("DEBUG: Google ID: \(googleId)")
-            print("DEBUG: Email: \(email)")
-            
             self.currentUserId = response.id
             self.currentEmail = email
             self.isFirstTimeUser = true
@@ -333,7 +306,6 @@ class SupabaseDataController {
     
     func signInWithGoogle(googleId: String) async throws -> UserData {
         do {
-            print("DEBUG: Attempting Google sign in with Google ID: \(googleId)")
             let response: [User] = try await supabase
                 .from("users")
                 .select()
@@ -344,12 +316,6 @@ class SupabaseDataController {
             guard let user = response.first else {
                 throw SupabaseError.invalidCredentials
             }
-            
-            print("DEBUG: ====== GOOGLE LOGIN ======")
-            print("DEBUG: Found user with ID: \(user.id)")
-            print("DEBUG: Google ID: \(user.google_id ?? "nil")")
-            print("DEBUG: Email: \(user.email)")
-            print("DEBUG: =========================")
             
             // Store both user ID and email on successful sign in
             self.currentUserId = user.id
@@ -369,7 +335,6 @@ class SupabaseDataController {
             try await initializeUserData(userId: user.id)
             return try await getUser(byId: user.id)
         } catch {
-            print("DEBUG: Google sign in error: \(error)")
             throw SupabaseError.networkError(error)
         }
     }
@@ -377,7 +342,6 @@ class SupabaseDataController {
     // MARK: - User Data Initialization
     
     private func initializeUserData(userId: UUID) async throws {
-        print("DEBUG: Initializing user data for ID: \(userId)")
         
         // Check for existing word records
         let existingRecords: [UserWordRecord] = try await supabase
@@ -387,14 +351,7 @@ class SupabaseDataController {
             .execute()
             .value
         
-        print("DEBUG: Found \(existingRecords.count) existing word records")
-        
-        // Print word ID mappings before initialization
-        print("DEBUG: Current word ID mappings:")
-        WordIDManager.shared.printCurrentMappings()
-        
         if existingRecords.isEmpty {
-            print("DEBUG: Creating new word records for user")
             let badges = sampleData.getBadgesData()
             
             // Initialize badges - set NewLeo badge as earned by default
@@ -413,7 +370,6 @@ class SupabaseDataController {
                         .from("user_badges")
                         .insert(badgeData)
                         .execute()
-                    print("DEBUG: Successfully initialized badge: \(badge.badgeTitle)")
                 } catch {
                     print("DEBUG: Error initializing badge \(badge.badgeTitle): \(error)")
                 }
@@ -422,9 +378,7 @@ class SupabaseDataController {
             // Initialize word records
             let levels = sampleData.getLevelsData()
             for level in levels {
-                print("DEBUG: Creating records for level \(level.levelTitle)")
                 for word in level.words {
-                    print("DEBUG: Creating record for word: \(word.wordTitle), ID: \(word.id)")
                     let wordData = UserWordRecord(
                         user_id: userId,
                         word_id: word.id,
@@ -434,16 +388,6 @@ class SupabaseDataController {
                         .from("user_word_records")
                         .insert(wordData)
                         .execute()
-                }
-            }
-            print("DEBUG: Finished creating word records")
-        } else {
-            print("DEBUG: User already has word records, checking consistency")
-            for record in existingRecords {
-                if let word = wordData(by: record.word_id) {
-                    print("DEBUG: Found word '\(word.wordTitle)' for record ID: \(record.word_id)")
-                } else {
-                    print("DEBUG: No word found for record ID: \(record.word_id)")
                 }
             }
         }
@@ -480,7 +424,6 @@ class SupabaseDataController {
         }
         
         do {
-            print("DEBUG: Attempting sign in for email: \(loginData.email)")
             let response: [User] = try await supabase
                 .from("users")
                 .select()
@@ -492,10 +435,6 @@ class SupabaseDataController {
             guard let user = response.first else {
                 throw SupabaseError.invalidCredentials
             }
-            
-            print("DEBUG: ====== LOGIN ======")
-            print("DEBUG: Found user with ID: \(user.id)")
-            print("DEBUG: ==================")
             
             // Store both user ID and email on successful sign in
             self.currentUserId = user.id
@@ -518,7 +457,6 @@ class SupabaseDataController {
             try await initializeUserData(userId: user.id)
             return try await getUser(byId: user.id)
         } catch {
-            print("DEBUG: Sign in error: \(error)")
             throw SupabaseError.networkError(error)
         }
     }
@@ -526,7 +464,6 @@ class SupabaseDataController {
     // Legacy login method (maintained for backward compatibility)
     func signIn(email: String, password: String) async throws -> UserData {
         do {
-            print("DEBUG: Attempting sign in for email: \(email)")
             let response: [User] = try await supabase
                 .from("users")
                 .select()
@@ -538,10 +475,6 @@ class SupabaseDataController {
             guard let user = response.first else {
                 throw SupabaseError.invalidCredentials
             }
-            
-            print("DEBUG: ====== LOGIN ======")
-            print("DEBUG: Found user with ID: \(user.id)")
-            print("DEBUG: ==================")
             
             // Store both user ID and email on successful sign in
             self.currentUserId = user.id
@@ -561,14 +494,12 @@ class SupabaseDataController {
             try await initializeUserData(userId: user.id)
             return try await getUser(byId: user.id)
         } catch {
-            print("DEBUG: Sign in error: \(error)")
             throw SupabaseError.networkError(error)
         }
     }
     
     // Add new method to get user by ID
     func getUser(byId userId: UUID) async throws -> UserData {
-        print("DEBUG: Getting user data for ID: \(userId)")
         let user: User = try await supabase
             .from("users")
             .select()
@@ -577,12 +508,6 @@ class SupabaseDataController {
             .execute()
             .value
         
-        print("DEBUG: Retrieved user:")
-        print("  - Name: \(user.name)")
-        print("  - Email: \(user.email)")
-        print("  - Apple ID: \(user.apple_id ?? "nil")")
-        print("  - Child Name: \(user.child_name ?? "nil")")
-        
         // Get all word records in a single query
         let wordsResponse: [UserWordRecord] = try await supabase
             .from("user_word_records")
@@ -590,15 +515,6 @@ class SupabaseDataController {
             .eq("user_id", value: userId)
             .execute()
             .value
-            
-        print("DEBUG: Found \(wordsResponse.count) word records in database")
-        print("DEBUG: Word records details:")
-        for record in wordsResponse {
-            print("  Word ID: \(record.word_id)")
-            print("    Practiced: \(record.is_practiced)")
-            print("    Attempts: \(record.attempts)")
-            print("    Accuracy: \(record.accuracy ?? [])")
-        }
         
         // Get all badge records in a single query
         let badgesResponse: [UserBadge] = try await supabase
@@ -629,7 +545,6 @@ class SupabaseDataController {
         )
         
         currentUser = userData
-        print("DEBUG: Successfully created UserData object for user: \(user.name)")
         return userData
     }
     
@@ -650,10 +565,6 @@ class SupabaseDataController {
         guard let userId = currentUser?.id else {
             throw SupabaseError.userNotLoggedIn
         }
-        
-        print("DEBUG: Updating word progress for wordId: \(wordId)")
-        print("DEBUG: Accuracy value: \(String(describing: accuracy))")
-        print("DEBUG: Recording path: \(String(describing: recordingPath))")
         
         // Verify the word exists in our local data
         guard let appWord = wordData(by: wordId) else {
@@ -680,14 +591,8 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: Found \(existingRecords.count) existing records")
             
             if let existingRecord = existingRecords.first {
-                print("DEBUG: Existing record:")
-                print("  - Attempts: \(existingRecord.attempts)")
-                print("  - Current accuracy array: \(String(describing: existingRecord.accuracy))")
-                print("  - Current recordings: \(String(describing: existingRecord.recordings))")
-                print("  - Currently mastered: \(existingRecord.mastered)")
                 
                 var newAccuracy = existingRecord.accuracy ?? []
                 if let accuracy = accuracy { newAccuracy.append(accuracy) }
@@ -713,13 +618,6 @@ class SupabaseDataController {
                     level_id: wordLevelId
                 )
                 
-                print("DEBUG: Updated record:")
-                print("  - Attempts: \(updatedRecord.attempts)")
-                print("  - New accuracy array: \(String(describing: updatedRecord.accuracy))")
-                print("  - New recordings array: \(String(describing: updatedRecord.recordings))")
-                print("  - Average accuracy: \(updatedRecord.avgAccuracy)")
-                print("  - Mastered: \(updatedRecord.mastered)")
-                
                 try await supabase
                     .from("user_word_records")
                     .update(updatedRecord)
@@ -734,7 +632,6 @@ class SupabaseDataController {
                 // Refresh current user data to ensure we have the latest records
                 currentUser = try await getUser(byId: userId)
             } else {
-                print("DEBUG: Creating new record")
                 
                 var newRecordings: [String]? = nil
                 if let recordingPath = recordingPath {
@@ -755,13 +652,6 @@ class SupabaseDataController {
                     level_id: wordLevelId
                 )
                 
-                print("DEBUG: New record:")
-                print("  - Attempts: \(newRecord.attempts)")
-                print("  - Accuracy array: \(String(describing: newRecord.accuracy))")
-                print("  - Recordings array: \(String(describing: newRecord.recordings))")
-                print("  - Average accuracy: \(newRecord.avgAccuracy)")
-                print("  - Mastered: \(newRecord.mastered)")
-                
                 try await supabase
                     .from("user_word_records")
                     .insert(newRecord)
@@ -776,7 +666,6 @@ class SupabaseDataController {
                 currentUser = try await getUser(byId: userId)
             }
         } catch {
-            print("Error updating word progress: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }
@@ -785,16 +674,13 @@ class SupabaseDataController {
     
     /// Checks if all words in a level are mastered and updates the user_levels table
     private func checkAndUpdateLevelCompletion(userId: UUID, levelId: UUID) async throws {
-        print("DEBUG: Checking level completion for level: \(levelId)")
         
         // Get all words for this level from app data
         guard let appLevel = sampleData.getLevelsData().first(where: { $0.id == levelId }) else {
-            print("DEBUG: Level not found in app data")
             return
         }
         
         let levelWordIds = appLevel.words.map { $0.id }
-        print("DEBUG: Level has \(levelWordIds.count) words")
         
         // Get all user word records for this level
         let wordRecords: [UserWordRecord] = try await supabase
@@ -805,15 +691,11 @@ class SupabaseDataController {
             .execute()
             .value
         
-        print("DEBUG: Found \(wordRecords.count) word records for this level")
         
         // Check if all words in the level are mastered
         let masteredWordIds = Set(wordRecords.filter { $0.mastered }.map { $0.word_id })
         let allWordsSet = Set(levelWordIds)
         let isLevelCompleted = allWordsSet.isSubset(of: masteredWordIds)
-        
-        print("DEBUG: Mastered words: \(masteredWordIds.count)/\(levelWordIds.count)")
-        print("DEBUG: Level completed: \(isLevelCompleted)")
         
         if isLevelCompleted {
             // Calculate average accuracy for the level
@@ -847,7 +729,6 @@ class SupabaseDataController {
                     .eq("user_id", value: userId)
                     .eq("level_id", value: levelId)
                     .execute()
-                print("DEBUG: Updated existing level record - Level marked as completed")
             } else {
                 // Create new record
                 let newLevelRecord = UserLevelRecord(
@@ -860,7 +741,6 @@ class SupabaseDataController {
                     .from("user_levels")
                     .insert(newLevelRecord)
                     .execute()
-                print("DEBUG: Created new level record - Level marked as completed")
             }
         }
     }
@@ -876,7 +756,6 @@ class SupabaseDataController {
         
         // Get the app's documents directory
         guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("DEBUG: Could not get documents directory")
             return nil
         }
         
@@ -891,20 +770,16 @@ class SupabaseDataController {
             // Convert source path string to URL
             let sourceURL = URL(fileURLWithPath: path)
             
-            print("DEBUG: Copying recording from \(sourceURL.path) to \(destinationPath.path)")
-            
             // Copy the file from the temporary location to our app's storage
             if FileManager.default.fileExists(atPath: destinationPath.path) {
                 try FileManager.default.removeItem(at: destinationPath)
             }
             try FileManager.default.copyItem(at: sourceURL, to: destinationPath)
             
-            print("DEBUG: Successfully copied recording to \(destinationPath.path)")
             
             // Return the full path - this will be stored in Supabase
             return destinationPath.path
         } catch {
-            print("Error copying recording: \(error)")
             return nil
         }
     }
@@ -955,7 +830,6 @@ class SupabaseDataController {
         // Delete the file if it exists
         if FileManager.default.fileExists(atPath: url) {
             try FileManager.default.removeItem(atPath: url)
-            print("DEBUG: Successfully deleted recording file at \(url)")
         }
         
         // Update the record
@@ -1119,19 +993,13 @@ class SupabaseDataController {
     
     // Add method to get word data by ID
     func wordData(by id: UUID) -> AppWord? {
-        print("DEBUG: Looking up word with ID: \(id)")
-        
-        // Print current word ID mappings
-        WordIDManager.shared.printCurrentMappings()
         
         let levels = sampleData.getLevelsData()
         for level in levels {
             if let word = level.words.first(where: { $0.id == id }) {
-                print("DEBUG: Found word '\(word.wordTitle)' for ID: \(id)")
                 return word
             }
         }
-        print("DEBUG: No word found for ID: \(id)")
         return nil
     }
     
@@ -1141,11 +1009,6 @@ class SupabaseDataController {
         from wordsResponse: [UserWordRecord],
         records: [UserWordRecord]
     ) -> [Level] {
-        print("DEBUG: Constructing user levels from \(wordsResponse.count) word records")
-        print("DEBUG: Word records in database:")
-        for record in wordsResponse where record.is_practiced {
-            print("  - Word ID: \(record.word_id) (Practiced: \(record.is_practiced), Attempts: \(record.attempts), Mastered: \(record.mastered))")
-        }
         
         let appLevels = sampleData.getLevelsData()
         var userLevels: [Level] = []
@@ -1187,10 +1050,6 @@ class SupabaseDataController {
             
             userLevels.append(level)
         }
-        
-        // Print summary
-        print("DEBUG: Found \(foundPracticedWords) practiced words")
-        print("DEBUG: Found \(foundMasteredWords) mastered words")
         
         return userLevels
     }
@@ -1386,25 +1245,11 @@ class SupabaseDataController {
         let isAppleUser = UserDefaults.standard.isAppleUser
         let isGoogleUser = UserDefaults.standard.isGoogleUser
         
-        if isAppleUser {
-            print("DEBUG: Restoring session for Apple user with ID: \(userId)")
-        } else if isGoogleUser {
-            print("DEBUG: Restoring session for Google user with ID: \(userId)")
-        } else {
-            print("DEBUG: Restoring session for regular user with ID: \(userId)")
-        }
         
         // Try to get the email from UserDefaults for session restoration
         // For Apple users, this might be empty, but we store it anyway
         if let email = UserDefaults.standard.string(forKey: "lastEmail") {
             self.currentEmail = email
-            if isAppleUser {
-                print("DEBUG: Restored Apple user session with email: \(email.isEmpty ? "(empty)" : email)")
-            } else if isGoogleUser {
-                print("DEBUG: Restored Google user session with email: \(email)")
-            } else {
-                print("DEBUG: Restored regular user session with email: \(email)")
-            }
         } else {
             print("DEBUG: No stored email found in UserDefaults")
         }
@@ -1423,13 +1268,10 @@ class SupabaseDataController {
         currentUser = nil
         isFirstTimeUser = false
         
-        print("DEBUG: User signed out and all session data cleared")
     }
     
     // Add method to update child's name
     public func updateChildName(userId: UUID, childName: String) async throws {
-        print("DEBUG: Starting child name update for user \(userId)")
-        print("DEBUG: New child name: \(childName)")
         
         do {
             let response = try await supabase
@@ -1437,9 +1279,6 @@ class SupabaseDataController {
                 .update(["child_name": childName])
                 .eq("id", value: userId)
                 .execute()
-            
-            print("DEBUG: Update response received")
-            print("DEBUG: Response: \(response)")
             
             // Verify the update was successful
             let updatedUser: User = try await supabase
@@ -1450,23 +1289,13 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: Verification - Updated user data:")
-            print("DEBUG: User ID: \(updatedUser.id)")
-            print("DEBUG: Child name: \(String(describing: updatedUser.child_name))")
-            
-            if updatedUser.child_name == nil {
-                print("DEBUG: WARNING - Child name is still nil after update")
-            }
         } catch {
-            print("DEBUG: Error in updateChildName: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }
     
     // Add method to update user's Apple ID
     public func updateUserAppleId(userId: UUID, appleId: String) async throws {
-        print("DEBUG: Starting Apple ID update for user \(userId)")
-        print("DEBUG: New Apple ID: \(appleId)")
         
         do {
             let response = try await supabase
@@ -1474,9 +1303,6 @@ class SupabaseDataController {
                 .update(["apple_id": appleId])
                 .eq("id", value: userId)
                 .execute()
-            
-            print("DEBUG: Apple ID update response received")
-            print("DEBUG: Response: \(response)")
             
             // Mark user as Apple user in UserDefaults
             UserDefaults.standard.isAppleUser = true
@@ -1490,22 +1316,13 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: Verification - Updated user data:")
-            print("DEBUG: User ID: \(updatedUser.id)")
-            print("DEBUG: Apple ID: \(String(describing: updatedUser.apple_id))")
-            
-            if updatedUser.apple_id == nil {
-                print("DEBUG: WARNING - Apple ID is still nil after update")
-            }
         } catch {
-            print("DEBUG: Error in updateUserAppleId: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }
     
     // Add method to mark questionnaire completion
     public func markQuestionnaireCompleted(userId: UUID) async throws {
-        print("DEBUG: Marking questionnaire completed for user \(userId)")
         
         do {
             let response = try await supabase
@@ -1513,9 +1330,6 @@ class SupabaseDataController {
                 .update(["is_first_login": false])
                 .eq("id", value: userId)
                 .execute()
-            
-            print("DEBUG: Questionnaire completion update response received")
-            print("DEBUG: Response: \(response)")
             
             // Verify the update was successful
             let updatedUser: User = try await supabase
@@ -1526,15 +1340,8 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: Verification - Updated user data:")
-            print("DEBUG: User ID: \(updatedUser.id)")
-            print("DEBUG: Is first login: \(String(describing: updatedUser.is_first_login))")
             
-            if updatedUser.is_first_login != false {
-                print("DEBUG: WARNING - is_first_login is still not false after update")
-            }
         } catch {
-            print("DEBUG: Error in markQuestionnaireCompleted: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }
@@ -1565,7 +1372,6 @@ class SupabaseDataController {
     
     func signInWithApple(appleId: String) async throws -> UserData {
         do {
-            print("DEBUG: Attempting Apple sign in with Apple ID: \(appleId)")
             let response: [User] = try await supabase
                 .from("users")
                 .select()
@@ -1576,12 +1382,6 @@ class SupabaseDataController {
             guard let user = response.first else {
                 throw SupabaseError.invalidCredentials
             }
-            
-            print("DEBUG: ====== APPLE LOGIN ======")
-            print("DEBUG: Found user with ID: \(user.id)")
-            print("DEBUG: Apple ID: \(user.apple_id ?? "nil")")
-            print("DEBUG: Email: \(user.email)")
-            print("DEBUG: ========================")
             
             // Store both user ID and email on successful sign in
             self.currentUserId = user.id
@@ -1601,15 +1401,12 @@ class SupabaseDataController {
             try await initializeUserData(userId: user.id)
             return try await getUser(byId: user.id)
         } catch {
-            print("DEBUG: Apple sign in error: \(error)")
             throw SupabaseError.networkError(error)
         }
     }
     
     // Add method to update user's Google ID
     public func updateUserGoogleId(userId: UUID, googleId: String) async throws {
-        print("DEBUG: Starting Google ID update for user \(userId)")
-        print("DEBUG: New Google ID: \(googleId)")
         
         do {
             let response = try await supabase
@@ -1617,9 +1414,6 @@ class SupabaseDataController {
                 .update(["google_id": googleId])
                 .eq("id", value: userId)
                 .execute()
-            
-            print("DEBUG: Google ID update response received")
-            print("DEBUG: Response: \(response)")
             
             // Mark user as Google user in UserDefaults
             UserDefaults.standard.isGoogleUser = true
@@ -1634,15 +1428,7 @@ class SupabaseDataController {
                 .execute()
                 .value
             
-            print("DEBUG: Verification - Updated user data:")
-            print("DEBUG: User ID: \(updatedUser.id)")
-            print("DEBUG: Google ID: \(String(describing: updatedUser.google_id))")
-            
-            if updatedUser.google_id == nil {
-                print("DEBUG: WARNING - Google ID is still nil after update")
-            }
         } catch {
-            print("DEBUG: Error in updateUserGoogleId: \(error)")
             throw SupabaseError.databaseError(error)
         }
     }
@@ -1660,7 +1446,6 @@ class SupabaseDataController {
             
             return user.google_id != nil && !user.google_id!.isEmpty
         } catch {
-            print("DEBUG: Error checking if user is Google user: \(error)")
             return false
         }
     }
@@ -1677,7 +1462,6 @@ class SupabaseDataController {
 
             return user.apple_id != nil && !user.apple_id!.isEmpty
         } catch {
-            print("DEBUG: Error checking if user is Apple user: \(error)")
             return false
         }
     }

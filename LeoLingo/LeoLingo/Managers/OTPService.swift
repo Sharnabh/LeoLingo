@@ -86,10 +86,8 @@ class OTPService {
         return try await withCheckedThrowingContinuation { continuation in
             smtp.send(mail) { (error) in
                 if let error = error {
-                    print("Failed to send OTP email: \(error)")
                     continuation.resume(throwing: error)
                 } else {
-                    print("OTP email sent successfully to \(email)")
                     continuation.resume()
                 }
             }
@@ -147,10 +145,8 @@ class OTPService {
         return try await withCheckedThrowingContinuation { continuation in
             smtp.send(testMail) { (error) in
                 if let error = error {
-                    print("Test email failed: \(error)")
                     continuation.resume(throwing: error)
                 } else {
-                    print("Test email sent successfully to \(email)")
                     continuation.resume()
                 }
             }

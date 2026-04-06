@@ -59,7 +59,6 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected level card at index: \(indexPath.item)")
         
         // Handle Body Parts category (index 0) separately
         if indexPath.item == 0 {
@@ -92,30 +91,6 @@ extension CategorySelectionViewController: UICollectionViewDelegate, UICollectio
             navigationController?.pushViewController(flashCardVC, animated: true)
         }
     }
-
-
-    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print("Selected level card at index: \(indexPath.item)")
-//        if indexPath.item == 0 {
-//            let splashScreen = UIHostingController(rootView: HumanBodySplashScreen())
-//            navigationController?.pushViewController(splashScreen, animated: true)
-//        }
-//
-////        let storyboard = UIStoryboard(name: "FlashCardsGame", bundle: nil)
-////        if let flashCardVC = storyboard.instantiateViewController(withIdentifier: "FlashCardViewController") as? FlashCardViewController {
-////         
-////            flashCardVC.selectedIndex = indexPath.item
-////            
-////            if let navigationController = self.navigationController {
-////                navigationController.pushViewController(flashCardVC, animated: true)
-////            } else {
-////                flashCardVC.modalPresentationStyle = .fullScreen
-////                present(flashCardVC, animated: true)
-////            }
-////        }
-//    }
-
 
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) as? CategorySelectionCollectionViewCell {

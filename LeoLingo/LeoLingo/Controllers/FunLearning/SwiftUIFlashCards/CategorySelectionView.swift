@@ -34,9 +34,6 @@ struct CategorySelectionView: View {
                 Image("flashcard_background")
                     .resizable()
                     .edgesIgnoringSafeArea(.all)
-                    .onAppear {
-                        print("Loading background image: jungle_background")
-                    }
                 
                 // Floating leaves animation
                 FloatingLeavesView()
@@ -230,10 +227,6 @@ struct SwiftUICardView: View {
                     .frame(height: 120)
                     .padding(.top, 10)
                     // Add fallback for missing images
-                    .onAppear {
-                        // This is just to handle the initialization - images would need to be manually added to assets
-                        print("Loading image: \(category.image)")
-                    }
                 
                 Text(category.name)
                     .font(.system(size: 22, weight: .bold, design: .rounded))

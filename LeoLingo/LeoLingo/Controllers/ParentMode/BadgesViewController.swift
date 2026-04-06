@@ -29,26 +29,21 @@ class BadgesViewController: UIViewController {
     }
     
     private func refreshBadgeData() {
-        print("DEBUG: BadgesVC - Starting badge data refresh")
         
         // Check what's in UserDefaults first
         let savedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
-        print("DEBUG: BadgesVC - Found \(savedBadgeIDs.count) earned badges in UserDefaults")
         
         // Ensure we have the latest user data and sync badges with UserDefaults
         Task {
             if let userId = SupabaseDataController.shared.userId {
-                print("DEBUG: BadgesVC - Fetching user data for ID: \(userId)")
                 do {
                     let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                     
                     // Count earned badges
                     let earnedBadges = userData.userBadges.filter { $0.isEarned }
-                    print("DEBUG: BadgesVC - Found \(earnedBadges.count) earned badges in user data")
                     
                     // Sync earned badges with UserDefaults to ensure persistence
                     for badge in userData.userBadges where badge.isEarned {
-                        print("DEBUG: BadgesVC - Adding earned badge to UserDefaults: \(badge.badgeTitle) (ID: \(badge.id))")
                         UserDefaults.standard.addEarnedBadge(badge.id)
                     }
                     
@@ -56,7 +51,6 @@ class BadgesViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.badgesEarnedCollectionView.reloadData()
                         self.badgescollectionView.reloadData()
-                        print("DEBUG: BadgesVC - Badge collection views reloaded")
                     }
                 } catch {
                     print("ERROR: BadgesVC - Error refreshing badge data: \(error)")
@@ -77,16 +71,13 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == badgesEarnedCollectionView {
             if let badges = SupabaseDataController.shared.getEarnedBadgesData(), !badges.isEmpty {
-                print("DEBUG: BadgesVC - Found \(badges.count) earned badges for display")
                 return badges.count
             } else {
-                print("DEBUG: BadgesVC - No earned badges found or empty array returned")
                 return 0
             }
         }
         
         let allBadges = SupabaseDataController.shared.getUserBadgesData()
-        print("DEBUG: BadgesVC - Found \(allBadges.count) total badges")
         return allBadges.count
     }
     
@@ -97,7 +88,6 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
             // Get earned badges safely
             guard let earnedBadges = SupabaseDataController.shared.getEarnedBadgesData(),
                   indexPath.row < earnedBadges.count else {
-                print("DEBUG: BadgesVC - Failed to get earned badge at index \(indexPath.row)")
                 return UICollectionViewCell()
             }
             
@@ -105,23 +95,18 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
             let badge = earnedBadges[indexPath.row]
             
             // Log badge details for debugging
-            print("DEBUG: BadgesVC - Processing badge with ID: \(badge.id), title: \(badge.badgeTitle)")
             
             // Find the corresponding app badge to get the image
             let appBadges = SampleDataController.shared.getBadgesData()
             if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
-                print("DEBUG: BadgesVC - Configuring earned badge cell: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                 cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
             } else {
                 // Try fuzzy matching by title if ID doesn't match
-                print("DEBUG: BadgesVC - Could not find badge by ID, trying title match for: \(badge.badgeTitle)")
                 if let appBadge = appBadges.first(where: { $0.badgeTitle.lowercased() == badge.badgeTitle.lowercased() }) {
-                    print("DEBUG: BadgesVC - Found badge by title match: \(appBadge.badgeTitle) with image: \(appBadge.badgeImage)")
                     // Update UserDefaults with the correct ID for future reference
                     UserDefaults.standard.addEarnedBadge(appBadge.id)
                     cell.configure(with: "\(appBadge.badgeImage)", title: "\(appBadge.badgeTitle)")
                 } else {
-                    print("DEBUG: BadgesVC - Could not find app badge matching ID: \(badge.id) or title: \(badge.badgeTitle)")
                     // Fallback configuration
                     cell.configure(with: "star", title: badge.badgeTitle)
                 }
@@ -135,7 +120,6 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         // Get all badges (earned and unearned)
         let badges = SupabaseDataController.shared.getUserBadgesData()
         guard indexPath.row < badges.count else {
-            print("DEBUG: BadgesVC - Out of bounds index for badges: \(indexPath.row)")
             return UICollectionViewCell()
         }
         
@@ -146,11 +130,9 @@ extension BadgesViewController: UICollectionViewDelegate, UICollectionViewDataSo
         // Find the app badge for additional information like image and description
         let appBadges = SampleDataController.shared.getBadgesData()
         if let appBadge = appBadges.first(where: { $0.id == badge.id }) {
-            print("DEBUG: BadgesVC - Configuring all badge cell: \(appBadge.badgeTitle), earned: \(status)")
             cell.configure(with: "\(appBadge.badgeImage)", description: "\(appBadge.badgeDescription)", status: status)
         } else {
             // Fallback if app badge not found
-            print("DEBUG: BadgesVC - Could not find app badge for ID: \(badge.id)")
             cell.configure(with: "star", description: "Badge description unavailable", status: status)
         }
         

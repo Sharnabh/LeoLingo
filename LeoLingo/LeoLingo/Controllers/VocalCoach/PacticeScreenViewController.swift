@@ -318,32 +318,23 @@ class PracticeScreenViewController: UIViewController {
     private func filteredLevelsForNewSession(from userLevels: [Level]) -> [Level] {
         var result: [Level] = []
         
-        print("DEBUG: === FILTERING SESSION START ===")
-        print("DEBUG: Processing \(userLevels.count) levels")
-        
         for (levelIndex, level) in userLevels.enumerated() {
-            print("DEBUG: Processing Level #\(levelIndex + 1) - ID: \(level.id)")
-            print("DEBUG: Level has \(level.words.count) total words")
             
             // Print all word IDs in this level
-            print("DEBUG: Word IDs in this level:")
             for (wordIndex, word) in level.words.enumerated() {
                 let wordTitle = SupabaseDataController.shared.wordData(by: word.id)?.wordTitle ?? "Unknown"
-                print("DEBUG:   [\(wordIndex)] \(word.id) - \(wordTitle)")
             }
             
             // Filter words that still need practice
             let remainingWords = level.words.filter { word in
                 // Skip if already marked as mastered
                 if let mastered = word.record?.mastered, mastered {
-                    print("DEBUG: ❌ Skipping word \(word.id) - mastered flag is true")
                     return false
                 }
                 
                 // Check accuracy history - if any attempt reached threshold, consider mastered
                 guard let accuracies = word.record?.accuracy, !accuracies.isEmpty else {
                     // No practice history - include this word
-                    print("DEBUG: ✅ Including word \(word.id) - no practice history")
                     return true
                 }
                 
@@ -351,13 +342,11 @@ class PracticeScreenViewController: UIViewController {
                 let hasMasteredAttempt = accuracies.contains { $0 >= masteryThreshold }
                 if hasMasteredAttempt {
                     let maxAccuracy = accuracies.max() ?? 0
-                    print("DEBUG: ❌ Skipping word \(word.id) - has accuracy \(maxAccuracy)% >= \(masteryThreshold)%")
                     return false
                 }
                 
                 // Word still needs practice
                 let maxAccuracy = accuracies.max() ?? 0
-                print("DEBUG: ✅ Including word \(word.id) - max accuracy \(maxAccuracy)% < \(masteryThreshold)%")
                 return true
             }
             
@@ -366,28 +355,18 @@ class PracticeScreenViewController: UIViewController {
                 var newLevel = level
                 newLevel.words = remainingWords
                 result.append(newLevel)
-                print("DEBUG: ✅ Level \(level.id) has \(remainingWords.count) words remaining for practice")
             } else {
                 print("DEBUG: ❌ Level \(level.id) is completed - all words mastered")
             }
         }
-        
-        print("DEBUG: Filtered \(result.count) levels with unmastered words from \(userLevels.count) total levels")
-        print("DEBUG: Total words after filter: \(result.flatMap { $0.words }.count)")
-        print("DEBUG: === FILTERING SESSION END ===")
         return result
     }
     
     private func applySessionFilterIfNeeded() {
-        print("DEBUG: Applying session filter...")
-        print("DEBUG: Before filter - Levels: \(levels.count), Total words: \(levels.flatMap { $0.words }.count)")
         
         levels = filteredLevelsForNewSession(from: levels)
         
-        print("DEBUG: After filter - Levels: \(levels.count), Total words: \(levels.flatMap { $0.words }.count)")
-        
         if levels.isEmpty {
-            print("DEBUG: All words mastered! Showing completion message.")
             showCompletionMessage()
             return
         }
@@ -411,23 +390,17 @@ class PracticeScreenViewController: UIViewController {
         Task {
             do {
                 guard let userId = SupabaseDataController.shared.userId else {
-                    print("DEBUG: No user ID found")
                     return
                 }
                 
                 // Force refresh user data from Supabase to ensure sync across devices
-                print("DEBUG: Fetching fresh user data from Supabase...")
                 try await SupabaseDataController.shared.refreshUserData()
                 
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 self.levels = userData.userLevels
                 
-                print("DEBUG: Loaded \(self.levels.count) levels with \(self.levels.flatMap { $0.words }.count) total words")
-                
                 // Apply personalized filtering - skip mastered words and completed levels
                 self.applySessionFilterIfNeeded()
-                
-                print("DEBUG: After filtering - \(self.levels.count) levels with \(self.levels.flatMap { $0.words }.count) words remaining")
                 
                 if self.levels.isEmpty {
                     showCompletionMessage()
@@ -713,7 +686,6 @@ class PracticeScreenViewController: UIViewController {
         // Find and display correct level title
         if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
             levelLabel.text = currentLevel.levelTitle
-            print("DEBUG: Displaying level: \(currentLevel.levelTitle)")
         }
         
         let totalWordsInLevel = levels[levelIndex].words.count
@@ -823,7 +795,6 @@ class PracticeScreenViewController: UIViewController {
         
         if alreadyShown {
             // Already shown this level's badge, just continue
-            print("DEBUG: Level badge for \(level.levelTitle) already shown this session, skipping popup")
             updateUI()
             return
         }
@@ -844,7 +815,6 @@ class PracticeScreenViewController: UIViewController {
                     let allBadges = SupabaseDataController.shared.getBadgesData()
                     if let levelBadge = allBadges.first(where: { $0.badgeTitle == level.levelTitle }) {
                         try await SupabaseDataController.shared.updateBadgeStatus(badgeId: levelBadge.id, isEarned: true, showPopup: false)
-                        print("DEBUG: ✅ Awarded badge: \(levelBadge.badgeTitle)")
                     }
                 } catch {
                     print("DEBUG: Error awarding level badge: \(error)")
@@ -927,7 +897,6 @@ class PracticeScreenViewController: UIViewController {
         // Update level title and progress
         if let currentLevel = appLevels.first(where: { $0.id == levels[levelIndex].id }) {
             levelLabel.text = currentLevel.levelTitle
-            print("DEBUG: updateUIAfterPopover - Displaying level: \(currentLevel.levelTitle)")
         }
         
         let totalWordsInLevel = levels[levelIndex].words.count
@@ -1164,11 +1133,9 @@ class PracticeScreenViewController: UIViewController {
         guard let gifPath = Bundle.main.path(forResource: "TalkingMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("❌ GIF file 'TalkingMojo.gif' not found")
             return
         }
         
-        print("✅ Loading TalkingMojo.gif")
         let imageCount = CGImageSourceGetCount(source)
         var totalDuration: TimeInterval = 0
         
@@ -1210,7 +1177,6 @@ class PracticeScreenViewController: UIViewController {
         mojoImage.isHidden = true
         mojoImage.alpha = 0
         
-        print("✅ TalkingMojo GIF loaded with \(imageCount) frames")
     }
     
     private func startTalkingAnimation() {
@@ -1263,7 +1229,6 @@ class PracticeScreenViewController: UIViewController {
         }
         
         UserDefaults.standard.synchronize()
-        print("DEBUG: Cleared all level badge shown flags for new session")
     }
     
     private func startNoiseMonitoring() {

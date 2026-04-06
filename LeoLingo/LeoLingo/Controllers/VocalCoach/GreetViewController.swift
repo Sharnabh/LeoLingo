@@ -44,11 +44,9 @@ class GreetViewController: UIViewController {
         guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("❌ GIF file 'HeyMojo.gif' not found")
             return
         }
         
-        print("✅ Loading HeyMojo.gif")
         let imageCount = CGImageSourceGetCount(source)
         var totalDuration: TimeInterval = 0
         
@@ -75,7 +73,6 @@ class GreetViewController: UIViewController {
         // Start animating
         mojoImageView.startAnimating()
         
-        print("✅ HeyMojo GIF loaded with \(imageCount) frames")
     }
         
     private func setupUI() {
@@ -115,7 +112,6 @@ class GreetViewController: UIViewController {
                     }
                 }
             } catch {
-                print("Error fetching user data: \(error)")
                 setupGreetings(isFirstTime: true)
                 startAnimations()
             }

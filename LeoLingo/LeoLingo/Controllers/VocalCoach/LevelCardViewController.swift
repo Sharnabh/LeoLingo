@@ -165,7 +165,6 @@ class LevelCardViewController: UIViewController {
             player.prepareToPlay()
             return player
         } catch {
-            print("Could not create audio player: \(error)")
             return nil
         }
     }()
@@ -311,7 +310,6 @@ class LevelCardViewController: UIViewController {
             
             // Ensure input is available
             guard audioSession.availableInputs?.count ?? 0 > 0 else {
-                print("No audio input available")
                 return
             }
         } catch {
@@ -508,7 +506,6 @@ class LevelCardViewController: UIViewController {
                         case .finished:
                             break
                         case .failure(let error):
-                            print("Speech recognition error: \(error)")
                             self?.stopListening()
                         }
                     } receiveValue: { [weak self] spokenText in
@@ -653,11 +650,6 @@ class LevelCardViewController: UIViewController {
                 // Get recording path from speech processor if available
                 let recordingPath = speechProcessor.getRecordingURL()?.path
                 
-                print("DEBUG: Recording accuracy to Supabase:")
-                print("  - Word ID: \(currentWord.id)")
-                print("  - Accuracy: \(accuracy)%")
-                print("  - Recording path: \(recordingPath ?? "No recording")")
-                
                 // Update word progress in Supabase
                 try await SupabaseDataController.shared.updateWordProgress(
                     wordId: currentWord.id,
@@ -674,9 +666,7 @@ class LevelCardViewController: UIViewController {
                     BadgeEarningManager.shared.checkBadgesAfterWordCompletion(accuracy: accuracy, in: self)
                 }
                 
-                print("DEBUG: Successfully recorded accuracy and refreshed data")
             } catch {
-                print("DEBUG: Error recording accuracy: \(error)")
                 handleError(error)
             }
         }
@@ -725,7 +715,6 @@ class LevelCardViewController: UIViewController {
         Task {
             do {
                 guard let userId = SupabaseDataController.shared.userId else {
-                    print("No user logged in")
                     return
                 }
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
@@ -796,11 +785,6 @@ class LevelCardViewController: UIViewController {
         let distance = speechProcessor.levenshteinDistance(spokenText.lowercased(), currentWord.lowercased())
         let maxLength = max(spokenText.count, currentWord.count)
         let accuracy = max(0, 100.0 - (Double(distance) / Double(maxLength)) * 100.0)
-        
-        print("DEBUG: Speech evaluation:")
-        print("  - Spoken text: \(spokenText)")
-        print("  - Target word: \(currentWord)")
-        print("  - Calculated accuracy: \(accuracy)%")
         
         // Record accuracy in Supabase
         recordAccuracy(accuracy)

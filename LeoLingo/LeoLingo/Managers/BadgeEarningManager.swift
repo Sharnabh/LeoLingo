@@ -25,7 +25,6 @@ class BadgeEarningManager {
     /// Checks all badge earning conditions and awards badges if criteria are met
     func checkAndAwardBadges(in viewController: UIViewController) {
         guard let userId = SupabaseDataController.shared.userId else {
-            print("DEBUG: BadgeEarningManager - No user ID found")
             return
         }
         
@@ -61,7 +60,6 @@ class BadgeEarningManager {
         let practicedWords = allWords.filter { $0.isPracticed }
         
         if practicedWords.count >= 1 {
-            print("DEBUG: BadgeEarningManager - Awarding Bee badge for first word completion")
             await awardBadge("Bee", in: viewController)
         }
     }
@@ -84,10 +82,6 @@ class BadgeEarningManager {
         if (practicedWords.count >= 15 && practiceStreak >= 3) ||
            maxStreak >= 5 ||
            practicedWords.count >= 20 {
-            print("DEBUG: BadgeEarningManager - Awarding Turtle badge for steady progress")
-            print("  - Practiced words: \(practicedWords.count)")
-            print("  - Current streak: \(practiceStreak) days")
-            print("  - Max streak: \(maxStreak) days")
             await awardBadge("Turtle", in: viewController)
         }
     }
@@ -118,7 +112,6 @@ class BadgeEarningManager {
         
         // Award elephant badge for completing 3+ levels
         if completedLevels >= 3 {
-            print("DEBUG: BadgeEarningManager - Awarding Elephant badge for completing \(completedLevels) levels")
             await awardBadge("Elephant", in: viewController)
         }
     }
@@ -143,10 +136,6 @@ class BadgeEarningManager {
         // - 25+ practiced words OR 
         // - 30+ minutes of daily practice time
         if totalAttempts >= 50 || practicedWords.count >= 25 || dailyTimeSpent >= 1800 {
-            print("DEBUG: BadgeEarningManager - Awarding Dog badge for regular practice")
-            print("  - Total attempts: \(totalAttempts)")
-            print("  - Practiced words: \(practicedWords.count)")
-            print("  - Daily time: \(dailyTimeSpent/60) minutes")
             await awardBadge("Dog", in: viewController)
         }
     }
@@ -176,7 +165,6 @@ class BadgeEarningManager {
         
         // Award bunny badge for improving on 5+ words rapidly
         if improvementCount >= 5 {
-            print("DEBUG: BadgeEarningManager - Awarding Bunny badge for rapid improvement")
             await awardBadge("Bunny", in: viewController)
         }
     }
@@ -198,7 +186,6 @@ class BadgeEarningManager {
         
         // Award lion badge for achieving high accuracy on 20+ words
         if highAccuracyWords.count >= 20 {
-            print("DEBUG: BadgeEarningManager - Awarding Lion badge for excellence")
             await awardBadge("Lion", in: viewController)
         }
     }
@@ -224,7 +211,6 @@ class BadgeEarningManager {
             
             // Award level badge if all words are passed
             if passedWords == totalWords && totalWords > 0 {
-                print("DEBUG: BadgeEarningManager - Awarding \(levelBadgeName) badge")
                 await awardBadge(levelBadgeName, in: viewController)
             }
         }
@@ -243,7 +229,6 @@ class BadgeEarningManager {
             // Get the badge from sample data
             let allBadges = SupabaseDataController.shared.getBadgesData()
             guard let appBadge = allBadges.first(where: { $0.badgeTitle == badgeTitle }) else {
-                print("DEBUG: BadgeEarningManager - Could not find badge: \(badgeTitle)")
                 return
             }
             
@@ -265,8 +250,6 @@ class BadgeEarningManager {
             DispatchQueue.main.async {
                 BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: viewController)
             }
-            
-            print("DEBUG: BadgeEarningManager - Successfully awarded \(badgeTitle) badge")
             
         } catch {
             print("DEBUG: BadgeEarningManager - Error awarding \(badgeTitle) badge: \(error)")
@@ -383,7 +366,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: beeBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Bee badge - First word vocalized!")
         } catch {
             print("DEBUG: Error awarding Bee badge: \(error)")
         }
@@ -397,7 +379,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: turtleBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Turtle badge - 7 days of steady practice!")
         } catch {
             print("DEBUG: Error awarding Turtle badge: \(error)")
         }
@@ -411,7 +392,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: elephantBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Elephant badge - Major milestone reached!")
         } catch {
             print("DEBUG: Error awarding Elephant badge: \(error)")
         }
@@ -425,7 +405,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: dogBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Dog badge - Loyal learner!")
         } catch {
             print("DEBUG: Error awarding Dog badge: \(error)")
         }
@@ -444,7 +423,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: bunnyBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Bunny badge - Quick learner!")
         } catch {
             print("DEBUG: Error awarding Bunny badge: \(error)")
         }
@@ -458,7 +436,6 @@ extension BadgeEarningManager {
         
         do {
             try await SupabaseDataController.shared.updateBadgeStatus(badgeId: lionBadge.id, isEarned: true, showPopup: true)
-            print("DEBUG: ✅ Awarded Lion badge - Master learner!")
         } catch {
             print("DEBUG: Error awarding Lion badge: \(error)")
         }

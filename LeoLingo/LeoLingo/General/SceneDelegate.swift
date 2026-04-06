@@ -22,22 +22,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Check if user is logged in and we have their ID
         if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
-            print("DEBUG: SceneDelegate - Found logged in user with ID: \(userId)")
-            print("DEBUG: SceneDelegate - Is Apple user: \(UserDefaults.standard.isAppleUser)")
-            print("DEBUG: SceneDelegate - Stored email: \(UserDefaults.standard.string(forKey: "lastEmail") ?? "nil")")
             
             // Set the user ID in SupabaseDataController
             SupabaseDataController.shared.restoreSession(userId: userId)
             
-            // Validate badge IDs at startup to ensure consistency
-            BadgeIDManager.shared.logAllBadgeIDs()
-            
             // Log any stored badges from UserDefaults
             let storedBadgeIDs = UserDefaults.standard.earnedBadgeIDs
-            print("DEBUG: SceneDelegate - Found \(storedBadgeIDs.count) earned badges in UserDefaults")
-            for idString in storedBadgeIDs {
-                print("DEBUG: SceneDelegate - Stored badge ID: \(idString)")
-            }
             
             // Load user data and check if user needs to complete questionnaire
             Task {
@@ -54,7 +44,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     DispatchQueue.main.async {
                         if isFirstLogin {
                             // User hasn't completed questionnaire, show questionnaire
-                            print("DEBUG: SceneDelegate - User needs to complete questionnaire")
                             let storyBoard = UIStoryboard(name: "Questionnaire", bundle: nil)
                             if let questionnaireVC = storyBoard.instantiateViewController(withIdentifier: "NameAndAgeVC") as? QuestionnaireViewController {
                                 questionnaireVC.getEmail(email: currentUser?.email ?? "")
@@ -62,7 +51,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                             }
                         } else {
                             // User has completed questionnaire, go to HomePage
-                            print("DEBUG: SceneDelegate - User has completed questionnaire, going to HomePage")
                             let storyboard = UIStoryboard(name: "VocalCoach", bundle: nil)
                             if let homePageVC = storyboard.instantiateViewController(withIdentifier: "HomePageViewController") as? HomePageViewController {
                                 // Create a navigation controller with the home page
@@ -73,7 +61,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         }
                     }
                 } catch {
-                    print("Error loading user data: \(error)")
                     // Handle error - redirect to login
                     DispatchQueue.main.async {
                         UserDefaults.standard.clearSession()

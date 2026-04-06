@@ -24,15 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Configure Google Sign-In
         guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") else {
-            print("Warning: GoogleService-Info.plist not found. Google Sign-In will not work.")
             return true
         }
         guard let plist = NSDictionary(contentsOfFile: path) else {
-            print("Warning: Unable to read GoogleService-Info.plist")
             return true
         }
         guard let clientId = plist["CLIENT_ID"] as? String else {
-            print("Warning: CLIENT_ID not found in GoogleService-Info.plist")
             return true
         }
         

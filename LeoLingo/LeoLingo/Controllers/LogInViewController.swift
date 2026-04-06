@@ -308,7 +308,6 @@ extension LogInViewController: LogInCellDelegate {
                     completion(exists)
                 }
             } catch {
-                print("Error checking user: \(error.localizedDescription)")
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     completion(false)
@@ -338,7 +337,6 @@ extension LogInViewController: LogInCellDelegate {
                     completion(true)
                 }
             } catch {
-                print("Login failed: \(error.localizedDescription)")
                 DispatchQueue.main.async { [weak self] in
                     self?.hideLoading()
                     completion(false)
@@ -390,7 +388,6 @@ extension LogInViewController {
                     }
                 }
             } catch {
-                print("Error checking user existence: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     completion(true) // Default to first-time user on error
                 }

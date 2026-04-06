@@ -94,11 +94,9 @@ class VocalCoachViewController: UIViewController {
                         // Show word image
                         self.wordImageView?.image = UIImage(named: appWord.wordImage)
                         self.wordImageView?.contentMode = .scaleAspectFit
-                        print("DEBUG: VocalCoach showing first unmastered word image: \(appWord.wordImage)")
                     } else {
                         // Show placeholder if all words are mastered
                         self.wordImageView?.image = UIImage(systemName: "checkmark.circle.fill")
-                        print("DEBUG: All words are mastered!")
                     }
                 }
             } catch {
@@ -140,7 +138,6 @@ class VocalCoachViewController: UIViewController {
     
     private func setupWordImageView() {
         guard let wordBox = wordBoxImageView else {
-            print("❌ wordBoxImageView is nil, cannot setup word image")
             return
         }
         
@@ -163,7 +160,6 @@ class VocalCoachViewController: UIViewController {
         
         wordImageView = imageView
         
-        print("✅ Word image view created and positioned inside word box")
     }
     
     private func setupAnimatedMojoGif() {
@@ -171,12 +167,9 @@ class VocalCoachViewController: UIViewController {
         guard let gifPath = Bundle.main.path(forResource: "HeyMojo", ofType: "gif"),
               let gifData = try? Data(contentsOf: URL(fileURLWithPath: gifPath)),
               let source = CGImageSourceCreateWithData(gifData as CFData, nil) else {
-            print("❌ GIF file 'HeyMojo.gif' not found")
             mojoImageView?.isHidden = false
             return
         }
-        
-        print("✅ Loading HeyMojo.gif")
         
         let imageCount = CGImageSourceGetCount(source)
         var images: [UIImage] = []
@@ -227,9 +220,6 @@ class VocalCoachViewController: UIViewController {
         
         // Start animation
         animatedImageView.startAnimating()
-        
-        print("✅ Animated GIF playing with \(imageCount) frames!")
-        print("📍 Animation duration: \(totalDuration)s")
     }
     
     private func navigateToPracticeScreen() {
@@ -352,11 +342,9 @@ class VocalCoachViewController: UIViewController {
                         // Show word image
                         self.wordImageView?.image = UIImage(named: appWord.wordImage)
                         self.wordImageView?.contentMode = .scaleAspectFit
-                        print("DEBUG: VocalCoach updated to show: \(appWord.wordImage)")
                     } else {
                         // Show placeholder if all words are mastered
                         self.wordImageView?.image = UIImage(systemName: "checkmark.circle.fill")
-                        print("DEBUG: All words are mastered!")
                     }
                 }
             } catch {
@@ -391,7 +379,6 @@ extension VocalCoachViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Selected level card at index: \(indexPath.item)")
         
         let levelCardVC = LevelCardViewController(selectedLevelIndex: indexPath.item)
         levelCardVC.title = "Level \(indexPath.item + 1)"

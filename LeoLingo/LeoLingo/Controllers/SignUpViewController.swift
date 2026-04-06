@@ -319,7 +319,6 @@ extension SignUpViewController: SignUpCellDelegate {
                     completion(exists)
                 }
             } catch {
-                print("Error checking user: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     completion(false)
                 }

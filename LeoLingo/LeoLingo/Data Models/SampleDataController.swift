@@ -310,7 +310,7 @@ class SampleDataController {
                 videos: ["https://www.youtube.com/watch?v=KRbxUiF2dkw"]
             )
         ]
-        let levelCardImages = ["Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10"]
+        let levelCardImages = ["level1","Level2","Level3","Level4","Level5","level6","Level7","Level8","Level9","Level10"]
        
         levelCards = zip(levels, levelCardImages).map { LevelCard(from: $0.0, levelCardImage: $0.1) }
         

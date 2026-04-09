@@ -1269,6 +1269,43 @@ class SupabaseDataController {
         isFirstTimeUser = false
         
     }
+
+    // Delete the current user's account and related data from database.
+    public func deleteCurrentAccount() async throws {
+        guard let userId = currentUserId else {
+            throw SupabaseError.userNotLoggedIn
+        }
+
+        do {
+            try await supabase
+                .from("user_word_records")
+                .delete()
+                .eq("user_id", value: userId)
+                .execute()
+
+            try await supabase
+                .from("user_badges")
+                .delete()
+                .eq("user_id", value: userId)
+                .execute()
+
+            try await supabase
+                .from("user_levels")
+                .delete()
+                .eq("user_id", value: userId)
+                .execute()
+
+            try await supabase
+                .from("users")
+                .delete()
+                .eq("id", value: userId)
+                .execute()
+
+            signOut()
+        } catch {
+            throw SupabaseError.databaseError(error)
+        }
+    }
     
     // Add method to update child's name
     public func updateChildName(userId: UUID, childName: String) async throws {

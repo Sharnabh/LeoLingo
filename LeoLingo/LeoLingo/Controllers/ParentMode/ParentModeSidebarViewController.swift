@@ -1,6 +1,10 @@
 import UIKit
 
 class ParentModeSidebarViewController: UITableViewController {
+    private enum AccountActionRow: Int {
+        case signOut = 0
+        case deleteAccount = 1
+    }
     
     enum MenuItem: Int, CaseIterable {
         case dashboard
@@ -50,11 +54,11 @@ class ParentModeSidebarViewController: UITableViewController {
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2 // Main menu section and Sign out section
+        return 2 // Main menu section and account actions section
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? MenuItem.allCases.count : 1
+        return section == 0 ? MenuItem.allCases.count : 2
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -67,10 +71,20 @@ class ParentModeSidebarViewController: UITableViewController {
             content.text = menuItem.title
             content.image = menuItem.image
         } else {
-            content.text = "Sign Out"
-            content.image = UIImage(systemName: "rectangle.portrait.and.arrow.right")
-            content.textProperties.color = .systemRed
-            content.imageProperties.tintColor = .systemRed
+            switch AccountActionRow(rawValue: indexPath.row) {
+            case .signOut:
+                content.text = "Sign Out"
+                content.image = UIImage(systemName: "rectangle.portrait.and.arrow.right")
+                content.textProperties.color = .systemRed
+                content.imageProperties.tintColor = .systemRed
+            case .deleteAccount:
+                content.text = "Delete Account"
+                content.image = UIImage(systemName: "trash.fill")
+                content.textProperties.color = .systemRed
+                content.imageProperties.tintColor = .systemRed
+            case .none:
+                break
+            }
         }
         
         cell.contentConfiguration = content
@@ -78,7 +92,7 @@ class ParentModeSidebarViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "Navigation" : nil
+        return section == 0 ? "Navigation" : "Account"
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -104,19 +118,25 @@ class ParentModeSidebarViewController: UITableViewController {
                 splitViewController.show(.secondary)
             }
         } else {
-            // Handle sign out
-            let alertController = UIAlertController(
-                title: "Sign Out",
-                message: "Are you sure you want to sign out?",
-                preferredStyle: .alert
-            )
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            alertController.addAction(UIAlertAction(title: "Sign Out", style: .destructive) { [weak self] _ in
-                self?.signOut()
-            })
-            
-            present(alertController, animated: true)
+            switch AccountActionRow(rawValue: indexPath.row) {
+            case .signOut:
+                let alertController = UIAlertController(
+                    title: "Sign Out",
+                    message: "Are you sure you want to sign out?",
+                    preferredStyle: .alert
+                )
+                
+                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                alertController.addAction(UIAlertAction(title: "Sign Out", style: .destructive) { [weak self] _ in
+                    self?.signOut()
+                })
+                
+                present(alertController, animated: true)
+            case .deleteAccount:
+                presentDeleteAccountConfirmation()
+            case .none:
+                break
+            }
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -136,6 +156,69 @@ class ParentModeSidebarViewController: UITableViewController {
         alertVC.addAction(UIAlertAction(title: "No", style: .cancel))
         
         present(alertVC, animated: true)
+    }
+
+    private func presentDeleteAccountConfirmation() {
+        let alertController = UIAlertController(
+            title: "Delete Account",
+            message: "Are you sure you want to delete your account? Type Delete to confirm.",
+            preferredStyle: .alert
+        )
+
+        alertController.addTextField { textField in
+            textField.placeholder = "Type Delete"
+            textField.autocapitalizationType = .none
+            textField.clearButtonMode = .whileEditing
+        }
+
+        let deleteAction = UIAlertAction(title: "Delete Account", style: .destructive) { [weak self, weak alertController] _ in
+            let confirmationText = alertController?.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+            guard confirmationText == "Delete" else {
+                self?.showMessageAlert(
+                    title: "Confirmation Failed",
+                    message: "Please type Delete exactly to confirm account deletion."
+                )
+                return
+            }
+
+            self?.deleteAccount()
+        }
+
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.addAction(deleteAction)
+        present(alertController, animated: true)
+    }
+
+    private func deleteAccount() {
+        Task { [weak self] in
+            do {
+                try await SupabaseDataController.shared.deleteCurrentAccount()
+                await MainActor.run {
+                    self?.showMessageAlert(
+                        title: "Account Deleted",
+                        message: "Your account has been deleted successfully."
+                    ) { [weak self] in
+                        self?.signOut()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self?.showMessageAlert(
+                        title: "Unable to Delete Account",
+                        message: error.localizedDescription
+                    )
+                }
+            }
+        }
+    }
+
+    private func showMessageAlert(title: String, message: String, completion: (() -> Void)? = nil) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completion?()
+        })
+        present(alertController, animated: true)
     }
     
     private func signOut() {

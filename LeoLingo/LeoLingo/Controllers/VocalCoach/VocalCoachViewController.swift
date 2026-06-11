@@ -353,6 +353,45 @@ class VocalCoachViewController: UIViewController {
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Show interactive tutorial tips if needed
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            self?.showInteractiveTips()
+        }
+    }
+    
+    private func showInteractiveTips() {
+        guard UserDefaults.standard.hasSeenOnboardingCarousel else { return }
+        guard !UserDefaults.standard.hasSeenVocalCoachTips else { return }
+        
+        var steps: [InteractiveTipOverlay.Step] = []
+        
+        if let button = continueButton {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: button,
+                title: "Resume Learning",
+                message: "Tap this button to continue right where you left off with your lessons!"
+            ))
+        }
+        
+        // Find cell at indexPath (0, 0) or fallback to collection view
+        let firstCardView = soundCards.cellForItem(at: IndexPath(item: 0, section: 0)) ?? soundCards
+        steps.append(InteractiveTipOverlay.Step(
+            targetView: firstCardView,
+            title: "Level Selection",
+            message: "Select any custom level card here to study specific vocabulary word groups!"
+        ))
+        
+        guard !steps.isEmpty else { return }
+        
+        let overlay = InteractiveTipOverlay(frame: self.view.bounds, steps: steps) {
+            UserDefaults.standard.hasSeenVocalCoachTips = true
+        }
+        self.view.addSubview(overlay)
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
         videoCardView = nil

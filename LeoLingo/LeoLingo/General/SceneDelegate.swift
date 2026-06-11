@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -19,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
+        self.window = window
         
         // Check if user is logged in and we have their ID
         if UserDefaults.standard.isUserLoggedIn, let userIdString = UserDefaults.standard.userId, let userId = UUID(uuidString: userIdString) {
@@ -62,26 +64,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     }
                 } catch {
                     // Handle error - redirect to login
-                    DispatchQueue.main.async {
-                        UserDefaults.standard.clearSession()
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
-                            window.rootViewController = loginVC
-                        }
+                    DispatchQueue.main.async { [weak self] in
+                        self?.navigateToLogin()
                     }
                 }
             }
         } else {
-            // User is not logged in or we don't have their ID, show login page
-            UserDefaults.standard.clearSession() // Clear any partial session data
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController {
-                window.rootViewController = loginVC
+            // User is not logged in or we don't have their ID, check onboarding status
+            if !UserDefaults.standard.hasSeenOnboardingCarousel {
+                let onboardingView = OnboardingCarouselView { [weak self] in
+                    UserDefaults.standard.hasSeenOnboardingCarousel = true
+                    self?.navigateToLogin(animated: true)
+                }
+                let hostingVC = UIHostingController(rootView: onboardingView)
+                window.rootViewController = hostingVC
+            } else {
+                navigateToLogin()
             }
         }
         
-        self.window = window
         window.makeKeyAndVisible()
+    }
+    
+    private func navigateToLogin(animated: Bool = false) {
+        guard let window = self.window else { return }
+        UserDefaults.standard.clearSession() // Clear any partial session data
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LogInViewController else { return }
+        
+        if animated {
+            UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+                window.rootViewController = loginVC
+            }, completion: nil)
+        } else {
+            window.rootViewController = loginVC
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

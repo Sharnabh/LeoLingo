@@ -16,6 +16,7 @@ extension UserDefaults {
         static let shouldShowOnboardingBadgeAchievement = "shouldShowOnboardingBadgeAchievement"
         static let earnedBadgeIDs = "earnedBadgeIDs"
         static let shownBadgeIDs = "shownBadgeIDs"
+        static let hasSeenOnboardingCarousel = "hasSeenOnboardingCarousel"
     }
     
     var isUserLoggedIn: Bool {
@@ -69,6 +70,15 @@ extension UserDefaults {
         }
         set {
             set(newValue, forKey: Keys.isGoogleUser)
+        }
+    }
+    
+    var hasSeenOnboardingCarousel: Bool {
+        get {
+            return bool(forKey: Keys.hasSeenOnboardingCarousel)
+        }
+        set {
+            set(newValue, forKey: Keys.hasSeenOnboardingCarousel)
         }
     }
     

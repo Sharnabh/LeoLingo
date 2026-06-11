@@ -237,6 +237,11 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         // Refresh practices and badges when view appears
         loadRecentPractices()
         refreshBadgeData()
+        
+        // Show interactive tutorial tips if needed
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            self?.showInteractiveTips()
+        }
     }
     
     private func checkForNewlyEarnedBadges() {
@@ -822,6 +827,82 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                 print("Error showing onboarding badge: \(error)")
             }
         }
+    }
+    
+    private func showInteractiveTips() {
+        guard UserDefaults.standard.hasSeenOnboardingCarousel else { return }
+        guard !UserDefaults.standard.hasSeenHomePageTips else { return }
+        
+        let kidsModeBtn = findButton(withAction: #selector(kidsModeButtonTapped(_:)))
+        let vocalCoachBtn = findButton(withAction: #selector(vocalCoachButtonTapped(_:)))
+        let funLearningBtn = findButton(withAction: #selector(funLearningButtonTapped(_:)))
+        
+        var steps: [InteractiveTipOverlay.Step] = []
+        
+        if let levelV = levelView {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: levelV,
+                title: "Your Level Progress",
+                message: "Track your language learning level and progress bar here as you complete exercises."
+            ))
+        }
+        
+        if let badgesV = badgesView {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: badgesV,
+                title: "Reward Badges",
+                message: "Check out all the cool badges you've earned! Complete exercises to unlock more."
+            ))
+        }
+        
+        if let kidsBtn = kidsModeBtn {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: kidsBtn,
+                title: "Parent Dashboard",
+                message: "Tap this button to switch to Parent Mode, view reports, and configure screen limits."
+            ))
+        }
+        
+        if let coachBtn = vocalCoachBtn {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: coachBtn,
+                title: "Vocal Coach",
+                message: "Practice speaking and pronunciation skills with Leo's interactive coaching!"
+            ))
+        }
+        
+        if let funBtn = funLearningBtn {
+            steps.append(InteractiveTipOverlay.Step(
+                targetView: funBtn,
+                title: "Fun Learning Games",
+                message: "Play spelling, jungle running games, and study with category flashcards."
+            ))
+        }
+        
+        guard !steps.isEmpty else { return }
+        
+        let overlay = InteractiveTipOverlay(frame: self.view.bounds, steps: steps) {
+            UserDefaults.standard.hasSeenHomePageTips = true
+        }
+        self.view.addSubview(overlay)
+    }
+    
+    private func findButton(withAction actionSelector: Selector) -> UIButton? {
+        func scan(view: UIView) -> UIButton? {
+            if let button = view as? UIButton {
+                let actions = button.actions(forTarget: self, forControlEvent: .touchUpInside)
+                if actions?.contains(NSStringFromSelector(actionSelector)) == true {
+                    return button
+                }
+            }
+            for subview in view.subviews {
+                if let found = scan(view: subview) {
+                    return found
+                }
+            }
+            return nil
+        }
+        return scan(view: self.view)
     }
 }
 extension HomePageViewController: UIPopoverPresentationControllerDelegate {

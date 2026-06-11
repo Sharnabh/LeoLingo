@@ -17,6 +17,8 @@ extension UserDefaults {
         static let earnedBadgeIDs = "earnedBadgeIDs"
         static let shownBadgeIDs = "shownBadgeIDs"
         static let hasSeenOnboardingCarousel = "hasSeenOnboardingCarousel"
+        static let hasSeenHomePageTips = "hasSeenHomePageTips"
+        static let hasSeenVocalCoachTips = "hasSeenVocalCoachTips"
     }
     
     var isUserLoggedIn: Bool {
@@ -79,6 +81,24 @@ extension UserDefaults {
         }
         set {
             set(newValue, forKey: Keys.hasSeenOnboardingCarousel)
+        }
+    }
+    
+    var hasSeenHomePageTips: Bool {
+        get {
+            return bool(forKey: Keys.hasSeenHomePageTips)
+        }
+        set {
+            set(newValue, forKey: Keys.hasSeenHomePageTips)
+        }
+    }
+    
+    var hasSeenVocalCoachTips: Bool {
+        get {
+            return bool(forKey: Keys.hasSeenVocalCoachTips)
+        }
+        set {
+            set(newValue, forKey: Keys.hasSeenVocalCoachTips)
         }
     }
     

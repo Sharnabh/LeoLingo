@@ -19,7 +19,7 @@ struct OnboardingCarouselView: View {
     private let slides = [
         OnboardingSlide(
             title: "Welcome to LeoLingo!",
-            description: "A fun and interactive way for children to learn, speak, and master new languages with confidence.",
+            description: "A fun and interactive way for children to learn and speak with confidence.",
             imageName: "LeoLingoMainImage",
             systemImageName: "character.book.closed.fill",
             gradientColors: [Color(hex: "FFF9F2"), Color(hex: "FFEBD6")],

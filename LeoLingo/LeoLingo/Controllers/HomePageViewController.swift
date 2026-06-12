@@ -219,28 +219,38 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        // Refresh practices and badges when view appears
+        loadRecentPractices()
+        refreshBadgeData()
         
         // Check if we should show the badge achievement popup after onboarding
         if UserDefaults.standard.shouldShowOnboardingBadgeAchievement {
             // Reset the flag so it doesn't show again
             UserDefaults.standard.shouldShowOnboardingBadgeAchievement = false
             
+            // Register for dismiss notification to continue checking/tips later
+            NotificationCenter.default.addObserver(self,
+                                                 selector: #selector(badgeAchievementDismissed),
+                                                 name: NSNotification.Name("DismissBadgeAchievement"),
+                                                 object: nil)
+            
             // Delay showing the popup for a better UX
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showOnboardingBadgeAchievement()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.showOnboardingBadgeAchievement()
             }
+        } else {
+            // Check for any newly earned badges (which will chain to interactive tips if none/once dismissed)
+            checkForNewlyEarnedBadges()
         }
+    }
+    
+    @objc private func badgeAchievementDismissed() {
+        // Remove observer
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DismissBadgeAchievement"), object: nil)
         
-        // Check for any newly earned badges that haven't been shown yet
-        checkForNewlyEarnedBadges()
-        
-        // Refresh practices and badges when view appears
-        loadRecentPractices()
-        refreshBadgeData()
-        
-        // Show interactive tutorial tips if needed
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-            self?.showInteractiveTips()
+        // Wait for dismissal transition to complete before continuing
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.checkForNewlyEarnedBadges()
         }
     }
     
@@ -255,30 +265,49 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                 // Get user data from Supabase
                 let userData = try await SupabaseDataController.shared.getUser(byId: userId)
                 
-                // Get list of badges shown before
-                let shownBadgeIDs = UserDefaults.standard.array(forKey: "shownBadgeAchievements") as? [String] ?? []
+                // Get list of badges shown before using the correct UserDefaults property
+                let shownBadgeIDs = UserDefaults.standard.shownBadgeIDs
                 
                 // Find any earned badge that hasn't been shown yet
+                var presentedBadge = false
                 for badge in userData.userBadges where badge.isEarned {
                     let badgeIDString = badge.id.uuidString
                     if !shownBadgeIDs.contains(badgeIDString) {
                         // This is a newly earned badge - show achievement popup
+                        presentedBadge = true
                         
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
+                            // Register for dismiss notification to continue flow
+                            NotificationCenter.default.addObserver(self,
+                                                                 selector: #selector(self.badgeAchievementDismissed),
+                                                                 name: NSNotification.Name("DismissBadgeAchievement"),
+                                                                 object: nil)
                             BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
                         }
                         
-                        // Mark this badge as shown
+                        // Mark this badge as shown using the correct UserDefaults property
                         var updatedShownBadges = shownBadgeIDs
                         updatedShownBadges.append(badgeIDString)
-                        UserDefaults.standard.set(updatedShownBadges, forKey: "shownBadgeAchievements")
+                        UserDefaults.standard.shownBadgeIDs = updatedShownBadges
                         
                         // Only show one badge at a time
                         break
                     }
                 }
+                
+                if !presentedBadge {
+                    // No new badges to show, safe to show interactive tips
+                    DispatchQueue.main.async { [weak self] in
+                        self?.showInteractiveTips()
+                    }
+                }
             } catch {
                 print("DEBUG: Error checking for newly earned badges: \(error)")
+                // Fallback to showing interactive tips if check fails
+                DispatchQueue.main.async { [weak self] in
+                    self?.showInteractiveTips()
+                }
             }
         }
     }
@@ -787,6 +816,8 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
         
         guard let userId = UserDefaults.standard.userId, 
               let id = UUID(uuidString: userId) else {
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DismissBadgeAchievement"), object: nil)
+            checkForNewlyEarnedBadges()
             return
         }
         
@@ -822,9 +853,20 @@ class HomePageViewController: UIViewController, UICollectionViewDelegate, UIColl
                             BadgeAchievementManager.shared.showBadgeAchievement(for: badge, in: self)
                         }
                     }
+                } else {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DismissBadgeAchievement"), object: nil)
+                        self.checkForNewlyEarnedBadges()
+                    }
                 }
             } catch {
                 print("Error showing onboarding badge: \(error)")
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DismissBadgeAchievement"), object: nil)
+                    self.checkForNewlyEarnedBadges()
+                }
             }
         }
     }

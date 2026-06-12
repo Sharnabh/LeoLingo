@@ -103,7 +103,6 @@ class SetPasscodeViewController: UIViewController {
     }
     
     func configureCircleView(circleView: UIView) {
-        circleView.layer.cornerRadius = circleView.frame.size.width / 2
         circleView.layer.borderWidth = 1
         circleView.layer.borderColor = UIColor.black.cgColor
     }
@@ -152,14 +151,34 @@ class SetPasscodeViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
+        // 1. Make the Passcode Indicator Circles perfect circles
+        circleView1.layer.cornerRadius = circleView1.bounds.width / 2
+        circleView2.layer.cornerRadius = circleView2.bounds.width / 2
+        circleView3.layer.cornerRadius = circleView3.bounds.width / 2
+        circleView4.layer.cornerRadius = circleView4.bounds.width / 2
+        
+        // 2. Make the Numpad Buttons perfect circles
         for button in passcodeButtons {
-            button.layoutIfNeeded()
-            button.layer.cornerRadius = button.bounds.width / 2
-            button.clipsToBounds = true
+            // Note: You don't need `button.layoutIfNeeded()` here.
+            // Auto layout has already done its job at this point!
+            if var config = button.configuration {
+                config.cornerStyle = .fixed
+                config.background.cornerRadius = button.bounds.width / 2
+                button.configuration = config
+            } else {
+                button.layer.cornerRadius = button.bounds.width / 2
+                button.clipsToBounds = true
+            }
         }
         
-        deleteButton.layoutIfNeeded()
-        deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
-        deleteButton.clipsToBounds = true
+        // 3. Make the Delete Button a perfect circle
+        if var config = deleteButton.configuration {
+            config.cornerStyle = .fixed
+            config.background.cornerRadius = deleteButton.bounds.width / 2
+            deleteButton.configuration = config
+        } else {
+            deleteButton.layer.cornerRadius = deleteButton.bounds.width / 2
+            deleteButton.clipsToBounds = true
+        }
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="m55-yv-aUA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="m55-yv-aUA">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -21,10 +21,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                             </imageView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qDS-1r-WJu">
-                                <rect key="frame" x="446" y="54" width="484" height="4"/>
+                                <rect key="frame" x="446" y="62" width="484" height="4"/>
                             </progressView>
                             <containerView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mge-DE-m82">
-                                <rect key="frame" x="246" y="123" width="884" height="766"/>
+                                <rect key="frame" x="246" y="123" width="884" height="741"/>
                                 <color key="backgroundColor" red="0.97647058819999999" green="0.94901960780000005" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <connections>
                                     <segue destination="ZB2-Pf-9HO" kind="embed" id="tqc-Rm-IKK"/>
@@ -64,11 +64,11 @@
             <objects>
                 <viewController id="BBv-aB-Zb8" customClass="NameAgeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1cR-PD-lzt">
-                        <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
+                        <rect key="frame" x="0.0" y="0.0" width="884" height="741"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="kIE-IV-bfu">
-                                <rect key="frame" x="10" y="10" width="864" height="726"/>
+                                <rect key="frame" x="10" y="10" width="864" height="701"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="UsW-LE-Osj">
                                         <rect key="frame" x="10" y="0.0" width="844" height="192"/>
@@ -182,10 +182,10 @@ experience</string>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rc6-gz-MbY">
-                                        <rect key="frame" x="271" y="512" width="322" height="171.5"/>
+                                        <rect key="frame" x="271" y="512" width="322" height="146.5"/>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mlQ-Zt-ls9">
-                                        <rect key="frame" x="385.5" y="691.5" width="93" height="34.5"/>
+                                        <rect key="frame" x="385.5" y="666.5" width="93" height="34.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N0h-ay-afS">
                                                 <rect key="frame" x="0.0" y="0.0" width="93" height="34.5"/>
@@ -240,7 +240,7 @@ experience</string>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZB2-Pf-9HO" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HzL-if-Q2X">
-                        <rect key="frame" x="0.0" y="24" width="884" height="50"/>
+                        <rect key="frame" x="0.0" y="32" width="884" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <navigationBarAppearance key="standardAppearance"/>
                     </navigationBar>
@@ -258,11 +258,11 @@ experience</string>
             <objects>
                 <viewController id="HT5-sn-dYK" customClass="SpeechLevelViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aCF-af-q9X">
-                        <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
+                        <rect key="frame" x="0.0" y="0.0" width="884" height="741"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="gNY-oH-cEK">
-                                <rect key="frame" x="10" y="10" width="864" height="726"/>
+                                <rect key="frame" x="10" y="10" width="864" height="701"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="GKK-BU-hZA">
                                         <rect key="frame" x="0.0" y="0.0" width="864" height="167"/>
@@ -298,14 +298,14 @@ experience</string>
                                                 <color key="backgroundColor" red="0.97647058959999999" green="0.96078431610000004" blue="0.90588235859999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <prototypes>
                                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SpeechLevels" textLabel="N0o-HW-koB" style="IBUITableViewCellStyleDefault" id="6Gw-ho-iyQ">
-                                                        <rect key="frame" x="0.0" y="50" width="804" height="43.5"/>
+                                                        <rect key="frame" x="0.0" y="50" width="804" height="51"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6Gw-ho-iyQ" id="rkW-HW-5JA">
-                                                            <rect key="frame" x="0.0" y="0.0" width="764" height="43.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="764" height="51"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="N0o-HW-koB">
-                                                                    <rect key="frame" x="16" y="0.0" width="740" height="43.5"/>
+                                                                    <rect key="frame" x="16" y="0.0" width="740" height="51"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                                                     <nil key="textColor"/>
@@ -323,10 +323,10 @@ experience</string>
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PC8-ib-nEr">
-                                        <rect key="frame" x="377" y="424" width="110" height="259.5"/>
+                                        <rect key="frame" x="377" y="424" width="110" height="234.5"/>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1C9-u3-tzI">
-                                        <rect key="frame" x="385.5" y="691.5" width="93" height="34.5"/>
+                                        <rect key="frame" x="385.5" y="666.5" width="93" height="34.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xsc-Na-zPS">
                                                 <rect key="frame" x="0.0" y="0.0" width="93" height="34.5"/>
@@ -374,11 +374,11 @@ experience</string>
             <objects>
                 <viewController id="lxg-cQ-UkX" customClass="DiagnosticCheckViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1jG-Qk-vyF">
-                        <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
+                        <rect key="frame" x="0.0" y="0.0" width="884" height="741"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="IUJ-VQ-S27">
-                                <rect key="frame" x="10" y="10" width="864" height="726"/>
+                                <rect key="frame" x="10" y="10" width="864" height="701"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="OgM-aF-Hm9">
                                         <rect key="frame" x="169" y="0.0" width="526" height="169"/>
@@ -400,18 +400,18 @@ experience</string>
                                         </subviews>
                                     </stackView>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="abR-Kd-GBO">
-                                        <rect key="frame" x="30" y="177" width="804" height="427.5"/>
+                                        <rect key="frame" x="30" y="177" width="804" height="402.5"/>
                                         <color key="backgroundColor" red="0.97647058959999999" green="0.96078431610000004" blue="0.90588235859999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="ZAy-HB-3wf" style="IBUITableViewCellStyleDefault" id="2Hy-nO-oco">
-                                                <rect key="frame" x="0.0" y="50" width="804" height="43.5"/>
+                                                <rect key="frame" x="0.0" y="50" width="804" height="51"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2Hy-nO-oco" id="ErJ-ty-JTb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="804" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="804" height="51"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZAy-HB-3wf">
-                                                            <rect key="frame" x="16" y="0.0" width="772" height="43.5"/>
+                                                            <rect key="frame" x="16" y="0.0" width="772" height="51"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                                             <nil key="textColor"/>
@@ -424,13 +424,13 @@ experience</string>
                                         </prototypes>
                                     </tableView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="G8R-oE-Ljx">
-                                        <rect key="frame" x="377" y="612.5" width="110" height="71"/>
+                                        <rect key="frame" x="377" y="587.5" width="110" height="71"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="71" id="i7x-EX-k5G"/>
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="3uS-68-RsB">
-                                        <rect key="frame" x="385.5" y="691.5" width="93" height="34.5"/>
+                                        <rect key="frame" x="385.5" y="666.5" width="93" height="34.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w4R-Yl-TPY">
                                                 <rect key="frame" x="0.0" y="0.0" width="93" height="34.5"/>
@@ -476,7 +476,7 @@ experience</string>
             <objects>
                 <viewController id="Lpw-7Q-wJD" customClass="WordSelectionViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kDL-p3-k4e">
-                        <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="V9G-td-5wh">
@@ -679,11 +679,11 @@ experience</string>
             <objects>
                 <viewController id="HOj-1R-Rc9" customClass="SetPasscodeViewController" customModule="LeoLingo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bSN-gK-W5j">
-                        <rect key="frame" x="0.0" y="0.0" width="884" height="766"/>
+                        <rect key="frame" x="0.0" y="0.0" width="884" height="741"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="22" translatesAutoresizingMaskIntoConstraints="NO" id="vP3-Te-xel">
-                                <rect key="frame" x="10" y="60" width="864" height="646.5"/>
+                                <rect key="frame" x="10" y="47.5" width="864" height="646.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Passcode for Parent Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pYx-zy-x6j">
                                         <rect key="frame" x="252" y="0.0" width="360" height="34"/>
@@ -740,6 +740,12 @@ experience</string>
                                                         <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
                                                         <state key="normal" title="Button"/>
                                                         <buttonConfiguration key="configuration" style="filled" title="1"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="100"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="passcodeTapped:" destination="HOj-1R-Rc9" eventType="touchUpInside" id="9Cx-SE-aqt"/>
                                                         </connections>

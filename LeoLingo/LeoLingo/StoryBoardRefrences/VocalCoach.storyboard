@@ -379,6 +379,7 @@
                         <outlet property="greetEmojiLabel" destination="bK0-bS-OZV" id="V4Q-5v-0jo"/>
                         <outlet property="greetLabel" destination="Mtr-wE-p5K" id="Uh3-qi-Yxm"/>
                         <outlet property="headingTitle" destination="f6V-UD-B2d" id="ypU-NV-b4E"/>
+                        <outlet property="mojoImageView" destination="imP-M5-XCB" id="KCK-mojoImageView"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDj-x3-LaU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

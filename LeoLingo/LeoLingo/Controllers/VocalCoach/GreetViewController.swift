@@ -11,10 +11,10 @@ import ImageIO
 
 class GreetViewController: UIViewController {
     
-    @IBOutlet var greetLabel: UILabel!
-    @IBOutlet var greetEmojiLabel: UILabel!
-    @IBOutlet weak var headingTitle: UILabel!
-    @IBOutlet weak var mojoImageView: UIImageView!
+    @IBOutlet var greetLabel: UILabel?
+    @IBOutlet var greetEmojiLabel: UILabel?
+    @IBOutlet weak var headingTitle: UILabel?
+    @IBOutlet weak var mojoImageView: UIImageView?
     
     // GIF properties
     private var heyMojoImages: [UIImage] = []
@@ -55,8 +55,8 @@ class GreetViewController: UIViewController {
                 let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any]
                 let gifProperties = properties?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
                 let frameDuration = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime as String] as? TimeInterval
-                    ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
-                    ?? 0.1
+                     ?? gifProperties?[kCGImagePropertyGIFDelayTime as String] as? TimeInterval
+                     ?? 0.1
                 totalDuration += frameDuration
                 heyMojoImages.append(UIImage(cgImage: cgImage))
             }
@@ -65,28 +65,28 @@ class GreetViewController: UIViewController {
         heyMojoDuration = totalDuration
         
         // Configure the image view with the GIF
-        mojoImageView.animationImages = heyMojoImages
-        mojoImageView.animationDuration = heyMojoDuration
-        mojoImageView.animationRepeatCount = 0 // Loop indefinitely
-        mojoImageView.contentMode = .scaleAspectFit
+        mojoImageView?.animationImages = heyMojoImages
+        mojoImageView?.animationDuration = heyMojoDuration
+        mojoImageView?.animationRepeatCount = 0 // Loop indefinitely
+        mojoImageView?.contentMode = .scaleAspectFit
         
         // Start animating
-        mojoImageView.startAnimating()
+        mojoImageView?.startAnimating()
         
     }
         
     private func setupUI() {
-        greetLabel.adjustsFontSizeToFitWidth = true
-        greetEmojiLabel.adjustsFontSizeToFitWidth = true
-        headingTitle.layer.cornerRadius = 21
-        headingTitle.layer.masksToBounds = true
+        greetLabel?.adjustsFontSizeToFitWidth = true
+        greetEmojiLabel?.adjustsFontSizeToFitWidth = true
+        headingTitle?.layer.cornerRadius = 21
+        headingTitle?.layer.masksToBounds = true
         
         // Add fade in animation
-        greetLabel.alpha = 0
-        greetEmojiLabel.alpha = 0
+        greetLabel?.alpha = 0
+        greetEmojiLabel?.alpha = 0
         UIView.animate(withDuration: 0.5) {
-            self.greetLabel.alpha = 1
-            self.greetEmojiLabel.alpha = 1
+            self.greetLabel?.alpha = 1
+            self.greetEmojiLabel?.alpha = 1
         }
     }
     
@@ -165,15 +165,15 @@ class GreetViewController: UIViewController {
         let greeting = greetings[greetingIndex]
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.greetLabel.alpha = 0
-            self.greetEmojiLabel.alpha = 0
+            self.greetLabel?.alpha = 0
+            self.greetEmojiLabel?.alpha = 0
         }) { _ in
-            self.greetLabel.text = greeting
-            self.greetEmojiLabel.text = self.emojis[self.emojiIndex]
+            self.greetLabel?.text = greeting
+            self.greetEmojiLabel?.text = self.emojis[self.emojiIndex]
             
             UIView.animate(withDuration: 0.3) {
-                self.greetLabel.alpha = 1
-                self.greetEmojiLabel.alpha = 1
+                self.greetLabel?.alpha = 1
+                self.greetEmojiLabel?.alpha = 1
             }
         }
         

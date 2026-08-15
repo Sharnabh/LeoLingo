@@ -21,7 +21,8 @@ class FunLearningViewController: UIViewController {
     
     var currentIndex = 1
     
-    let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo",]
+    // let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo", "SingAlongLogo",]
+    let gameImages: [String] = [ "JungleRunLogo", "FlashCardsGameLogo"]
     
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -253,14 +254,15 @@ extension FunLearningViewController: UICollectionViewDelegate, UICollectionViewD
                 present(vc, animated: true)
             }
         }
-        if indexPath.item == 2
-        {
-            let storyboard = UIStoryboard(name: "SingAlong", bundle: nil)
-            if let singAlongVC = storyboard.instantiateViewController(withIdentifier: "SingAlongViewController") as? SingAlongViewController {
-                singAlongVC.modalPresentationStyle = .fullScreen
-                present(singAlongVC, animated: true)
-            }
-        }
+        // SingAlong Module disabled - access commented out
+//        if indexPath.item == 2
+//        {
+//            let storyboard = UIStoryboard(name: "SingAlong", bundle: nil)
+//            if let singAlongVC = storyboard.instantiateViewController(withIdentifier: "SingAlongViewController") as? SingAlongViewController {
+//                singAlongVC.modalPresentationStyle = .fullScreen
+//                present(singAlongVC, animated: true)
+//            }
+//        }
     }
     
     

@@ -18,7 +18,7 @@ class OTPService {
         static let smtpHost = "smtp.gmail.com"
         static let smtpPort: Int32 = 587
         static let fromEmail = "sharnabhbanerjee3@gmail.com" // Replace with your email
-        static let fromPassword = "jltf plkm ordx yzdw" // Replace with your app password
+        static let fromPassword = "eqtk cqqi yulk okwn" // Replace with your app password (without spaces)
         static let fromName = "Leo Lingo"
     }
     
@@ -31,10 +31,7 @@ class OTPService {
         password: EmailConfig.fromPassword,
         port: EmailConfig.smtpPort,
         tlsMode: .requireSTARTTLS,
-        tlsConfiguration: nil,
-        authMethods: [],
-        domainName: "localhost",
-        timeout: 10
+        authMethods: [.login, .plain]
     )
     
     func sendOTP(to email: String, type: OTPType) async throws {
